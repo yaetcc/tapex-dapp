@@ -1166,6 +1166,42 @@ input:focus{
 }
 
 /* ===== 14 其他 ===== */
+.tapex-links{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0));
+}
+.tl-head{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--tx1);margin-bottom:9px;}
+.tl-head svg{flex:none;}
+.tl-addr{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:9px;
+  padding:8px 10px;
+}
+.tl-addr code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px;color:var(--teal);
+  word-break:break-all;
+  line-height:1.5;
+}
+.tl-copy{
+  flex:none;margin-left:auto;
+  background:var(--teal-soft,rgba(45,212,191,.12));color:var(--teal);
+  border:1px solid rgba(45,212,191,.35);border-radius:8px;
+  font-size:12px;padding:4px 12px;cursor:pointer;
+  transition:filter .15s ease;
+}
+.tl-copy:hover{filter:brightness(1.15);}
+.tl-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.tl-links a{
+  color:var(--tx2);text-decoration:none;font-size:12.5px;
+  border:1px solid var(--line);border-radius:8px;padding:5px 12px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .15s ease,color .15s ease;
+}
+.tl-links a:hover{color:var(--teal);border-color:rgba(45,212,191,.4);}
 .wallet-hint{
   font-size:12.5px;
   color:var(--tx3);
@@ -5197,6 +5233,17 @@ input:focus,textarea:focus,select:focus{
       <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 XCHIP</button>
       <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
       <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">分红合约部署中，稍后开放领取。</div>
+      <div class="tapex-links">
+        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPEX · 合约与购买</b></div>
+        <div class="tl-addr">
+          <code>0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE</code>
+          <button class="tl-copy" id="hdCopy" data-i18n="d.copy">复制</button>
+        </div>
+        <div class="tl-links">
+          <a href="https://www.oklink.com/xlayer/token/0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
+          <a href="https://www.okx.com/zh-hans/web3/dex" target="_blank" rel="noopener" data-i18n="d.dex">OKX DEX 搜索</a>
+        </div>
+      </div>
     </div>
 
 </main>
@@ -5285,6 +5332,11 @@ var I18N = {
   "d.pending": {zh:"分红合约部署中，稍后开放领取。", en:"Dividend contract deploying; claiming opens soon."},
   "d.claimed": {zh:"XCHIP 分红已领取", en:"XCHIP dividends claimed"},
   "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
+  "d.links": {zh:"TAPEX · 合约与购买", en:"TAPEX · Contract & Buy"},
+  "d.copy": {zh:"复制", en:"Copy"},
+  "d.copied": {zh:"已复制合约地址", en:"Contract address copied"},
+  "d.explorer": {zh:"OKLink 浏览器", en:"OKLink Explorer"},
+  "d.dex": {zh:"OKX DEX 搜索", en:"OKX DEX Search"},
   "nav.connect": {zh:"连接钱包", en:"Connect Wallet"},
   "nav.mainnet": {zh:"X Layer", en:"X Layer"},
   "st.supply": {zh:"XCHIP 总供应", en:"XCHIP Supply"},
@@ -7386,6 +7438,10 @@ $("assembleBtn").addEventListener("click", doAssemble);
 (function(){
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
   var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
+  var hdCopy = $("hdCopy"); if (hdCopy) hdCopy.addEventListener("click", function(){
+    try { navigator.clipboard.writeText("0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE").then(function(){ toast(t("d.copied")); }); }
+    catch(e){ toast(t("d.copied")); }
+  });
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
   var om = $("partsOwnModal"); if (om) om.addEventListener("click", function(ev){ if (ev.target === om) closePop(om); });
 })();
