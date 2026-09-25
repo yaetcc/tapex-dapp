@@ -2571,6 +2571,54 @@ footer b{
 #rigModal.open .rm-box{
   animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
 }
+.sl-own{
+  cursor:pointer;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .15s ease;
+}
+.sl-own:hover{
+  border-color:rgba(217,164,65,.6);
+  box-shadow:0 0 12px rgba(217,164,65,.18);
+  transform:translateY(-1px);
+}
+#partsOwnModal{
+  position:fixed;
+  inset:0;
+  z-index:99;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(6,10,20,.74);
+}
+#partsOwnModal.open,#partsOwnModal.closing{
+  display:flex;
+}
+#partsOwnModal.open{
+  animation:maskIn .18s ease;
+}
+#partsOwnModal.closing{
+  animation:maskOut .15s ease forwards;
+}
+#partsOwnModal.open .rm-box{
+  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
+}
+#partsOwnModal.closing .rm-box{
+  animation:modalOut .15s ease forwards;
+}
+.parts-own-sum{
+  margin-top:8px;
+  padding-top:10px;
+  border-top:1px dashed rgba(94,110,140,.25);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12.5px;
+  color:var(--tx2);
+}
+.parts-own-sum b{
+  font-family:"JetBrains Mono",monospace;
+  font-size:15px;
+  color:var(--gold);
+}
 #rigModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
 }
@@ -5118,7 +5166,7 @@ input:focus,textarea:focus,select:focus{
         <div class="forge-track">
           <div class="slot sl-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgePicked">0</b><span data-i18n="已抽">已抽</span></div>
           <div class="core" id="forgeCore"><div class="bb" id="bbBox"><div class="bb-lid"><span>TAPEX</span></div><div class="bb-body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 11l3-6 2 5 3-7-1 8H9z"/><path d="M7 15h9"/></svg><span data-i18n="点击抽卡">点击抽卡</span></div></div><div class="bb-beam" id="bbBeam"></div></div>
-          <div class="slot sl-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgeTotal">0</b><span data-i18n="拥有">拥有</span></div>
+          <div class="slot sl-box sl-own" id="forgeOwnSlot" title="点击查看全部部件"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgeTotal">0</b><span data-i18n="拥有">拥有</span></div>
         </div>
         <div class="fly-parts" id="flyParts"><span class="part pn"></span><span class="part pn"></span><span class="part pl"></span><span class="part pl"></span></div>
       </div>
@@ -5249,6 +5297,15 @@ input:focus,textarea:focus,select:focus{
     </div>
   </div>
 </main>
+
+<div id="partsOwnModal">
+  <div class="rm-box">
+    <button class="rm-close" id="partsOwnClose">×</button>
+    <div class="rm-head"><b id="partsOwnTitle" data-i18n="b.ownParts">我的部件</b></div>
+    <div class="parts-grid" id="partsOwnGrid"></div>
+    <div class="parts-own-sum"><span data-i18n="b.ownTotal">部件合计</span><b id="partsOwnTotal">0</b></div>
+  </div>
+</div>
 
 <footer>
   <div class="wrap">
@@ -5384,6 +5441,8 @@ var I18N = {
   "b.canAsm": {zh:"可组装", en:"Can build"},
   "b.connectTier": {zh:"连接钱包查看档位明细", en:"Connect wallet for tier detail"},
   "b.loadingTier": {zh:"读取档位明细…", en:"Loading tiers…"},
+  "b.ownParts": {zh:"我的部件", en:"My Parts"},
+  "b.ownTotal": {zh:"部件合计", en:"Total Parts"},
   "rig.rate": {zh:"算力 ", en:"Hash "},
   "rig.release6h": {zh:" H · 每 6h 释放", en:" H · every 6h"},
   "rig.noHash": {zh:"未接入算力", en:"No hashrate"},
@@ -6311,6 +6370,27 @@ function toggleAsm(pt){
   renderBench(parts);
   var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
   toast(PART_NAMES[pt] + t("t.asmLoaded") + n + "/8");
+}
+function openPartsOwn(){
+  var m = $("partsOwnModal"); if (!m) return;
+  var g = $("partsOwnGrid");
+  if (!signer || !account) {
+    g.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>';
+    var st = $("partsOwnTotal"); if (st) st.textContent = "—";
+    openPop(m);
+    return;
+  }
+  var parts = window.__parts || [0,0,0,0,0,0,0,0];
+  var sum = 0;
+  g.innerHTML = parts.map(function(n, i){
+    sum += n;
+    return '<div class="part-cell">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
+      '<b>' + PART_NAMES[i] + '</b>' +
+      '<span>' + (n ? t("a.has") + n : t("a.missing")) + '</span></div>';
+  }).join("");
+  var st = $("partsOwnTotal"); if (st) st.textContent = String(sum);
+  openPop(m);
 }
 function benchBoot(cb){
   var pc = document.querySelector("#bench .pc-case");
@@ -7403,6 +7483,11 @@ $("switchNet").addEventListener("click", function(){ switchNet().catch(function(
   });
 })();
 $("assembleBtn").addEventListener("click", doAssemble);
+(function(){
+  var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
+  var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
+  var om = $("partsOwnModal"); if (om) om.addEventListener("click", function(ev){ if (ev.target === om) closePop(om); });
+})();
 (function(){
   var q = document.querySelector(".mq-grp"); if (!q) return;
   q.addEventListener("click", function(ev){
