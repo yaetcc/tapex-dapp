@@ -3587,7 +3587,7 @@ html{
   position:relative;
 }
 .card.refreshing .asset-list{
-  opacity:.55;
+  opacity:.72;
   transition:opacity .25s;
 }
 .card.refreshing::after{
@@ -5795,6 +5795,7 @@ function renderMine(){
           '<li>' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
         if ($("myAssets").innerHTML !== mineHtml) $("myAssets").innerHTML = mineHtml;
         $("myAssets").dataset.ok = "1";
+        window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
         $("pendingAmt").textContent = fmtWei(r[10]) + " XCHIP";
         $("forgePicked").textContent = fmtInt(BigInt(total));
@@ -5819,7 +5820,7 @@ function renderMine(){
     if (signer && account) {
       if (!$("myAssets").dataset.ok) {
         $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e).slice(0,50) + '' + t("a.retry15") + '</span><span class="v">—</span></li>';
-        setTimeout(refresh, 15000);
+        setTimeout(refresh, 30000);
       } else {
         toast(t("a.refreshFail"));   // 已有数据不清空，避免卡片闪没
       }
@@ -6200,7 +6201,14 @@ function doMarketCancel(id, btn){
   });
 }
 
+/* 刷新防抖：连续链上操作（抽卡/组装/质押/挂单等 23 处调用）合并为一轮刷新，
+   避免每次操作后各跑一次完整链上读取造成刷新风暴与页面频繁闪动 */
+var __refreshTimer = null;
 function refresh(){
+  clearTimeout(__refreshTimer);
+  __refreshTimer = setTimeout(doRefresh, 250);
+}
+function doRefresh(){
   if (__refreshing) { __refreshingDirty = true; return; }
   __refreshing = true;
   marketDirty = true;   // 交易后强制重读市场
@@ -7095,7 +7103,7 @@ function toggleWalletPanel(){
   if (p.classList.contains("open")) { closePop(p); return; }
   if (account) $("wpAddr").textContent = shortAddr(account);
   renderWalletPanel();
-  if (!__mineSum) refresh();
+  if (!__mineSum || Date.now() - (window.__mineLoadedAt || 0) > 30000) refresh();
   openPop(p);
 }
 function closeWalletPanel(){ closePop($("walletPanel")); }
