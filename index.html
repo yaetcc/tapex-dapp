@@ -172,13 +172,14 @@ nav{
   padding:14px;
   z-index:70;
 }
-#walletPanel.open{
+#walletPanel.open,#walletPanel.closing{
   display:block;
-  animation:panelIn .18s ease;
 }
-@keyframes panelIn{
-  from{ opacity:0; transform:translateY(-6px); }
-  to{ opacity:1; transform:none; }
+#walletPanel.open{
+  animation:panelIn .2s cubic-bezier(.2,.9,.3,1.1);
+}
+#walletPanel.closing{
+  animation:panelOut .16s ease forwards;
 }
 .wp-addr{
   display:flex;
@@ -289,6 +290,15 @@ nav{
 }
 #menuPanel{
   display:none;
+}
+#menuPanel.open,#menuPanel.closing{
+  display:block;
+}
+#menuPanel.open{
+  animation:panelIn .2s cubic-bezier(.2,.9,.3,1.1);
+}
+#menuPanel.closing{
+  animation:panelOut .16s ease forwards;
 }
 .link-home{
   font-size:13px;
@@ -1226,6 +1236,38 @@ footer b{
 #toast.show{
   opacity:1;
   transform:translateX(-50%) translateY(0);
+}
+
+/* ===== 12 弹窗 · 统一动画 ===== */
+@keyframes panelIn{
+  from{ opacity:0; transform:translateY(-6px); }
+  to{ opacity:1; transform:none; }
+}
+@keyframes panelOut{
+  to{ opacity:0; transform:translateY(-4px); }
+}
+@keyframes maskIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+@keyframes maskOut{
+  to{ opacity:0; }
+}
+@keyframes modalIn{
+  from{ opacity:0; transform:scale(.96) translateY(8px); }
+  to{ opacity:1; transform:none; }
+}
+@keyframes modalOut{
+  to{ opacity:0; transform:scale(.97) translateY(4px); }
+}
+@media (prefers-reduced-motion:reduce){
+  #walletPanel.open,#walletPanel.closing,#menuPanel.open,#menuPanel.closing,
+  #rigModal.open,#rigModal.closing,#shareModal.open,#shareModal.closing,
+  #rigModal.open .rm-box,#rigModal.closing .rm-box,
+  #shareModal.open .share-box,#shareModal.closing .share-box{
+    animation:none!important;
+    transition:none!important;
+  }
 }
 
 /* ===== 09 组装台 · 铸造 ===== */
@@ -2480,8 +2522,20 @@ footer b{
   justify-content:center;
   background:rgba(6,10,20,.74);
 }
-#rigModal.open{
+#rigModal.open,#rigModal.closing{
   display:flex;
+}
+#rigModal.open{
+  animation:maskIn .18s ease;
+}
+#rigModal.closing{
+  animation:maskOut .15s ease forwards;
+}
+#rigModal.open .rm-box{
+  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
+}
+#rigModal.closing .rm-box{
+  animation:modalOut .15s ease forwards;
 }
 .rm-box{
   width:min(440px,92vw);
@@ -3490,19 +3544,33 @@ html{
 }
 
 /* ===== 12 弹窗 · 提示 ===== */
-.share-modal .share-box{
+#shareModal.open,#shareModal.closing{
+  display:flex;
+}
+#shareModal.open{
+  animation:maskIn .18s ease;
+}
+#shareModal.closing{
+  animation:maskOut .15s ease forwards;
+}
+#shareModal .share-box{
   transform:scale(.92) translateY(8px);
   opacity:0;
   transition:transform .28s cubic-bezier(.2,.9,.3,1.15),opacity .2s;
 }
-.share-modal.open .share-box{
+#shareModal.closing .share-box{
+  transition:transform .15s ease,opacity .15s ease;
+  transform:scale(.96) translateY(4px);
+  opacity:0;
+}
+#shareModal.open .share-box{
   transform:scale(1) translateY(0);
   opacity:1;
   position:relative;
   overflow:hidden;
   animation:boxGlow .9s ease;
 }
-.share-modal.open .share-box::before{
+#shareModal.open .share-box::before{
   content:"";
   position:absolute;
   top:-30%;
@@ -3762,7 +3830,7 @@ main .card:nth-child(3){
 }
 
 /* ===== 12 弹窗 · 提示 ===== */
-.share-modal.open .share-box::after{
+#shareModal.open .share-box::after{
   content:"";
   position:absolute;
   top:-25%;
@@ -6385,7 +6453,7 @@ function showShare(hits){
   drawShare(name0, tier0);
   $("shareTag").textContent = t("s.won") + lines.join("、") + t("s.odds");
   var sm = $("shareModal");
-  sm.classList.remove("open"); void sm.offsetWidth; sm.classList.add("open");   // 重放开箱动画
+  sm.classList.remove("open"); void sm.offsetWidth; openPop(sm);   // 重放开箱动画
 }
 function drawShare(name, tier){
   var cv = $("shareCanvas"), ctx = cv.getContext("2d");
@@ -6427,7 +6495,7 @@ $("shareCopy").addEventListener("click", function(){
   if (navigator.clipboard) navigator.clipboard.writeText("【TAPE·X 出货】" + $("shareTag").textContent);
   toast(t("w.copyOk"));
 });
-$("shareClose").addEventListener("click", function(){ $("shareModal").classList.remove("open"); });
+$("shareClose").addEventListener("click", function(){ closePop($("shareModal")); });
 
 function doBatchCancel(){
   var rows = window.mkMineRows || [];
@@ -6597,8 +6665,8 @@ function renderRigModal(tid){
     '<div class="rm-acts">' + acts + '</div>' +
     '<div class="msg" id="rigModalMsg"></div>';
 }
-function openRigModal(tid){ renderRigModal(tid); $("rigModal").classList.add("open"); }
-function closeRigModal(){ $("rigModal").classList.remove("open"); }
+function openRigModal(tid){ renderRigModal(tid); openPop($("rigModal")); }
+function closeRigModal(){ closePop($("rigModal")); }
 function doRigStake(id){
   if (!signer || !account) { setMsg("rigModalMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("rigModalMsg")) return;
@@ -7003,17 +7071,34 @@ window.killOverflow = killOverflow;  // 便于外部/调试调用
   });
 })();
 
+/* 弹窗统一动画：关闭时先播收起动画（closing）再隐藏 */
+function closePop(el){
+  if (!el || el.classList.contains("closing")) return;
+  if (el.classList.contains("open")) {
+    el.classList.add("closing");
+    el.classList.remove("open");
+    clearTimeout(el._cp);
+    el._cp = setTimeout(function(){ el.classList.remove("closing"); }, 190);
+  }
+}
+function openPop(el){
+  if (!el) return;
+  clearTimeout(el._cp);
+  el.classList.remove("closing");
+  el.classList.add("open");
+}
+
 /* 钱包弹窗面板：连接后点击钱包按钮展开资产摘要 */
 function toggleWalletPanel(){
   var p = $("walletPanel");
   if (!p) return;
-  if (p.classList.contains("open")) { p.classList.remove("open"); return; }
+  if (p.classList.contains("open")) { closePop(p); return; }
   if (account) $("wpAddr").textContent = shortAddr(account);
   renderWalletPanel();
   if (!__mineSum) refresh();
-  p.classList.add("open");
+  openPop(p);
 }
-function closeWalletPanel(){ var p = $("walletPanel"); if (p) p.classList.remove("open"); }
+function closeWalletPanel(){ closePop($("walletPanel")); }
 function renderWalletPanel(){
   var s = __mineSum;
   $("wpXchip").textContent = s ? s.xchip : "…";
@@ -7054,19 +7139,20 @@ function renderWalletPanel(){
   if (!mb || !mp) return;
   mb.addEventListener("click", function(ev){
     ev.stopPropagation();
-    var open = mp.classList.toggle("open");
-    mb.classList.toggle("on", open);
-    mb.setAttribute("aria-expanded", open ? "true" : "false");
+    if (mp.classList.contains("open")) { closePop(mp); }
+    else { openPop(mp); }
+    mb.classList.toggle("on", mp.classList.contains("open"));
+    mb.setAttribute("aria-expanded", mp.classList.contains("open") ? "true" : "false");
   });
   mp.addEventListener("click", function(ev){
-    if (ev.target.closest("a")) mp.classList.remove("open");
+    if (ev.target.closest("a")) closePop(mp);
   });
   document.addEventListener("click", function(ev){
     if (mp.classList.contains("open") && !mp.contains(ev.target) && ev.target !== mb && !mb.contains(ev.target)) {
-      mp.classList.remove("open");
+      closePop(mp);
     }
   });
-  window.addEventListener("scroll", function(){ if (mp.classList.contains("open")) mp.classList.remove("open"); }, { passive: true });
+  window.addEventListener("scroll", function(){ if (mp.classList.contains("open")) closePop(mp); }, { passive: true });
 })();
 
 })();
