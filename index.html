@@ -4673,10 +4673,58 @@ footer .f-line2{
   border:1px dashed rgba(130,160,215,.25);
   border-radius:10px;
   background:rgba(10,18,36,.4);
+  flex-wrap:wrap;
 }
 .asm-strategy b{
   color:var(--gold);
   font-weight:600;
+}
+.asm-mode{
+  background:rgba(16,29,56,.9);
+  border:1px solid rgba(130,160,215,.35);
+  border-radius:7px;
+  color:var(--teal);
+  font-size:10.5px;
+  padding:2px 6px;
+  cursor:pointer;
+  max-width:150px;
+}
+.st-cnt{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin-left:2px;
+}
+.st-cnt button{
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  border:1px solid rgba(130,160,215,.35);
+  background:rgba(16,29,56,.9);
+  color:var(--gold);
+  font-size:13px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:border-color .15s ease,background .15s ease;
+}
+.st-cnt button:hover{
+  border-color:rgba(217,164,65,.6);
+  background:rgba(217,164,65,.12);
+}
+.st-cnt input{
+  width:38px;
+  height:20px;
+  border:1px solid rgba(130,160,215,.35);
+  border-radius:6px;
+  background:rgba(16,29,56,.9);
+  color:var(--tx);
+  font-size:11px;
+  text-align:center;
+  font-family:"JetBrains Mono",monospace;
+  padding:0;
 }
 .asm-strategy .can-n{
   margin-left:auto;
@@ -5439,6 +5487,15 @@ var I18N = {
   "b.strategy": {zh:"组装策略", en:"Strategy"},
   "b.lowFirstTag": {zh:"每类 1 件 · 低档优先 · 保护高档", en:"1 each · low tier first"},
   "b.canAsm": {zh:"可组装", en:"Can build"},
+  "b.modeLow": {zh:"低档优先", en:"Low first"},
+  "b.modeBal": {zh:"均衡", en:"Balanced"},
+  "b.modeHigh": {zh:"高档优先", en:"High first"},
+  "b.modeLowTag": {zh:"低档优先：组装自动烧低档、保留高档", en:"Low first: burns low tiers, keeps high tiers"},
+  "b.modeBalTag": {zh:"均衡消耗各档", en:"Balanced across tiers"},
+  "b.modeHighTag": {zh:"高档优先：优先消耗 Pro/旗舰件", en:"High first: burns Pro/flagship parts"},
+  "b.chainRule": {zh:"链上合约当前固定按低档优先消耗，高档自动保留", en:"On-chain assembly always burns low tier first"},
+  "b.stCount": {zh:"组装台数", en:"Batch"},
+  "b.stCountTip": {zh:"批量组装台数（1-5）", en:"Batch size (1-5)"},
   "b.connectTier": {zh:"连接钱包查看档位明细", en:"Connect wallet for tier detail"},
   "b.loadingTier": {zh:"读取档位明细…", en:"Loading tiers…"},
   "b.ownParts": {zh:"我的部件", en:"My Parts"},
@@ -6185,14 +6242,44 @@ function tierBadges(cache){
   }
   return b.join("");
 }
+var __asmMode = "low";
+function setAsmMode(m){
+  __asmMode = m;
+  var se = $("asmMode"); if (se) se.value = m;
+  if (m === "low") toast(t("b.modeLowTag"));
+  else if (m === "balanced") toast(t("b.modeBalTag"));
+  else toast(t("b.modeHighTag") + t("b.chainRule"));
+  renderAsmStrategy(window.__parts || [0,0,0,0,0,0,0,0]);
+}
+function asmCountSet(v){
+  v = Math.max(1, Math.min(5, v));
+  var a = $("asmCount"); if (a) a.value = v;
+  var b = $("benchCnt"); if (b) b.value = v;
+  var s = $("stCount"); if (s) s.value = v;
+  return v;
+}
 function renderAsmStrategy(parts){
   var el = $("asmStrategy"); if (!el) return;
   if (!signer || !account) { el.innerHTML = ""; return; }
   if (!parts || !parts.length) return;
   var canN = Math.min.apply(null, parts.slice(0, 8));
+  var n = $("stCount") && $("stCount").value ? Number($("stCount").value) : (Number(($("asmCount") || { value: "2" }).value) || 2);
+  var modeTxt = __asmMode === "low" ? t("b.modeLow") : (__asmMode === "balanced" ? t("b.modeBal") : t("b.modeHigh"));
   el.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><path d="M12 3l8 4v8l-8 4-8-4V7z"/><path d="M12 12l8-4M12 12v8"/></svg>' +
-    '<span>' + t("b.strategy") + '</span><b>' + t("b.lowFirstTag") + '</b>' +
+    '<span>' + t("b.strategy") + '</span>' +
+    '<select id="asmMode" class="asm-mode" title="' + t("b.chainRule") + '">' +
+      '<option value="low"' + (__asmMode === "low" ? " selected" : "") + '>' + t("b.modeLow") + '</option>' +
+      '<option value="balanced"' + (__asmMode === "balanced" ? " selected" : "") + '>' + t("b.modeBal") + '</option>' +
+      '<option value="high"' + (__asmMode === "high" ? " selected" : "") + '>' + t("b.modeHigh") + '</option>' +
+    '</select>' +
+    '<span class="st-cnt"><button id="stMinus" aria-label="−">−</button><input id="stCount" type="number" min="1" max="5" value="' + n + '">' + t("b.units") + '<button id="stPlus" aria-label="+">+</button></span>' +
     '<span class="can-n">' + t("b.canAsm") + ' ' + canN + ' ' + t("b.units") + '</span>';
+  var mo = $("asmMode");
+  if (mo) mo.addEventListener("change", function(){ setAsmMode(mo.value); });
+  var mn = $("stMinus"); if (mn) mn.addEventListener("click", function(){ asmCountSet(Number(($("stCount")||{value:2}).value||2) - 1); });
+  var pl = $("stPlus"); if (pl) pl.addEventListener("click", function(){ asmCountSet(Number(($("stCount")||{value:2}).value||2) + 1); });
+  var sc = $("stCount");
+  if (sc) sc.addEventListener("change", function(){ asmCountSet(Number(sc.value)||2); });
 }
 var __pidStatic = null;
 var __tierLoading = false;
