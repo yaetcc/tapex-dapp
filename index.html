@@ -3093,9 +3093,6 @@ footer b{
 }
 
 /* ===== 14 其他 ===== */
-#partsGrid{
-  display:none!important;
-}
 
 /* ===== 09 组装台 · 铸造 ===== */
 .pc-head b{
@@ -4395,6 +4392,224 @@ footer .f-line2{
   box-shadow:0 8px 18px rgba(3,6,16,.4);
 }
 
+/* ===== 组装页 · 部件档位徽章 / 详情面板 ===== */
+.pt-badges{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:5px;
+}
+.pt-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding:1px 6px;
+  border-radius:999px;
+  font-size:9px;
+  font-family:"JetBrains Mono",monospace;
+  line-height:1.5;
+  border:1px solid transparent;
+  opacity:.92;
+}
+.pt-badge i{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  display:inline-block;
+}
+.pt-badge.t0{
+  color:#7fe8dc;
+  border-color:rgba(79,224,208,.4);
+  background:rgba(79,224,208,.08);
+}
+.pt-badge.t0 i{ background:#4fd8c9; }
+.pt-badge.t1{
+  color:#c4b5fd;
+  border-color:rgba(167,139,250,.45);
+  background:rgba(167,139,250,.1);
+}
+.pt-badge.t1 i{ background:#a78bfa; box-shadow:0 0 4px rgba(167,139,250,.8); }
+.pt-badge.t2{
+  color:#f5cf8a;
+  border-color:rgba(240,194,103,.5);
+  background:rgba(240,194,103,.1);
+}
+.pt-badge.t2 i{ background:#f0c267; box-shadow:0 0 5px rgba(240,194,103,.9); }
+.pt-badge.hot{
+  animation:ptPulse 1.4s ease infinite;
+}
+@keyframes ptPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.08); }
+}
+.part-cell.ok .pt-badges{
+  opacity:1;
+}
+.pt-total{
+  font-size:10px;
+  color:var(--tx3);
+  margin-top:2px;
+}
+.part-cell .pt-cnt{
+  display:none;
+}
+
+/* 详情面板：点击部件格展开的 inline 面板 */
+.pt-detail{
+  display:none;
+  margin:0 0 12px;
+  padding:12px 14px;
+  border:1px solid rgba(240,194,103,.3);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(24,38,72,.85),rgba(15,26,50,.92));
+  box-shadow:0 10px 26px rgba(3,6,16,.45);
+}
+.pt-detail.open{
+  display:block;
+  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
+}
+.pt-detail .ptd-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+.pt-detail .ptd-head svg{
+  width:24px;
+  height:24px;
+}
+.pt-detail .ptd-head b{
+  font-size:14px;
+  color:var(--tx);
+}
+.pt-detail .ptd-head span{
+  font-size:11px;
+  color:var(--tx3);
+  margin-left:auto;
+}
+.pt-detail .ptd-close{
+  border:none;
+  background:none;
+  color:var(--tx3);
+  cursor:pointer;
+  font-size:13px;
+  padding:2px 6px;
+  border-radius:6px;
+  transition:.15s;
+}
+.pt-detail .ptd-close:hover{
+  color:var(--gold);
+  background:rgba(240,194,103,.12);
+}
+.ptd-rows{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.ptd-row{
+  padding:8px 9px;
+  border-radius:10px;
+  border:1px solid rgba(130,160,215,.16);
+  background:rgba(10,18,36,.55);
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.ptd-row.t0{ border-color:rgba(79,224,208,.3); }
+.ptd-row.t1{ border-color:rgba(167,139,250,.32); }
+.ptd-row.t2{ border-color:rgba(240,194,103,.38); }
+.ptd-row b{
+  font-size:10.5px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.ptd-row b i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  display:inline-block;
+}
+.ptd-row.t0 b{ color:#7fe8dc; } .ptd-row.t0 b i{ background:#4fd8c9; }
+.ptd-row.t1 b{ color:#c4b5fd; } .ptd-row.t1 b i{ background:#a78bfa; }
+.ptd-row.t2 b{ color:#f5cf8a; } .ptd-row.t2 b i{ background:#f0c267; }
+.ptd-row span{
+  font-size:10px;
+  color:var(--tx2);
+  font-family:"JetBrains Mono",monospace;
+}
+.ptd-row em{
+  font-style:normal;
+  font-size:10px;
+  color:var(--tx3);
+}
+.ptd-row .have{
+  font-size:11px;
+  font-weight:700;
+}
+.ptd-row.t0 .have{ color:#7fe8dc; }
+.ptd-row.t1 .have{ color:#c4b5fd; }
+.ptd-row.t2 .have{ color:#f5cf8a; }
+.ptd-foot{
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.ptd-foot .asm-hint{
+  font-size:10.5px;
+  color:var(--tx3);
+  flex:1 1 100%;
+}
+.ptd-load{
+  font-size:11px;
+  color:var(--tx3);
+  padding:6px 0;
+  text-align:center;
+}
+
+/* 组装策略提示条 */
+.asm-strategy{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10.5px;
+  color:var(--tx3);
+  margin:8px 0 2px;
+  padding:6px 10px;
+  border:1px dashed rgba(130,160,215,.25);
+  border-radius:10px;
+  background:rgba(10,18,36,.4);
+}
+.asm-strategy b{
+  color:var(--gold);
+  font-weight:600;
+}
+.asm-strategy .can-n{
+  margin-left:auto;
+  color:var(--teal);
+  font-family:"JetBrains Mono",monospace;
+  font-weight:700;
+}
+@media (max-width:640px){
+  .parts-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+  .ptd-rows{
+    grid-template-columns:repeat(3,1fr);
+  }
+  .part-cell{
+    padding:8px 4px;
+  }
+  .pt-badge{
+    font-size:8.5px;
+    padding:1px 4px;
+  }
+}
+
 /* ===== 05 表单 ===== */
 input,select,textarea{
   background:#0D1730;
@@ -4858,6 +5073,8 @@ input:focus,textarea:focus,select:focus{
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg>组装流片：8 类部件 → 整机 PC NFT</h3>
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
+      <div class="pt-detail" id="ptDetail"></div>
+      <div class="asm-strategy" id="asmStrategy"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
       <div class="foundry" id="foundry">
@@ -5096,6 +5313,19 @@ var I18N = {
   "b.loadedOk": {zh:"已装入 ✓", en:"Loaded ✓"},
   "b.hasShort": {zh:"有 ", en:"x "},
   "b.missingShort": {zh:"缺件", en:"missing"},
+  "b.detail": {zh:"档位明细", en:"Tier Detail"},
+  "b.power": {zh:"单件算力", en:"hash each"},
+  "b.lowFirst": {zh:"组装时优先消耗（低档优先）", en:"burned first (low tier)"},
+  "b.none": {zh:"暂无", en:"none"},
+  "b.loadToBench": {zh:"装入装机台", en:"Load to bench"},
+  "b.unloadBench": {zh:"清空装机台", en:"Clear bench"},
+  "b.lowFirstHint": {zh:"组装时合约自动优先消耗低档部件，高档部件自动保留。", en:"Assembly burns low-tier parts first; high-tier parts are kept."},
+  "b.benchCleared": {zh:"装机台已清空", en:"Bench cleared"},
+  "b.strategy": {zh:"组装策略", en:"Strategy"},
+  "b.lowFirstTag": {zh:"每类 1 件 · 低档优先 · 保护高档", en:"1 each · low tier first"},
+  "b.canAsm": {zh:"可组装", en:"Can build"},
+  "b.connectTier": {zh:"连接钱包查看档位明细", en:"Connect wallet for tier detail"},
+  "b.loadingTier": {zh:"读取档位明细…", en:"Loading tiers…"},
   "rig.rate": {zh:"算力 ", en:"Hash "},
   "rig.release6h": {zh:" H · 每 6h 释放", en:" H · every 6h"},
   "rig.noHash": {zh:"未接入算力", en:"No hashrate"},
@@ -5829,19 +6059,139 @@ function renderMine(){
   });
 }
 
+function tierBadges(cache){
+  var b = [];
+  for (var tr = 0; tr < 3; tr++){
+    var c = cache && cache[tr] ? cache[tr] : 0;
+    b.push('<span class="pt-badge t' + tr + (c > 0 ? " hot" : "") + '" title="' + PART_TIER[tr] + '">' + '<i></i>' + PART_TIER[tr] + ' ×' + c + '</span>');
+  }
+  return b.join("");
+}
+function renderAsmStrategy(parts){
+  var el = $("asmStrategy"); if (!el) return;
+  if (!signer || !account) { el.innerHTML = ""; return; }
+  if (!parts || !parts.length) return;
+  var canN = Math.min.apply(null, parts.slice(0, 8));
+  el.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><path d="M12 3l8 4v8l-8 4-8-4V7z"/><path d="M12 12l8-4M12 12v8"/></svg>' +
+    '<span>' + t("b.strategy") + '</span><b>' + t("b.lowFirstTag") + '</b>' +
+    '<span class="can-n">' + t("b.canAsm") + ' ' + canN + ' ' + t("b.units") + '</span>';
+}
+var __pidStatic = null;
+var __tierLoading = false;
+function readPartStatic(){
+  if (__pidStatic) return Promise.resolve(__pidStatic);
+  if (!signer || !account) return Promise.resolve(null);
+  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+  var qs = [];
+  for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) qs.push((function(t, tr){
+    return readRetry(function(){ return proc.tokenIdOf(t, tr); }, 1).then(function(id){
+      return readRetry(function(){ return proc.baseHash(Number(id)); }, 1).then(function(h){ return { t: t, tr: tr, id: Number(id), hash: Number(h) }; });
+    });
+  })(t, tr));
+  return Promise.all(qs).then(function(arr){
+    return Promise.all([1,2,3].map(function(tr){ return readRetry(function(){ return proc.tierMultiplier(tr); }, 1).then(function(m){ return Number(m); }); })).then(function(ms){
+      var out = { ids: {}, hash: {}, mult: ms };
+      arr.forEach(function(o){ out.ids[o.t + "-" + o.tr] = o.id; out.hash[o.id] = o.hash; });
+      __pidStatic = out;
+      return out;
+    });
+  });
+}
+function loadAllPartTiers(){
+  if (!signer || !account || __tierLoading) return;
+  if (Date.now() - (window.__tierLoadedAt || 0) < 15000) return;   // 档位余额 15s 缓存，避免每次刷新重读 24 次 RPC
+  __tierLoading = true;
+  readPartStatic().then(function(st){
+    if (!st) { __tierLoading = false; return; }
+    var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+    var qs = [];
+    for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) qs.push((function(t, tr){
+      return readRetry(function(){ return proc.balanceOf(account, st.ids[t + "-" + tr]); }, 1).then(function(b){ return { t: t, tr: tr, c: Number(b) }; });
+    })(t, tr));
+    return Promise.all(qs);
+  }).then(function(rows){
+    window.__ptCache = {};
+    rows.forEach(function(r){ (window.__ptCache[r.t] = window.__ptCache[r.t] || {})[r.tr] = r.c; });
+    renderPartsGrid(window.__parts || [0,0,0,0,0,0,0,0]);
+    window.__tierLoadedAt = Date.now();
+    __tierLoading = false;
+  }).catch(function(){ __tierLoading = false; });
+}
+function openPartDetail(pt){
+  var d = $("ptDetail"); if (!d) return;
+  if (d.classList.contains("open") && d.dataset.t === String(pt)) { d.classList.remove("open"); d.dataset.t = ""; return; }
+  d.dataset.t = String(pt);
+  d.innerHTML = '<div class="ptd-load">' + t("b.loadingTier") + '</div>';
+  d.classList.add("open");
+  if (!signer || !account) { d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; return; }
+  readPartStatic().then(function(st){
+    if (!st) { d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; return; }
+    var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+    var nm = PART_NAMES[pt];
+    return Promise.all([0,1,2].map(function(tr){
+      return readRetry(function(){ return proc.balanceOf(account, st.ids[(pt + 1) + "-" + tr]); }, 1).then(function(b){
+        return { tr: tr, count: Number(b), hash: st.hash[st.ids[(pt + 1) + "-" + tr]] * st.mult[tr] };
+      });
+    })).then(function(rows){
+      d.innerHTML =
+        '<div class="ptd-head">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--gold)">' + PART_ICON[pt] + '</svg>' +
+          '<b>' + nm + '</b><span>' + t("b.detail") + '</span><button class="ptd-close">×</button>' +
+        '</div>' +
+        '<div class="ptd-rows">' + rows.map(function(r){
+          return '<div class="ptd-row t' + r.tr + '">' +
+            '<b><i></i>' + PART_TIER[r.tr] + '</b>' +
+            '<span>' + t("b.power") + ' · ' + r.hash + ' H</span>' +
+            '<span class="have">× ' + r.count + '</span>' +
+            '<em>' + (r.count ? t("b.lowFirst") : t("b.none")) + '</em>' +
+          '</div>';
+        }).join('') + '</div>' +
+        '<div class="ptd-foot">' +
+          '<button class="action-btn sec" id="ptdLoad">' + t("b.loadToBench") + '</button>' +
+          '<button class="action-btn sec" id="ptdClear">' + t("b.unloadBench") + '</button>' +
+          '<span class="asm-hint">' + t("b.lowFirstHint") + '</span>' +
+        '</div>';
+      var cc = d.querySelector(".ptd-close");
+      if (cc) cc.addEventListener("click", function(){ d.classList.remove("open"); d.dataset.t = ""; });
+      var lk = d.querySelector("#ptdLoad");
+      if (lk) lk.addEventListener("click", function(){ toggleAsm(pt); });
+      var ck = d.querySelector("#ptdClear");
+      if (ck) ck.addEventListener("click", function(){ asmSel = {}; renderBench(window.__parts); toast(t("b.benchCleared")); });
+    });
+  }).catch(function(){ d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; });
+}
 function renderPartsGrid(parts){
   var g = $("partsGrid"); if (!g) return;
   var names = PART_NAMES, ready = parts.every(function(v){ return v >= 1; });
+  var cache = window.__ptCache || {};
   g.innerHTML = names.map(function(n, i){
     var ok = parts[i] >= 1;
-    return '<div class="part-cell' + (ok ? " ok" : "") + '">' +
+    var badges = cache[i + 1] ? tierBadges(cache[i + 1]) : '';
+    return '<div class="part-cell' + (ok ? " ok" : "") + '" data-t="' + i + '" tabindex="0">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
-      '<b>' + n + '</b><span>' + (ok ? t("a.has") + parts[i] : t("a.missing") + parts[i]) + '</span></div>';
+      '<b>' + n + '</b><span>' + (ok ? t("a.has") + parts[i] : t("a.missing") + parts[i]) + '</span>' +
+      (badges ? '<span class="pt-badges">' + badges + '</span>' : '<span class="pt-badges pt-loading">…</span>') +
+      '</div>';
   }).join("");
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
+  renderAsmStrategy(parts);
   renderBench(parts);
+  loadAllPartTiers();
 }
+(function(){
+  var g = $("partsGrid"); if (!g) return;
+  g.addEventListener("click", function(ev){
+    var c = ev.target.closest(".part-cell");
+    if (c) openPartDetail(Number(c.getAttribute("data-t")));
+  });
+  g.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter" || ev.key === " ") {
+      var c = ev.target.closest(".part-cell");
+      if (c) { ev.preventDefault(); openPartDetail(Number(c.getAttribute("data-t"))); }
+    }
+  });
+})();
 
 /* ---------- 装机台（真实装机体验） ---------- */
 var asmSel = {};              // type -> 1 已选装
