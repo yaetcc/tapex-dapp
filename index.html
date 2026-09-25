@@ -6003,7 +6003,8 @@ function renderMine(){
     readRetry(function(){ return mine.earned(account); }),
     readRetry(function(){ return mine.userShares(account); }),
     readRetry(function(){ return circ.lastTokenId(); }),
-    readRetry(function(){ return mine.totalShares(); })
+    readRetry(function(){ return mine.totalShares(); }),
+    readRetry(function(){ return proc.mintCount(); })
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -6059,7 +6060,7 @@ function renderMine(){
         window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
         $("pendingAmt").textContent = fmtWei(r[10]) + " XCHIP";
-        $("forgePicked").textContent = fmtInt(BigInt(total));
+        $("forgePicked").textContent = fmtInt(BigInt(r[14]));
         $("forgeTotal").textContent = fmtInt(BigInt(total));
         var hint = $("stakeHint");
         if (hint) hint.textContent = myNfts.length
