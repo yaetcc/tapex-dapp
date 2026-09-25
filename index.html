@@ -2657,6 +2657,11 @@ footer b{
   color:var(--tx3);
   font-size:10.5px;
 }
+.own-cell .own-load{
+  color:var(--teal);
+  font-style:normal;
+  opacity:.8;
+}
 .own-chip{
   display:inline-flex;
   align-items:center;
@@ -5705,6 +5710,7 @@ var I18N = {
   "t.asmLoaded": {zh:" 已装入机箱 · ", en:" loaded into case · "},
   "t.asmUnloaded": {zh:" 已从机箱卸载", en:" unloaded from case"},
   "b.preHash": {zh:"预期算力", en:"Expected hash"},
+  "b.loadTier": {zh:"读取档位明细…", en:"loading tiers…"},
   "b.selPrev": {zh:"配置预览 · 链上按低档优先消耗", en:"Preview · on-chain burns low tier first"},
   "t.asmShort": {zh:"还差 ", en:"Need "},
   "t.asmShortTail": {zh:" 类部件未装入", en:" more part types"},
@@ -6443,9 +6449,9 @@ function readPartStatic(){
     });
   });
 }
-function loadAllPartTiers(){
+function loadAllPartTiers(force){
   if (!signer || !account || __tierLoading) return;
-  if (Date.now() - (window.__tierLoadedAt || 0) < 15000) return;   // 档位余额 15s 缓存，避免每次刷新重读 24 次 RPC
+  if (!force && Date.now() - (window.__tierLoadedAt || 0) < 15000) return;   // 档位余额 15s 缓存，避免每次刷新重读 24 次 RPC
   __tierLoading = true;
   readPartStatic().then(function(st){
     if (!st) { __tierLoading = false; return; }
@@ -6648,7 +6654,7 @@ function renderPartsOwnBody(parts){
     return '<div class="own-cell' + (n ? " has" : "") + '" data-own="' + i + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
       '<b>' + PART_NAMES[i] + '</b>' +
-      (chips ? '<span class="own-chips">' + chips + '</span>' : '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + '</span>') +
+      (chips ? '<span class="own-chips">' + chips + '</span>' : '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + (n ? ' <em class="own-load">· ' + t("b.loadTier") + '</em>' : '') + '</span>') +
       '<span class="own-arrow">›</span>' +
       det + '</div>';
   }).join("");
@@ -6672,15 +6678,15 @@ function openPartsOwn(){
   }
   renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]);
   openPop(m);
-  if (!window.__ptCache && !window.__tierLoading) loadAllPartTiers();
   if (!window.__ptCache) {
+    if (!window.__tierLoading) loadAllPartTiers(true);
     (function poll(times){
       setTimeout(function(){
         if (!document.getElementById("partsOwnModal").classList.contains("open")) return;
         if (window.__ptCache) { renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]); return; }
         if (times > 0) poll(times - 1);
-      }, 1200);
-    })(3);
+      }, 1500);
+    })(9);
   }
 }
 function benchBoot(cb){
