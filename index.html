@@ -4231,23 +4231,63 @@ main{
 .asset-list li{
   padding:9px 2px;
 }
-/* 质押工具条：手机端换行显示，彻底去掉横向滚动（WebView 触摸滚动链会把工具条内部滑动传给整页，造成页面左右滑动） */
+/* 质押工具条 · 移动端重设计：三层分区（筛选行 / 操作行 / 分页行），全部内容可见、无横向滚动 */
 .rig-ops{
   flex-wrap:wrap;
   height:auto;
   overflow-x:visible;
-  row-gap:6px;
+  row-gap:10px;
+  padding:10px 12px 9px;
 }
+/* 行1 筛选：全选（左）· 标签（中，占满）· 排序（右） */
+.rig-ops .rg-all{
+  order:0;
+}
+.rig-ops .rig-tabs{
+  order:1;
+  flex:0 0 auto;
+  justify-content:center;
+  margin:0;
+  height:24px;
+  padding:3px;
+}
+.rig-ops .rt{
+  height:18px;
+  padding:0 8px;
+}
+.rig-ops #rigS{
+  order:2;
+  height:24px;
+  min-width:auto;
+  padding:0 8px;
+}
+/* 行2 操作：三个按钮等宽、加高触控区，与筛选行视觉分隔 */
 .rig-ops .batch-grp{
   order:3;
   width:100%;
   justify-content:stretch;
+  gap:8px;
+  border-top:1px solid rgba(130,160,215,.14);
+  padding-top:10px;
 }
-.rig-ops .batch-grp .action-btn{
+.rig-ops .batch-grp .action-btn,.rig-ops #rigClaimBtn{
   flex:1 1 0;
+  height:34px;
+  font-size:12.5px;
+  padding:0 6px;
 }
+/* 行3 分页：居中 */
 .rig-ops .rig-pg{
-  margin-left:auto;
+  order:4;
+  margin:0 auto;
+  height:22px;
+}
+.rig-ops .rig-pg button{
+  height:22px;
+  min-width:26px;
+}
+.rig-ops .rig-pg span{
+  font-size:12px;
 }
 .hero-inner{
   padding:18px 14px;
