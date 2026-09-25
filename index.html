@@ -716,7 +716,7 @@ input::placeholder{
 }
 .mk-item{
   display:grid;
-  grid-template-columns:34px 1fr 88px 70px 52px;
+  grid-template-columns:34px 1fr 88px 52px;
   gap:6px;
   align-items:center;
   padding:8px 10px;
@@ -726,15 +726,23 @@ input::placeholder{
   font-size:12.5px;
   transition:transform .15s ease,border-color .2s ease,box-shadow .2s ease;
 }
+.mk-item .mk-dots{
+  display:none;
+}
+.mk-item .mk-seller{
+  display:none;
+}
 .mk-tier{
   display:flex;
-  flex-direction:column;
-  gap:2px;
+  flex-direction:row;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:3px 6px;
   min-width:0;
 }
 .mk-dots{
   display:flex;
-  gap:3px;
+  gap:2px;
   flex-wrap:nowrap;
 }
 .mk-dot{
@@ -752,8 +760,9 @@ input::placeholder{
   box-shadow:0 0 5px rgba(217,164,65,.7);
 }
 .mk-hash{
-  font-size:10px;
-  color:var(--tx3);
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--tx2);
   font-family:"JetBrains Mono",monospace;
   white-space:nowrap;
 }
@@ -766,6 +775,7 @@ input::placeholder{
   font-family:"JetBrains Mono",monospace;
   color:var(--gold);
   font-weight:600;
+  font-size:12px;
 }
 .mk-price{
   color:var(--tx);
@@ -3496,13 +3506,15 @@ footer::before{
 
 /* ===== 07 徽章 · 档位 ===== */
 .grade-tag{
-  box-shadow:0 0 7px rgba(120,140,180,.25);
+  box-shadow:0 0 5px rgba(120,140,180,.25);
   display:inline-block;
-  margin-left:4px;
-  padding:3px 10px;
-  border-radius:5px;
-  font-size:11.5px;
+  margin-left:2px;
+  padding:1px 7px;
+  border-radius:999px;
+  font-size:9.5px;
   font-weight:700;
+  letter-spacing:.3px;
+  line-height:1.4;
 }
 .grade-tag.g2{
   box-shadow:0 0 8px rgba(63,212,196,.3);
@@ -3735,7 +3747,7 @@ html{
 }
 .mk-head-row{
   display:grid;
-  grid-template-columns:34px 1fr 88px 70px 52px;
+  grid-template-columns:34px 1fr 88px 52px;
   gap:6px;
   align-items:center;
   padding:2px 10px 6px;
@@ -3746,6 +3758,9 @@ html{
 }
 .mk-head-row span:nth-child(n+3){
   text-align:right;
+}
+.mk-head-row span:nth-child(4){
+  display:none;
 }
 .mk-head-row.mk-head-mine{
   grid-template-columns:34px 1fr auto;
@@ -4751,6 +4766,21 @@ main{
 .row{
   grid-template-columns:1fr;
 }
+.mk-item .mk-dots{
+  display:flex;
+}
+.mk-item{
+  grid-template-columns:34px 1fr 88px 70px 52px;
+}
+.mk-item .mk-seller{
+  display:block;
+}
+.mk-head-row{
+  grid-template-columns:34px 1fr 88px 70px 52px;
+}
+.mk-head-row span:nth-child(4){
+  display:inline;
+}
 }
 @media (max-width:640px){
 nav{
@@ -4814,6 +4844,9 @@ main{
 .mk-item{
   grid-template-columns:26px 1fr 80px;
   gap:5px;
+}
+.mk-item .mk-dots{
+  display:flex;
 }
 .mk-item .mk-seller{
   display:none;
