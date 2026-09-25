@@ -2619,6 +2619,102 @@ footer b{
   font-size:15px;
   color:var(--gold);
 }
+.own-cell{
+  grid-column:1 / -1;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 9px;
+  border:1px solid rgba(130,160,215,.16);
+  border-radius:9px;
+  background:rgba(10,18,36,.45);
+  cursor:pointer;
+  transition:border-color .15s ease,background .15s ease;
+}
+.own-cell:hover{
+  border-color:rgba(217,164,65,.45);
+  background:rgba(217,164,65,.06);
+}
+.own-cell > svg{
+  width:17px;
+  height:17px;
+  flex:none;
+  color:var(--teal);
+}
+.own-cell > b{
+  color:var(--tx);
+  font-size:12px;
+  font-weight:600;
+  min-width:34px;
+}
+.own-cell .own-chips{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  flex:1;
+}
+.own-cell .own-n{
+  color:var(--tx3);
+  font-size:10.5px;
+}
+.own-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  font-size:9.5px;
+  color:var(--tx3);
+  padding:1px 6px;
+  border-radius:999px;
+  border:1px solid rgba(130,160,215,.22);
+  background:rgba(16,29,56,.6);
+}
+.own-chip i{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--tx3);
+  flex:none;
+}
+.own-chip.t0 i{ background:#4fd8c9; }
+.own-chip.t1 i{ background:#6cc2ff; }
+.own-chip.t2 i{ background:#ffd54d; }
+.own-chip.t0{ color:#4fd8c9; }
+.own-chip.t1{ color:#6cc2ff; }
+.own-chip.t2{ color:#ffd54d; }
+.own-chip.z{ opacity:.45; }
+.own-cell .own-arrow{
+  color:var(--tx3);
+  font-size:13px;
+  transition:transform .18s ease;
+  flex:none;
+}
+.own-cell.open .own-arrow{
+  transform:rotate(90deg);
+  color:var(--gold);
+}
+.own-tiers{
+  display:none;
+  grid-column:1 / -1;
+  margin:-4px 0 2px;
+  padding:6px 8px;
+  border:1px solid rgba(130,160,215,.13);
+  border-radius:8px;
+  background:rgba(7,13,28,.5);
+}
+.own-cell.open .own-tiers{
+  display:block;
+}
+.own-tiers .ptd-row{
+  margin-bottom:2px;
+}
+.own-tiers .ptd-row:last-child{
+  margin-bottom:0;
+}
+@media (max-width:420px){
+  .own-cell .own-chips{
+    gap:3px;
+  }
+}
 #rigModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
 }
@@ -6458,6 +6554,46 @@ function toggleAsm(pt){
   var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
   toast(PART_NAMES[pt] + t("t.asmLoaded") + n + "/8");
 }
+function renderPartsOwnBody(parts){
+  var g = $("partsOwnGrid"); if (!g) return;
+  var cache = window.__ptCache || null;
+  var stat = window.__pidStatic || null;
+  var sum = 0;
+  g.innerHTML = parts.map(function(n, i){
+    sum += n;
+    var chips = "";
+    var det = "";
+    if (cache && stat) {
+      var c = cache[i + 1] || [0,0,0];
+      chips = [0,1,2].map(function(tr){
+        return '<span class="own-chip t' + tr + (c[tr] > 0 ? "" : " z") + '"><i></i>' + PART_TIER[tr] + ' ×' + c[tr] + '</span>';
+      }).join("");
+      det = '<div class="own-tiers">' + [0,1,2].map(function(tr){
+        var v = c[tr];
+        var hash = v > 0 ? Math.round(stat.hash[stat.ids[(i + 1) + "-" + tr]] * stat.mult[tr]) : 0;
+        return '<div class="ptd-row t' + tr + '">' +
+          '<b><i></i>' + PART_TIER[tr] + '</b>' +
+          '<span>' + (v > 0 ? t("b.power") + ' · ' + hash + ' H' : '—') + '</span>' +
+          '<span class="have">× ' + v + '</span>' +
+          '<em>' + (v ? t("b.lowFirst") : t("b.none")) + '</em></div>';
+      }).join("") + '</div>';
+    }
+    return '<div class="own-cell' + (n ? " has" : "") + '" data-own="' + i + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
+      '<b>' + PART_NAMES[i] + '</b>' +
+      (chips ? '<span class="own-chips">' + chips + '</span>' : '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + '</span>') +
+      '<span class="own-arrow">›</span>' +
+      det + '</div>';
+  }).join("");
+  var st = $("partsOwnTotal"); if (st) st.textContent = String(sum);
+  if (!g.dataset.bound) {
+    g.dataset.bound = "1";
+    g.addEventListener("click", function(ev){
+      var cell = ev.target.closest(".own-cell");
+      if (cell) cell.classList.toggle("open");
+    });
+  }
+}
 function openPartsOwn(){
   var m = $("partsOwnModal"); if (!m) return;
   var g = $("partsOwnGrid");
@@ -6467,17 +6603,18 @@ function openPartsOwn(){
     openPop(m);
     return;
   }
-  var parts = window.__parts || [0,0,0,0,0,0,0,0];
-  var sum = 0;
-  g.innerHTML = parts.map(function(n, i){
-    sum += n;
-    return '<div class="part-cell">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
-      '<b>' + PART_NAMES[i] + '</b>' +
-      '<span>' + (n ? t("a.has") + n : t("a.missing")) + '</span></div>';
-  }).join("");
-  var st = $("partsOwnTotal"); if (st) st.textContent = String(sum);
+  renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]);
   openPop(m);
+  if (!window.__ptCache && !window.__tierLoading) loadAllPartTiers();
+  if (!window.__ptCache) {
+    (function poll(times){
+      setTimeout(function(){
+        if (!document.getElementById("partsOwnModal").classList.contains("open")) return;
+        if (window.__ptCache) { renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]); return; }
+        if (times > 0) poll(times - 1);
+      }, 1200);
+    })(3);
+  }
 }
 function benchBoot(cb){
   var pc = document.querySelector("#bench .pc-case");
