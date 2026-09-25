@@ -39,6 +39,11 @@
   margin:0;
   padding:0;
 }
+html{
+  /* 阻止 iOS Safari text autosizing：动态数据加载后可能把文字突然放大（WebKit #296524/#304640），撑开布局导致导航与内容不齐平 */
+  -webkit-text-size-adjust:none;
+  text-size-adjust:none;
+}
 body{
   background:radial-gradient(1100px 480px at 18% -8%, rgba(79,224,208,.16), transparent 62%),
     radial-gradient(900px 420px at 88% 4%, rgba(240,194,103,.13), transparent 60%),
