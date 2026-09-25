@@ -45,6 +45,8 @@ html{
   text-size-adjust:none;
 }
 body{
+  /* 显式根字号：阻止 iOS/WebView font boosting 对继承字号文本的自动放大 */
+  font-size:14px;
   background:radial-gradient(1100px 480px at 18% -8%, rgba(79,224,208,.16), transparent 62%),
     radial-gradient(900px 420px at 88% 4%, rgba(240,194,103,.13), transparent 60%),
     radial-gradient(1200px 800px at 50% 122%, rgba(96,64,190,.15), transparent 65%),
@@ -4152,10 +4154,11 @@ main{
 }
 @media (max-width:640px){
 nav{
-  padding:12px 16px;
+  /* 移动端与 main 左右 padding(24px) 对齐 */
+  padding:12px 24px;
 }
 main{
-  padding:18px 14px 48px;
+  padding:18px 24px 48px;
 }
 .card{
   padding:18px 16px;
@@ -4240,11 +4243,6 @@ main{
   border:1px solid var(--line);
   border-radius:14px;
   box-shadow:0 12px 32px rgba(0,0,0,.45);
-}
-nav{
-  position:relative;
-  /* 与 main 容器 padding 对齐，保证导航内容与页面内容左右齐平 */
-  padding:12px 24px;
 }
 .brand{
   font-size:14px;
