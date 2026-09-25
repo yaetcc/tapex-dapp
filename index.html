@@ -133,6 +133,9 @@ nav{
   align-items:center;
   gap:12px;
 }
+#menuBtn{
+  display:none;
+}
 .link-home{
   font-size:13px;
   color:var(--tx2);
@@ -4209,9 +4212,84 @@ main{
   font-size:12px;
 }
 .nav-right{
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  gap:6px 10px;
+  flex-wrap:nowrap;
+  gap:8px;
+}
+nav{
+  position:relative;
+  padding:12px 12px;
+}
+.brand{
+  font-size:14px;
+  gap:7px;
+}
+.brand svg{
+  width:22px;
+  height:22px;
+}
+#menuBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  flex:none;
+  border-radius:10px;
+  border:1px solid rgba(130,160,215,.38);
+  background:rgba(17,31,59,.92);
+  color:var(--tx);
+  cursor:pointer;
+}
+#menuBtn svg{
+  width:19px;
+  height:19px;
+}
+.nav-right > .nav-anchor{
+  display:none;
+}
+#walletBtn{
+  padding:6px 10px;
+  font-size:12px;
+}
+.badge.on{
+  font-size:10px;
+  padding:2px 6px;
+}
+#menuPanel{
+  display:none;
+  position:absolute;
+  top:calc(100% + 6px);
+  right:12px;
+  z-index:2000;
+  min-width:170px;
+  flex-direction:column;
+  gap:4px;
+  padding:10px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 12px 32px rgba(0,0,0,.45);
+}
+#menuPanel.open{
+  display:flex;
+}
+#menuPanel a{
+  display:block;
+  padding:9px 12px;
+  border-radius:9px;
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--tx);
+  text-decoration:none;
+}
+#menuPanel a:hover{
+  background:rgba(79,224,208,.12);
+  color:var(--gold);
+}
+}
+@media (max-width:430px){
+.badge.on{
+  display:none;
 }
 }
 </style>
@@ -4234,6 +4312,14 @@ main{
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
     <button id="walletBtn"><span class="dot"></span><span id="walletLabel" data-i18n="nav.connect">连接钱包</span></button>
+    <button id="menuBtn" aria-label="菜单"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div id="menuPanel">
+    <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
+    <a class="nav-anchor" href="#overview" data-i18n="nav.ov">概览</a>
+    <a class="nav-anchor" href="#asm" data-i18n="nav.asm">组装</a>
+    <a class="nav-anchor" href="#mine" data-i18n="nav.assets">资产</a>
+    <a class="nav-anchor" href="#market" data-i18n="nav.market">市场</a>
   </div>
 </nav>
 
@@ -6347,6 +6433,27 @@ applyLang(true);
     try { localStorage.setItem("tapx_lang", LANG); } catch(e){}
     applyLang();
   });
+})();
+
+/* 移动端汉堡菜单 */
+(function(){
+  var mb = $("menuBtn"), mp = $("menuPanel");
+  if (!mb || !mp) return;
+  mb.addEventListener("click", function(ev){
+    ev.stopPropagation();
+    var open = mp.classList.toggle("open");
+    mb.classList.toggle("on", open);
+    mb.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  mp.addEventListener("click", function(ev){
+    if (ev.target.closest("a")) mp.classList.remove("open");
+  });
+  document.addEventListener("click", function(ev){
+    if (mp.classList.contains("open") && !mp.contains(ev.target) && ev.target !== mb && !mb.contains(ev.target)) {
+      mp.classList.remove("open");
+    }
+  });
+  window.addEventListener("scroll", function(){ mp.classList.remove("open"); }, { passive: true });
 })();
 
 })();
