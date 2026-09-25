@@ -5152,7 +5152,7 @@ function renderMine(){
         var nftRow = freePcs.length
           ? freePcs.map(function(p){
               var dots = "", tip = [];
-              for (var k = 0; k < 8; k++){ var t = Number(p.tiers[k]); dots += '<i class="mk-dot t' + t + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[t]); }
+              for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[tv]); }
               return '<li class="pc-row" data-rig="' + p.tid + '">' + miniIcon("nft") + '<span class="nm">PC #' + p.tid + ' <span class="grade g' + (p.grade||1) + '">' + GRADE_NAMES[p.grade||1] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + p.hash + ' H</span><span class="pc-act">' + t("f.idle") + ' ›</span></li>';
             }).join("")
           : (pcs.length ? '' : '<li>' + miniIcon("nft") + '<span class="nm">' + t("a.pcnft") + '</span><span class="v">' + t("a.none") + '</span></li>');
@@ -5471,7 +5471,7 @@ function renderMkPage(){
     li.className = "mk-item";
     var mine = account && r.l.seller.toLowerCase() === account.toLowerCase();
     var dots = "", tip = [];
-    for (var k = 0; k < 8; k++){ var t = Number(rd.tiers[k]); dots += '<i class="mk-dot t' + t + '" title=""></i>'; tip.push(PART_ABBR[k] + ":" + TIER_NAME[t]); }
+    for (var k = 0; k < 8; k++){ var tv = Number(rd.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_ABBR[k] + ":" + TIER_NAME[tv]); }
     var dotsHtml = '<span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>';
     var gr = Number(rd.grade)||1;
     li.innerHTML =
@@ -5933,7 +5933,7 @@ function renderRigList(){
     '</div>';
   var body = slice.length ? slice.map(function(o){
     var p = o.p, g = p.grade || 1;
-    var fl = 0, pr = 0; for (var t = 0; t < 8; t++) { if (Number(p.tiers[t]) === 3) fl++; else if (Number(p.tiers[t]) === 2) pr++; }
+    var fl = 0, pr = 0; for (var ti = 0; ti < 8; ti++) { if (Number(p.tiers[ti]) === 3) fl++; else if (Number(p.tiers[ti]) === 2) pr++; }
     var tierTxt = (fl ? "旗舰×" + fl : "") + (pr ? "Pro×" + pr : "");
     var shr = rigData.totalH > 0 && o.st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "";
     var fanSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(0 12 12)"/><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(120 12 12)"/><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(240 12 12)"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>';
@@ -5967,7 +5967,7 @@ function renderRigModal(tid){
   var st = rigData.staked.indexOf(tid) > -1;
   var g = p.grade || 1;
   var fl = 0, pr = 0, tierList = [];
-  for (var t = 0; t < 8; t++){ var tv = Number(p.tiers[t]); if (tv === 3) fl++; else if (tv === 2) pr++; tierList.push(PART_NAMES[t] + "·" + PART_TIER[tv]); }
+  for (var ti = 0; ti < 8; ti++){ var tv = Number(p.tiers[ti]); if (tv === 3) fl++; else if (tv === 2) pr++; tierList.push(PART_NAMES[ti] + "·" + PART_TIER[tv]); }
   var shr = rigData.totalH > 0 && st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "—";
   var acts;
   if (rigSell[tid]) {
