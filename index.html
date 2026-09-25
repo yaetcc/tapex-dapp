@@ -3103,6 +3103,48 @@ footer b{
   padding:0 2px;
   flex-direction:column;
 }
+.pc-slot .st-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--tx3);
+  position:absolute;
+  top:5px;
+  right:5px;
+}
+.pc-slot .st-dot.t0{ background:#4fd8c9; box-shadow:0 0 6px rgba(79,216,201,.8); }
+.pc-slot .st-dot.t1{ background:#6cc2ff; box-shadow:0 0 6px rgba(108,194,255,.8); }
+.pc-slot .st-dot.t2{ background:#ffd54d; box-shadow:0 0 6px rgba(255,213,77,.8); }
+.pc-slot .slot-sel{
+  font-size:9px;
+  font-weight:700;
+}
+.pc-slot .slot-sel.t0{ color:#4fd8c9; }
+.pc-slot .slot-sel.t1{ color:#6cc2ff; }
+.pc-slot .slot-sel.t2{ color:#ffd54d; }
+.bench-prev{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  padding:5px 10px;
+  border:1px dashed rgba(217,164,65,.3);
+  border-radius:8px;
+  background:rgba(217,164,65,.05);
+  font-size:10.5px;
+  color:var(--tx3);
+  flex-wrap:wrap;
+}
+.bench-prev .bp-h{ color:var(--tx2); }
+.bench-prev .bp-h b{
+  color:var(--gold);
+  font-family:"JetBrains Mono",monospace;
+}
+.bench-prev .bp-t{
+  margin-left:auto;
+  color:var(--tx3);
+  font-size:9.5px;
+}
 
 /* ===== 14 其他 ===== */
 #benchProg{
@@ -5661,6 +5703,9 @@ var I18N = {
   "t.asmMissing": {zh:"缺少", en:"Missing "},
   "t.asmMissingTail": {zh:"，去抽卡凑齐", en:" — draw more parts"},
   "t.asmLoaded": {zh:" 已装入机箱 · ", en:" loaded into case · "},
+  "t.asmUnloaded": {zh:" 已从机箱卸载", en:" unloaded from case"},
+  "b.preHash": {zh:"预期算力", en:"Expected hash"},
+  "b.selPrev": {zh:"配置预览 · 链上按低档优先消耗", en:"Preview · on-chain burns low tier first"},
   "t.asmShort": {zh:"还差 ", en:"Need "},
   "t.asmShortTail": {zh:" 类部件未装入", en:" more part types"},
   "o.asmBusy": {zh:"组装中…", en:"Assembling…"},
@@ -6507,15 +6552,23 @@ function renderBench(parts){
   // 机箱内部插槽：行1 电源/散热器/主板 · 行2 GPU/RAM/CPU · 行3 SSD/机箱(横跨)
   var SLOT_ORDER = [5, 6, 1, 2, 3, 0, 4, 7];
   var SLOT_SPAN = { 7: " span2" };   // 机箱壳横跨两列
+  var stat = window.__pidStatic || null;
+  var tcache = window.__ptCache || null;
+  var preHash = 0;
   var slots = SLOT_ORDER.map(function(si){
     var sel = asmSel[si] ? " on" : "";
     var off = (!connected && !asmSel[si]) ? " off" : (parts[si] < 1 && !asmSel[si] ? " off" : "");
     var nm = PART_NAMES[si];
     var cnt = parts[si] || 0;
-    return '<div class="pc-slot' + sel + off + (SLOT_SPAN[si] || "") + '" data-t="' + si + '" title="' + nm + (asmSel[si] ? " · " + t("b.loaded") : (cnt > 0 ? " · " + t("b.has") + cnt + " " + t("a.unit") : " · " + t("b.missing"))) + '">' +
+    var tr = asmSel[si] ? asmSel[si] - 1 : -1;
+    var ph = 0;
+    if (tr > -1 && stat && tcache) ph = Math.round(stat.hash[stat.ids[(si + 1) + "-" + tr]] * stat.mult[tr]);
+    if (tr > -1) preHash += ph;
+    var dot = tr > -1 ? '<i class="st-dot t' + tr + '"></i>' : '';
+    var sSpan = tr > -1 ? '<span class="slot-sel t' + tr + '">' + PART_TIER[tr] + ' · ' + ph + ' H</span>' : '<span>' + (cnt > 0 ? t("b.hasShort") + cnt : (connected ? t("b.missingShort") : "—")) + '</span>';
+    return '<div class="pc-slot' + sel + off + (SLOT_SPAN[si] || "") + '" data-t="' + si + '" title="' + nm + (tr > -1 ? " · " + PART_TIER[tr] + " · " + ph + " H" : (cnt > 0 ? " · " + t("b.has") + cnt + " " + t("a.unit") : " · " + t("b.missing"))) + '">' + dot +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[si] + '</svg>' +
-      '<b>' + nm + '</b>' +
-      '<span>' + (asmSel[si] ? t("b.loadedOk") : (cnt > 0 ? t("b.hasShort") + cnt : (connected ? t("b.missingShort") : "—"))) + '</span></div>';
+      '<b>' + nm + '</b>' + sSpan + '</div>';
   }).join("");
   b.innerHTML =
     '<div class="pc-case">' +
@@ -6528,6 +6581,7 @@ function renderBench(parts){
       '</div>' +
     '</div>' +
     '<div class="bench-foot">' +
+      (preHash > 0 ? '<div class="bench-prev"><span class="bp-h">' + t("b.preHash") + ' <b>' + preHash + ' H</b></span><span class="bp-t">' + t("b.selPrev") + '</span></div>' : '') +
       '<div class="bench-prog"><span>' + t("b.installed") + ' <b>' + n + '</b>/8</span><div class="bench-bar"><i style="width:' + (n * 12.5) + '%"></i></div></div>' +
       '<div class="bench-acts">' +
         '<button id="benchBtn">' + t("act.asmFull") + (n === 8 ? " ▸" : "") + '</button>' +
@@ -6547,12 +6601,25 @@ function toggleAsm(pt){
   if (!signer || !account) { toast(t("t.asmConnect")); return; }
   if (asmBusy) return;
   var parts = window.__parts || [0,0,0,0,0,0,0,0];
-  if (asmSel[pt]) { asmSel[pt] = 0; renderBench(parts); return; }
-  if ((parts[pt] || 0) < 1) { toast(t("t.asmMissing") + PART_NAMES[pt] + t("t.asmMissingTail")); return; }
-  asmSel[pt] = 1;
+  var cache = window.__ptCache || null;
+  var stat = window.__pidStatic || null;
+  var cur = asmSel[pt] || 0;            // 0=空 1=标准 2=Pro 3=旗舰
+  var av = [];
+  if (cache) { var c = cache[pt + 1] || [0,0,0]; for (var tr = 0; tr < 3; tr++) if (c[tr] > 0) av.push(tr + 1); }
+  else if ((parts[pt] || 0) >= 1) av = [1];
+  if (!av.length) { toast(t("t.asmMissing") + PART_NAMES[pt] + t("t.asmMissingTail")); return; }
+  var next = 0;
+  if (cur) { var idx = av.indexOf(cur); next = (idx > -1 && idx + 1 < av.length) ? av[idx + 1] : 0; }
+  else next = av[0];
+  asmSel[pt] = next;
   renderBench(parts);
-  var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
-  toast(PART_NAMES[pt] + t("t.asmLoaded") + n + "/8");
+  if (next) {
+    var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
+    var h = (stat && cache) ? Math.round(stat.hash[stat.ids[(pt + 1) + "-" + (next - 1)]] * stat.mult[next - 1]) : 0;
+    toast(PART_NAMES[pt] + " · " + PART_TIER[next - 1] + (h ? " · " + h + " H" : "") + t("t.asmLoaded") + n + "/8");
+  } else {
+    toast(PART_NAMES[pt] + t("t.asmUnloaded"));
+  }
 }
 function renderPartsOwnBody(parts){
   var g = $("partsOwnGrid"); if (!g) return;
