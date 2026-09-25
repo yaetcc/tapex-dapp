@@ -4999,6 +4999,7 @@ input:focus,textarea:focus,select:focus{
     <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
     <a class="nav-anchor" href="#asm" data-i18n="nav.asm">组装</a>
     <a class="nav-anchor" href="#mine" data-i18n="nav.assets">资产</a>
+    <a class="nav-anchor" href="#divd" data-i18n="nav.divd">分红</a>
     <a class="nav-anchor" href="#market" data-i18n="nav.market">市场</a>
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
@@ -5020,6 +5021,7 @@ input:focus,textarea:focus,select:focus{
     <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
     <a class="nav-anchor" href="#asm" data-i18n="nav.asm">组装</a>
     <a class="nav-anchor" href="#mine" data-i18n="nav.assets">资产</a>
+    <a class="nav-anchor" href="#divd" data-i18n="nav.divd">分红</a>
     <a class="nav-anchor" href="#market" data-i18n="nav.market">市场</a>
   </div>
 </nav>
@@ -5183,6 +5185,20 @@ input:focus,textarea:focus,select:focus{
       <p class="hint">合约 <code>0x83eB…CD8</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
     </div>
   </div>
+
+    <div class="card" id="divd">
+      <div class="kicker">TAPEX · <span data-i18n="d.title">持币分红</span></div>
+      <p class="hint" data-i18n="d.desc">持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。</p>
+      <div class="panel-stat" id="divdStats">
+        <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
+        <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 XCHIP</span></div>
+        <div class="statbox"><b id="hdRate">1,000 / 6h</b><span data-i18n="d.rate">释放速率</span></div>
+      </div>
+      <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 XCHIP</button>
+      <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
+      <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">分红合约部署中，稍后开放领取。</div>
+    </div>
+
 </main>
 
 <div id="partsOwnModal">
@@ -5244,7 +5260,9 @@ var ADDRS = {
   processor: "0x7e8aBC042ceA2f5566298e159E2801b721Bb3AA0",
   circuit: "0x20420E212E0f38EF5e29b3B3ea945F77fbC128E6",
   mining: "0xA12D7d971E316Dc37689fCbd01Cd2f259f342018",
-  market: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8"
+  market: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8",
+  tapex: "0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE",
+  dividend: "" // 分红合约：部署后填入
 };
 
 /* ---------- 多语言 ---------- */
@@ -5256,6 +5274,17 @@ var I18N = {
   "nav.asm": {zh:"组装", en:"Assemble"},
   "nav.assets": {zh:"资产", en:"Assets"},
   "nav.market": {zh:"市场", en:"Market"},
+  "nav.divd": {zh:"分红", en:"Dividends"},
+  "d.title": {zh:"持币分红", en:"Hold-to-Earn"},
+  "d.desc": {zh:"持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。", en:"Holding TAPEX auto-accrues XCHIP dividends: 1,000 XCHIP released every 6h and split by holding share; claim anytime. Sell/transfer to stop accruing."},
+  "d.hold": {zh:"TAPEX 持仓", en:"TAPEX Held"},
+  "d.claim": {zh:"可领分红 XCHIP", en:"Claimable XCHIP"},
+  "d.rate": {zh:"释放速率", en:"Emission Rate"},
+  "d.claimBtn": {zh:"领取 XCHIP", en:"Claim XCHIP"},
+  "d.noWallet": {zh:"连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPEX holdings and dividends."},
+  "d.pending": {zh:"分红合约部署中，稍后开放领取。", en:"Dividend contract deploying; claiming opens soon."},
+  "d.claimed": {zh:"XCHIP 分红已领取", en:"XCHIP dividends claimed"},
+  "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
   "nav.connect": {zh:"连接钱包", en:"Connect Wallet"},
   "nav.mainnet": {zh:"X Layer", en:"X Layer"},
   "st.supply": {zh:"XCHIP 总供应", en:"XCHIP Supply"},
@@ -5671,6 +5700,20 @@ var ABI_MARKET = [
   "function listingIds(uint256) view returns (uint256)",
   "function listings(uint256) view returns (tuple(uint256 tokenId,address seller,uint256 price,uint256 listedAt,bool active))"
 ];
+var ABI_DIVD = [
+  "function claim()",
+  "function claimable(address) view returns (uint256)",
+  "function earned(address) view returns (uint256)",
+  "function emissionPerEpoch() view returns (uint256)",
+  "function epochDuration() view returns (uint256)",
+  "function excluded(address) view returns (bool)",
+  "function rewardRate() view returns (uint256)",
+  "function rewardPerTokenStored() view returns (uint256)",
+  "function supplyBase() view returns (uint256)",
+  "function sync()",
+  "function tapex() view returns (address)",
+  "function xchip() view returns (address)"
+];
 
 var $ = function(id){ return document.getElementById(id); };
 function flashStat(id){ var el = $(id); if (!el) return; el.classList.add("flash"); el.classList.add("pulse"); setTimeout(function(){ el.classList.remove("flash"); el.classList.remove("pulse"); }, 600); }
@@ -5966,6 +6009,58 @@ function refreshNames(){
 }
 refreshNames();
 var __mr = 0;
+/* ---------- TAPEX 持币分红 ---------- */
+function renderDividend(){
+  var pending = $("hdPending"), noWallet = $("hdNoWallet"), btn = $("hdClaimBtn");
+  if (!ADDRS.dividend) {
+    if (pending) pending.style.display = "";
+    if (noWallet) noWallet.style.display = "none";
+    if (btn) { btn.disabled = true; btn.textContent = t("d.claimBtn"); }
+    return Promise.resolve();
+  }
+  if (pending) pending.style.display = "none";
+  if (!signer || !account) {
+    if (noWallet) noWallet.style.display = "";
+    if (btn) { btn.disabled = true; btn.textContent = t("d.claimBtn"); }
+    return Promise.resolve();
+  }
+  if (noWallet) noWallet.style.display = "none";
+  var divd = new ethers.Contract(ADDRS.dividend, ABI_DIVD, pubProvider);
+  var tapex = new ethers.Contract(ADDRS.tapex, ["function balanceOf(address) view returns (uint256)"], pubProvider);
+  return Promise.all([
+    readRetry(function(){ return tapex.balanceOf(account); }),
+    readRetry(function(){ return divd.claimable(account); }),
+    readRetry(function(){ return divd.epochDuration(); }),
+    readRetry(function(){ return divd.emissionPerEpoch(); })
+  ]).then(function(r){
+    $("hdTapex").textContent = fmtWei(r[0]);
+    $("hdClaimable").textContent = fmtWei(r[1]);
+    var hrs = Number(r[2]) / 3600;
+    $("hdRate").textContent = fmtWei(r[3]) + " / " + (hrs >= 1 ? hrs + "h" : Number(r[2]) + "s");
+    var can = BigInt(r[1]) > 0n;
+    var btn2 = $("hdClaimBtn");
+    if (btn2) { btn2.disabled = !can; btn2.textContent = t("d.claimBtn"); btn2.dataset.ready = "1"; }
+    return null;
+  });
+}
+function claimDividend(){
+  if (!signer || !account) { toast(t("t.connectFirst")); return; }
+  if (!ADDRS.dividend) { toast(t("d.pending")); return; }
+  var btn = $("hdClaimBtn");
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.textContent = t("a.loading"); }
+  var divd = new ethers.Contract(ADDRS.dividend, ABI_DIVD, signer);
+  divd.claim().then(function(tx){
+    if (btn) btn.textContent = t("mint.busy");
+    return tx.wait();
+  }).then(function(){
+    toast(t("d.claimed"));
+    refresh();
+  }).catch(function(e){
+    toast(t("d.claimFail") + (e && (e.reason || e.shortMessage || e.message) || ""));
+    if (btn) { btn.disabled = false; btn.textContent = t("d.claimBtn"); }
+  });
+}
 function renderMine(){
   if (!signer || !account) {
     $("myAssets").innerHTML = '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
@@ -6508,7 +6603,8 @@ function doRefresh(){
   Promise.all([
     renderGlobal().catch(function(e){ console.warn("global read fail", e); }),
     renderMine().catch(function(e){ console.warn("mine read fail", e); }),
-    renderMarket().catch(function(e){ console.warn("market read fail", e); })
+    renderMarket().catch(function(e){ console.warn("market read fail", e); }),
+    renderDividend().catch(function(e){ console.warn("dividend read fail", e); })
   ]).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
 }
 // 运行时溢出扫描：实测任何超出视口的元素并收缩（连接钱包/数据渲染后 WebView 字体度量差异导致溢出的最终兜底）
@@ -7289,6 +7385,7 @@ $("switchNet").addEventListener("click", function(){ switchNet().catch(function(
 $("assembleBtn").addEventListener("click", doAssemble);
 (function(){
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
+  var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
   var om = $("partsOwnModal"); if (om) om.addEventListener("click", function(ev){ if (ev.target === om) closePop(om); });
 })();
