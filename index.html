@@ -1202,6 +1202,11 @@ input:focus{
   transition:border-color .15s ease,color .15s ease;
 }
 .tl-links a:hover{color:var(--teal);border-color:rgba(45,212,191,.4);}
+.tl-links a.tl-buy{
+  color:var(--gold,#f5c542);border-color:rgba(245,197,66,.45);
+  background:rgba(245,197,66,.08);font-weight:600;
+}
+.tl-links a.tl-buy:hover{color:#fff;border-color:var(--gold);background:rgba(245,197,66,.18);}
 .wallet-hint{
   font-size:12.5px;
   color:var(--tx3);
@@ -5240,6 +5245,7 @@ input:focus,textarea:focus,select:focus{
           <button class="tl-copy" id="hdCopy" data-i18n="d.copy">复制</button>
         </div>
         <div class="tl-links">
+          <a class="tl-buy" href="https://ignix.bot/launch?token=0xf154c55bbff1b889d4ae279c0e3e9d31671feeee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
           <a href="https://www.oklink.com/xlayer/token/0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
           <a href="https://www.okx.com/zh-hans/web3/dex" target="_blank" rel="noopener" data-i18n="d.dex">OKX DEX 搜索</a>
         </div>
@@ -5335,6 +5341,7 @@ var I18N = {
   "d.links": {zh:"TAPEX · 合约与购买", en:"TAPEX · Contract & Buy"},
   "d.copy": {zh:"复制", en:"Copy"},
   "d.copied": {zh:"已复制合约地址", en:"Contract address copied"},
+  "d.buy": {zh:"IGNIX 购买", en:"Buy on IGNIX"},
   "d.explorer": {zh:"OKLink 浏览器", en:"OKLink Explorer"},
   "d.dex": {zh:"OKX DEX 搜索", en:"OKX DEX Search"},
   "nav.connect": {zh:"连接钱包", en:"Connect Wallet"},
