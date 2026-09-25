@@ -1480,6 +1480,8 @@ footer b{
 /* ===== 08 矿机 · 质押 ===== */
 .rig-ops{
   transition:border-color .25s,background .25s;
+  min-width:0;
+  max-width:100%;
   display:flex;
   gap:8px;
   align-items:center;
@@ -4228,6 +4230,24 @@ main{
 }
 .asset-list li{
   padding:9px 2px;
+}
+/* 质押工具条：手机端换行显示，彻底去掉横向滚动（WebView 触摸滚动链会把工具条内部滑动传给整页，造成页面左右滑动） */
+.rig-ops{
+  flex-wrap:wrap;
+  height:auto;
+  overflow-x:visible;
+  row-gap:6px;
+}
+.rig-ops .batch-grp{
+  order:3;
+  width:100%;
+  justify-content:stretch;
+}
+.rig-ops .batch-grp .action-btn{
+  flex:1 1 0;
+}
+.rig-ops .rig-pg{
+  margin-left:auto;
 }
 .hero-inner{
   padding:18px 14px;
