@@ -6196,25 +6196,39 @@ function renderMine(){
     __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
     var myNfts = [];
     var last = Number(r[12]);
-    var from = Math.max(1, last - 200 + 1);
-    var ids = [];
-    for (var tid = from; tid <= last; tid++) ids.push(tid);
-    function batchRead(idList, fn){
-      var BATCH = 40, out = [], idx = 0;
-      function step(){
-        if (idx >= idList.length) return Promise.resolve(out);
-        var chunk = idList.slice(idx, idx + BATCH); idx += BATCH;
-        return Promise.all(chunk.map(function(t){ return readRetry(function(){ return fn(t); }, 2); })).then(function(res){
-          out = out.concat(res); return step();
-        });
+    var cacheKey = account.toLowerCase() + "|" + last;
+    var now = Date.now();
+    var rigCache = window.__rigCache;
+    var scan;
+    if (rigCache && rigCache.key === cacheKey && now < rigCache.exp) {
+      myNfts = rigCache.myNfts.slice();
+      scan = Promise.resolve(rigCache.staked.slice());
+    } else {
+      var from = 1;   // 全量扫描：覆盖早期 NFT（此前只扫最近 200 个 ID，旧矿机 #5..#28 被漏显）
+      var ids = [];
+      for (var tid = from; tid <= last; tid++) ids.push(tid);
+      function batchRead(idList, fn){
+        var BATCH = 40, out = [], idx = 0;
+        function step(){
+          if (idx >= idList.length) return Promise.resolve(out);
+          var chunk = idList.slice(idx, idx + BATCH); idx += BATCH;
+          return Promise.all(chunk.map(function(t){ return readRetry(function(){ return fn(t); }, 2); })).then(function(res){
+            out = out.concat(res); return step();
+          });
+        }
+        return step();
       }
-      return step();
+      scan = batchRead(ids, function(tid){ return circ.ownerOf(tid); }).then(function(own){
+        own.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push(from + i); });
+        return batchRead(ids, function(stid){ return mine.stakes(stid); }).then(function(stRows){
+          var staked = [];
+          stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked.push(from + i); });
+          window.__rigCache = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice() };
+          return staked;
+        });
+      });
     }
-    return batchRead(ids, function(tid){ return circ.ownerOf(tid); }).then(function(own){
-      own.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push(from + i); });
-      return batchRead(ids, function(stid){ return mine.stakes(stid); }).then(function(stRows){
-        var staked = [];
-        stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked.push(from + i); });
+    return scan.then(function(staked){
         var allIds = myNfts.slice();
         staked.forEach(function(t){ if (allIds.indexOf(t) === -1) allIds.push(t); });
         var pcQ = allIds.map(function(tid){
@@ -6258,7 +6272,6 @@ function renderMine(){
         renderRigList();
         if (Number(r[11]) > 0) rigOn(fmtInt(r[11])); else rigOff();
         return r;
-      });
       });
     });
   }).catch(function(e){
