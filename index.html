@@ -50,6 +50,8 @@ body{
   /* 兜底：任何文字被自动放大/字体替换导致变宽时强制断行，杜绝横向溢出 */
   overflow-wrap:break-word;
   word-break:break-word;
+  /* 最后防线：即使个别元素在 WebView 中溢出，页面也不可左右滑动 */
+  overflow-x:hidden;
   background:radial-gradient(1100px 480px at 18% -8%, rgba(79,224,208,.16), transparent 62%),
     radial-gradient(900px 420px at 88% 4%, rgba(240,194,103,.13), transparent 60%),
     radial-gradient(1200px 800px at 50% 122%, rgba(96,64,190,.15), transparent 65%),
@@ -660,6 +662,8 @@ input::placeholder{
 }
 #netbar{
   display:none;
+  min-width:0;
+  flex-wrap:wrap;
   align-items:center;
   gap:10px;
   padding:10px 24px;
@@ -813,7 +817,9 @@ input:focus{
   background:rgba(217,164,65,.1);
 }
 .price-line{
+  min-width:0;
   display:flex;
+  flex-wrap:wrap;
   justify-content:space-between;
   align-items:center;
   font-size:13px;
@@ -1094,7 +1100,9 @@ footer b{
   background:linear-gradient(180deg,rgba(26,47,90,.9),rgba(16,30,58,.95));
 }
 .forge-track{
+  min-width:0;
   display:flex;
+  flex-wrap:wrap;
   align-items:center;
   justify-content:space-between;
   gap:8px;
@@ -3801,7 +3809,9 @@ footer .f-line2{
   font-weight:700;
 }
 .mint-qty{
+  min-width:0;
   display:flex;
+  flex-wrap:wrap;
   align-items:center;
   gap:8px;
   margin-top:6px;
@@ -5677,7 +5687,51 @@ function refresh(){
     renderGlobal().catch(function(e){ console.warn("global read fail", e); }),
     renderMine().catch(function(e){ console.warn("mine read fail", e); }),
     renderMarket().catch(function(e){ console.warn("market read fail", e); })
-  ]).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } });
+  ]).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
+}
+// 运行时溢出扫描：实测任何超出视口的元素并收缩（连接钱包/数据渲染后 WebView 字体度量差异导致溢出的最终兜底）
+function killOverflow(){
+  try {
+    var vw = document.documentElement.clientWidth;
+    if (vw <= 0) return;
+    if (document.documentElement.scrollWidth <= vw) return;
+    var all = document.querySelectorAll("*");
+    var fixed = 0;
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      var cs = getComputedStyle(el);
+      if (cs.position === "fixed") continue;
+      var r = el.getBoundingClientRect();
+      if (!r.width && !r.height) continue;
+      if (r.right > vw + 0.5 || r.left < -0.5) {
+        var isTextLeaf = (el.children.length === 0 || el.textContent.trim() !== "" && el.children.length === 1 && el.children[0].tagName === "BR" || (el.children.length === 0 && cs.whiteSpace === "nowrap"));
+        if (isTextLeaf) {
+          el.style.overflowWrap = "break-word";
+          el.style.wordBreak = "break-word";
+          if (cs.whiteSpace === "nowrap") el.style.whiteSpace = "normal";
+        } else {
+          el.style.minWidth = "0";
+          el.style.maxWidth = "100%";
+          el.style.overflowWrap = "break-word";
+          el.style.wordBreak = "break-word";
+        }
+        var over = Math.max(r.right - vw, -r.left);
+        if (el.children.length === 0 && cs.whiteSpace === "nowrap") el.style.whiteSpace = "normal";
+        var maxW = (vw - r.left) + "px";
+        if (maxW.indexOf("-") !== 0) { el.style.maxWidth = maxW; }
+        fixed++;
+      }
+    }
+    if (fixed > 0 && document.documentElement.scrollWidth > vw) {
+      // 第二遍：父级兜底收缩
+      var all2 = document.querySelectorAll("*");
+      for (var j = 0; j < all2.length; j++) {
+        var e2 = all2[j];
+        var rr = e2.getBoundingClientRect();
+        if (rr.right > vw + 0.5) { e2.style.maxWidth = (vw - rr.left) + "px"; e2.style.overflow = "hidden"; }
+      }
+    }
+  } catch (e) { /* 扫描失败不阻塞页面 */ }
 }
 
 /* ---------- 钱包 ---------- */
@@ -6445,6 +6499,10 @@ setTimeout(function(){
 renderGlobal().then(function(){ refresh(); }).catch(function(e){ console.warn("init read fail", e); });
 checkChain();
 applyLang(true);
+/* 字体加载完成/窗口就绪后再扫描一次：WebView 字体替换导致的延迟溢出 */
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ setTimeout(killOverflow, 120); });
+window.addEventListener("load", function(){ setTimeout(killOverflow, 400); });
+window.killOverflow = killOverflow;  // 便于外部/调试调用
 (function(){
   var lb = $("langBtn"); if (!lb) return;
   lb.addEventListener("click", function(){
