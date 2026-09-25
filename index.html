@@ -141,10 +141,136 @@ nav{
   color:var(--gold);
 }
 .nav-right{
+  position:relative;
   margin-left:auto;
   display:flex;
   align-items:center;
   gap:12px;
+}
+/* 钱包弹窗面板（连接后点击钱包按钮展开，内嵌资产摘要） */
+#walletPanel{
+  display:none;
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:252px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5);
+  padding:14px;
+  z-index:70;
+}
+#walletPanel.open{
+  display:block;
+  animation:panelIn .18s ease;
+}
+@keyframes panelIn{
+  from{ opacity:0; transform:translateY(-6px); }
+  to{ opacity:1; transform:none; }
+}
+.wp-addr{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.wp-addr .mono{
+  font-family:"JetBrains Mono",monospace;
+  font-size:13px;
+  color:var(--tx);
+  letter-spacing:.02em;
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#wpCopy{
+  flex:none;
+  width:26px;
+  height:26px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  border:1px solid rgba(130,160,215,.3);
+  background:rgba(9,15,29,.5);
+  color:var(--tx2);
+  cursor:pointer;
+  transition:all .2s;
+}
+#wpCopy:hover{
+  border-color:var(--gold);
+  color:var(--gold);
+}
+#wpCopy svg{
+  width:14px;
+  height:14px;
+}
+.wp-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+.wp-cell{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:8px 10px;
+  border:1px solid rgba(130,160,215,.18);
+  border-radius:10px;
+  background:rgba(9,15,29,.45);
+  min-width:0;
+}
+.wp-cell b{
+  font-family:"JetBrains Mono",monospace;
+  font-size:14.5px;
+  color:var(--gold);
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.wp-cell span{
+  font-size:11px;
+  color:var(--tx3);
+}
+.wp-link{
+  display:block;
+  margin-top:12px;
+  padding:9px 12px;
+  text-align:center;
+  border-radius:10px;
+  background:linear-gradient(135deg,rgba(217,164,65,.18),rgba(217,164,65,.08));
+  border:1px solid rgba(217,164,65,.35);
+  color:var(--gold);
+  font-size:12.5px;
+  font-weight:600;
+  text-decoration:none;
+  transition:all .2s;
+}
+.wp-link:hover{
+  background:linear-gradient(135deg,rgba(217,164,65,.28),rgba(217,164,65,.12));
+}
+.wp-disc{
+  display:block;
+  width:100%;
+  margin-top:8px;
+  padding:8px 12px;
+  text-align:center;
+  border-radius:10px;
+  border:1px solid rgba(229,98,76,.4);
+  background:rgba(229,98,76,.08);
+  color:#F2B8AE;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all .2s;
+}
+.wp-disc:hover{
+  background:rgba(229,98,76,.16);
 }
 /* 汉堡按钮与下拉面板：桌面默认隐藏，仅在移动端媒体查询内显示 */
 #menuBtn{
@@ -4358,6 +4484,9 @@ main{
   font-size:10px;
   padding:2px 6px;
 }
+#walletPanel{
+  width:min(252px, calc(100vw - 32px));
+}
 #menuPanel.open{
   display:flex;
 }
@@ -4400,6 +4529,17 @@ main{
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
     <button id="walletBtn"><span class="dot"></span><span id="walletLabel" data-i18n="nav.connect">连接钱包</span></button>
+    <div id="walletPanel">
+      <div class="wp-addr"><b class="mono" id="wpAddr">—</b><button id="wpCopy" title="复制地址"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
+      <div class="wp-grid">
+        <div class="wp-cell"><b id="wpXchip">—</b><span>XCHIP</span></div>
+        <div class="wp-cell"><b id="wpPcs">—</b><span data-i18n="wp.pc">PC 整机</span></div>
+        <div class="wp-cell"><b id="wpParts">—</b><span data-i18n="wp.parts">部件</span></div>
+        <div class="wp-cell"><b id="wpPending">—</b><span data-i18n="wp.pending">待领</span></div>
+      </div>
+      <a class="wp-link" href="#mine" id="wpGoMine"><span data-i18n="wp.goMine">查看完整资产页</span> →</a>
+      <button class="wp-disc" id="wpDisconnect" data-i18n="wp.disconnect">断开连接</button>
+    </div>
     <button id="menuBtn" aria-label="菜单" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div id="menuPanel">
@@ -4634,6 +4774,12 @@ var I18N = {
   "ph.rigEmpty": {zh:"连接钱包后显示质押中的矿机", en:"Staked miners appear after connecting"},
   "mine.title": {zh:"我的资产", en:"My Assets"},
   "rig.stake": {zh:"质押挖矿", en:"Stake & Mine"},
+  "wp.pc": {zh:"PC 整机", en:"PC Rigs"},
+  "wp.parts": {zh:"部件", en:"Parts"},
+  "wp.pending": {zh:"待领", en:"Pending"},
+  "wp.goMine": {zh:"查看完整资产页", en:"View full assets"},
+  "wp.disconnect": {zh:"断开连接", en:"Disconnect"},
+  "wp.copy": {zh:"地址已复制", en:"Address copied"},
   "rig.sell": {zh:"挂单出售", en:"List for Sale"},
   "rig.sub": {zh:"我的矿机 · 实时链上状态", en:"My miners · live on-chain"},
   "act.unstake": {zh:"解押", en:"Unstake"},
@@ -5053,6 +5199,7 @@ function rpcFail(){
 /* ---------- 链上自动刷新：监听新块，10 秒节流 + 防重入 ---------- */
 var __lastBlockAt = 0;
 var __refreshing = false, __refreshingDirty = false;
+var __mineSum = null;   // 钱包弹窗资产摘要缓存（renderMine 填充）
 function bindBlockWatch(){
   try {
     pubProvider.off("block");
@@ -5296,6 +5443,7 @@ function renderMine(){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
     renderPartsGrid(parts);
+    __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
     var myNfts = [];
     var last = Number(r[12]);
     var from = Math.max(1, last - 200 + 1);
@@ -5838,7 +5986,8 @@ function connect(){
   });
 }
 function disconnect(){
-  signer = null; account = null;
+  signer = null; account = null; __mineSum = null;
+  closeWalletPanel();
   $("walletBtn").classList.remove("connected");
   $("walletLabel").textContent = t("w.connectBtn");
   $("walletHint").innerHTML = t("w.connectHint");
@@ -6508,7 +6657,10 @@ if (window.self !== window.top) {
 }
 
 /* ---------- 绑定 ---------- */
-$("walletBtn").addEventListener("click", function(){ signer ? disconnect() : connect().catch(function(e){ toast(e.message.slice(0,60)); }); });
+$("walletBtn").addEventListener("click", function(){
+  if (!signer) { connect().catch(function(e){ toast(e.message.slice(0,60)); }); return; }
+  toggleWalletPanel();
+});
 $("switchNet").addEventListener("click", function(){ switchNet().catch(function(e){ toast(t("w.switchFail") + (e.message||"").slice(0,60)); }); });
 (function(){
   var core = $("forgeCore");
@@ -6570,6 +6722,51 @@ window.killOverflow = killOverflow;  // 便于外部/调试调用
     try { localStorage.setItem("tapx_lang", LANG); } catch(e){}
     applyLang();
   });
+})();
+
+/* 钱包弹窗面板：连接后点击钱包按钮展开资产摘要 */
+function toggleWalletPanel(){
+  var p = $("walletPanel");
+  if (!p) return;
+  if (p.classList.contains("open")) { p.classList.remove("open"); return; }
+  if (account) $("wpAddr").textContent = shortAddr(account);
+  renderWalletPanel();
+  if (!__mineSum) refresh();
+  p.classList.add("open");
+}
+function closeWalletPanel(){ var p = $("walletPanel"); if (p) p.classList.remove("open"); }
+function renderWalletPanel(){
+  var s = __mineSum;
+  $("wpXchip").textContent = s ? s.xchip : "…";
+  $("wpPcs").textContent = s ? s.pcs : "…";
+  $("wpParts").textContent = s ? s.parts : "…";
+  $("wpPending").textContent = s ? s.pending : "…";
+}
+(function(){
+  var p = $("walletPanel");
+  if (!p) return;
+  var copy = $("wpCopy");
+  if (copy) copy.addEventListener("click", function(){
+    if (!account) return;
+    (navigator.clipboard ? navigator.clipboard.writeText(account) : Promise.reject()).then(function(){
+      toast(t("wp.copy"));
+    }).catch(function(){
+      var ta = document.createElement("textarea");
+      ta.value = account; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(t("wp.copy")); } catch(e){}
+      document.body.removeChild(ta);
+    });
+  });
+  var disc = $("wpDisconnect");
+  if (disc) disc.addEventListener("click", function(){ closeWalletPanel(); disconnect(); });
+  var go = $("wpGoMine");
+  if (go) go.addEventListener("click", function(){ closeWalletPanel(); });
+  document.addEventListener("click", function(ev){
+    var wb = $("walletBtn");
+    if (p.classList.contains("open") && !p.contains(ev.target) && (!wb || (!wb.contains(ev.target) && ev.target !== wb))) closeWalletPanel();
+  });
+  window.addEventListener("scroll", function(){ if (p.classList.contains("open")) closeWalletPanel(); }, { passive:true });
 })();
 
 /* 移动端汉堡菜单 */
