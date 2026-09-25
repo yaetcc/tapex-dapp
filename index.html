@@ -2608,9 +2608,6 @@ footer b{
   margin-top:8px;
   padding-top:10px;
   border-top:1px dashed rgba(94,110,140,.25);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
   font-size:12.5px;
   color:var(--tx2);
 }
@@ -2619,37 +2616,90 @@ footer b{
   font-size:15px;
   color:var(--gold);
 }
-.own-cell{
-  grid-column:1 / -1;
-  display:flex;
-  align-items:center;
+.own-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:8px;
-  padding:7px 9px;
+  margin:4px 0 12px;
+}
+.own-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  padding:13px 8px 11px;
   border:1px solid rgba(130,160,215,.16);
-  border-radius:9px;
-  background:rgba(10,18,36,.45);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(18,32,62,.55),rgba(10,18,36,.45));
   cursor:pointer;
-  transition:border-color .15s ease,background .15s ease;
+  position:relative;
+  transition:border-color .18s ease,background .18s ease,transform .15s ease,box-shadow .18s ease;
 }
 .own-cell:hover{
-  border-color:rgba(217,164,65,.45);
-  background:rgba(217,164,65,.06);
+  border-color:rgba(217,164,65,.5);
+  background:linear-gradient(180deg,rgba(24,40,74,.65),rgba(14,26,50,.55));
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(5,10,22,.4);
+}
+.own-cell.has{
+  border-color:rgba(79,216,201,.32);
+  background:linear-gradient(180deg,rgba(17,42,52,.55),rgba(10,22,36,.5));
+}
+.own-cell.has:hover{
+  border-color:rgba(79,216,201,.6);
+  box-shadow:0 0 14px rgba(79,216,201,.12),0 4px 14px rgba(5,10,22,.4);
 }
 .own-cell > svg{
-  width:17px;
-  height:17px;
+  width:22px;
+  height:22px;
   flex:none;
   color:var(--teal);
+  transition:color .18s ease;
+}
+.own-cell:not(.has) > svg{
+  color:var(--tx3);
+  opacity:.6;
 }
 .own-cell > b{
   color:var(--tx);
-  font-size:12px;
+  font-size:11.5px;
   font-weight:600;
-  min-width:34px;
 }
-.own-cell.open .own-arrow{
-  transform:rotate(90deg);
-  color:var(--gold);
+.own-cell .own-n{
+  font-size:10.5px;
+  font-family:"JetBrains Mono",monospace;
+  color:var(--tx3);
+  padding:1px 8px;
+  border-radius:999px;
+  border:1px solid rgba(94,110,140,.25);
+  background:rgba(94,110,140,.08);
+}
+.own-cell.has .own-n{
+  color:var(--teal);
+  border-color:rgba(79,216,201,.4);
+  background:rgba(79,216,201,.1);
+}
+.own-sum-prog{
+  height:3px;
+  border-radius:999px;
+  background:rgba(94,110,140,.16);
+  overflow:hidden;
+  margin-bottom:9px;
+}
+.own-sum-prog i{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#d9a441,#f0c267);
+  transition:width .35s ease;
+}
+.own-sum-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12.5px;
+  color:var(--tx2);
 }
 #rigModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
@@ -5138,9 +5188,16 @@ input:focus,textarea:focus,select:focus{
 <div id="partsOwnModal">
   <div class="rm-box">
     <button class="rm-close" id="partsOwnClose">×</button>
-    <div class="rm-head"><b id="partsOwnTitle" data-i18n="b.ownParts">我的部件</b></div>
-    <div class="parts-grid" id="partsOwnGrid"></div>
-    <div class="parts-own-sum"><span data-i18n="b.ownTotal">部件合计</span><b id="partsOwnTotal">0</b></div>
+    <div class="rm-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:20px;height:20px;color:var(--gold);flex:none"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM9 16v1M15 16v1M9 7V6M15 7V6"/></svg>
+      <b id="partsOwnTitle" data-i18n="b.ownParts">我的部件</b>
+    </div>
+    <div class="rm-info" id="ownStats"></div>
+    <div class="own-grid" id="partsOwnGrid"></div>
+    <div class="parts-own-sum">
+      <div class="own-sum-prog"><i id="ownProgBar"></i></div>
+      <div class="own-sum-row"><span data-i18n="b.ownTotal">部件合计</span><b id="partsOwnTotal">0</b></div>
+    </div>
   </div>
 </div>
 
@@ -5289,6 +5346,9 @@ var I18N = {
   "b.loadingTier": {zh:"读取档位明细…", en:"Loading tiers…"},
   "b.ownParts": {zh:"我的部件", en:"My Parts"},
   "b.ownTotal": {zh:"部件合计", en:"Total Parts"},
+  "b.ownHave": {zh:"已拥有", en:"Owned"},
+  "b.ownReady": {zh:"集齐", en:"Ready"},
+  "b.ownUnits": {zh:"件", en:" pcs"},
   "rig.rate": {zh:"算力 ", en:"Hash "},
   "rig.release6h": {zh:" H · 每 6h 释放", en:" H · every 6h"},
   "rig.noHash": {zh:"未接入算力", en:"No hashrate"},
@@ -6108,16 +6168,21 @@ function toggleAsm(pt){
 }
 function renderPartsOwnBody(parts){
   var g = $("partsOwnGrid"); if (!g) return;
-  var sum = 0;
+  var sum = 0, have = 0;
   g.innerHTML = parts.map(function(n, i){
-    sum += n;
+    sum += n; if (n > 0) have++;
     return '<div class="own-cell' + (n ? " has" : "") + '" data-own="' + i + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
       '<b>' + PART_NAMES[i] + '</b>' +
-      '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + '</span>' +
+      '<span class="own-n">' + (n ? n : t("a.missing")) + '</span>' +
       '</div>';
   }).join("");
   var st = $("partsOwnTotal"); if (st) st.textContent = String(sum);
+  var stats = $("ownStats");
+  if (stats) stats.innerHTML = '<span>' + t("b.ownHave") + ' <b>' + sum + '</b> ' + t("b.ownUnits") + '</span>' +
+    '<span>' + t("b.ownReady") + ' <b>' + have + '</b>/8</span>';
+  var bar = $("ownProgBar");
+  if (bar) bar.style.width = Math.round(have / 8 * 100) + "%";
 }
 function openPartsOwn(){
   var m = $("partsOwnModal"); if (!m) return;
