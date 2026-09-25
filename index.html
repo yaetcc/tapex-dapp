@@ -101,7 +101,8 @@ nav{
   display:flex;
   align-items:center;
   gap:14px;
-  padding:12px 24px;
+  /* 水平内边距与 main 容器（max-width:1280px 居中）对齐，避免宽屏下导航内容超出页面内容区 */
+  padding:12px max(24px, calc((100% - 1280px) / 2 + 24px));
   background:rgba(11,19,40,.93);
   backdrop-filter:blur(8px);
   border-bottom:2px solid rgba(240,194,103,.30);
