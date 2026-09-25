@@ -6430,22 +6430,49 @@ function renderAsmStrategy(parts){
 }
 var __pidStatic = null;
 var __tierLoading = false;
+/* 批量 eth_call：每批 10 个（X Layer 公共 RPC 拒绝大 batch，-32014），自动分批串联 */
+function batchEthCall(iface, fnName, argLists, to, batchSize){
+  batchSize = batchSize || 10;
+  var chunks = [];
+  for (var i = 0; i < argLists.length; i += batchSize) chunks.push(argLists.slice(i, i + batchSize));
+  return chunks.reduce(function(p, chunk){
+    return p.then(function(acc){
+      var body = chunk.map(function(a, k){
+        return { jsonrpc: "2.0", id: k + 1, method: "eth_call", params: [{ to: to, data: iface.encodeFunctionData(fnName, a) }, "latest"] };
+      });
+      return fetch(RPC, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        .then(function(r){ return r.json(); })
+        .then(function(arr){
+          var byId = {};
+          arr.forEach(function(o){ if (o && o.id) byId[o.id] = o; });
+          return acc.concat(chunk.map(function(a, k){
+            var o = byId[k + 1];
+            return (o && o.result) ? iface.decodeFunctionResult(fnName, o.result)[0] : null;
+          }));
+        });
+    });
+  }, Promise.resolve([]));
+}
 function readPartStatic(){
   if (__pidStatic) return Promise.resolve(__pidStatic);
   if (!signer || !account) return Promise.resolve(null);
-  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-  var qs = [];
-  for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) qs.push((function(t, tr){
-    return readRetry(function(){ return proc.tokenIdOf(t, tr); }, 1).then(function(id){
-      return readRetry(function(){ return proc.baseHash(Number(id)); }, 1).then(function(h){ return { t: t, tr: tr, id: Number(id), hash: Number(h) }; });
-    });
-  })(t, tr));
-  return Promise.all(qs).then(function(arr){
-    return Promise.all([1,2,3].map(function(tr){ return readRetry(function(){ return proc.tierMultiplier(tr); }, 1).then(function(m){ return Number(m); }); })).then(function(ms){
-      var out = { ids: {}, hash: {}, mult: ms };
-      arr.forEach(function(o){ out.ids[o.t + "-" + o.tr] = o.id; out.hash[o.id] = o.hash; });
-      __pidStatic = out;
-      return out;
+  var iface = new ethers.Interface([
+    "function tokenIdOf(uint8,uint8) view returns (uint256)",
+    "function baseHash(uint256) view returns (uint256)",
+    "function tierMultiplier(uint256) view returns (uint256)"
+  ]);
+  var t0 = [];
+  for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) t0.push([t, tr]);
+  return batchEthCall(iface, "tokenIdOf", t0, ADDRS.processor).then(function(ids){
+    var idN = ids.map(function(v){ return Number(v); });
+    return batchEthCall(iface, "baseHash", idN.map(function(id){ return [id]; }), ADDRS.processor).then(function(hashes){
+      return batchEthCall(iface, "tierMultiplier", [[0],[1],[2]], ADDRS.processor).then(function(mults){
+        var out = { ids: {}, hash: {}, mult: mults.map(function(v){ return Number(v); }) };
+        var k = 0;
+        for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++){ var id = idN[k]; out.ids[t + "-" + tr] = id; out.hash[id] = hashes[k] === null ? 0 : Number(hashes[k]); k++; }
+        __pidStatic = out;
+        return out;
+      });
     });
   });
 }
@@ -6455,18 +6482,17 @@ function loadAllPartTiers(force){
   __tierLoading = true;
   readPartStatic().then(function(st){
     if (!st) { __tierLoading = false; return; }
-    var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-    var qs = [];
-    for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) qs.push((function(t, tr){
-      return readRetry(function(){ return proc.balanceOf(account, st.ids[t + "-" + tr]); }, 1).then(function(b){ return { t: t, tr: tr, c: Number(b) }; });
-    })(t, tr));
-    return Promise.all(qs);
-  }).then(function(rows){
-    window.__ptCache = {};
-    rows.forEach(function(r){ (window.__ptCache[r.t] = window.__ptCache[r.t] || {})[r.tr] = r.c; });
-    renderPartsGrid(window.__parts || [0,0,0,0,0,0,0,0]);
-    window.__tierLoadedAt = Date.now();
-    __tierLoading = false;
+    var iface = new ethers.Interface(["function balanceOf(address,uint256) view returns (uint256)"]);
+    var bal = [];
+    for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) bal.push([account, st.ids[t + "-" + tr]]);
+    return batchEthCall(iface, "balanceOf", bal, ADDRS.processor).then(function(counts){
+      window.__ptCache = {};
+      var k = 0;
+      for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++){ (window.__ptCache[t] = window.__ptCache[t] || {})[tr] = counts[k] === null ? 0 : Number(counts[k]); k++; }
+      renderPartsGrid(window.__parts || [0,0,0,0,0,0,0,0]);
+      window.__tierLoadedAt = Date.now();
+      __tierLoading = false;
+    });
   }).catch(function(){ __tierLoading = false; });
 }
 function openPartDetail(pt){
@@ -6568,7 +6594,7 @@ function renderBench(parts){
     var cnt = parts[si] || 0;
     var tr = asmSel[si] ? asmSel[si] - 1 : -1;
     var ph = 0;
-    if (tr > -1 && stat && tcache) ph = Math.round(stat.hash[stat.ids[(si + 1) + "-" + tr]] * stat.mult[tr]);
+    if (tr > -1 && stat && tcache) { var bh = stat.hash[stat.ids[(si + 1) + "-" + tr]] || 0; ph = bh > 0 ? Math.round(bh * stat.mult[tr]) : 0; }
     if (tr > -1) preHash += ph;
     var dot = tr > -1 ? '<i class="st-dot t' + tr + '"></i>' : '';
     var sSpan = tr > -1 ? '<span class="slot-sel t' + tr + '">' + PART_TIER[tr] + ' · ' + ph + ' H</span>' : '<span>' + (cnt > 0 ? t("b.hasShort") + cnt : (connected ? t("b.missingShort") : "—")) + '</span>';
@@ -6643,10 +6669,11 @@ function renderPartsOwnBody(parts){
       }).join("");
       det = '<div class="own-tiers">' + [0,1,2].map(function(tr){
         var v = c[tr];
-        var hash = v > 0 ? Math.round(stat.hash[stat.ids[(i + 1) + "-" + tr]] * stat.mult[tr]) : 0;
+        var h = stat.hash[stat.ids[(i + 1) + "-" + tr]] || 0;
+        var hash = v > 0 && h > 0 ? Math.round(h * stat.mult[tr]) : 0;
         return '<div class="ptd-row t' + tr + '">' +
           '<b><i></i>' + PART_TIER[tr] + '</b>' +
-          '<span>' + (v > 0 ? t("b.power") + ' · ' + hash + ' H' : '—') + '</span>' +
+          '<span>' + (hash > 0 ? t("b.power") + ' · ' + hash + ' H' : '—') + '</span>' +
           '<span class="have">× ' + v + '</span>' +
           '<em>' + (v ? t("b.lowFirst") : t("b.none")) + '</em></div>';
       }).join("") + '</div>';
@@ -6680,13 +6707,14 @@ function openPartsOwn(){
   openPop(m);
   if (!window.__ptCache) {
     if (!window.__tierLoading) loadAllPartTiers(true);
-    (function poll(times){
+    (function poll(times, tries){
       setTimeout(function(){
         if (!document.getElementById("partsOwnModal").classList.contains("open")) return;
         if (window.__ptCache) { renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]); return; }
-        if (times > 0) poll(times - 1);
+        if (!window.__tierLoading && tries > 0) { loadAllPartTiers(true); tries--; }
+        if (times > 0) poll(times - 1, tries);
       }, 1500);
-    })(9);
+    })(12, 2);
   }
 }
 function benchBoot(cb){
