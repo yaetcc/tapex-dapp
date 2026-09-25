@@ -2337,8 +2337,35 @@ footer b{
   flex:none;
 }
 .miner .rg-cb input{
-  width:12px;
-  height:12px;
+  width:13px;
+  height:13px;
+  -webkit-appearance:none;
+  appearance:none;
+  border:1px solid rgba(130,160,215,.45);
+  border-radius:4px;
+  background:rgba(16,29,56,.85);
+  cursor:pointer;
+  position:relative;
+  transition:border-color .15s ease,background .15s ease,box-shadow .15s ease;
+}
+.miner .rg-cb input:hover{
+  border-color:rgba(217,164,65,.55);
+}
+.miner .rg-cb input:checked{
+  background:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 0 6px rgba(217,164,65,.45);
+}
+.miner .rg-cb input:checked::after{
+  content:"";
+  position:absolute;
+  left:4px;
+  top:1px;
+  width:4px;
+  height:8px;
+  border:solid #08101f;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg);
 }
 .rg-bar{
   width:100%;
