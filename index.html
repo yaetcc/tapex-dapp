@@ -6301,16 +6301,16 @@ function renderBench(parts){
     bb.disabled = asmBusy || !full;
   }
 }
-function toggleAsm(t){
+function toggleAsm(pt){
   if (!signer || !account) { toast(t("t.asmConnect")); return; }
   if (asmBusy) return;
   var parts = window.__parts || [0,0,0,0,0,0,0,0];
-  if (asmSel[t]) { asmSel[t] = 0; renderBench(parts); return; }
-  if ((parts[t] || 0) < 1) { toast(t("t.asmMissing") + PART_NAMES[t] + t("t.asmMissingTail")); return; }
-  asmSel[t] = 1;
+  if (asmSel[pt]) { asmSel[pt] = 0; renderBench(parts); return; }
+  if ((parts[pt] || 0) < 1) { toast(t("t.asmMissing") + PART_NAMES[pt] + t("t.asmMissingTail")); return; }
+  asmSel[pt] = 1;
   renderBench(parts);
   var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
-  toast(PART_NAMES[t] + t("t.asmLoaded") + n + "/8");
+  toast(PART_NAMES[pt] + t("t.asmLoaded") + n + "/8");
 }
 function benchBoot(cb){
   var pc = document.querySelector("#bench .pc-case");
