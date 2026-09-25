@@ -5990,6 +5990,10 @@ function readRetry(fn, tries){
     throw err;
   });
 }
+function clearRigCache(){
+  window.__rigCache = null;
+  try { localStorage.removeItem("rigCache"); } catch(e){}
+}
 function setMsg(id, type, text){
   var el = $(id);
   if (!el) return;
@@ -6199,32 +6203,81 @@ function renderMine(){
     var cacheKey = account.toLowerCase() + "|" + last;
     var now = Date.now();
     var rigCache = window.__rigCache;
+    if (!(rigCache && rigCache.key === cacheKey && now < rigCache.exp)) {
+      try { var lc = JSON.parse(localStorage.getItem("rigCache")); if (lc && lc.key === cacheKey && lc.exp > now) rigCache = lc; } catch(e){}
+    }
     var scan;
     if (rigCache && rigCache.key === cacheKey && now < rigCache.exp) {
       myNfts = rigCache.myNfts.slice();
       scan = Promise.resolve(rigCache.staked.slice());
     } else {
       var from = 1;   // 全量扫描：覆盖早期 NFT（此前只扫最近 200 个 ID，旧矿机 #5..#28 被漏显）
-      var ids = [];
-      for (var tid = from; tid <= last; tid++) ids.push(tid);
-      function batchRead(idList, fn){
-        var BATCH = 40, out = [], idx = 0;
-        function step(){
-          if (idx >= idList.length) return Promise.resolve(out);
-          var chunk = idList.slice(idx, idx + BATCH); idx += BATCH;
-          return Promise.all(chunk.map(function(t){ return readRetry(function(){ return fn(t); }, 2); })).then(function(res){
-            out = out.concat(res); return step();
-          });
-        }
-        return step();
+      // Multicall3 批量查询：1600 次逐 ID RPC → 约 4 次批量 RPC（秒级完成）
+      var MC_ADDR = "0xcA11bde05977b3631167028862bE2a173976CA11";
+      var MC_ABI = ["function tryAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) view returns (tuple(bool success, bytes returnData)[])"];
+      var ownerSel = "0x6352211e";
+      var stakeSel = new ethers.Interface(["function stakes(uint256) view returns (address,uint256,uint256)"]).getFunction("stakes").selector;
+      function tidHex(t){ return ethers.toBeHex(BigInt(t), 32).slice(2); }
+      var allCalls = [];
+      for (var t2 = from; t2 <= last; t2++){
+        allCalls.push({ target: circ.target, callData: ownerSel + tidHex(t2) });
+        allCalls.push({ target: mine.target, callData: stakeSel + tidHex(t2) });
       }
-      scan = batchRead(ids, function(tid){ return circ.ownerOf(tid); }).then(function(own){
-        own.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push(from + i); });
-        return batchRead(ids, function(stid){ return mine.stakes(stid); }).then(function(stRows){
-          var staked = [];
-          stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked.push(from + i); });
-          window.__rigCache = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice() };
-          return staked;
+      var BATCH = 400, out = [], idx = 0;
+      var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
+      function step(){
+        if (idx >= allCalls.length) return Promise.resolve(out);
+        var chunk = allCalls.slice(idx, idx + BATCH); idx += BATCH;
+        return readRetry(function(){ return mc.tryAggregate.staticCall(false, chunk); }, 1).then(function(res){
+          out = out.concat(res); return step();
+        });
+      }
+      function saveCache(myN, st){
+        var c = { key: cacheKey, exp: now + 60000, myNfts: myN.slice(), staked: st.slice() };
+        window.__rigCache = c;
+        try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e){}
+      }
+      scan = step().then(function(ret){
+        var staked = [];
+        for (var i = 0; i < ret.length; i += 2){
+          var tid = from + (i >> 1);
+          var own = ret[i], stR = ret[i + 1];
+          if (own && own.success && own.returnData && own.returnData.length >= 64){
+            var rh = ethers.hexlify(own.returnData);
+            if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push(tid);
+          }
+          if (stR && stR.success && stR.returnData && stR.returnData.length >= 192){
+            var sh = ethers.hexlify(stR.returnData);
+            var stOwner = "0x" + sh.slice(26, 66);
+            var share = BigInt("0x" + sh.slice(66, 130));
+            if (stOwner.toLowerCase() === account.toLowerCase() && share > 0n) staked.push(tid);
+          }
+        }
+        saveCache(myNfts, staked);
+        return staked;
+      }).catch(function(e){
+        console.warn("multicall fail, fallback per-id scan", e);
+        var ids = [];
+        for (var t3 = from; t3 <= last; t3++) ids.push(t3);
+        function batchRead(idList, fn){
+          var B2 = 40, o2 = [], j2 = 0;
+          function stp(){
+            if (j2 >= idList.length) return Promise.resolve(o2);
+            var chunk = idList.slice(j2, j2 + B2); j2 += B2;
+            return Promise.all(chunk.map(function(t){ return readRetry(function(){ return fn(t); }, 2); })).then(function(res){
+              o2 = o2.concat(res); return stp();
+            });
+          }
+          return stp();
+        }
+        return batchRead(ids, function(tid){ return circ.ownerOf(tid); }).then(function(own){
+          own.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push(from + i); });
+          return batchRead(ids, function(stid){ return mine.stakes(stid); }).then(function(stRows){
+            var staked2 = [];
+            stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push(from + i); });
+            saveCache(myNfts, staked2);
+            return staked2;
+          });
         });
       });
     }
@@ -7200,7 +7253,7 @@ function doRigStake(id){
     stopSigWatch();
     logTx(t("o.stakeLog") + id, receipt.hash);
     setMsg("rigModalMsg","ok", t("o.stakeOk"));
-    closeRigModal(); toast(t("o.stakeOkShort")); refresh();
+    closeRigModal(); toast(t("o.stakeOkShort")); clearRigCache(); refresh();
   }).catch(function(e){
     stopSigWatch();
     if (e.message === "not your nft") return;
@@ -7223,7 +7276,7 @@ function doRigUnstake(id){
     stopSigWatch();
     logTx(t("o.unstakeLog") + id, receipt.hash);
     setMsg("rigModalMsg","ok", t("o.unstakeOk"));
-    closeRigModal(); toast(t("o.unstakeOkShort")); refresh();
+    closeRigModal(); toast(t("o.unstakeOkShort")); clearRigCache(); refresh();
   }).catch(function(e){
     stopSigWatch();
     var m = humanErr(e);
@@ -7307,7 +7360,7 @@ function doBatchStake(){
   (function one(i){
     if (i >= ids.length) {
       rigLog("ok", t("o.batchStakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.stakeOkShort"));
-      rigSel = {}; refresh(); busy(btn, false); return;
+      rigSel = {}; clearRigCache(); refresh(); busy(btn, false); return;
     }
     var id = ids[i];
     rigLog("info", t("o.stakeProgress") + (i + 1) + "/" + ids.length + t("o.stakeProgressMid") + id + t("o.stakeProgressTail"));
