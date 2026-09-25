@@ -1205,7 +1205,7 @@ footer b{
   font-size:13px;
   opacity:0;
   transition:all .3s;
-  z-index:99;
+  z-index:999;
   pointer-events:none;
   max-width:86vw;
   font-family:"JetBrains Mono",monospace;
@@ -5478,8 +5478,33 @@ function fitStatNums(){
     while (el.scrollWidth > g.clientWidth - 2 && fs > 12 && guard < 30) { fs -= 1; el.style.fontSize = fs + "px"; guard++; }
   });
 }
-function toast(msg){
-  var t = $("toast"); if (!t) return; t.textContent = msg; t.classList.add("show");
+/* 就近提示：toast 显示在最近一次点击的元素附近（或显式传入的 anchor 附近），
+   无点击上下文时兜底显示在屏幕底部。所有现有 toast(msg) 调用自动生效。 */
+var __lastTap = null;
+document.addEventListener("click", function(e){ __lastTap = e.target; }, true);
+document.addEventListener("touchend", function(e){ __lastTap = e.target; }, true);
+function toast(msg, anchor){
+  var t = $("toast"); if (!t) return;
+  t.textContent = msg;
+  var el = (anchor && anchor.isConnected) ? anchor : (__lastTap && __lastTap.isConnected ? __lastTap : null);
+  if (el) {
+    var r = el.getBoundingClientRect();
+    var left = Math.max(64, Math.min(r.left + r.width / 2, window.innerWidth - 64));
+    var top = r.top - 46;
+    if (top < 10) top = r.bottom + 12;   // 上方放不下时放到元素下方
+    t.style.left = left + "px";
+    t.style.top = top + "px";
+    t.style.bottom = "auto";
+    t.style.transform = "translateX(-50%) translateY(6px)";
+  } else {
+    t.style.left = "50%";
+    t.style.top = "auto";
+    t.style.bottom = "34px";
+    t.style.transform = "translateX(-50%) translateY(16px)";
+  }
+  t.classList.remove("show");
+  void t.offsetWidth;   // 强制 reflow，保证每次弹出都有过渡动画
+  t.classList.add("show");
   clearTimeout(t._tm); t._tm = setTimeout(function(){ t.classList.remove("show"); }, 2200);
 }
 function logTx(label, hash){
