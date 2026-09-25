@@ -41,12 +41,15 @@
 }
 html{
   /* 阻止 iOS Safari text autosizing：动态数据加载后可能把文字突然放大（WebKit #296524/#304640），撑开布局导致导航与内容不齐平 */
-  -webkit-text-size-adjust:none;
-  text-size-adjust:none;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 body{
   /* 显式根字号：阻止 iOS/WebView font boosting 对继承字号文本的自动放大 */
   font-size:14px;
+  /* 兜底：任何文字被自动放大/字体替换导致变宽时强制断行，杜绝横向溢出 */
+  overflow-wrap:break-word;
+  word-break:break-word;
   background:radial-gradient(1100px 480px at 18% -8%, rgba(79,224,208,.16), transparent 62%),
     radial-gradient(900px 420px at 88% 4%, rgba(240,194,103,.13), transparent 60%),
     radial-gradient(1200px 800px at 50% 122%, rgba(96,64,190,.15), transparent 65%),
@@ -197,6 +200,7 @@ nav{
 .hero{
   position:relative;
   z-index:1;
+  min-width:0;
   max-width:1280px;
   margin:0 auto;
   padding:26px 24px 6px;
@@ -679,9 +683,11 @@ input::placeholder{
   display:flex;
 }
 main{
+  min-width:0;
   max-width:1280px;
   margin:0 auto;
   padding:28px 24px 60px;
+  min-width:0;
   display:grid;
   grid-template-columns:1fr 380px;
   gap:26px;
@@ -692,6 +698,7 @@ main{
 
 /* ===== 03 卡片 ===== */
 .card{
+  min-width:0;
   background:linear-gradient(180deg,rgba(31,54,98,.94),rgba(17,31,59,.99));
   border:1px solid rgba(130,160,215,.30);
   border-radius:var(--r-card);
@@ -4146,6 +4153,7 @@ to{background-position:34px 34px,34px 34px,0 0}}
 }
 @media (max-width:960px){
 main{
+  min-width:0;
   grid-template-columns:1fr;
 }
 .row{
