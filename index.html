@@ -133,7 +133,11 @@ nav{
   align-items:center;
   gap:12px;
 }
+/* 汉堡按钮与下拉面板：桌面默认隐藏，仅在移动端媒体查询内显示 */
 #menuBtn{
+  display:none;
+}
+#menuPanel{
   display:none;
 }
 .link-home{
@@ -4215,6 +4219,22 @@ main{
   flex-wrap:nowrap;
   gap:8px;
 }
+/* 移动端汉堡菜单：单行压缩导航 + 下拉面板 */
+#menuPanel{
+  display:none;
+  position:absolute;
+  top:calc(100% + 6px);
+  right:12px;
+  z-index:2000;
+  min-width:170px;
+  flex-direction:column;
+  gap:4px;
+  padding:10px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 12px 32px rgba(0,0,0,.45);
+}
 nav{
   position:relative;
   padding:12px 12px;
@@ -4254,21 +4274,6 @@ nav{
 .badge.on{
   font-size:10px;
   padding:2px 6px;
-}
-#menuPanel{
-  display:none;
-  position:absolute;
-  top:calc(100% + 6px);
-  right:12px;
-  z-index:2000;
-  min-width:170px;
-  flex-direction:column;
-  gap:4px;
-  padding:10px;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow:0 12px 32px rgba(0,0,0,.45);
 }
 #menuPanel.open{
   display:flex;
@@ -4312,7 +4317,7 @@ nav{
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
     <button id="walletBtn"><span class="dot"></span><span id="walletLabel" data-i18n="nav.connect">连接钱包</span></button>
-    <button id="menuBtn" aria-label="菜单"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <button id="menuBtn" aria-label="菜单" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div id="menuPanel">
     <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
@@ -4832,6 +4837,7 @@ function applyLang(noRefresh){
     } catch(e2){}
   });
   var lb = $("langBtn"); if (lb) lb.textContent = (LANG === "zh") ? "EN" : "中";
+  var mbx = $("menuBtn"); if (mbx) mbx.setAttribute("aria-label", (LANG === "zh") ? "菜单" : "Menu");
   refreshNames();
   var wl = $("walletLabel");
   if (wl && wl.textContent !== t("nav.connect")) { /* 钱包状态文本保留原逻辑 */ }
@@ -6453,7 +6459,7 @@ applyLang(true);
       mp.classList.remove("open");
     }
   });
-  window.addEventListener("scroll", function(){ mp.classList.remove("open"); }, { passive: true });
+  window.addEventListener("scroll", function(){ if (mp.classList.contains("open")) mp.classList.remove("open"); }, { passive: true });
 })();
 
 })();
