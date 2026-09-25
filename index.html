@@ -4357,6 +4357,11 @@ main{
 .asset-list li{
   padding:9px 2px;
 }
+/* 移动端防聚焦缩放：iOS/Android WebView 在输入框字号<16px 时聚焦会自动放大页面。
+   :focus 时强制 16px（缩放临界值），聚焦即生效、失焦自动恢复，视觉不变 */
+input:focus,textarea:focus,select:focus{
+  font-size:16px!important;
+}
 /* 质押工具条 · 移动端重设计：三层分区（筛选行 / 操作行 / 分页行），全部内容可见、无横向滚动 */
 .rig-ops{
   flex-wrap:wrap;
@@ -6706,6 +6711,40 @@ bindWalletEvents();
 setTimeout(function(){
   if (!et) { et = detectWallet(); if (et) bindWalletEvents(); }
 }, 900);
+
+/* 防聚焦缩放兜底：动态生成的输入框同样处理。
+   在 touchstart/mousedown（聚焦发生前）就预置字号 16px，确保 iOS/Android WebView 判定缩放时已达临界值；失焦恢复原字号。 */
+(function(){
+  var FIX = 16;
+  function prep(el){
+    if (!el || !el.tagName) return;
+    var tag = el.tagName;
+    if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") return;
+    if (el.type === "checkbox" || el.type === "radio" || el.type === "button" || el.type === "submit" || el.type === "range") return;
+    var cs = getComputedStyle(el);
+    if (parseFloat(cs.fontSize) < FIX) {
+      if (!el.dataset.origFs) el.dataset.origFs = cs.fontSize;
+      el.style.fontSize = FIX + "px";
+    }
+  }
+  function restore(el){
+    if (el && el.dataset && el.dataset.origFs) {
+      el.style.fontSize = el.dataset.origFs;
+      delete el.dataset.origFs;
+    }
+  }
+  document.addEventListener("touchstart", function(e){ prep(e.target); }, true);
+  document.addEventListener("mousedown", function(e){ prep(e.target); }, true);
+  document.addEventListener("focusin", function(e){ prep(e.target); }, true);
+  document.addEventListener("focusout", function(e){ restore(e.target); }, true);
+  document.addEventListener("touchend", function(e){
+    // 点击后如果未聚焦（点 select 的箭头等），恢复原字号
+    setTimeout(function(){
+      var el = e.target;
+      if (el && document.activeElement !== el) restore(el);
+    }, 300);
+  }, true);
+})();
 
 /* 初始化 */
 renderGlobal().then(function(){ refresh(); }).catch(function(e){ console.warn("init read fail", e); });
