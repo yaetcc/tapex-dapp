@@ -2647,78 +2647,9 @@ footer b{
   font-weight:600;
   min-width:34px;
 }
-.own-cell .own-chips{
-  display:flex;
-  gap:4px;
-  flex-wrap:wrap;
-  flex:1;
-}
-.own-cell .own-n{
-  color:var(--tx3);
-  font-size:10.5px;
-}
-.own-cell .own-load{
-  color:var(--teal);
-  font-style:normal;
-  opacity:.8;
-}
-.own-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:3px;
-  font-size:9.5px;
-  color:var(--tx3);
-  padding:1px 6px;
-  border-radius:999px;
-  border:1px solid rgba(130,160,215,.22);
-  background:rgba(16,29,56,.6);
-}
-.own-chip i{
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--tx3);
-  flex:none;
-}
-.own-chip.t0 i{ background:#4fd8c9; }
-.own-chip.t1 i{ background:#6cc2ff; }
-.own-chip.t2 i{ background:#ffd54d; }
-.own-chip.t0{ color:#4fd8c9; }
-.own-chip.t1{ color:#6cc2ff; }
-.own-chip.t2{ color:#ffd54d; }
-.own-chip.z{ opacity:.45; }
-.own-cell .own-arrow{
-  color:var(--tx3);
-  font-size:13px;
-  transition:transform .18s ease;
-  flex:none;
-}
 .own-cell.open .own-arrow{
   transform:rotate(90deg);
   color:var(--gold);
-}
-.own-tiers{
-  display:none;
-  grid-column:1 / -1;
-  margin:-4px 0 2px;
-  padding:6px 8px;
-  border:1px solid rgba(130,160,215,.13);
-  border-radius:8px;
-  background:rgba(7,13,28,.5);
-}
-.own-cell.open .own-tiers{
-  display:block;
-}
-.own-tiers .ptd-row{
-  margin-bottom:2px;
-}
-.own-tiers .ptd-row:last-child{
-  margin-bottom:0;
-}
-@media (max-width:420px){
-  .own-cell .own-chips{
-    gap:3px;
-  }
 }
 #rigModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
@@ -3107,48 +3038,6 @@ footer b{
   margin-top:12px;
   padding:0 2px;
   flex-direction:column;
-}
-.pc-slot .st-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--tx3);
-  position:absolute;
-  top:5px;
-  right:5px;
-}
-.pc-slot .st-dot.t0{ background:#4fd8c9; box-shadow:0 0 6px rgba(79,216,201,.8); }
-.pc-slot .st-dot.t1{ background:#6cc2ff; box-shadow:0 0 6px rgba(108,194,255,.8); }
-.pc-slot .st-dot.t2{ background:#ffd54d; box-shadow:0 0 6px rgba(255,213,77,.8); }
-.pc-slot .slot-sel{
-  font-size:9px;
-  font-weight:700;
-}
-.pc-slot .slot-sel.t0{ color:#4fd8c9; }
-.pc-slot .slot-sel.t1{ color:#6cc2ff; }
-.pc-slot .slot-sel.t2{ color:#ffd54d; }
-.bench-prev{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  width:100%;
-  padding:5px 10px;
-  border:1px dashed rgba(217,164,65,.3);
-  border-radius:8px;
-  background:rgba(217,164,65,.05);
-  font-size:10.5px;
-  color:var(--tx3);
-  flex-wrap:wrap;
-}
-.bench-prev .bp-h{ color:var(--tx2); }
-.bench-prev .bp-h b{
-  color:var(--gold);
-  font-family:"JetBrains Mono",monospace;
-}
-.bench-prev .bp-t{
-  margin-left:auto;
-  color:var(--tx3);
-  font-size:9.5px;
 }
 
 /* ===== 14 其他 ===== */
@@ -4625,60 +4514,6 @@ footer .f-line2{
   box-shadow:0 8px 18px rgba(3,6,16,.4);
 }
 
-/* ===== 组装页 · 部件档位徽章 / 详情面板 ===== */
-.pt-badges{
-  display:flex;
-  gap:4px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-top:5px;
-}
-.pt-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:3px;
-  padding:1px 6px;
-  border-radius:999px;
-  font-size:9px;
-  font-family:"JetBrains Mono",monospace;
-  line-height:1.5;
-  border:1px solid transparent;
-  opacity:.92;
-}
-.pt-badge i{
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  display:inline-block;
-}
-.pt-badge.t0{
-  color:#7fe8dc;
-  border-color:rgba(79,224,208,.4);
-  background:rgba(79,224,208,.08);
-}
-.pt-badge.t0 i{ background:#4fd8c9; }
-.pt-badge.t1{
-  color:#c4b5fd;
-  border-color:rgba(167,139,250,.45);
-  background:rgba(167,139,250,.1);
-}
-.pt-badge.t1 i{ background:#a78bfa; box-shadow:0 0 4px rgba(167,139,250,.8); }
-.pt-badge.t2{
-  color:#f5cf8a;
-  border-color:rgba(240,194,103,.5);
-  background:rgba(240,194,103,.1);
-}
-.pt-badge.t2 i{ background:#f0c267; box-shadow:0 0 5px rgba(240,194,103,.9); }
-.pt-badge.hot{
-  animation:ptPulse 1.4s ease infinite;
-}
-@keyframes ptPulse{
-  0%,100%{ transform:scale(1); }
-  50%{ transform:scale(1.08); }
-}
-.part-cell.ok .pt-badges{
-  opacity:1;
-}
 .pt-total{
   font-size:10px;
   color:var(--tx3);
@@ -4688,115 +4523,6 @@ footer .f-line2{
   display:none;
 }
 
-/* 详情面板：点击部件格展开的 inline 面板 */
-.pt-detail{
-  display:none;
-  margin:0 0 12px;
-  padding:12px 14px;
-  border:1px solid rgba(240,194,103,.3);
-  border-radius:14px;
-  background:linear-gradient(180deg,rgba(24,38,72,.85),rgba(15,26,50,.92));
-  box-shadow:0 10px 26px rgba(3,6,16,.45);
-}
-.pt-detail.open{
-  display:block;
-  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
-}
-.pt-detail .ptd-head{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:10px;
-}
-.pt-detail .ptd-head svg{
-  width:24px;
-  height:24px;
-}
-.pt-detail .ptd-head b{
-  font-size:14px;
-  color:var(--tx);
-}
-.pt-detail .ptd-head span{
-  font-size:11px;
-  color:var(--tx3);
-  margin-left:auto;
-}
-.pt-detail .ptd-close{
-  border:none;
-  background:none;
-  color:var(--tx3);
-  cursor:pointer;
-  font-size:13px;
-  padding:2px 6px;
-  border-radius:6px;
-  transition:.15s;
-}
-.pt-detail .ptd-close:hover{
-  color:var(--gold);
-  background:rgba(240,194,103,.12);
-}
-.ptd-rows{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-}
-.ptd-row{
-  padding:8px 9px;
-  border-radius:10px;
-  border:1px solid rgba(130,160,215,.16);
-  background:rgba(10,18,36,.55);
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-}
-.ptd-row.t0{ border-color:rgba(79,224,208,.3); }
-.ptd-row.t1{ border-color:rgba(167,139,250,.32); }
-.ptd-row.t2{ border-color:rgba(240,194,103,.38); }
-.ptd-row b{
-  font-size:10.5px;
-  font-weight:600;
-  display:flex;
-  align-items:center;
-  gap:5px;
-}
-.ptd-row b i{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  display:inline-block;
-}
-.ptd-row.t0 b{ color:#7fe8dc; } .ptd-row.t0 b i{ background:#4fd8c9; }
-.ptd-row.t1 b{ color:#c4b5fd; } .ptd-row.t1 b i{ background:#a78bfa; }
-.ptd-row.t2 b{ color:#f5cf8a; } .ptd-row.t2 b i{ background:#f0c267; }
-.ptd-row span{
-  font-size:10px;
-  color:var(--tx2);
-  font-family:"JetBrains Mono",monospace;
-}
-.ptd-row em{
-  font-style:normal;
-  font-size:10px;
-  color:var(--tx3);
-}
-.ptd-row .have{
-  font-size:11px;
-  font-weight:700;
-}
-.ptd-row.t0 .have{ color:#7fe8dc; }
-.ptd-row.t1 .have{ color:#c4b5fd; }
-.ptd-row.t2 .have{ color:#f5cf8a; }
-.ptd-foot{
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.ptd-foot .asm-hint{
-  font-size:10.5px;
-  color:var(--tx3);
-  flex:1 1 100%;
-}
 .ptd-load{
   font-size:11px;
   color:var(--tx3);
@@ -4821,16 +4547,6 @@ footer .f-line2{
 .asm-strategy b{
   color:var(--gold);
   font-weight:600;
-}
-.asm-mode{
-  background:rgba(16,29,56,.9);
-  border:1px solid rgba(130,160,215,.35);
-  border-radius:7px;
-  color:var(--teal);
-  font-size:10.5px;
-  padding:2px 6px;
-  cursor:pointer;
-  max-width:150px;
 }
 .st-cnt{
   display:flex;
@@ -4879,15 +4595,8 @@ footer .f-line2{
   .parts-grid{
     grid-template-columns:repeat(4,1fr);
   }
-  .ptd-rows{
-    grid-template-columns:repeat(3,1fr);
-  }
   .part-cell{
     padding:8px 4px;
-  }
-  .pt-badge{
-    font-size:8.5px;
-    padding:1px 4px;
   }
 }
 
@@ -5370,7 +5079,6 @@ input:focus,textarea:focus,select:focus{
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg>组装流片：8 类部件 → 整机 PC NFT</h3>
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
-      <div class="pt-detail" id="ptDetail"></div>
       <div class="asm-strategy" id="asmStrategy"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
@@ -6381,23 +6089,6 @@ function renderMine(){
   });
 }
 
-function tierBadges(cache){
-  var b = [];
-  for (var tr = 0; tr < 3; tr++){
-    var c = cache && cache[tr] ? cache[tr] : 0;
-    b.push('<span class="pt-badge t' + tr + (c > 0 ? " hot" : "") + '" title="' + PART_TIER[tr] + '">' + '<i></i>' + PART_TIER[tr] + ' ×' + c + '</span>');
-  }
-  return b.join("");
-}
-var __asmMode = "low";
-function setAsmMode(m){
-  __asmMode = m;
-  var se = $("asmMode"); if (se) se.value = m;
-  if (m === "low") toast(t("b.modeLowTag"));
-  else if (m === "balanced") toast(t("b.modeBalTag"));
-  else toast(t("b.modeHighTag") + t("b.chainRule"));
-  renderAsmStrategy(window.__parts || [0,0,0,0,0,0,0,0]);
-}
 function asmCountSet(v){
   v = Math.max(1, Math.min(5, v));
   var a = $("asmCount"); if (a) a.value = v;
@@ -6411,165 +6102,30 @@ function renderAsmStrategy(parts){
   if (!parts || !parts.length) return;
   var canN = Math.min.apply(null, parts.slice(0, 8));
   var n = $("stCount") && $("stCount").value ? Number($("stCount").value) : (Number(($("asmCount") || { value: "2" }).value) || 2);
-  var modeTxt = __asmMode === "low" ? t("b.modeLow") : (__asmMode === "balanced" ? t("b.modeBal") : t("b.modeHigh"));
   el.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" style="flex:none"><path d="M12 3l8 4v8l-8 4-8-4V7z"/><path d="M12 12l8-4M12 12v8"/></svg>' +
     '<span>' + t("b.strategy") + '</span>' +
-    '<select id="asmMode" class="asm-mode" title="' + t("b.chainRule") + '">' +
-      '<option value="low"' + (__asmMode === "low" ? " selected" : "") + '>' + t("b.modeLow") + '</option>' +
-      '<option value="balanced"' + (__asmMode === "balanced" ? " selected" : "") + '>' + t("b.modeBal") + '</option>' +
-      '<option value="high"' + (__asmMode === "high" ? " selected" : "") + '>' + t("b.modeHigh") + '</option>' +
-    '</select>' +
     '<span class="st-cnt"><button id="stMinus" aria-label="−">−</button><input id="stCount" type="number" min="1" max="5" value="' + n + '">' + t("b.units") + '<button id="stPlus" aria-label="+">+</button></span>' +
     '<span class="can-n">' + t("b.canAsm") + ' ' + canN + ' ' + t("b.units") + '</span>';
-  var mo = $("asmMode");
-  if (mo) mo.addEventListener("change", function(){ setAsmMode(mo.value); });
   var mn = $("stMinus"); if (mn) mn.addEventListener("click", function(){ asmCountSet(Number(($("stCount")||{value:2}).value||2) - 1); });
   var pl = $("stPlus"); if (pl) pl.addEventListener("click", function(){ asmCountSet(Number(($("stCount")||{value:2}).value||2) + 1); });
   var sc = $("stCount");
   if (sc) sc.addEventListener("change", function(){ asmCountSet(Number(sc.value)||2); });
 }
-var __pidStatic = null;
-var __tierLoading = false;
-/* 批量 eth_call：每批 10 个（X Layer 公共 RPC 拒绝大 batch，-32014），自动分批串联 */
-function batchEthCall(iface, fnName, argLists, to, batchSize){
-  batchSize = batchSize || 10;
-  var chunks = [];
-  for (var i = 0; i < argLists.length; i += batchSize) chunks.push(argLists.slice(i, i + batchSize));
-  return chunks.reduce(function(p, chunk){
-    return p.then(function(acc){
-      var body = chunk.map(function(a, k){
-        return { jsonrpc: "2.0", id: k + 1, method: "eth_call", params: [{ to: to, data: iface.encodeFunctionData(fnName, a) }, "latest"] };
-      });
-      return fetch(RPC, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
-        .then(function(r){ return r.json(); })
-        .then(function(arr){
-          var byId = {};
-          arr.forEach(function(o){ if (o && o.id) byId[o.id] = o; });
-          return acc.concat(chunk.map(function(a, k){
-            var o = byId[k + 1];
-            return (o && o.result) ? iface.decodeFunctionResult(fnName, o.result)[0] : null;
-          }));
-        });
-    });
-  }, Promise.resolve([]));
-}
-function readPartStatic(){
-  if (__pidStatic) return Promise.resolve(__pidStatic);
-  if (!signer || !account) return Promise.resolve(null);
-  var iface = new ethers.Interface([
-    "function tokenIdOf(uint8,uint8) view returns (uint256)",
-    "function baseHash(uint256) view returns (uint256)",
-    "function tierMultiplier(uint256) view returns (uint256)"
-  ]);
-  var t0 = [];
-  for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) t0.push([t, tr]);
-  return batchEthCall(iface, "tokenIdOf", t0, ADDRS.processor).then(function(ids){
-    var idN = ids.map(function(v){ return Number(v); });
-    return batchEthCall(iface, "baseHash", idN.map(function(id){ return [id]; }), ADDRS.processor).then(function(hashes){
-      return batchEthCall(iface, "tierMultiplier", [[0],[1],[2]], ADDRS.processor).then(function(mults){
-        var out = { ids: {}, hash: {}, mult: mults.map(function(v){ return Number(v); }) };
-        var k = 0;
-        for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++){ var id = idN[k]; out.ids[t + "-" + tr] = id; out.hash[id] = hashes[k] === null ? 0 : Number(hashes[k]); k++; }
-        __pidStatic = out;
-        return out;
-      });
-    });
-  });
-}
-function loadAllPartTiers(force){
-  if (!signer || !account || __tierLoading) return;
-  if (!force && Date.now() - (window.__tierLoadedAt || 0) < 15000) return;   // 档位余额 15s 缓存，避免每次刷新重读 24 次 RPC
-  __tierLoading = true;
-  readPartStatic().then(function(st){
-    if (!st) { __tierLoading = false; return; }
-    var iface = new ethers.Interface(["function balanceOf(address,uint256) view returns (uint256)"]);
-    var bal = [];
-    for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++) bal.push([account, st.ids[t + "-" + tr]]);
-    return batchEthCall(iface, "balanceOf", bal, ADDRS.processor).then(function(counts){
-      window.__ptCache = {};
-      var k = 0;
-      for (var t = 1; t <= 8; t++) for (var tr = 0; tr < 3; tr++){ (window.__ptCache[t] = window.__ptCache[t] || {})[tr] = counts[k] === null ? 0 : Number(counts[k]); k++; }
-      renderPartsGrid(window.__parts || [0,0,0,0,0,0,0,0]);
-      window.__tierLoadedAt = Date.now();
-      __tierLoading = false;
-    });
-  }).catch(function(){ __tierLoading = false; });
-}
-function openPartDetail(pt){
-  var d = $("ptDetail"); if (!d) return;
-  if (d.classList.contains("open") && d.dataset.t === String(pt)) { d.classList.remove("open"); d.dataset.t = ""; return; }
-  d.dataset.t = String(pt);
-  d.innerHTML = '<div class="ptd-load">' + t("b.loadingTier") + '</div>';
-  d.classList.add("open");
-  if (!signer || !account) { d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; return; }
-  readPartStatic().then(function(st){
-    if (!st) { d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; return; }
-    var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-    var nm = PART_NAMES[pt];
-    return Promise.all([0,1,2].map(function(tr){
-      return readRetry(function(){ return proc.balanceOf(account, st.ids[(pt + 1) + "-" + tr]); }, 1).then(function(b){
-        return { tr: tr, count: Number(b), hash: st.hash[st.ids[(pt + 1) + "-" + tr]] * st.mult[tr] };
-      });
-    })).then(function(rows){
-      d.innerHTML =
-        '<div class="ptd-head">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--gold)">' + PART_ICON[pt] + '</svg>' +
-          '<b>' + nm + '</b><span>' + t("b.detail") + '</span><button class="ptd-close">×</button>' +
-        '</div>' +
-        '<div class="ptd-rows">' + rows.map(function(r){
-          return '<div class="ptd-row t' + r.tr + '">' +
-            '<b><i></i>' + PART_TIER[r.tr] + '</b>' +
-            '<span>' + t("b.power") + ' · ' + r.hash + ' H</span>' +
-            '<span class="have">× ' + r.count + '</span>' +
-            '<em>' + (r.count ? t("b.lowFirst") : t("b.none")) + '</em>' +
-          '</div>';
-        }).join('') + '</div>' +
-        '<div class="ptd-foot">' +
-          '<button class="action-btn sec" id="ptdLoad">' + t("b.loadToBench") + '</button>' +
-          '<button class="action-btn sec" id="ptdClear">' + t("b.unloadBench") + '</button>' +
-          '<span class="asm-hint">' + t("b.lowFirstHint") + '</span>' +
-        '</div>';
-      var cc = d.querySelector(".ptd-close");
-      if (cc) cc.addEventListener("click", function(){ d.classList.remove("open"); d.dataset.t = ""; });
-      var lk = d.querySelector("#ptdLoad");
-      if (lk) lk.addEventListener("click", function(){ toggleAsm(pt); });
-      var ck = d.querySelector("#ptdClear");
-      if (ck) ck.addEventListener("click", function(){ asmSel = {}; renderBench(window.__parts); toast(t("b.benchCleared")); });
-    });
-  }).catch(function(){ d.innerHTML = '<div class="ptd-load">' + t("b.connectTier") + '</div>'; });
-}
 function renderPartsGrid(parts){
   var g = $("partsGrid"); if (!g) return;
   var names = PART_NAMES, ready = parts.every(function(v){ return v >= 1; });
-  var cache = window.__ptCache || {};
   g.innerHTML = names.map(function(n, i){
     var ok = parts[i] >= 1;
-    var badges = cache[i + 1] ? tierBadges(cache[i + 1]) : '';
-    return '<div class="part-cell' + (ok ? " ok" : "") + '" data-t="' + i + '" tabindex="0">' +
+    return '<div class="part-cell' + (ok ? " ok" : "") + '" data-t="' + i + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
       '<b>' + n + '</b><span>' + (ok ? t("a.has") + parts[i] : t("a.missing") + parts[i]) + '</span>' +
-      (badges ? '<span class="pt-badges">' + badges + '</span>' : '<span class="pt-badges pt-loading">…</span>') +
       '</div>';
   }).join("");
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
   renderAsmStrategy(parts);
   renderBench(parts);
-  loadAllPartTiers();
 }
-(function(){
-  var g = $("partsGrid"); if (!g) return;
-  g.addEventListener("click", function(ev){
-    var c = ev.target.closest(".part-cell");
-    if (c) openPartDetail(Number(c.getAttribute("data-t")));
-  });
-  g.addEventListener("keydown", function(ev){
-    if (ev.key === "Enter" || ev.key === " ") {
-      var c = ev.target.closest(".part-cell");
-      if (c) { ev.preventDefault(); openPartDetail(Number(c.getAttribute("data-t"))); }
-    }
-  });
-})();
 
 /* ---------- 装机台（真实装机体验） ---------- */
 var asmSel = {};              // type -> 1 已选装
@@ -6584,21 +6140,13 @@ function renderBench(parts){
   // 机箱内部插槽：行1 电源/散热器/主板 · 行2 GPU/RAM/CPU · 行3 SSD/机箱(横跨)
   var SLOT_ORDER = [5, 6, 1, 2, 3, 0, 4, 7];
   var SLOT_SPAN = { 7: " span2" };   // 机箱壳横跨两列
-  var stat = window.__pidStatic || null;
-  var tcache = window.__ptCache || null;
-  var preHash = 0;
   var slots = SLOT_ORDER.map(function(si){
     var sel = asmSel[si] ? " on" : "";
     var off = (!connected && !asmSel[si]) ? " off" : (parts[si] < 1 && !asmSel[si] ? " off" : "");
     var nm = PART_NAMES[si];
     var cnt = parts[si] || 0;
-    var tr = asmSel[si] ? asmSel[si] - 1 : -1;
-    var ph = 0;
-    if (tr > -1 && stat && tcache) { var bh = stat.hash[stat.ids[(si + 1) + "-" + tr]] || 0; ph = bh > 0 ? Math.round(bh * stat.mult[tr]) : 0; }
-    if (tr > -1) preHash += ph;
-    var dot = tr > -1 ? '<i class="st-dot t' + tr + '"></i>' : '';
-    var sSpan = tr > -1 ? '<span class="slot-sel t' + tr + '">' + PART_TIER[tr] + ' · ' + ph + ' H</span>' : '<span>' + (cnt > 0 ? t("b.hasShort") + cnt : (connected ? t("b.missingShort") : "—")) + '</span>';
-    return '<div class="pc-slot' + sel + off + (SLOT_SPAN[si] || "") + '" data-t="' + si + '" title="' + nm + (tr > -1 ? " · " + PART_TIER[tr] + " · " + ph + " H" : (cnt > 0 ? " · " + t("b.has") + cnt + " " + t("a.unit") : " · " + t("b.missing"))) + '">' + dot +
+    var sSpan = asmSel[si] ? '<span>' + t("b.installed") + '</span>' : '<span>' + (cnt > 0 ? t("b.hasShort") + cnt : (connected ? t("b.missingShort") : "—")) + '</span>';
+    return '<div class="pc-slot' + sel + off + (SLOT_SPAN[si] || "") + '" data-t="' + si + '" title="' + nm + (cnt > 0 ? " · " + t("b.has") + cnt + " " + t("a.unit") : " · " + t("b.missing")) + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[si] + '</svg>' +
       '<b>' + nm + '</b>' + sSpan + '</div>';
   }).join("");
@@ -6613,7 +6161,6 @@ function renderBench(parts){
       '</div>' +
     '</div>' +
     '<div class="bench-foot">' +
-      (preHash > 0 ? '<div class="bench-prev"><span class="bp-h">' + t("b.preHash") + ' <b>' + preHash + ' H</b></span><span class="bp-t">' + t("b.selPrev") + '</span></div>' : '') +
       '<div class="bench-prog"><span>' + t("b.installed") + ' <b>' + n + '</b>/8</span><div class="bench-bar"><i style="width:' + (n * 12.5) + '%"></i></div></div>' +
       '<div class="bench-acts">' +
         '<button id="benchBtn">' + t("act.asmFull") + (n === 8 ? " ▸" : "") + '</button>' +
@@ -6633,66 +6180,29 @@ function toggleAsm(pt){
   if (!signer || !account) { toast(t("t.asmConnect")); return; }
   if (asmBusy) return;
   var parts = window.__parts || [0,0,0,0,0,0,0,0];
-  var cache = window.__ptCache || null;
-  var stat = window.__pidStatic || null;
-  var cur = asmSel[pt] || 0;            // 0=空 1=标准 2=Pro 3=旗舰
-  var av = [];
-  if (cache) { var c = cache[pt + 1] || [0,0,0]; for (var tr = 0; tr < 3; tr++) if (c[tr] > 0) av.push(tr + 1); }
-  else if ((parts[pt] || 0) >= 1) av = [1];
-  if (!av.length) { toast(t("t.asmMissing") + PART_NAMES[pt] + t("t.asmMissingTail")); return; }
-  var next = 0;
-  if (cur) { var idx = av.indexOf(cur); next = (idx > -1 && idx + 1 < av.length) ? av[idx + 1] : 0; }
-  else next = av[0];
-  asmSel[pt] = next;
-  renderBench(parts);
-  if (next) {
+  if (!asmSel[pt]) {
+    if ((parts[pt] || 0) < 1) { toast(t("t.asmMissing") + PART_NAMES[pt] + t("t.asmMissingTail")); return; }
+    asmSel[pt] = 1;
     var n = 0; for (var k in asmSel) if (asmSel[k]) n++;
-    var h = (stat && cache) ? Math.round(stat.hash[stat.ids[(pt + 1) + "-" + (next - 1)]] * stat.mult[next - 1]) : 0;
-    toast(PART_NAMES[pt] + " · " + PART_TIER[next - 1] + (h ? " · " + h + " H" : "") + t("t.asmLoaded") + n + "/8");
+    toast(PART_NAMES[pt] + t("t.asmLoaded") + n + "/8");
   } else {
+    delete asmSel[pt];
     toast(PART_NAMES[pt] + t("t.asmUnloaded"));
   }
+  renderBench(parts);
 }
 function renderPartsOwnBody(parts){
   var g = $("partsOwnGrid"); if (!g) return;
-  var cache = window.__ptCache || null;
-  var stat = window.__pidStatic || null;
   var sum = 0;
   g.innerHTML = parts.map(function(n, i){
     sum += n;
-    var chips = "";
-    var det = "";
-    if (cache && stat) {
-      var c = cache[i + 1] || [0,0,0];
-      chips = [0,1,2].map(function(tr){
-        return '<span class="own-chip t' + tr + (c[tr] > 0 ? "" : " z") + '"><i></i>' + PART_TIER[tr] + ' ×' + c[tr] + '</span>';
-      }).join("");
-      det = '<div class="own-tiers">' + [0,1,2].map(function(tr){
-        var v = c[tr];
-        var h = stat.hash[stat.ids[(i + 1) + "-" + tr]] || 0;
-        var hash = v > 0 && h > 0 ? Math.round(h * stat.mult[tr]) : 0;
-        return '<div class="ptd-row t' + tr + '">' +
-          '<b><i></i>' + PART_TIER[tr] + '</b>' +
-          '<span>' + (hash > 0 ? t("b.power") + ' · ' + hash + ' H' : '—') + '</span>' +
-          '<span class="have">× ' + v + '</span>' +
-          '<em>' + (v ? t("b.lowFirst") : t("b.none")) + '</em></div>';
-      }).join("") + '</div>';
-    }
     return '<div class="own-cell' + (n ? " has" : "") + '" data-own="' + i + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
       '<b>' + PART_NAMES[i] + '</b>' +
-      (chips ? '<span class="own-chips">' + chips + '</span>' : '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + (n ? ' <em class="own-load">· ' + t("b.loadTier") + '</em>' : '') + '</span>') +
-      '<span class="own-arrow">›</span>' +
-      det + '</div>';
+      '<span class="own-n">' + (n ? t("a.has") + n : t("a.missing")) + '</span>' +
+      '</div>';
   }).join("");
   var st = $("partsOwnTotal"); if (st) st.textContent = String(sum);
-  if (!g.dataset.bound) {
-    g.dataset.bound = "1";
-    g.addEventListener("click", function(ev){
-      var cell = ev.target.closest(".own-cell");
-      if (cell) cell.classList.toggle("open");
-    });
-  }
 }
 function openPartsOwn(){
   var m = $("partsOwnModal"); if (!m) return;
@@ -6705,17 +6215,6 @@ function openPartsOwn(){
   }
   renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]);
   openPop(m);
-  if (!window.__ptCache) {
-    if (!window.__tierLoading) loadAllPartTiers(true);
-    (function poll(times, tries){
-      setTimeout(function(){
-        if (!document.getElementById("partsOwnModal").classList.contains("open")) return;
-        if (window.__ptCache) { renderPartsOwnBody(window.__parts || [0,0,0,0,0,0,0,0]); return; }
-        if (!window.__tierLoading && tries > 0) { loadAllPartTiers(true); tries--; }
-        if (times > 0) poll(times - 1, tries);
-      }, 1500);
-    })(12, 2);
-  }
 }
 function benchBoot(cb){
   var pc = document.querySelector("#bench .pc-case");
