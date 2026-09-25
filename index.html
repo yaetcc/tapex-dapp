@@ -695,7 +695,7 @@ input::placeholder{
 }
 .mk-item{
   display:grid;
-  grid-template-columns:34px 1fr 72px 46px 44px;
+  grid-template-columns:34px 1fr 88px 70px 52px;
   gap:6px;
   align-items:center;
   padding:8px 10px;
@@ -3545,6 +3545,166 @@ html{
   border-color:#d9a441;
   box-shadow:0 0 8px rgba(217,164,65,.25);
 }
+/* ===== 10 市场 · 美化增强 ===== */
+.mk-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:10px 0 2px;
+}
+.mk-stat{
+  background:rgba(16,29,56,.72);
+  border:1px solid rgba(130,160,215,.22);
+  border-radius:12px;
+  padding:9px 12px;
+  min-width:0;
+}
+.mk-stat b{
+  display:block;
+  font-size:15px;
+  font-weight:700;
+  font-family:"JetBrains Mono",monospace;
+  font-variant-numeric:tabular-nums;
+  color:var(--tx);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mk-stat span{
+  display:block;
+  font-size:10.5px;
+  letter-spacing:.6px;
+  color:var(--tx3);
+  margin-top:2px;
+}
+.mk-stat.gold b{
+  color:var(--gold);
+}
+.mk-sell{
+  background:rgba(16,29,56,.55);
+  border:1px solid rgba(130,160,215,.2);
+  border-radius:14px;
+  padding:12px 14px 14px;
+  margin:10px 0 0;
+}
+.mk-form-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--tx2);
+  margin-bottom:10px;
+}
+.mk-form-label::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:3px;
+  background:var(--gold);
+  box-shadow:0 0 8px rgba(217,164,65,.55);
+  flex:none;
+}
+.mk-sell .mk-row{
+  margin:0;
+}
+.mk-field{
+  display:flex;
+  align-items:center;
+  background:rgba(9,15,29,.65);
+  border:1px solid rgba(130,160,215,.28);
+  border-radius:10px;
+  padding:0 10px;
+  min-width:0;
+  transition:border-color .2s,box-shadow .2s;
+}
+.mk-field:focus-within{
+  border-color:var(--gold);
+  box-shadow:0 0 8px rgba(217,164,65,.18);
+}
+.mk-field .mk-prefix{
+  color:var(--gold);
+  font-family:"JetBrains Mono",monospace;
+  font-size:12.5px;
+  flex:none;
+  margin-right:6px;
+}
+.mk-field .mk-suffix{
+  color:var(--tx3);
+  font-size:11px;
+  flex:none;
+  margin-left:6px;
+  font-weight:600;
+}
+.mk-field input{
+  flex:1;
+  min-width:0;
+  height:34px;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--tx);
+  font-family:"JetBrains Mono",monospace;
+  font-size:13px;
+  padding:0;
+}
+.mk-sell .action-btn{
+  width:100%;
+  margin-top:10px;
+  padding:11px;
+  font-size:13px;
+}
+.mk-sell .msg{
+  margin-top:8px;
+}
+.mk-head-row{
+  display:grid;
+  grid-template-columns:34px 1fr 88px 70px 52px;
+  gap:6px;
+  align-items:center;
+  padding:2px 10px 6px;
+  font-size:10px;
+  letter-spacing:1.2px;
+  color:var(--tx3);
+  text-transform:uppercase;
+}
+.mk-head-row span:nth-child(n+3){
+  text-align:right;
+}
+.mk-head-row.mk-head-mine{
+  grid-template-columns:34px 1fr auto;
+}
+.mk-price{
+  text-align:right;
+  white-space:nowrap;
+}
+.mk-price.floor{
+  color:var(--gold);
+  font-weight:600;
+}
+.mk-price.floor::after{
+  content:"▲";
+  font-size:8px;
+  margin-left:3px;
+  vertical-align:1px;
+}
+.mk-seller{
+  cursor:help;
+}
+.mk-item{
+  transition:transform .15s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.mk-item:hover{
+  border-color:rgba(217,164,65,.5);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transform:translateY(-1px);
+}
+.mk-mine-item{
+  transition:border-color .2s ease;
+}
+.mk-mine-item:hover{
+  border-color:rgba(217,164,65,.5);
+}
 .mk-page{
   font-size:12px;
   color:#8fa3c7;
@@ -4339,15 +4499,34 @@ main{
   flex:1 1 42%;
   min-width:0;
 }
+.mk-stats{
+  gap:6px;
+}
+.mk-stat{
+  padding:8px 10px;
+}
+.mk-stat b{
+  font-size:13px;
+}
+.mk-stat span{
+  font-size:9.5px;
+}
+.mk-sell .mk-row{
+  grid-template-columns:1fr;
+}
+.mk-head-row{
+  display:none;
+}
 .mk-item{
-  grid-template-columns:26px 1fr 60px;
+  grid-template-columns:26px 1fr 80px;
   gap:5px;
 }
 .mk-item .mk-seller{
   display:none;
 }
 .mk-item .mk-price{
-  grid-column:2;
+  font-size:11px;
+  text-align:right;
 }
 .mk-item .mk-buy,.mk-item .mk-cancel{
   grid-column:1/-1;
@@ -4676,13 +4855,18 @@ input:focus,textarea:focus,select:focus{
     <div class="card" id="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
       <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
+      <div class="mk-stats">
+        <div class="mk-stat"><b id="mkStatCount">—</b><span data-i18n="mk.onSale">在售挂单</span></div>
+        <div class="mk-stat gold"><b id="mkStatFloor">—</b><span data-i18n="mk.floorLb">地板价</span></div>
+        <div class="mk-stat"><b id="mkStatMine">—</b><span data-i18n="mk.mineCnt">我的挂单</span></div>
+      </div>
       <div class="mk-sell" id="mkSell">
-        <label data-i18n="挂单卖出 NFT Token ID">挂单卖出 NFT Token ID</label>
+        <div class="mk-form-label" data-i18n="mk.sellTitle">挂单卖出 NFT</div>
         <div class="mk-row">
-          <input type="number" id="mkId" min="1" placeholder="我的 PC NFT ID">
-          <input type="number" id="mkPrice" min="0" step="0.000001" placeholder="价格 OKB">
+          <div class="mk-field"><span class="mk-prefix">#</span><input type="number" id="mkId" min="1" placeholder="PC NFT ID"></div>
+          <div class="mk-field"><input type="number" id="mkPrice" min="0" step="0.000001" placeholder="价格"><span class="mk-suffix">OKB</span></div>
         </div>
-        <button class="action-btn" id="mkListBtn">' + t("act.order") + '</button>
+        <button class="action-btn" id="mkListBtn" data-i18n="act.order">挂单</button>
         <div class="msg" id="mkMsg"></div>
       </div>
       <div class="mk-toolbar" id="mkToolbar">
@@ -4703,10 +4887,10 @@ input:focus,textarea:focus,select:focus{
         <button class="mk-pg" id="mkPrev">‹</button>
         <button class="mk-pg" id="mkNext">›</button>
       </div>
-      <div class="mk-head">在售挂单 <span class="mk-floor" id="mkFloor"></span></div>
-      <ul class="mk-list" id="mkList"><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
-      <div class="mk-head">我的挂单<button class="action-btn auto mk-cancel-all" id="mkCancelAll" data-i18n="全部撤下">全部撤下</button></div>
-      <ul class="mk-list" id="mkMineList"><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
+      <div class="mk-head"><span data-i18n="mk.onSaleH">在售挂单</span><span class="mk-floor" id="mkFloor"></span></div>
+      <ul class="mk-list" id="mkList"><li class="mk-head-row"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPc">PC</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colSeller">卖家</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
+      <div class="mk-head"><span data-i18n="mk.mineH">我的挂单</span><button class="action-btn auto mk-cancel-all" id="mkCancelAll" data-i18n="全部撤下">全部撤下</button></div>
+      <ul class="mk-list" id="mkMineList"><li class="mk-head-row mk-head-mine"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
       <p class="hint">合约 <code>0x83eB…CD8</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
     </div>
   </div>
@@ -4857,6 +5041,17 @@ var I18N = {
   "m.readFail": {zh:"市场读取失败：", en:"Market read failed: "},
   "m.noMatch": {zh:"暂无符合条件的在售挂单", en:"No matching listings"},
   "m.floor": {zh:"地板价 ", en:"Floor "},
+  "mk.onSale": {zh:"在售挂单", en:"Listed"},
+  "mk.onSaleH": {zh:"在售挂单", en:"Active listings"},
+  "mk.mineH": {zh:"我的挂单", en:"My listings"},
+  "mk.mineCnt": {zh:"我的挂单", en:"Mine"},
+  "mk.floorLb": {zh:"地板价", en:"Floor"},
+  "mk.sellTitle": {zh:"挂单卖出 NFT", en:"List your PC NFT"},
+  "mk.colId": {zh:"#", en:"#"},
+  "mk.colPc": {zh:"PC", en:"PC"},
+  "mk.colPrice": {zh:"价格", en:"Price"},
+  "mk.colSeller": {zh:"卖家", en:"Seller"},
+  "mk.colAct": {zh:"操作", en:"Action"},
   "act.save": {zh:"保存", en:"Save"},
   "s.won": {zh:"本次抽中：", en:"Drew: "},
   "s.odds": {zh:"。概率（链上 config.tw 实测）：机箱 18% · 电源 20% · 散热器 18% · RAM 14% · SSD 12% · 主板 8% · CPU 6% · GPU 4%，档位标准 70% / Pro 20% / 旗舰 10%。", en:". Odds (on-chain tw): Case 18% · PSU 20% · Cooler 18% · RAM 14% · SSD 12% · Motherboard 8% · CPU 6% · GPU 4%; tiers Standard 70% / Pro 20% / Flagship 10%."},
@@ -5709,6 +5904,7 @@ function claimFlow(){
 }
 /* ---------- 交易市场 ---------- */
 var marketDirty = false;
+function mkHeadOf(ul){ var h = ul && ul.querySelector(".mk-head-row"); return h ? h.outerHTML : ""; }
 function renderMarket(){
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, pubProvider);
   var list = $("mkList");
@@ -5730,7 +5926,7 @@ function renderMarket(){
         return readRetry(function(){ return mk.listings(tid); }, 2).then(function(l){ return { l: l, tid: tid }; });
       })).then(function(rows){
         var active = rows.filter(function(r){ return r.l.active; });
-        if (!active.length) { list.innerHTML = '<li class="mk-empty">' + t("m.empty") + '</li>'; return; }
+        if (!active.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.empty") + '</li>'; return; }
         var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
         var PART_ABBR = ["CPU","MB","GPU","RAM","SSD","PSU","FAN","CASE"];
         var TIER_NAME = ["标准","Pro","旗舰"];
@@ -5741,6 +5937,9 @@ function renderMarket(){
         })).then(function(rows2){
           var floor = Math.min.apply(null, rows2.map(function(rd){ return Number(rd.r.l.price); }))/1e18;
           $("mkFloor").textContent = t("m.floor") + floor + " OKB";
+          var stC = $("mkStatCount"), stF = $("mkStatFloor");
+          if (stC) stC.textContent = rows2.length;
+          if (stF) stF.textContent = floor + " OKB";
           window.__mkActive = rows2;
           window.__mkLoadedAt = Date.now();
           mkPage = 0;
@@ -5750,8 +5949,10 @@ function renderMarket(){
           if (ml){
             var mineRows = rows2.filter(function(rd){ return account && rd.r.l.seller.toLowerCase() === account.toLowerCase(); });
             window.mkMineRows = mineRows;
-            if (!mineRows.length) ml.innerHTML = '<li class="mk-empty">' + t("m.mineEmpty") + '</li>';
-            else ml.innerHTML = mineRows.map(function(rd){
+            var stM = $("mkStatMine");
+            if (stM) stM.textContent = (account && mineRows.length) ? mineRows.length : "0";
+            if (!mineRows.length) ml.innerHTML = mkHeadOf(ml) + '<li class="mk-empty">' + t("m.mineEmpty") + '</li>';
+            else ml.innerHTML = mkHeadOf(ml) + mineRows.map(function(rd){
               return '<li class="mk-mine-item" data-id="' + rd.r.tid + '">' +
                 '<span class="mk-tid">#' + rd.r.tid + '</span>' +
                 '<span class="mk-price">' + Number(rd.r.l.price) / 1e18 + ' OKB</span>' +
@@ -5764,7 +5965,7 @@ function renderMarket(){
   }).catch(function(e){
     if (window.__mkr && window.__mkr < 3 && RPCS.length > 1) { window.__mkr++; rpcFail(); return renderMarket(); }
     window.__mkr = 0;
-    list.innerHTML = '<li class="mk-empty">' + t("m.readFail") + String(e.message||e).slice(0,60) + '</li>';
+    list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.readFail") + String(e.message||e).slice(0,60) + '</li>';
   });
 }
 
@@ -5790,8 +5991,10 @@ function renderMkPage(){
   var prev = $("mkPrev"), next = $("mkNext");
   if (prev) prev.disabled = mkPage <= 0;
   if (next) next.disabled = mkPage >= pages - 1;
-  if (!rows.length) { list.innerHTML = '<li class="mk-empty">' + t("m.noMatch") + '</li>'; return; }
-  list.innerHTML = "";
+  if (!rows.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.noMatch") + '</li>'; return; }
+  var headHtml = mkHeadOf(list);
+  list.innerHTML = headHtml;
+  var floorPx = Math.min.apply(null, rows.map(function(rd){ return Number(rd.r.l.price); }));
   var PART_ABBR = ["CPU","MB","GPU","RAM","SSD","PSU","FAN","CASE"];
   var TIER_NAME = ["标准","Pro","旗舰"];
   rows.slice(mkPage*MK_PER_PAGE, (mkPage+1)*MK_PER_PAGE).forEach(function(rd){
@@ -5802,12 +6005,13 @@ function renderMkPage(){
     for (var k = 0; k < 8; k++){ var tv = Number(rd.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_ABBR[k] + ":" + TIER_NAME[tv]); }
     var dotsHtml = '<span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>';
     var gr = Number(rd.grade)||1;
+    var isFloor = Number(r.l.price) === floorPx;
     li.innerHTML =
       '<span class="mk-tid">#' + r.tid + '</span>' +
       '<span class="mk-tier">' + dotsHtml + '<span class="mk-hash">' + rd.hash + ' H</span>' +
       '<span class="grade-tag g' + gr + '">' + (GRADE_NAMES[gr] || t("g.c")) + '</span></span>' +
-      '<span class="mk-price">' + Number(r.l.price)/1e18 + ' OKB</span>' +
-      '<span class="mk-seller">' + shortAddr(r.l.seller) + '</span>' +
+      '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + Number(r.l.price)/1e18 + ' OKB</span>' +
+      '<span class="mk-seller" title="' + r.l.seller + '">' + shortAddr(r.l.seller) + '</span>' +
       '<button class="action-btn sec mk-buy" data-id="' + r.tid + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
       '<button class="action-btn auto mk-cancel" data-id="' + r.tid + '"' + (mine ? '' : ' style="display:none"') + '>撤单</button>';
     list.appendChild(li);
