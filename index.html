@@ -1144,6 +1144,13 @@ input:focus{
 .asset-list{
   list-style:none;
 }
+.asset-list li.tk-li{cursor:pointer;}
+.asset-list li.tk-li:hover{background:rgba(79,224,208,.05);}
+.asset-list li.tk-li .mini.gold{color:var(--gold);}
+.asset-list li.tk-li .tk-tag{
+  font-weight:400;font-size:10.5px;color:var(--tx3);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:2px;vertical-align:2px;
+}
 .asset-list li{
   display:flex;
   justify-content:space-between;
@@ -5375,6 +5382,7 @@ var I18N = {
   "ph.noWallet": {zh:"未连接钱包", en:"No wallet connected"},
   "ph.rigEmpty": {zh:"连接钱包后显示质押中的矿机", en:"Staked miners appear after connecting"},
   "mine.title": {zh:"我的资产", en:"My Assets"},
+  "mine.copyTip": {zh:"点击复制合约地址", en:"Click to copy contract address"},
   "rig.stake": {zh:"质押挖矿", en:"Stake & Mine"},
   "wp.pc": {zh:"PC 整机", en:"PC Rigs"},
   "wp.parts": {zh:"部件", en:"Parts"},
@@ -6142,7 +6150,10 @@ function claimDividend(){
 }
 function renderMine(){
   if (!signer || !account) {
-    $("myAssets").innerHTML = '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
+    $("myAssets").innerHTML =
+      '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">分红代币</b></span><span class="v">—</span></li>' +
+      '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
     $("forgePicked").textContent = "—";
     $("forgeTotal").textContent = "—";
@@ -6151,6 +6162,7 @@ function renderMine(){
     return Promise.resolve();
   }
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
+  var tapex = new ethers.Contract(ADDRS.tapex, ["function balanceOf(address) view returns (uint256)"], pubProvider);
   var proc  = new ethers.Contract(ADDRS.processor, ABI_PROC, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
@@ -6174,7 +6186,8 @@ function renderMine(){
     readRetry(function(){ return mine.userShares(account); }),
     readRetry(function(){ return circ.lastTokenId(); }),
     readRetry(function(){ return mine.totalShares(); }),
-    readRetry(function(){ return proc.mintCount(); })
+    readRetry(function(){ return proc.mintCount(); }),
+    readRetry(function(){ return tapex.balanceOf(account); })
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -6219,7 +6232,8 @@ function renderMine(){
           ? '<li class="st-li">' + miniIcon("rig") + '<span class="nm">' + t("a.staked") + ' <b>' + staked.length + '</b></span><span class="st-chips">' + staked.map(function(x){ var pg = 1, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { pg = pcs[j].grade || 1; break; } return '<span class="st-chip g' + pg + '" data-rig="' + x + '">#' + x + '</span>'; }).join("") + '</span></li>'
           : '';
         var mineHtml =
-          '<li>' + miniIcon("xchip") + '<span class="nm">XCHIP</span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">分红代币</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
           nftRow +
           stRow +
           '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
@@ -6418,7 +6432,8 @@ function miniIcon(k){
     nft:'<svg class="mini g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M16 8a1.6 1.6 0 100 .01"/><path d="M6 16h12"/></svg>',
     rig:'<svg class="mini t" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/><rect x="5.5" y="6.5" width="5" height="3.5" rx="1"/><circle cx="8" cy="8.2" r="0.9" fill="currentColor" stroke="none"/><rect x="5.5" y="11.5" width="5" height="3.5" rx="1"/><circle cx="16.5" cy="12.5" r="3.8"/><path d="M16.5 8.7v1.1M16.5 14.9v1.1M12.7 9.7l.8.8M19.5 14.5l.8.8M12.7 15.3l.8-.8M19.5 10.5l.8-.8"/><path d="M16.5 12.5l2.6-1.2"/><rect x="5.5" y="16.8" width="9" height="1.6" rx="0.8"/><circle cx="11.5" cy="17.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
     mint:'<svg class="mini g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 7v10M7 12h10"/></svg>',
-    wallet:'<svg class="mini t" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12.5h.01"/><path d="M3 9h18"/></svg>'
+    wallet:'<svg class="mini t" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12.5h.01"/><path d="M3 9h18"/></svg>',
+    tapex:'<svg class="mini gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6h12M6 6v12M6 6l6 6 6-6"/></svg>'
   };
   return svg[k] || "";
 }
@@ -7204,7 +7219,11 @@ function doRigUnstake(id){
 }
 (function(){
   var ma = $("myAssets");
-  if (ma) ma.addEventListener("click", function(ev){ var row = ev.target.closest("[data-rig]"); if (row) openRigModal(Number(row.getAttribute("data-rig"))); });
+  if (ma) ma.addEventListener("click", function(ev){
+    var cp = ev.target.closest("[data-copy]");
+    if (cp) { var ck = cp.getAttribute("data-copy"); var ca = { tapex: ADDRS.tapex, xchip: ADDRS.token }[ck]; if (ca) { try { navigator.clipboard.writeText(ca).then(function(){ toast(t("d.copied")); }); } catch(e){ toast(t("d.copied")); } } return; }
+    var row = ev.target.closest("[data-rig]"); if (row) openRigModal(Number(row.getAttribute("data-rig")));
+  });
   var rm = $("rigModal");
   if (rm) rm.addEventListener("click", function(ev){
     if (ev.target === rm || ev.target.closest("#rigModalClose")) { closeRigModal(); return; }
