@@ -17,6 +17,17 @@
 
 
 /* ===== 01 变量 · 基础 ===== */
+/* 隐藏 number input 的原生上下箭头（spinner）：浅灰系统控件与深色主题不协调。
+   铸造数量旁已有 1/10/100/1000 快捷按钮，市场/组装价格手动输入，无功能损失 */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+input[type=number]{
+  -moz-appearance:textfield;
+  appearance:textfield;
+}
 :root{
   --bg:#0B1328;
   --panel:#111F3B;
