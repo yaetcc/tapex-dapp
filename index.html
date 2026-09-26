@@ -5161,7 +5161,7 @@ input:focus,textarea:focus,select:focus{
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="5" value="2">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
+      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="20" value="2">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
@@ -6544,7 +6544,7 @@ function doBenchAssemble(){
     var qb = ev.target.closest("#benchQuick");
     if (qb) { doAssemble(qb); return; }
     var bq = ev.target.closest("#benchBatch");
-    if (bq) { var v = Number(($("benchCnt") || { value: "2" }).value) || 1; if (v < 1) v = 1; if (v > 5) v = 5; doAssembleN(v); return; }
+    if (bq) { var v = Number(($("benchCnt") || { value: "2" }).value) || 1; if (v < 1) v = 1; if (v > 20) v = 20; doAssembleN(v); return; }
   });
 })();
 var PART_ICON = [
@@ -7203,7 +7203,7 @@ function doAssembleN(n){
       });
   })(0);
 }
-(function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; if (v > 5) v = 5; doAssembleN(v); }); })();
+(function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; if (v > 20) v = 20; doAssembleN(v); }); })();
 /* ---------- 质押 / 解押 ---------- */
 var rigData = { staked: [], pcs: [], totalH: 0, pending: "—" };
 var rigFilter = "all", rigSort = "hashD", rigPage = 0;
