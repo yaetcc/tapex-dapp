@@ -1289,13 +1289,6 @@ input:focus{
 .asset-list li:not(.tk-li) .v{
   color:var(--gold);
 }
-.asset-list li.ast-stat{
-  justify-content:flex-start;
-  gap:10px;
-}
-.asset-list li.ast-stat .mini{
-  flex:none;
-}
 
 /* ===== 质押中 · 紧凑算力行 ===== */
 .pc-scroll .st-row{
@@ -6584,9 +6577,9 @@ function renderMine(){
           '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">分红代币</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
           nftRow +
           stRow +
-          '<li class="ast-stat">' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
-          (Number(r[13]) > 0n ? '<li class="ast-stat">' + miniIcon("xchip") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[11]) / Number(r[13]) * 100).toFixed(1) + '%</span></li>' : '') +
-          '<li class="ast-stat">' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
+          '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
+          (Number(r[13]) > 0n ? '<li>' + miniIcon("xchip") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[11]) / Number(r[13]) * 100).toFixed(1) + '%</span></li>' : '') +
+          '<li>' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
         if ($("myAssets").innerHTML !== mineHtml) $("myAssets").innerHTML = mineHtml;
         $("myAssets").dataset.ok = "1";
         window.__mineLoadedAt = Date.now();
