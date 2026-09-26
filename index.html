@@ -5053,19 +5053,6 @@ input:focus,textarea:focus,select:focus{
   display:none;
 }
 }
-/* ===== 队列执行器面板 ===== */
-.q-panel{position:fixed;right:18px;bottom:18px;width:306px;max-width:calc(100vw - 36px);background:rgba(10,15,20,.95);border:1px solid #24303c;border-radius:14px;padding:14px 16px;z-index:9999;display:none;box-shadow:0 18px 50px rgba(0,0,0,.55)}
-.q-panel.show{display:block}
-.q-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.q-title{font-size:13px;font-weight:700;color:#eaf4f0}
-.q-count{font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#00e5a0}
-.q-bar{height:6px;background:#15222c;border-radius:99px;overflow:hidden;margin-bottom:8px}
-.q-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#00e5a0,#22d3ee);border-radius:99px;transition:width .25s}
-.q-txt{font-size:12px;color:#9fb4c2;min-height:16px;line-height:1.5;word-break:break-all}
-.q-fails{font-size:11px;color:#f87171;margin-top:6px;display:none;line-height:1.5;word-break:break-all}
-.q-ops{display:flex;gap:8px;margin-top:10px}
-.q-btn{flex:1;background:#15222c;border:1px solid #24303c;color:#d7e2ea;border-radius:9px;padding:7px 0;font-size:12px;cursor:pointer;transition:.2s}
-.q-btn:hover{border-color:#00e5a0;color:#00e5a0}
 </style>
 </head>
 <body>
@@ -5343,57 +5330,6 @@ input:focus,textarea:focus,select:focus{
 <script>
 (function(){
 "use strict";
-
-/* ===== 全局队列执行器（批量操作进度 / 失败重试）===== */
-var Q = (function(){
-  var el, label, bar, txt, fails, count;
-  var state = { running:false, total:0, cur:0, ok:0, failList:[], retryFn:null };
-  function ensure(){
-    if (el) return;
-    el = document.createElement('div');
-    el.className = 'q-panel';
-    el.innerHTML =
-      '<div class="q-head"><span class="q-title"></span><span class="q-count"></span></div>' +
-      '<div class="q-bar"><i class="q-fill"></i></div>' +
-      '<div class="q-txt"></div>' +
-      '<div class="q-fails"></div>' +
-      '<div class="q-ops"><button class="q-btn q-retry">重试失败项</button><button class="q-btn q-hide">收起</button></div>';
-    document.body.appendChild(el);
-    label = el.querySelector('.q-title'); bar = el.querySelector('.q-fill');
-    txt = el.querySelector('.q-txt'); fails = el.querySelector('.q-fails');
-    count = el.querySelector('.q-count');
-    el.querySelector('.q-hide').onclick = function(){ el.classList.remove('show'); };
-    el.querySelector('.q-retry').onclick = function(){
-      if (!state.running && state.retryFn && state.failList.length){ state.retryFn(); }
-    };
-  }
-  function paint(){
-    var pct = state.total ? Math.round(state.cur / state.total * 100) : 0;
-    bar.style.width = pct + '%';
-    count.textContent = state.ok + '/' + state.total;
-    if (state.failList.length){
-      fails.style.display = 'block';
-      fails.textContent = '失败 ' + state.failList.length + ' 项：' + state.failList.slice(0, 3).join('；') + (state.failList.length > 3 ? ' 等' : '');
-    } else { fails.style.display = 'none'; }
-  }
-  return {
-    start: function(name, total, retryFn){
-      ensure();
-      state = { running:true, total:total, cur:0, ok:0, failList:[], retryFn:retryFn };
-      label.textContent = name; txt.textContent = '准备执行…';
-      fails.textContent = ''; fails.style.display = 'none';
-      el.classList.add('show'); paint();
-    },
-    ok: function(i, msg){ state.cur = i; state.ok++; txt.textContent = msg; paint(); },
-    fail: function(i, msg){ state.cur = i; state.failList.push(msg); txt.textContent = msg; paint(); },
-    done: function(msg){
-      state.running = false;
-      txt.textContent = msg + ' · 成功 ' + state.ok + ' · 失败 ' + state.failList.length;
-      paint();
-    }
-  };
-})();
-
 
 /* ---------- 常量 ---------- */
 var CHAIN_ID = 196;
@@ -7127,14 +7063,13 @@ function doBatchCancel(){
   var btn = $("mkCancelAll"); busy(btn, true, t("mkt.busyCancel"));
   setMsg("mkMsg","info", t("mkt.batchCancel") + rows.length + t("mkt.batchCancelMid"));
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
-  Q.start("批量撤单 " + rows.length + " 单", rows.length, function(){ doBatchCancel(); });
   (function one(i){
-    if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); Q.done("批量撤单完成"); return; }
+    if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); return; }
     var id = rows[i].r.tid;
     setMsg("mkMsg","info", t("mkt.cancelProgress") + (i + 1) + "/" + rows.length + t("mkt.cancelProgressMid") + id + t("mkt.cancelProgressTail"));
     mk.cancel(id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); })
-      .then(function(receipt){ logTx("批量撤单", receipt.hash); Q.ok(i + 1, "撤单 #" + id + " 成功"); one(i + 1); })
-      .catch(function(e){ setMsg("mkMsg","err", t("o.batchFail") + (i + 1) + t("mkt.singleFail") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80)); one(i + 1); });
+      .then(function(receipt){ logTx("批量撤单", receipt.hash); one(i + 1); })
+      .catch(function(e){ setMsg("mkMsg","err", t("o.batchFail") + (i + 1) + t("mkt.singleFail") + humanErr(e).slice(0, 110) + t("o.skip")); one(i + 1); });
   })(0);
 }
 (function(){ var ca = $("mkCancelAll"); if (ca) ca.addEventListener("click", doBatchCancel); })();
@@ -7180,11 +7115,10 @@ function doAssembleN(n){
   if (!signer || !account) { setMsg("toMsg","err", t("o.connectFirst")); return; }
   if (!ensureNetMsg("toMsg")) return;
   var btn = $("asmBatchBtn"); busy(btn, true, "组装中…");
-  Q.start("批量组装 " + n + " 台", n, function(){ doAssembleN(n); });
   var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   (function one(i){
-    if (i >= n) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
+    if (i >= n) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); return; }
     setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmProgressMid"));
     Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
       .then(function(bs){
@@ -7195,10 +7129,10 @@ function doAssembleN(n){
         return circ.assemble({ gasLimit: 500000 });
       })
       .then(function(tx){ return tx.wait(); })
-      .then(function(receipt){ logTx("批量组装", receipt.hash); Q.ok(i + 1, "组装完成 第" + (i + 1) + " 台"); one(i + 1); })
+      .then(function(receipt){ logTx("批量组装", receipt.hash); one(i + 1); })
       .catch(function(e){
         if (e.message === "missing parts") return;
-        setMsg("toMsg","err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "第" + (i + 1) + " 台：" + humanErr(e).slice(0, 80));
+        setMsg("toMsg","err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip"));
         one(i + 1);
       });
   })(0);
@@ -7420,14 +7354,13 @@ function doBatchStake(){
   for (var k in rigSel) if (rigSel[k] && rigData.staked.indexOf(Number(k)) === -1) ids.push(Number(k));
   if (!ids.length) { toast(t("o.selIdle")); return; }
   var btn = $("rigBatchStake"); busy(btn, true, t("o.stakeBusy"));
-  Q.start("批量质押 " + ids.length + " 台", ids.length, function(){ doBatchStake(); });
   rigLog("info", t("o.batchStake") + ids.length + t("o.batchStakeMid"));
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   (function one(i){
     if (i >= ids.length) {
       rigLog("ok", t("o.batchStakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.stakeOkShort"));
-      rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("批量质押完成"); return;
+      rigSel = {}; clearRigCache(); refresh(); busy(btn, false); return;
     }
     var id = ids[i];
     rigLog("info", t("o.stakeProgress") + (i + 1) + "/" + ids.length + t("o.stakeProgressMid") + id + t("o.stakeProgressTail"));
@@ -7435,10 +7368,10 @@ function doBatchStake(){
       var chain = app.toLowerCase() === ADDRS.mining.toLowerCase() ? Promise.resolve() : circ.approve(ADDRS.mining, id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
       return chain.then(function(){ return mine.stake(id, { gasLimit: 300000 }); });
     }).then(function(tx){ return tx.wait(); }).then(function(receipt){
-      logTx("质押 #" + id, receipt.hash); Q.ok(i + 1, "质押 #" + id + " 成功");
+      logTx("质押 #" + id, receipt.hash);
       one(i + 1);
     }).catch(function(e){
-      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80));
+      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip"));
       one(i + 1);
     });
   })(0);
@@ -7448,21 +7381,20 @@ function doBatchUnstake(){
   for (var k in rigSel) if (rigSel[k] && rigData.staked.indexOf(Number(k)) > -1) ids.push(Number(k));
   if (!ids.length) { toast(t("o.selMining")); return; }
   var btn = $("rigBatchUnstake"); busy(btn, true, t("o.unstakeBusy"));
-  Q.start("批量解押 " + ids.length + " 台", ids.length, function(){ doBatchUnstake(); });
   rigLog("info", t("o.batchUnstake") + ids.length + t("o.batchStakeMid"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   (function one(i){
     if (i >= ids.length) {
       rigLog("ok", t("o.batchUnstakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.unstakeOkShort"));
-      rigSel = {}; refresh(); busy(btn, false); Q.done("批量解押完成"); return;
+      rigSel = {}; refresh(); busy(btn, false); return;
     }
     var id = ids[i];
     rigLog("info", t("o.unstakeProgress") + (i + 1) + "/" + ids.length + t("o.stakeProgressMid") + id + t("o.stakeProgressTail"));
     mine.unstake(id, { gasLimit: 200000 }).then(function(tx){ return tx.wait(); }).then(function(receipt){
-      logTx("解押 #" + id, receipt.hash); Q.ok(i + 1, "解押 #" + id + " 成功");
+      logTx("解押 #" + id, receipt.hash);
       one(i + 1);
     }).catch(function(e){
-      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80));
+      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip"));
       one(i + 1);
     });
   })(0);
