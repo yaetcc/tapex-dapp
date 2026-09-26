@@ -2874,6 +2874,96 @@ footer b{
 #partsOwnModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
 }
+#chgModal{
+  position:fixed;
+  inset:0;
+  z-index:99;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(6,10,20,.74);
+}
+#chgModal.open,#chgModal.closing{
+  display:flex;
+}
+#chgModal.open{
+  animation:maskIn .18s ease;
+}
+#chgModal.closing{
+  animation:maskOut .15s ease forwards;
+}
+#chgModal.open .rm-box{
+  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
+}
+#chgModal.closing .rm-box{
+  animation:modalOut .15s ease forwards;
+}
+.chg-scroll{
+  max-height:62vh;
+  overflow-y:auto;
+  padding:2px 2px 4px;
+}
+.chg-sec{
+  margin-bottom:14px;
+}
+.chg-sec:last-child{
+  margin-bottom:0;
+}
+.chg-t{
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--gold);
+  margin-bottom:7px;
+  letter-spacing:.2px;
+}
+.chg-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.chg-list li{
+  position:relative;
+  padding-left:15px;
+  font-size:12.5px;
+  color:var(--tx2);
+  line-height:1.55;
+}
+.chg-list li::before{
+  content:"";
+  position:absolute;
+  left:1px;
+  top:7px;
+  width:5px;
+  height:5px;
+  border-radius:2px;
+  background:var(--teal);
+  box-shadow:0 0 6px rgba(79,224,208,.5);
+}
+.chg-list.plan li::before{
+  background:var(--gold);
+  box-shadow:0 0 6px rgba(217,164,65,.5);
+}
+.f-log{
+  text-align:center;
+  margin-top:8px;
+}
+.link-btn{
+  background:none;
+  border:none;
+  color:var(--teal);
+  font-size:12px;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  opacity:.85;
+  transition:opacity .2s;
+}
+.link-btn:hover{
+  opacity:1;
+}
 .parts-own-sum{
   margin-top:8px;
   padding-top:10px;
@@ -5516,8 +5606,37 @@ input:focus,textarea:focus,select:focus{
   <div class="wrap">
     <p class="f-line1"><b data-i18n="免责声明：">免责声明：</b>本页面为演示 / 设计级实现，部署于 X Layer 主网（Chain 196），合约未经第三方审计。</p>
     <p class="f-line2"><b data-i18n="主网交互使用真实资产，一旦转账不可逆转。">主网交互使用真实资产，一旦转账不可逆转。</b>抽卡为链上伪随机（演示级）。参与前请自行核验合约源码与权限清单。</p>
+    <p class="f-log"><button class="link-btn" id="btnChangelog">更新日志 · 2026-09-26</button></p>
   </div>
 </footer>
+
+<div id="chgModal">
+  <div class="rm-box">
+    <button class="rm-close" id="chgClose">×</button>
+    <div class="rm-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:20px;height:20px;color:var(--gold);flex:none"><path d="M4 20V8l4-3 4 3 4-3 4 3v12H4z"/><path d="M8 20v-6h8v6M8 5v0M16 5v0" opacity=".6"/></svg><b>更新日志</b></div>
+    <div class="chg-scroll">
+      <div class="chg-sec">
+        <div class="chg-t">今日优化 · 2026-09-26</div>
+        <ul class="chg-list">
+          <li>My 资产页重构：待机 / 质押分块，长列表改为内部滚动</li>
+          <li>标头精简：「待机 · N 台」「质押 · N 台」，数字金色、居右</li>
+          <li>质押与待机算力行显示内容统一（ID · 档位 · 部件 · 算力 · 状态）</li>
+          <li>统计行数值居右：质押算力 / 份额占比 / 硬件部件</li>
+          <li>「已抽硬件部件」更名「硬件部件」；移除多余提示与标头图标</li>
+        </ul>
+      </div>
+      <div class="chg-sec">
+        <div class="chg-t">后续计划</div>
+        <ul class="chg-list plan">
+          <li>待机 / 质押行内一键质押、解押快捷操作</li>
+          <li>批量操作队列体验：失败重试、中途暂停入口优化</li>
+          <li>资产数据加载提速（批量 RPC 读取合并）</li>
+          <li>交易市场 / 分红页体验迭代</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="toast">done</div>
 
@@ -7337,6 +7456,15 @@ $("shareCopy").addEventListener("click", function(){
   toast(t("w.copyOk"));
 });
 $("shareClose").addEventListener("click", function(){ closePop($("shareModal")); });
+$("btnChangelog").addEventListener("click", function(){ openPop($("chgModal")); });
+$("chgClose").addEventListener("click", function(){ closePop($("chgModal")); });
+$("chgModal").addEventListener("click", function(ev){ if (ev.target === this) closePop($("chgModal")); });
+document.addEventListener("keydown", function(ev){
+  if (ev.key === "Escape") {
+    var cm = $("chgModal");
+    if (cm && cm.classList.contains("open")) closePop(cm);
+  }
+});
 
 function doBatchCancel(){
   var rows = window.mkMineRows || [];
