@@ -1171,6 +1171,109 @@ input:focus{
 .asset-list .nm{
   color:var(--tx2);
 }
+
+/* ===== My · 我的资产 美化 ===== */
+.asset-list li{
+  border-radius:10px;
+  padding:10px 10px;
+  margin:2px 0;
+  border:1px solid transparent;
+}
+.asset-list li:hover{
+  background:rgba(79,224,208,.04);
+  border-color:rgba(79,224,208,.14);
+}
+.asset-list li.tk-li{
+  position:relative;
+}
+.asset-list li.tk-li .mini{
+  width:30px;
+  height:30px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  background:rgba(20,34,63,.85);
+  border:1px solid rgba(130,160,215,.2);
+  box-sizing:border-box;
+  transition:border-color .2s,box-shadow .2s;
+}
+.asset-list li.tk-li .mini svg{
+  width:16px;
+  height:16px;
+}
+.asset-list li.tk-li .nm{
+  flex:1;
+  margin-left:10px;
+  font-weight:600;
+  color:var(--tx);
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  row-gap:2px;
+}
+.asset-list li.tk-li .tk-tag{
+  background:rgba(217,164,65,.12);
+  border-color:rgba(217,164,65,.3);
+  color:#d9a441;
+  font-weight:600;
+}
+.asset-list li.tk-li .v{
+  font-size:15px;
+  color:var(--gold);
+  letter-spacing:.02em;
+}
+.asset-list li.tk-li:hover .mini{
+  border-color:rgba(217,164,65,.55);
+  box-shadow:0 0 12px rgba(217,164,65,.15);
+}
+.asset-list li.tk-li::after{
+  content:"复制";
+  position:absolute;
+  right:10px;
+  bottom:3px;
+  font-size:9px;
+  color:var(--tx3);
+  opacity:0;
+  transition:opacity .2s;
+}
+.asset-list li.tk-li:hover::after{
+  opacity:.7;
+}
+.pc-wrap-hd .nm{
+  font-weight:600;
+  font-size:13px;
+}
+.pc-wrap-hd{
+  padding:4px 2px 8px;
+}
+.pc-scroll{
+  background:rgba(12,21,43,.5);
+  border:1px solid rgba(130,160,215,.14);
+  border-radius:10px;
+  padding:4px 8px 4px 10px;
+  box-sizing:border-box;
+}
+.pc-scroll .pc-row{
+  padding:7px 4px;
+  border-radius:8px;
+  transition:background .18s ease,border-color .18s ease;
+}
+.pc-scroll .pc-row:hover{
+  background:rgba(79,224,208,.06);
+  border-color:transparent;
+}
+.st-li{
+  padding:4px 0 6px;
+}
+.st-chip{
+  border-radius:8px;
+}
+.asset-list li:not(.tk-li) .v{
+  color:var(--gold);
+}
+
 .asset-list li.pc-wrap{
   display:block;
   padding:8px 0 6px;
