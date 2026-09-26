@@ -5819,7 +5819,7 @@ var I18N = {
   "a.drawnParts": {zh:"硬件部件", en:"Parts Drawn"},
   "a.unit": {zh:"件", en:"pcs"},
   "a.readFail": {zh:"资产读取失败：", en:"Assets read failed: "},
-  "a.retry15": {zh:"，15 秒后自动重试", en:", retry in 15s"},
+  "a.retry15": {zh:"，30 秒后自动重试", en:", retry in 30s"},
   "a.has": {zh:"有 ", en:"have "},
   "a.missing": {zh:"缺 ", en:"missing "},
   "b.tower": {zh:"塔式机箱 · 内部装配", en:"Tower Case · Internal Assembly"},
@@ -6260,6 +6260,7 @@ function rpcFail(){
 var __lastBlockAt = 0;
 var __refreshing = false, __refreshingDirty = false;
 var __mineSum = null;   // 钱包弹窗资产摘要缓存（renderMine 填充）
+var __mineFailCount = 0; // 资产页连续读取失败计数（首次失败自动切 RPC 并立即重试）
 function bindBlockWatch(){
   try {
     pubProvider.off("block");
@@ -6703,6 +6704,7 @@ function renderMine(){
           '<li>' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
         if ($("myAssets").innerHTML !== mineHtml) $("myAssets").innerHTML = mineHtml;
         $("myAssets").dataset.ok = "1";
+        __mineFailCount = 0;
         window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
         $("pendingAmt").textContent = fmtWei(r[10]) + " XCHIP";
@@ -6725,6 +6727,13 @@ function renderMine(){
     console.warn("renderMine fail", e);
     if (mineCard) mineCard.classList.remove("refreshing");
     if (signer && account) {
+      __mineFailCount = (__mineFailCount || 0) + 1;
+      if (__mineFailCount === 1) {          // 首次失败：自动切到备用 RPC 并立即重试一次，不打断用户
+        rpcFail();
+        setTimeout(refresh, 1200);
+        return;
+      }
+      __mineFailCount = 0;
       if (!$("myAssets").dataset.ok) {
         $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e).slice(0,50) + '' + t("a.retry15") + '</span><span class="v">—</span></li>';
         setTimeout(refresh, 30000);
