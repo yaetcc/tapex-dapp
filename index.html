@@ -7031,8 +7031,10 @@ function doMint(){
     while (left > 0n) { var b = left > perTx ? perTx : left; batches.push(b); left -= b; }
     var unitPrice = cfg.price;
     resetSig();
+    Q.start("铸造 " + fmtInt(amtBN) + " 个（分 " + batches.length + " 批）", batches.length, function(){ doMint(); });
     var i = 0;
     var run = function(){
+      if (Q.stopped()) { mintDone = true; clearTimeout(sigTimer); setMsg("mintMsg","info","已终止"); __minting = false; setMintBusy(false); Q.done("已终止"); return Promise.resolve(); }
       if (i >= batches.length) return Promise.resolve();
       var b = batches[i]; i++;
       resetSig();
@@ -7040,13 +7042,19 @@ function doMint(){
       var txP = Promise.resolve(proc.mint(b, { value: unitPrice * b, gasLimit: 4000000 }));
       return txP.then(function(tx){
         setMsg("mintMsg","info","批次 " + i + "/" + batches.length + " 已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
-        return tx.wait().then(function(receipt){ logTx(t("mint.batchLog"), receipt.hash); if (batches.length > 1) bbPulse(); return run(); });
+        return tx.wait().then(function(receipt){ logTx(t("mint.batchLog"), receipt.hash); if (batches.length > 1) bbPulse(); Q.ok(i, "批次 " + i + "/" + batches.length + " 完成"); return run(); });
+      }).catch(function(e){
+        var m = humanErr(e);
+        setMsg("mintMsg","err","批次 " + i + "/" + batches.length + " 失败：" + m.slice(0,110) + "（已跳过，继续下一批）");
+        Q.fail(i, "批次 " + i + "：" + m.slice(0,80));
+        return run();
       });
     };
     return run();
     });
   }).then(function(){
     mintDone = true; clearTimeout(sigTimer);
+    Q.done("铸造完成");
     setMsg("mintMsg","ok", t("mint.ok") + fmtInt(amtBN) + t("mint.okTail"));
     forgeFly(amtBN);
     bbOpen();
