@@ -2152,21 +2152,6 @@ footer b{
   border-color:rgba(217,164,65,.55);
   box-shadow:0 0 0 1px rgba(217,164,65,.18);
 }
-/* ===== 08b 矿机 · 紧凑列表视图 ===== */
-.rig-main.list{display:flex;flex-direction:column;gap:6px}
-.rig-row.list{flex-direction:row;align-items:center;gap:10px;padding:6px 10px;border-top-width:2px;flex-wrap:wrap;cursor:pointer}
-.rig-row.list .rg-cb{flex:none}
-.rig-row.list .rl-id{font-family:"JetBrains Mono",monospace;color:var(--gold);font-size:13px;min-width:56px}
-.rig-row.list .grade{font-size:10px;padding:2px 8px;border-radius:99px;flex:none}
-.rig-row.list .rl-h{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--teal);min-width:74px}
-.rig-row.list .rl-tier{font-size:11px;color:var(--tx3);flex:1;min-width:56px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rig-row.list .rg-st{font-size:11px;flex:none}
-.rig-row.list .rl-share{font-size:11px;color:var(--tx3);flex:none;font-family:"JetBrains Mono",monospace}
-.rig-row.list .rc-go{font-size:11px;color:var(--gold);flex:none}
-.rig-ops #rigQ{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;color:var(--tx);font-size:12px;min-width:96px;flex:none}
-.rig-ops #rigQ::placeholder{color:var(--tx3)}
-.rig-ops #rigQ:focus{outline:none;border-color:rgba(63,212,196,.55)}
-.rig-ops #rigViewBtn,.rig-ops #rigPer{flex:none}
 
 /* ===== 14 其他 ===== */
 .rg-cb{
@@ -5557,9 +5542,6 @@ var I18N = {
   "rig.emptyMine": {zh:"暂无挖矿中的矿机", en:"No mining miners"},
   "rig.emptyIdle": {zh:"暂无待机的矿机", en:"No idle miners"},
   "rig.selAll": {zh:"全选", en:"All"},
-  "rig.search": {zh:"搜索 #ID", en:"Search #ID"},
-  "rig.viewList": {zh:"列表视图", en:"List view"},
-  "rig.viewCard": {zh:"卡片视图", en:"Card view"},
   "rig.sortHashD": {zh:"算力 ↓", en:"Hash ↓"},
   "rig.sortHashA": {zh:"算力 ↑", en:"Hash ↑"},
   "rig.sortGrade": {zh:"等级", en:"Grade"},
@@ -7227,8 +7209,6 @@ var rigData = { staked: [], pcs: [], totalH: 0, pending: "—" };
 var rigFilter = "all", rigSort = "hashD", rigPage = 0;
 var rigSel = {}, rigSell = {};
 var RIG_PER = 12;
-var rigView = "card", rigQ = "", rigPer = 12;
-try { rigView = localStorage.getItem("tapx_rigView") === "list" ? "list" : "card"; rigPer = Number(localStorage.getItem("tapx_rigPer")) || 12; } catch(e){}
 var GAUGE = { col:["#a9c6f0","#a9c6f0","#6cc2ff","#c792ff","#ffd54d"], len:[0,12.6,22.6,32.7,42.7], px:[0,9,16.9,27.1,35], py:[0,14.5,7.9,7.9,14.5] };
 function renderRigList(){
   var rl = $("rigList"); if (!rl) return;
@@ -7238,7 +7218,6 @@ function renderRigList(){
     var st = rigData.staked.indexOf(p.tid) > -1;
     if (rigFilter === "mine" && !st) continue;
     if (rigFilter === "idle" && st) continue;
-    if (rigQ && String(p.tid).indexOf(rigQ) === -1) continue;
     rows.push({ tid: p.tid, p: p, st: st });
   }
   if (rigSort === "hashA") rows.sort(function(a,b){ return a.p.hash - b.p.hash; });
@@ -7246,7 +7225,7 @@ function renderRigList(){
   else rows.sort(function(a,b){ return b.p.hash - a.p.hash; });
   var total = rows.length, pages = Math.max(1, Math.ceil(total / RIG_PER));
   if (rigPage >= pages) rigPage = pages - 1;
-  var slice = rows.slice(rigPage * rigPer, rigPage * rigPer + rigPer);
+  var slice = rows.slice(rigPage * RIG_PER, rigPage * RIG_PER + RIG_PER);
   var selN = 0; for (var k in rigSel) if (rigSel[k]) selN++;
   var hd = '<div class="rig-headbar">' +
     '<div class="rig-title"><b>' + t("rig.stake") + '</b><span>' + t("rig.sub") + '</span></div>' +
@@ -7257,21 +7236,7 @@ function renderRigList(){
       '<div class="rs-item"><div class="rs-top">' + miniIcon("xchip") + '<span>' + t("rig.pending") + '</span></div><b>' + rigData.pending + '</b></div>' +
     '</div>' +
     '</div>';
-  var body = slice.length ? (rigView === "list" ? slice.map(function(o){
-    var p = o.p, g = p.grade || 1;
-    var shr = rigData.totalH > 0 && o.st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "";
-    var tierTxt = ""; for (var ti = 0; ti < 8; ti++) { if (Number(p.tiers[ti]) === 3) tierTxt += "旗舰 "; else if (Number(p.tiers[ti]) === 2) tierTxt += "Pro "; }
-    return '<div class="rig-row list g' + g + (o.st ? " mining" : "") + (rigSel[o.tid] ? " sel" : "") + '" data-rig="' + o.tid + '">' +
-      '<label class="rg-cb"><input type="checkbox" data-tid="' + o.tid + '"' + (rigSel[o.tid] ? " checked" : "") + '></label>' +
-      '<b class="rl-id">#' + o.tid + '</b>' +
-      '<span class="grade g' + g + '">' + (GRADE_NAMES[g] || "") + '</span>' +
-      '<span class="rl-h">' + fmtInt(p.hash) + ' H</span>' +
-      '<span class="rl-tier">' + tierTxt + '</span>' +
-      '<span class="rg-st ' + (o.st ? "on" : "idle") + '">' + (o.st ? t("f.mining") : t("f.idle")) + '</span>' +
-      (o.st && shr ? '<span class="rl-share">份额 ' + shr + '</span>' : '') +
-      '<span class="rc-go">' + t("rig.manage") + '</span>' +
-    '</div>';
-  }).join("") : slice.map(function(o){
+  var body = slice.length ? slice.map(function(o){
     var p = o.p, g = p.grade || 1;
     var fl = 0, pr = 0; for (var ti = 0; ti < 8; ti++) { if (Number(p.tiers[ti]) === 3) fl++; else if (Number(p.tiers[ti]) === 2) pr++; }
     var tierTxt = (fl ? "旗舰×" + fl : "") + (pr ? "Pro×" + pr : "");
@@ -7286,23 +7251,19 @@ function renderRigList(){
       '</div>' +
       '<div class="rc-foot"><span class="rg-st ' + (o.st ? "on" : "idle") + '">' + (o.st ? t("f.mining") : t("f.idle")) + '</span><span class="rc-go">' + t("rig.manage") + '</span></div>' +
       '</div>';
-  }).join("")) : '<div class="rig-empty">' + (rigFilter === "all" ? t("rig.emptyAll") : rigFilter === "mine" ? t("rig.emptyMine") : t("rig.emptyIdle")) + '</div>';
+  }).join("") : '<div class="rig-empty">' + (rigFilter === "all" ? t("rig.emptyAll") : rigFilter === "mine" ? t("rig.emptyMine") : t("rig.emptyIdle")) + '</div>';
   var pg = pages > 1 ? '<div class="rig-pg"><button class="action-btn auto mini" data-pg="-1"' + (rigPage === 0 ? " disabled" : "") + '>‹</button><span>' + (rigPage + 1) + ' / ' + pages + '</span><button class="action-btn auto mini" data-pg="1"' + (rigPage >= pages - 1 ? " disabled" : "") + '>›</button></div>' : '';
   var ops = '<div class="rig-ops">' +
     '<label class="rg-all"><input type="checkbox" id="rigSelAll"' + (selN === rows.length && rows.length ? " checked" : "") + '>' + t("rig.selAll") + '</label>' +
     '' +
     '<div class="rig-tabs"><button class="rt' + (rigFilter === "all" ? " on" : "") + '" data-f="all">' + t("f.all") + '</button><button class="rt' + (rigFilter === "mine" ? " on" : "") + '" data-f="mine">' + t("f.mining") + '</button><button class="rt' + (rigFilter === "idle" ? " on" : "") + '" data-f="idle">' + t("f.idle") + '</button></div>' +
     '' +
-    '<input id="rigQ" type="text" placeholder="' + t("rig.search") + '" value="' + rigQ + '">' +
     '<select id="rigS"><option value="hashD">' + t("rig.sortHashD") + '</option><option value="hashA"' + (rigSort === "hashA" ? " selected" : "") + '>' + t("rig.sortHashA") + '</option><option value="gradeD"' + (rigSort === "gradeD" ? " selected" : "") + '>' + t("rig.sortGrade") + '</option></select>' +
     '' +
     '<div class="batch-grp"><button class="action-btn auto mini" id="rigBatchStake">' + t("rig.stake") + '</button><button class="action-btn sec mini" id="rigBatchUnstake">' + t("act.unstake") + '</button><button class="action-btn" id="rigClaimBtn">' + t("act.claim") + '</button></div>' +
-    '<button class="action-btn auto mini" id="rigViewBtn">' + (rigView === "list" ? t("rig.viewCard") : t("rig.viewList")) + '</button>' +
-    '<select id="rigPer"><option value="12"' + (rigPer === 12 ? " selected" : "") + '>12/页</option><option value="24"' + (rigPer === 24 ? " selected" : "") + '>24/页</option><option value="48"' + (rigPer === 48 ? " selected" : "") + '>48/页</option></select>' +
     pg +
     '</div>';
-  var lh = hd + ops + '<div class="rig-main' + (rigView === "list" ? " list" : "") + '">' + body + '</div>';
-  if (rl.innerHTML !== lh) { rl.innerHTML = lh; if (rigQ) { var qe = $("rigQ"); if (qe) { qe.focus(); try { qe.setSelectionRange(rigQ.length, rigQ.length); } catch(e2){} } } }
+  var lh = hd + ops + '<div class="rig-main">' + body + '</div>'; if (rl.innerHTML !== lh) rl.innerHTML = lh;
 }
 function renderRigModal(tid){
   var p = null;
@@ -7517,14 +7478,9 @@ function doBatchUnstake(){
     if (f) { rigFilter = f.getAttribute("data-f"); rigPage = 0; renderRigList(); return; }
     var pg = ev.target.closest("[data-pg]");
     if (pg) { rigPage += Number(pg.getAttribute("data-pg")); renderRigList(); return; }
-    if (ev.target.closest("#rigViewBtn")) { rigView = rigView === "list" ? "card" : "list"; try { localStorage.setItem("tapx_rigView", rigView); } catch(e){} renderRigList(); return; }
     if (ev.target.closest("#rigBatchStake")) { doBatchStake(); return; }
     if (ev.target.closest("#rigBatchUnstake")) { doBatchUnstake(); return; }
     if (ev.target.closest("#rigClaimBtn")) { doClaim(); return; }
-  });
-  rl.addEventListener("input", function(ev){
-    var q = ev.target.closest("#rigQ");
-    if (q) { rigQ = q.value.trim(); rigPage = 0; renderRigList(); return; }
   });
   rl.addEventListener("change", function(ev){
     var all = ev.target.closest("#rigSelAll");
@@ -7533,8 +7489,6 @@ function doBatchUnstake(){
       if (all.checked) for (var i = 0; i < rigData.pcs.length; i++) rigSel[rigData.pcs[i].tid] = true;
       renderRigList(); return;
     }
-    var qp = ev.target.closest("#rigPer");
-    if (qp) { rigPer = Number(qp.value) || 12; rigPage = 0; try { localStorage.setItem("tapx_rigPer", String(rigPer)); } catch(e){} renderRigList(); return; }
     var so = ev.target.closest("#rigS");
     if (so) { rigSort = so.value; rigPage = 0; renderRigList(); return; }
   });
