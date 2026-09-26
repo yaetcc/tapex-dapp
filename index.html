@@ -6402,7 +6402,7 @@ function renderMine(){
           ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">PC 整机 · 共 ' + freePcs.length + ' 台</span><span class="v pc-more-v">滑动查看全部</span></div><div class="pc-scroll"><ul>' + pcRowsHtml.join("") + '</ul></div></li>'
           : (pcs.length ? '' : '<li>' + miniIcon("nft") + '<span class="nm">' + t("a.pcnft") + '</span><span class="v">' + t("a.none") + '</span></li>');
         var stRow = staked.length
-          ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("a.staked") + ' · <b style="color:var(--gold)">' + staked.length + '</b> 台</span></div><div class="pc-scroll"><ul><li class="st-li">' + staked.map(function(x){ var pg = 1, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { pg = pcs[j].grade || 1; break; } return '<span class="st-chip g' + pg + '" data-rig="' + x + '">#' + x + '</span>'; }).join("") + '</li></ul></div></li>'
+          ? '<li class="st-li">' + miniIcon("rig") + '<span class="nm">' + t("a.staked") + ' <b>' + staked.length + '</b></span><span class="st-chips">' + staked.map(function(x){ var pg = 1, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { pg = pcs[j].grade || 1; break; } return '<span class="st-chip g' + pg + '" data-rig="' + x + '">#' + x + '</span>'; }).join("") + '</span></li>'
           : '';
         var mineHtml =
           '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
