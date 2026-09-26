@@ -5161,7 +5161,7 @@ input:focus,textarea:focus,select:focus{
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="2">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
+      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
@@ -5347,7 +5347,7 @@ input:focus,textarea:focus,select:focus{
 /* ===== 全局队列执行器（批量操作进度 / 失败重试）===== */
 var Q = (function(){
   var el, label, bar, txt, fails, count;
-  var state = { running:false, total:0, cur:0, ok:0, failList:[], retryFn:null };
+  var state = { running:false, stopped:false, total:0, cur:0, ok:0, failList:[], retryFn:null };
   function ensure(){
     if (el) return;
     el = document.createElement('div');
@@ -5357,12 +5357,13 @@ var Q = (function(){
       '<div class="q-bar"><i class="q-fill"></i></div>' +
       '<div class="q-txt"></div>' +
       '<div class="q-fails"></div>' +
-      '<div class="q-ops"><button class="q-btn q-retry">重试失败项</button><button class="q-btn q-hide">收起</button></div>';
+      '<div class="q-ops"><button class="q-btn q-stop">终止</button><button class="q-btn q-retry">重试失败项</button><button class="q-btn q-hide">收起</button></div>';
     document.body.appendChild(el);
     label = el.querySelector('.q-title'); bar = el.querySelector('.q-fill');
     txt = el.querySelector('.q-txt'); fails = el.querySelector('.q-fails');
     count = el.querySelector('.q-count');
     el.querySelector('.q-hide').onclick = function(){ el.classList.remove('show'); };
+    el.querySelector('.q-stop').onclick = function(){ if (state.running) { Q.stop(); } };
     el.querySelector('.q-retry').onclick = function(){
       if (!state.running && state.retryFn && state.failList.length){ state.retryFn(); }
     };
@@ -5379,7 +5380,7 @@ var Q = (function(){
   return {
     start: function(name, total, retryFn){
       ensure();
-      state = { running:true, total:total, cur:0, ok:0, failList:[], retryFn:retryFn };
+      state = { running:true, stopped:false, total:total, cur:0, ok:0, failList:[], retryFn:retryFn };
       label.textContent = name; txt.textContent = '准备执行…';
       fails.textContent = ''; fails.style.display = 'none';
       el.classList.add('show'); paint();
@@ -5390,7 +5391,15 @@ var Q = (function(){
       state.running = false;
       txt.textContent = msg + ' · 成功 ' + state.ok + ' · 失败 ' + state.failList.length;
       paint();
-    }
+    },
+    stop: function(){
+      if (!state.running) return;
+      state.stopped = true;
+      state.running = false;
+      txt.textContent = '已终止，剩余任务不再执行';
+      paint();
+    },
+    stopped: function(){ return state.stopped; }
   };
 })();
 
@@ -7129,6 +7138,7 @@ function doBatchCancel(){
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
   Q.start("批量撤单 " + rows.length + " 单", rows.length, function(){ doBatchCancel(); });
   (function one(i){
+    if (Q.stopped()) { setMsg("mkMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); Q.done("批量撤单完成"); return; }
     var id = rows[i].r.tid;
     setMsg("mkMsg","info", t("mkt.cancelProgress") + (i + 1) + "/" + rows.length + t("mkt.cancelProgressMid") + id + t("mkt.cancelProgressTail"));
@@ -7184,6 +7194,7 @@ function doAssembleN(n){
   var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   (function one(i){
+    if (Q.stopped()) { setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= n) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
     setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmProgressMid"));
     Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
@@ -7425,6 +7436,7 @@ function doBatchStake(){
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   (function one(i){
+    if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= ids.length) {
       rigLog("ok", t("o.batchStakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.stakeOkShort"));
       rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("批量质押完成"); return;
@@ -7452,6 +7464,7 @@ function doBatchUnstake(){
   rigLog("info", t("o.batchUnstake") + ids.length + t("o.batchStakeMid"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   (function one(i){
+    if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= ids.length) {
       rigLog("ok", t("o.batchUnstakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.unstakeOkShort"));
       rigSel = {}; refresh(); busy(btn, false); Q.done("批量解押完成"); return;
