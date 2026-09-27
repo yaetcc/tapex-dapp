@@ -6444,7 +6444,7 @@ function renderGlobal(){
     readRetry(function(){ return proc.nextPriceStep(); })
   ]).then(function(r){
     var cfg = r[5];
-    if (setNum("stXchip", r[0], fmtWeiUnit, fmtWei)) flashStat("stXchip");
+    if (setNum("stXchip", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stXchip");
     if (setNum("stPool", r[1], fmtWeiUnit, fmtWei)) flashStat("stPool");
     if (setNum("stMinted", cfg.minted_, fmtNumUnit, fmtInt)) flashStat("stMinted");
     if (setNum("stCap", cfg.cap_, fmtNumUnit, fmtInt)) flashStat("stCap");
