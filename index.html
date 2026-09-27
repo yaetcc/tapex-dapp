@@ -6356,9 +6356,9 @@ function detectWallet(){
 }
 et = detectWallet();
 initEIP6963();
-var RPCS = ["https://xlayerrpc.okx.com", "https://rpc.xlayer.tech"]; // 仅保留实测可达的两个主网 RPC（xlayer-mainnet-rpc.okx.com 已实测不可达，移除）
+var RPCS = ["https://xlayerrpc.okx.com", "https://xlayer.drpc.org", "https://rpc.xlayer.tech"]; // 实测可达的 3 个主网 RPC（dRPC 2026-09-28 实测可达；xlayer-mainnet-rpc.okx.com 等已实测不可达移除）
 var rpcIdx = 0;
-var rpcOk = {};      // 健康探测结果：下标 → 是否可用
+var rpcOk = {};      // 健康探测结果：下标 → 是否可用（false=限流/故障冷却中，rpcProbe 每 5 分钟复测恢复）
 function makePub(){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); } // 显式 chainId + 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
 var pubProvider = makePub();
 function probeRpc(url){
@@ -6383,6 +6383,7 @@ function rpcProbe(){
   });
 }
 function rpcFail(){
+  rpcOk[rpcIdx % RPCS.length] = false;   // 当前端点限流/故障 → 冷却，避免立刻切回（rpcProbe 每 5 分钟复测后恢复）
   for (var k = 1; k <= RPCS.length; k++){
     var j = (rpcIdx + k) % RPCS.length;
     if (rpcOk[j] !== false) { rpcIdx = j; break; }
