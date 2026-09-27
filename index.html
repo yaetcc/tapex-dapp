@@ -6002,6 +6002,7 @@ var I18N = {
   "e.funds": {zh:"钱包余额不足（OKB 或 gas）", en:"Insufficient balance (OKB or gas)"},
   "e.gas": {zh:"gas 超出预估，请稍后再试", en:"Gas exceeds estimate, retry later"},
   "e.revert": {zh:"链上拒绝执行（请检查 NFT 归属 / 授权 / 是否已挂单）", en:"Rejected on-chain (check NFT ownership / approval / listing)"},
+  "e.network": {zh:"网络连接异常，请检查网络后自动重试", en:"Network error, retrying automatically"},
   "e.timeout": {zh:"RPC 响应超时，请稍后重试", en:"RPC timeout, retry later"},
   "ms.hash": {zh:"全网算力 ", en:"Network Hash "},
   "ms.halving": {zh:" H · 减半 L", en:" H · Halving L"},
@@ -6555,6 +6556,7 @@ function humanErr(e){
   if (/gas required exceeds/i.test(m)) return t("e.gas");
   if (/execution reverted|revert/i.test(m)) return t("e.revert");
   if (/timeout|timeout exceeded/i.test(m)) return t("e.timeout");
+  if (/failed to fetch|network error|net::|load failed|could not connect|fetch failed|ENOTFOUND|ECONNREFUSED|ERR_CONNECTION|ERR_INTERNET|getaddrinfo/i.test(m)) return t("e.network");
   return m.slice(0, 220);
 }
 
