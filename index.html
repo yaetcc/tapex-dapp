@@ -7059,7 +7059,7 @@ function renderMine(){
     });
   }
 
-  /* ---- 主流程：base → 缓存判定 → V4V5 → V6 → 详情 → 渲染 ---- */
+  /* ---- 主流程（重写 v2）：分步渐进 base → V6 秒出 → V4 后台循环补全，每步独立容错 ---- */
   return readBase().then(function(acc){
     var parts = [Number(acc[1]||0),Number(acc[2]||0),Number(acc[3]||0),Number(acc[4]||0),Number(acc[5]||0),Number(acc[6]||0),Number(acc[7]||0),Number(acc[8]||0)];
     window.__parts = parts;
@@ -7067,107 +7067,71 @@ function renderMine(){
     var last = Number(acc[12] || 0), lastV6 = Number(acc[17] || 0);
     var cacheKey = account.toLowerCase() + "|" + last + "|" + lastV6;
     var now = Date.now();
-    var rigCache = window.__rigCache;
-    if (!(rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && now < (rigCache.exp || 0))){
-      try {
-        var lc = JSON.parse(localStorage.getItem("rigCache"));
-        if (lc && lc.key === cacheKey && lc.exp > now) rigCache = lc;
-      } catch(e){}
+    var myNfts = [], staked = [], v3Staked = [];
+    /* 读缓存：仅老矿机缓存（V6 始终实时读），空结果或过期一律不命中 */
+    try {
+      var lc = JSON.parse(localStorage.getItem("rigCache"));
+      if (lc && lc.key === cacheKey && lc.exp > now &&
+          ((Array.isArray(lc.myNfts) && lc.myNfts.length) || (Array.isArray(lc.staked) && lc.staked.length))){
+        myNfts = lc.myNfts.slice(); staked = lc.staked.slice();
+      }
+    } catch(e){}
+
+    /* ---- Step A: V6 读取（独立重试 2 次 + RPC 切换，毫秒级秒出）---- */
+    function v6WithRetry(tries){
+      tries = tries || 0;
+      return readV6(acc).catch(function(e){
+        console.warn("v6 retry", tries, e);
+        if (tries < 2){ rpcFail(); return v6WithRetry(tries + 1); }
+        throw e;
+      });
     }
-    var myNfts, staked, v3Staked = [];
-    var __bfFail = 0;
-    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && (rigCache.myNfts.length || rigCache.staked.length) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
-      myNfts = rigCache.myNfts.slice();
-      staked = rigCache.staked.slice();
-      // 缓存命中仍后台扫 V4/V5 老矿机补全（质押托管 + 合约升级可能让缓存过期，扫描结果只增不减）
+    var v6p = v6WithRetry(0);
+
+    /* ---- Step B: V4/V5 老矿机扫描（独立后台循环，成功自动合并渲染）---- */
+    function v4Backfill(){
+      if (!signer || !account) return;
       readV4V5(acc).then(function(s1){
-        var merged = s1.myNfts.concat(myNfts);
-        var mergedSt = s1.staked.concat(staked);
-        var seen2 = {}, mm = [], ms = [], k2;
-        for (k2 = 0; k2 < merged.length; k2++){ if (!seen2[merged[k2]]) { seen2[merged[k2]] = 1; mm.push(merged[k2]); } }
-        var seen3 = {};
-        for (k2 = 0; k2 < mergedSt.length; k2++){ if (!seen3[mergedSt[k2]]) { seen3[mergedSt[k2]] = 1; ms.push(mergedSt[k2]); } }
-        if (ms.length > staked.length){
+        var seen = {}, mm = [], ms = [], k;
+        for (k = 0; k < s1.myNfts.length; k++){ if (!seen[s1.myNfts[k]]) { seen[s1.myNfts[k]] = 1; mm.push(s1.myNfts[k]); } }
+        for (k = 0; k < myNfts.length; k++){ if (!seen[myNfts[k]]) { seen[myNfts[k]] = 1; mm.push(myNfts[k]); } }
+        var seen2 = {};
+        for (k = 0; k < s1.staked.length; k++){ if (!seen2[s1.staked[k]]) { seen2[s1.staked[k]] = 1; ms.push(s1.staked[k]); } }
+        for (k = 0; k < staked.length; k++){ if (!seen2[staked[k]]) { seen2[staked[k]] = 1; ms.push(staked[k]); } }
+        var hasNew = ms.length > staked.length;
+        if (hasNew){
           staked = ms; myNfts = mm;
-          var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice(), v: 2 };
-          if (mm.length || ms.length) { window.__rigCache = c2; try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e){} }
-          readPcDetails(myNfts.concat(staked), staked).then(function(pcs3){
-            renderMineView(acc, staked, pcs3, myNfts, s1.v3Staked || []);
+          var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice() };
+          window.__rigCache = c2; try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e2){}
+          readPcDetails(mm.concat(ms), ms).then(function(pcs){
+            renderMineView(acc, ms, pcs, mm, s1.v3Staked || []);
+            var bfEl = $("rigBackfill"); if (bfEl) bfEl.remove();
           });
+        } else {
+          var bfEl2 = $("rigBackfill"); if (bfEl2) bfEl2.remove();
         }
       }).catch(function(e){
-        console.warn("v45 cache-backfill", e);
-        __bfFail++;
-        if (__bfFail >= 3){
-          try { localStorage.removeItem("rigCache"); } catch(e9){}
-          window.__rigCache = null;
-          console.warn("v45 backfill gave up, rigCache cleared");
-          return;
-        }
+        console.warn("v4 backfill", e);
+        rpcFail();
         var rlB = $("rigList");
-        if (rlB) rlB.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
-        setTimeout(function(){ readV4V5(acc).then(function(s2){
-          var m2 = s2.myNfts.concat(staked), ms2 = s2.staked.concat(staked);
-          var seenA = {}, mmA = [], msA = [], kA;
-          for (kA = 0; kA < m2.length; kA++){ if (!seenA[m2[kA]]) { seenA[m2[kA]] = 1; mmA.push(m2[kA]); } }
-          var seenB = {};
-          for (kA = 0; kA < ms2.length; kA++){ if (!seenB[ms2[kA]]) { seenB[ms2[kA]] = 1; msA.push(ms2[kA]); } }
-          if (msA.length > staked.length && msA.length){
-            var c3 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mmA.slice(), staked: msA.slice(), v: 2 };
-            window.__rigCache = c3; try { localStorage.setItem("rigCache", JSON.stringify(c3)); } catch(e3){}
-            readPcDetails(mmA.concat(msA), msA).then(function(pcs4){ renderMineView(acc, msA, pcs4, mmA, s2.v3Staked || []); });
-          }
-        }).catch(function(e4){
-          console.warn("v45 backfill retry", e4);
-          __bfFail++;
-          if (__bfFail >= 3){
-            try { localStorage.removeItem("rigCache"); } catch(e9){}
-            window.__rigCache = null;
-            console.warn("v45 backfill gave up, rigCache cleared");
-            return;
-          }
-          var rlB2 = $("rigList");
-          if (rlB2 && !$("rigBackfill")) rlB2.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
-          setTimeout(function(){ readV4V5(acc).then(function(s3){
-            var m3 = s3.myNfts.concat(staked), ms3 = s3.staked.concat(staked);
-            var seenC = {}, mmC = [], msC = [], kC;
-            for (kC = 0; kC < m3.length; kC++){ if (!seenC[m3[kC]]) { seenC[m3[kC]] = 1; mmC.push(m3[kC]); } }
-            var seenD = {};
-            for (kC = 0; kC < ms3.length; kC++){ if (!seenD[ms3[kC]]) { seenD[ms3[kC]] = 1; msC.push(ms3[kC]); } }
-            if (msC.length > staked.length && msC.length){
-              var c4 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mmC.slice(), staked: msC.slice(), v: 2 };
-              window.__rigCache = c4; try { localStorage.setItem("rigCache", JSON.stringify(c4)); } catch(e5){}
-              readPcDetails(mmC.concat(msC), msC).then(function(pcs5){ renderMineView(acc, msC, pcs5, mmC, s3.v3Staked || []); });
-            }
-          }).catch(function(e6){ console.warn("v45 backfill loop", e6); }); }, 20000);
-        }); }, 20000);
-      });
-    } else {
-      // 两阶段：V6 批量视图先行渲染（毫秒级），V4/V5 老矿机全量扫描后台进行，扫完自动补渲染
-      var v6p = readV6(acc);
-      var v45p = readV4V5(acc);
-      return v6p.then(function(v6){
-        myNfts = v6.owned.slice();
-        staked = v6.staked.slice();
-        v3Staked = [];
-        return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
-          return renderMineView(acc, staked, pcs, myNfts, v3Staked);
-        }).then(function(){
-          return v45p.then(function(s1){
-            myNfts = s1.myNfts.concat(v6.owned);
-            staked = s1.staked.concat(v6.staked);
-            v3Staked = s1.v3Staked;
-            var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice(), v: 2 };
-            if (myNfts.length || staked.length) { window.__rigCache = c; try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){} }
-            return readPcDetails(myNfts.concat(staked), staked).then(function(pcs2){
-              return renderMineView(acc, staked, pcs2, myNfts, v3Staked);
-            });
-          });
-        });
+        if (rlB && !$("rigBackfill")) rlB.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
+        setTimeout(v4Backfill, 15000);
       });
     }
-    return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
-      return renderMineView(acc, staked, pcs, myNfts, v3Staked);
+    if (last > 0) v4Backfill();
+
+    /* ---- 编排：V6（合并缓存老矿机）渲染 ---- */
+    return v6p.then(function(v6){
+      var seen = {}, mm = [], k;
+      for (k = 0; k < myNfts.length; k++){ if (!seen[myNfts[k]]) { seen[myNfts[k]] = 1; mm.push(myNfts[k]); } }
+      for (k = 0; k < v6.owned.length; k++){ if (!seen[v6.owned[k]]) { seen[v6.owned[k]] = 1; mm.push(v6.owned[k]); } }
+      var seen2 = {};
+      var ms = [];
+      for (k = 0; k < staked.length; k++){ if (!seen2[staked[k]]) { seen2[staked[k]] = 1; ms.push(staked[k]); } }
+      for (k = 0; k < v6.staked.length; k++){ if (!seen2[v6.staked[k]]) { seen2[v6.staked[k]] = 1; ms.push(v6.staked[k]); } }
+      return readPcDetails(mm.concat(ms), ms).then(function(pcs){
+        return renderMineView(acc, ms, pcs, mm, v3Staked);
+      });
     });
   }).catch(function(e){
     console.warn("renderMine fail", e);
