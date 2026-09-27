@@ -6460,10 +6460,13 @@ function logTx(label, hash){
 }
 
 
-function readRetry(fn, tries){
-  tries = tries || 3;
-  return fn().catch(function(err){
-    if (tries > 1) return new Promise(function(res){ setTimeout(res, 1200); }).then(function(){ return readRetry(fn, tries-1); });
+function readRetry(fn, tries, timeoutMs){
+  tries = tries || 3; timeoutMs = timeoutMs || 8000;
+  return Promise.race([
+    Promise.resolve().then(fn),
+    new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("read timeout")); }, timeoutMs); })
+  ]).catch(function(err){
+    if (tries > 1) return new Promise(function(res){ setTimeout(res, 1200); }).then(function(){ return readRetry(fn, tries-1, timeoutMs); });
     throw err;
   });
 }
@@ -6670,12 +6673,12 @@ function renderMine(){
     readRetry(function(){ return circ.balanceOf(account); }),
     readRetry(function(){ return Promise.all([mine.earned(account), mineV3.earned(account), mine6.earned(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
     readRetry(function(){ return Promise.all([mine.userShares(account), mineV3.userShares(account), mine6.userShares(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
-    readRetry(function(){ return circ.lastTokenId(); }),
+    (function(){ return readRetry(function(){ return circ.lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last4")||"0")); } catch(e){ return 0n; } }); })(),
     readRetry(function(){ return Promise.all([mine.totalShares(), mineV3.totalShares(), mine6.totalShares()]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
     readRetry(function(){ return proc.mintCount(); }),
     readRetry(function(){ return tapex.balanceOf(account); }),
-    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).lastTokenId(); }),
-    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); })
+    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last5")||"0")); } catch(e){ return 0n; } }); })(),
+    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last6")||"0")); } catch(e){ return 0n; } }); })()
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -6721,7 +6724,7 @@ function renderMine(){
         allCalls.push({ target: circV6.target, callData: ownerSel + tidHex(t6m) });
         allCalls.push({ target: mine6.target, callData: stake6Sel + tidHex(t6m) });
       }
-      var BATCH = 300, out = [], idx = 0, __totalChunks = Math.ceil(allCalls.length / BATCH), __doneChunks = 0;
+      var BATCH = 100, out = [], idx = 0, __totalChunks = Math.ceil(allCalls.length / BATCH), __doneChunks = 0;
       var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
       function scanHint(){
         var el = $("myAssets"); if (!el) return;
@@ -6732,7 +6735,7 @@ function renderMine(){
       function step(){
         if (idx >= allCalls.length) return Promise.resolve(out);
         var jobs = [], chunks = [];
-        while (jobs.length < 4 && idx < allCalls.length){
+        while (jobs.length < 3 && idx < allCalls.length){
           var chunk = allCalls.slice(idx, idx + BATCH); idx += BATCH;
           chunks.push(chunk);
           jobs.push(readRetry(function(ch){ return mc.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 1));
@@ -6747,25 +6750,26 @@ function renderMine(){
         var c = { key: cacheKey, exp: now + 60000, myNfts: myN.slice(), staked: st.slice() };
         window.__rigCache = c;
         try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e){}
+        try { localStorage.setItem("tapec_last4", String(last)); localStorage.setItem("tapec_last5", String(lastV5)); localStorage.setItem("tapec_last6", String(lastV6)); } catch(e){}
       }
       scan = step().then(function(ret){
         var staked = [], v3Staked = [], v5Owned = [];
         var v4Count = (last - from + 1) * 3;
+        function hit(r){
+          if (r && r[0] && r[1] && r[1].length >= 192){
+            var sh = ethers.hexlify(r[1]);
+            var stOwner = "0x" + sh.slice(26, 66);
+            var share = BigInt("0x" + sh.slice(66, 130));
+            return stOwner.toLowerCase() === account.toLowerCase() && share > 0n;
+          }
+          return false;
+        }
         for (var i = 0; i < v4Count; i += 3){
           var tid = from + (i / 3);
           var own = ret[i], stR = ret[i + 1], st3R = ret[i + 2];
-          if (own && own.success && own.returnData && own.returnData.length >= 64){
-            var rh = ethers.hexlify(own.returnData);
+          if (own && own[0] && own[1] && own[1].length >= 64){
+            var rh = ethers.hexlify(own[1]);
             if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
-          }
-          function hit(r){
-            if (r && r.success && r.returnData && r.returnData.length >= 192){
-              var sh = ethers.hexlify(r.returnData);
-              var stOwner = "0x" + sh.slice(26, 66);
-              var share = BigInt("0x" + sh.slice(66, 130));
-              return stOwner.toLowerCase() === account.toLowerCase() && share > 0n;
-            }
-            return false;
           }
           if (hit(stR)) staked.push("0|" + tid);
           if (hit(st3R)) v3Staked.push("0|" + tid);
@@ -6773,16 +6777,16 @@ function renderMine(){
         var v5End = v4Count + (lastV5 - from + 1);
         for (var i5 = v4Count, idx5 = 0; i5 < v5End; i5++, idx5++){
           var o5 = ret[i5];
-          if (o5 && o5.success && o5.returnData && o5.returnData.length >= 64){
-            var rh5 = ethers.hexlify(o5.returnData);
+          if (o5 && o5[0] && o5[1] && o5[1].length >= 64){
+            var rh5 = ethers.hexlify(o5[1]);
             if (("0x" + rh5.slice(26, 66)).toLowerCase() === account.toLowerCase()) { myNfts.push("1|" + (from + idx5)); v5Owned.push("1|" + (from + idx5)); }
           }
         }
         window.__v5Owned = v5Owned;
         for (var i6 = v5End, idx6 = 0; i6 < ret.length; i6 += 2, idx6++){
           var o6 = ret[i6], st6R = ret[i6 + 1];
-          if (o6 && o6.success && o6.returnData && o6.returnData.length >= 64){
-            var rh6 = ethers.hexlify(o6.returnData);
+          if (o6 && o6[0] && o6[1] && o6[1].length >= 64){
+            var rh6 = ethers.hexlify(o6[1]);
             if (("0x" + rh6.slice(26, 66)).toLowerCase() === account.toLowerCase()) { myNfts.push("2|" + (from + idx6)); }
           }
           if (hit(st6R)) staked.push("2|" + (from + idx6));
@@ -6796,7 +6800,7 @@ function renderMine(){
         var ids = [];
         for (var t3 = from; t3 <= last; t3++) ids.push(t3);
         function batchRead(idList, fn){
-          var B2 = 40, o2 = [], j2 = 0;
+          var B2 = 16, o2 = [], j2 = 0;
           function stp(){
             if (j2 >= idList.length) return Promise.resolve(o2);
             var chunk = idList.slice(j2, j2 + B2); j2 += B2;
