@@ -6675,13 +6675,15 @@ function renderMine(){
     readRetry(function(){ return circ.balanceOf(account); }),
     readRetry(function(){ return Promise.all([mine.earned(account), mineV3.earned(account), mine6.earned(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
     readRetry(function(){ return Promise.all([mine.userShares(account), mineV3.userShares(account), mine6.userShares(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
-    (function(){ return readRetry(function(){ return circ.lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last4")||"0")); } catch(e){ return 0n; } }); })(),
+    (function(){ return readRetry(function(){ return circ.lastTokenId(); }, 1, 3000).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last4")||"0")); } catch(e){ return 0n; } }); })(),
     readRetry(function(){ return Promise.all([mine.totalShares(), mineV3.totalShares(), mine6.totalShares()]).then(function(a){ return a[0] + a[1] + a[2]; }); }),
     readRetry(function(){ return proc.mintCount(); }),
     readRetry(function(){ return tapex.balanceOf(account); }),
     (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last5")||"0")); } catch(e){ return 0n; } }); })(),
     (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last6")||"0")); } catch(e){ return 0n; } }); })(),
-    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 2).catch(function(){ return 0n; })
+    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 2).catch(function(){ return 0n; }),
+    readRetry(function(){ return circ.balanceOf(account); }, 1, 3000).catch(function(){ return 0n; }),
+    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 1, 3000).catch(function(){ return 0n; })
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -6712,7 +6714,9 @@ function renderMine(){
       var circV6 = new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider);
       var mineV3 = new ethers.Contract(ADDRS.miningV3, ["function stakes(uint256) view returns (address,uint256,uint256)"], pubProvider);
       var mine6 = new ethers.Contract(ADDRS.miningV6, ["function stakes(bytes32) view returns (address,uint256,uint256)"], pubProvider);
-      var lastV5 = Number(r[16] || 0);
+      var v4Count = Number(r[19] || 0), v5Count = Number(r[20] || 0);
+      if (v4Count <= 0) last = 0;                 // 用户无 V4 PC 则跳过 V4 全量扫描（V4 有 1296 台存量，扫一次 3888 calls，RPC 限流即卡死）
+      var lastV5 = v5Count > 0 ? Number(r[16] || 0) : 0;
       var lastV6 = Number(r[17] || 0);
       for (var t2 = from; t2 <= last; t2++){
         allCalls.push({ target: circ.target, callData: ownerSel + tidHex(t2) });
