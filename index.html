@@ -6208,6 +6208,8 @@ var ABI_CIRCUIT = [
   "function isApprovedForAll(address,address) view returns (bool)",
   "function lastTokenId() view returns (uint256)",
   "function ownerOf(uint256) view returns (address)",
+  "function tokenOfOwnerByIndex(address,uint256) view returns (uint256)",
+  "function totalSupply() view returns (uint256)",
   "function setApprovalForAll(address,bool)"
 ];
 var ABI_MINING = [
@@ -6678,7 +6680,8 @@ function renderMine(){
     readRetry(function(){ return proc.mintCount(); }),
     readRetry(function(){ return tapex.balanceOf(account); }),
     (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last5")||"0")); } catch(e){ return 0n; } }); })(),
-    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last6")||"0")); } catch(e){ return 0n; } }); })()
+    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last6")||"0")); } catch(e){ return 0n; } }); })(),
+    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 2).catch(function(){ return 0n; })
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -6720,12 +6723,57 @@ function renderMine(){
       for (var t5 = from; t5 <= lastV5; t5++){
         allCalls.push({ target: circV5.target, callData: ownerSel + tidHex(t5) });
       }
-      for (var t6m = from; t6m <= lastV6; t6m++){
-        allCalls.push({ target: circV6.target, callData: ownerSel + tidHex(t6m) });
-        allCalls.push({ target: mine6.target, callData: stake6Sel + tidHex(t6m) });
-      }
       var BATCH = 100, out = [], idx = 0, __totalChunks = Math.ceil(allCalls.length / BATCH), __doneChunks = 0;
       var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
+      function chunkCall(calls){
+        var out3 = [], i3 = 0;
+        function st3(){
+          if (i3 >= calls.length) return Promise.resolve(out3);
+          var jobs = [];
+          while (jobs.length < 3 && i3 < calls.length){
+            var ch = calls.slice(i3, i3 + 100); i3 += 100;
+            jobs.push(readRetry(function(ch2){ return mc.tryAggregate.staticCall(false, ch2); }.bind(null, ch), 1));
+          }
+          return Promise.all(jobs).then(function(res){ for (var k = 0; k < res.length; k++) out3 = out3.concat(res[k]); return st3(); });
+        }
+        return st3();
+      }
+      var toiSel = new ethers.Interface(["function tokenOfOwnerByIndex(address,uint256) view returns (uint256)"]).getFunction("tokenOfOwnerByIndex").selector;
+      var addrP = "000000000000000000000000" + String(account).toLowerCase().slice(2);
+      function readV6(){
+        var n6 = Number(r[18] || 0);
+        if (n6 <= 0) return Promise.resolve({ owned: [], staked: [] });
+        var calls = [];
+        for (var k6 = 0; k6 < n6; k6++) calls.push({ target: circV6.target, callData: toiSel + addrP + tidHex(k6) });
+        return chunkCall(calls).then(function(ret){
+          var ids = [];
+          for (var k6 = 0; k6 < ret.length; k6++){
+            var x = ret[k6];
+            if (x && x[0] && x[1] && x[1].length >= 64){
+              var raw = ethers.hexlify(x[1]);
+              var id = BigInt("0x" + raw.slice(2, 66));
+              if (id > 0n) ids.push(Number(id));
+            }
+          }
+          var sc = [];
+          for (var k6 = 0; k6 < ids.length; k6++) sc.push({ target: mine6.target, callData: stake6Sel + tidHex(ids[k6]) });
+          if (!sc.length) return { owned: [], staked: [] };
+          return chunkCall(sc).then(function(ret2){
+            var owned = [], staked = [];
+            for (var k6 = 0; k6 < ret2.length; k6++){
+              owned.push("2|" + ids[k6]);
+              var x = ret2[k6];
+              if (x && x[0] && x[1] && x[1].length >= 192){
+                var sh = ethers.hexlify(x[1]);
+                var stOwner = "0x" + sh.slice(26, 66);
+                var share = BigInt("0x" + sh.slice(66, 130));
+                if (stOwner.toLowerCase() === account.toLowerCase() && share > 0n) staked.push("2|" + ids[k6]);
+              }
+            }
+            return { owned: owned, staked: staked };
+          });
+        });
+      }
       function scanHint(){
         var el = $("myAssets"); if (!el) return;
         var li = el.querySelector("li");
@@ -6783,18 +6831,16 @@ function renderMine(){
           }
         }
         window.__v5Owned = v5Owned;
-        for (var i6 = v5End, idx6 = 0; i6 < ret.length; i6 += 2, idx6++){
-          var o6 = ret[i6], st6R = ret[i6 + 1];
-          if (o6 && o6[0] && o6[1] && o6[1].length >= 64){
-            var rh6 = ethers.hexlify(o6[1]);
-            if (("0x" + rh6.slice(26, 66)).toLowerCase() === account.toLowerCase()) { myNfts.push("2|" + (from + idx6)); }
-          }
-          if (hit(st6R)) staked.push("2|" + (from + idx6));
-        }
-        window.__v6Owned = myNfts.filter(function(x){ return x.indexOf("2|") === 0; });
-        saveCache(myNfts, staked);
-        window.__v3Staked = v3Staked;
         return staked;
+      }).then(function(staked){
+        return readV6().then(function(v6){
+          var st = staked.concat(v6.staked);
+          myNfts = myNfts.concat(v6.owned);
+          window.__v6Owned = v6.owned;
+          saveCache(myNfts, st);
+          window.__v3Staked = v3Staked;
+          return st;
+        });
       }).catch(function(e){
         console.warn("multicall fail, fallback per-id scan", e);
         var ids = [];
@@ -6822,18 +6868,18 @@ function renderMine(){
               st3Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) v3Staked2.push("0|" + (from + i)); });
               var ids5 = [];
               for (var t5b = 1; t5b <= lastV5f; t5b++) ids5.push(t5b);
+              var v6CountF = Number(r[18] || 0);
               var ids6 = [];
-              for (var t6b = 1; t6b <= lastV6; t6b++) ids6.push(t6b);
+              for (var t6b = 0; t6b < v6CountF; t6b++) ids6.push(t6b);
               return batchRead(ids5, function(tid5){ return circV5f.ownerOf(tid5); }).then(function(own5){
                 own5.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push("1|" + (1 + i)); });
                 window.__v5Owned = myNfts.filter(function(x){ return x.indexOf("1|") === 0; });
-                return batchRead(ids6, function(tid6){ return circV6.ownerOf(tid6); }).then(function(own6){
-                  own6.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push("2|" + (1 + i)); });
-                  window.__v6Owned = myNfts.filter(function(x){ return x.indexOf("2|") === 0; });
-                  var stake6Calls = [];
-                  for (var t6s = 1; t6s <= lastV6; t6s++) stake6Calls.push(t6s);
-                  return batchRead(stake6Calls, function(tid6){ return mine6.stakes(ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["uint8","uint256"],[1, tid6]))); }).then(function(st6Rows){
-                    st6Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push("2|" + (1 + i)); });
+                return batchRead(ids6, function(k6){ return circV6.tokenOfOwnerByIndex(account, k6); }).then(function(own6){
+                  var v6owned = [], v6ids = [];
+                  own6.forEach(function(o, i){ if (o && Number(o) > 0n) { var tid = Number(o); v6ids.push(tid); v6owned.push("2|" + tid); myNfts.push("2|" + tid); } });
+                  window.__v6Owned = v6owned;
+                  return batchRead(v6ids, function(tid6){ return mine6.stakes(ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["uint8","uint256"],[1, tid6]))); }).then(function(st6Rows){
+                    st6Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push("2|" + v6ids[i]); });
                     saveCache(myNfts, staked2);
                     window.__v3Staked = v3Staked2;
                     return staked2;
