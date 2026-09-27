@@ -5698,6 +5698,25 @@ input:focus,textarea:focus,select:focus{
 (function(){
 "use strict";
 console.log("%cTapeX DApp v3fb49d0b+ (2026-09-27 根治版: 批量视图+分批详情+uint8部件修复)", "color:#e8c46a");
+function showErrBanner(){
+  try {
+    var eb = document.getElementById("errBanner");
+    var d = window.__lastErr || {};
+    if (!eb){ eb = document.createElement("div"); eb.id = "errBanner"; eb.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:999999;background:#ff3b30;color:#fff;font-size:12px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,.3)"; document.body.appendChild(eb); }
+    eb.style.display = "block";
+    eb.textContent = "⚠ " + d.msg + "  →  " + String(d.stack||"").split(String.fromCharCode(10)).slice(0,3).join(" / ");
+  } catch(e2){}
+}
+window.addEventListener("error", function(ev){
+  var er = ev.error || {};
+  window.__lastErr = { msg: String(ev.message || er.message || er), stack: er.stack ? String(er.stack) : "" };
+  showErrBanner();
+});
+window.addEventListener("unhandledrejection", function(ev){
+  var r = ev.reason || {};
+  window.__lastErr = { msg: String(r.message || r.reason || r), stack: r.stack ? String(r.stack) : "" };
+  showErrBanner();
+});
 
 /* ===== 全局队列执行器（批量操作进度 / 失败重试）===== */
 var Q = (function(){
@@ -6828,9 +6847,10 @@ function renderMine(){
       }
       scan = step().then(function(ret){
         var staked = [], v3Staked = [], v5Owned = [];
+        if (!Array.isArray(ret)) return staked;
         var v4Count = (last - from + 1) * 3;
         function hit(r){
-          if (r && r[0] && r[1] && r[1].length >= 192){
+          if (r && r[0] && r[1] && typeof r[1] === "string" && r[1].length >= 192){
             var sh = ethers.hexlify(r[1]);
             var stOwner = "0x" + sh.slice(26, 66);
             var share = BigInt("0x" + sh.slice(66, 130));
@@ -6841,7 +6861,7 @@ function renderMine(){
         for (var i = 0; i < v4Count; i += 3){
           var tid = from + (i / 3);
           var own = ret[i], stR = ret[i + 1], st3R = ret[i + 2];
-          if (own && own[0] && own[1] && own[1].length >= 64){
+          if (own && own[0] && own[1] && typeof own[1] === "string" && own[1].length >= 64){
             var rh = ethers.hexlify(own[1]);
             if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
           }
@@ -6851,7 +6871,7 @@ function renderMine(){
         var v5End = v4Count + (lastV5 - from + 1);
         for (var i5 = v4Count, idx5 = 0; i5 < v5End; i5++, idx5++){
           var o5 = ret[i5];
-          if (o5 && o5[0] && o5[1] && o5[1].length >= 64){
+          if (o5 && o5[0] && o5[1] && typeof o5[1] === "string" && o5[1].length >= 64){
             var rh5 = ethers.hexlify(o5[1]);
             if (("0x" + rh5.slice(26, 66)).toLowerCase() === account.toLowerCase()) { myNfts.push("1|" + (from + idx5)); v5Owned.push("1|" + (from + idx5)); }
           }
@@ -6952,7 +6972,7 @@ function renderMine(){
             var tidList = bySrc[src];
             jobs.push(Promise.all(tidList.map(function(tid){
               return readRetry(function(){ return c.getCircuit(tid); }, 2).then(function(g){ return { src: Number(src), tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
-            })));
+            })).catch(function(err){ console.warn("pcQ group fail", err); return []; }));
           });
           return Promise.all(jobs).then(function(groups){ var all = []; groups.forEach(function(g){ all = all.concat(g); }); return all; });
         })();
@@ -7014,7 +7034,7 @@ function renderMine(){
       }
       __mineFailCount = 0;
       if (!$("myAssets").dataset.ok) {
-        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e).slice(0,50) + '' + t("a.retry15") + '</span><span class="v">—</span></li>';
+        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e) + '' + t("a.retry15") + '</span><span class="v">—</span></li>' + (e && e.stack ? '<li style="font-size:10px;opacity:.6;word-break:break-all">' + String(e.stack).split(String.fromCharCode(10)).slice(0,4).join(' | ') + '</li>' : '');
         setTimeout(refresh, 30000);
       } else {
         toast(t("a.refreshFail"));   // 已有数据不清空，避免卡片闪没
