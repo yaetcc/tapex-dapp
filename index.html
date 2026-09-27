@@ -6872,9 +6872,9 @@ function renderMine(){
       function step(){
         if (idx >= allCalls.length) return Promise.resolve(out);
         var jobs = [];
-        while (jobs.length < 2 && idx < allCalls.length){
+        while (jobs.length < 1 && idx < allCalls.length){
           var chunk = allCalls.slice(idx, idx + 50); idx += 50;
-          jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 3));
+          jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 5));
         }
         return Promise.all(jobs).then(function(res){
           var k;
@@ -7080,6 +7080,8 @@ function renderMine(){
         }
       }).catch(function(e){
         console.warn("v45 cache-backfill", e);
+        var rlB = $("rigList");
+        if (rlB) rlB.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
         setTimeout(function(){ readV4V5(acc).then(function(s2){
           var m2 = s2.myNfts.concat(staked), ms2 = s2.staked.concat(staked);
           var seenA = {}, mmA = [], msA = [], kA;
@@ -7091,7 +7093,23 @@ function renderMine(){
             window.__rigCache = c3; try { localStorage.setItem("rigCache", JSON.stringify(c3)); } catch(e3){}
             readPcDetails(mmA.concat(msA), msA).then(function(pcs4){ renderMineView(acc, msA, pcs4, mmA, s2.v3Staked || []); });
           }
-        }).catch(function(e4){ console.warn("v45 backfill retry", e4); }); }, 30000);
+        }).catch(function(e4){
+          console.warn("v45 backfill retry", e4);
+          var rlB2 = $("rigList");
+          if (rlB2 && !$("rigBackfill")) rlB2.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
+          setTimeout(function(){ readV4V5(acc).then(function(s3){
+            var m3 = s3.myNfts.concat(staked), ms3 = s3.staked.concat(staked);
+            var seenC = {}, mmC = [], msC = [], kC;
+            for (kC = 0; kC < m3.length; kC++){ if (!seenC[m3[kC]]) { seenC[m3[kC]] = 1; mmC.push(m3[kC]); } }
+            var seenD = {};
+            for (kC = 0; kC < ms3.length; kC++){ if (!seenD[ms3[kC]]) { seenD[ms3[kC]] = 1; msC.push(ms3[kC]); } }
+            if (msC.length > staked.length && msC.length){
+              var c4 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mmC.slice(), staked: msC.slice(), v: 2 };
+              window.__rigCache = c4; try { localStorage.setItem("rigCache", JSON.stringify(c4)); } catch(e5){}
+              readPcDetails(mmC.concat(msC), msC).then(function(pcs5){ renderMineView(acc, msC, pcs5, mmC, s3.v3Staked || []); });
+            }
+          }).catch(function(e6){ console.warn("v45 backfill loop", e6); }); }, 20000);
+        }); }, 20000);
       });
     } else {
       // 两阶段：V6 批量视图先行渲染（毫秒级），V4/V5 老矿机全量扫描后台进行，扫完自动补渲染
@@ -7193,6 +7211,7 @@ function renderMineView(r, staked, pcs, myNfts, v3Staked){
         rigData.totalH = Number(r[11]) || 0;
         rigData.pending = fmtWei(r[10]) + " XCHIP";
         renderRigList();
+        var bfEl = $("rigBackfill"); if (bfEl) bfEl.remove();
         if (Number(r[11]) > 0) rigOn(fmtInt(r[11])); else rigOff();
         return r;
 }
