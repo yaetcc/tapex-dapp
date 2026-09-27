@@ -6896,10 +6896,12 @@ function renderMine(){
   /* ---- 步骤 4：PC 详情（V6 getCircuits 50/批；V4/V5 getCircuit 单查），单台失败仅跳过该台 ---- */
   function readPcDetails(allIds, staked){
     if (!window.__pcBySrc) window.__pcBySrc = {};
-    var bySrc = {};
+    var bySrc = {}, seen = {};
     var k;
     for (k = 0; k < allIds.length; k++){
-      var ps = String(allIds[k]).split("|");
+      var key = String(allIds[k]);
+      if (seen[key]) continue; seen[key] = true;
+      var ps = key.split("|");
       if (!bySrc[ps[0]]) bySrc[ps[0]] = [];
       bySrc[ps[0]].push(Number(ps[1]));
     }
