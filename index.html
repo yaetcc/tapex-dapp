@@ -6858,9 +6858,9 @@ function renderMine(){
       function step(){
         if (idx >= allCalls.length) return Promise.resolve(out);
         var jobs = [];
-        while (jobs.length < 3 && idx < allCalls.length){
+        while (jobs.length < 2 && idx < allCalls.length){
           var chunk = allCalls.slice(idx, idx + 50); idx += 50;
-          jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 1));
+          jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 3));
         }
         return Promise.all(jobs).then(function(res){
           var k;
@@ -7064,7 +7064,21 @@ function renderMine(){
             renderMineView(acc, staked, pcs3, myNfts, s1.v3Staked || []);
           });
         }
-      }).catch(function(e){ console.warn("v45 cache-backfill", e); });
+      }).catch(function(e){
+        console.warn("v45 cache-backfill", e);
+        setTimeout(function(){ readV4V5(acc).then(function(s2){
+          var m2 = s2.myNfts.concat(staked), ms2 = s2.staked.concat(staked);
+          var seenA = {}, mmA = [], msA = [], kA;
+          for (kA = 0; kA < m2.length; kA++){ if (!seenA[m2[kA]]) { seenA[m2[kA]] = 1; mmA.push(m2[kA]); } }
+          var seenB = {};
+          for (kA = 0; kA < ms2.length; kA++){ if (!seenB[ms2[kA]]) { seenB[ms2[kA]] = 1; msA.push(ms2[kA]); } }
+          if (msA.length > staked.length && msA.length){
+            var c3 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mmA.slice(), staked: msA.slice(), v: 2 };
+            window.__rigCache = c3; try { localStorage.setItem("rigCache", JSON.stringify(c3)); } catch(e3){}
+            readPcDetails(mmA.concat(msA), msA).then(function(pcs4){ renderMineView(acc, msA, pcs4, mmA, s2.v3Staked || []); });
+          }
+        }).catch(function(e4){ console.warn("v45 backfill retry", e4); }); }, 30000);
+      });
     } else {
       // 两阶段：V6 批量视图先行渲染（毫秒级），V4/V5 老矿机全量扫描后台进行，扫完自动补渲染
       var v6p = readV6(acc);
