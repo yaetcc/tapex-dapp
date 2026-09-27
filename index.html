@@ -6358,10 +6358,13 @@ function detectWallet(){
 }
 et = detectWallet();
 initEIP6963();
-var RPCS = ["https://xlayerrpc.okx.com", "https://xlayer.drpc.org", "https://rpc.xlayer.tech"]; // 实测可达的 3 个主网 RPC（dRPC 2026-09-28 实测可达；xlayer-mainnet-rpc.okx.com 等已实测不可达移除）
+var RPCS = ["https://xlayerrpc.okx.com", "https://xlayer.drpc.org", "https://rpc.nodeflare.app/xlayer/public", "https://rpc.xlayer.tech"]; // 4 个主网 RPC（NodeFlare 多区域自动故障转移、非 OKX 域名，2026-09-28 实测可达）
 var rpcIdx = 0;
 var rpcOk = {};      // 健康探测结果：下标 → 是否可用（false=限流/故障冷却中，rpcProbe 每 5 分钟复测恢复）
-function makePub(){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); } // 显式 chainId + 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
+function makePub(){
+  try { return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], new ethers.Network("xlayer", 196), { batchMaxCount: 1, staticNetwork: true }); }
+  catch(e){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); }
+} // 显式 chainId + staticNetwork 跳过自动网络检测（部分公共端点检测会失败）+ 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
 var pubProvider = makePub();
 setTimeout(function(){ rpcProbe(); }, 4000);
 function probeRpc(url){
