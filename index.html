@@ -5457,6 +5457,11 @@ input:focus,textarea:focus,select:focus{
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
       <span class="asm-tier"><select id="asmTier"><option value="auto">品质：自动（低档优先）</option><option value="0">品质：标准</option><option value="1">品质：Pro</option><option value="2">品质：旗舰</option></select></span><button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
+      <div class="migrate-bar" id="migBar" style="display:none">
+        <span id="migText"></span>
+        <button class="action-btn sec auto" id="migBtn">迁移旧部件</button>
+        <div class="msg" id="migMsg"></div>
+      </div>
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
@@ -5770,7 +5775,8 @@ var ADDRS = {
   marketV4: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8",
   marketV5: "0x81BeC9d095c9Abf7b5D2D4D2c7b2B3ab91076a38",
   tapex: "0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE",
-  dividend: "0xA86e125b6F824483fC16616d963481C8a346f5dF"
+  dividend: "0xA86e125b6F824483fC16616d963481C8a346f5dF",
+  oldProcessor: "0x5dF4EA17B27be693348E4d5CD8c0566d6Af9eB26"
 };
 
 /* ---------- 多语言 ---------- */
@@ -6172,6 +6178,7 @@ var ABI_PROC = [
   "function isApprovedForAll(address,address) view returns (bool)",
   "function mint(uint256) payable",
   "function mintCount() view returns (uint256)",
+  "function migrateParts(address,uint256[])",
   "function mintWithXchip(uint256)",
   "function nextPriceStep() view returns (uint256)",
   "function setApprovalForAll(address,bool)",
@@ -7328,6 +7335,7 @@ function doRefresh(){
     renderMine().catch(function(e){ console.warn("mine read fail", e); }),
     renderMarket().catch(function(e){ console.warn("market read fail", e); }),
     renderPartMarket().catch(function(e){ console.warn("part market read fail", e); }),
+    checkOldParts().catch(function(e){ console.warn("old parts check fail", e); }),
     renderDividend().catch(function(e){ console.warn("dividend read fail", e); })
   ]).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
 }
@@ -8409,6 +8417,69 @@ function doPartCancelAll(){
   });
 })();
 $("mkListBtn").addEventListener("click", doMarketList);
+
+/* ---------- 旧版部件迁移（旧 Processor → ProcessorV3 1:1） ---------- */
+var ABI_OLD = [
+  "function balanceOfBatch(address[],uint256[]) view returns (uint256[])",
+  "function setApprovalForAll(address,bool)",
+  "function isApprovedForAll(address,address) view returns (bool)"
+];
+var oldPartsCache = { n: 0, at: 0, checked: false };
+function checkOldParts(){
+  var bar = $("migBar"); if (!bar) return Promise.resolve();
+  if (!account) { bar.style.display = "none"; return Promise.resolve(); }
+  if (Date.now() - oldPartsCache.at < 60000 && oldPartsCache.checked) { renderMigBar(); return Promise.resolve(); }
+  var op = new ethers.Contract(ADDRS.oldProcessor, ABI_OLD, pubProvider);
+  var ids = []; for (var i = 3; i <= 26; i++) ids.push(i);
+  return readRetry(function(){ return op.balanceOfBatch([account], ids); }).then(function(bs){
+    var n = bs.reduce(function(a, b){ return a + Number(b); }, 0);
+    oldPartsCache = { n: n, at: Date.now(), checked: true };
+    renderMigBar();
+  }).catch(function(){ bar.style.display = "none"; });
+}
+function renderMigBar(){
+  var bar = $("migBar"); if (!bar) return;
+  if (oldPartsCache.n > 0) {
+    bar.style.display = "";
+    var mt = $("migText");
+    if (mt) mt.innerHTML = "检测到旧版部件 <b>" + oldPartsCache.n + "</b> 件（旧处理器 <code>" + String(ADDRS.oldProcessor).slice(0,6) + "…</code>），迁移后即可正常组装与交易。";
+  } else bar.style.display = "none";
+}
+function doMigrateOld(){
+  if (!signer || !account) { setMsg("migMsg","err","请先连接钱包。"); return; }
+  if (!ensureNetMsg("migMsg")) return;
+  if (!(oldPartsCache.n > 0)) { setMsg("migMsg","err","未检测到旧版部件。"); return; }
+  var btn = $("migBtn"); busy(btn, true);
+  setMsg("migMsg","info","检查旧处理器授权…");
+  var op = new ethers.Contract(ADDRS.oldProcessor, ABI_OLD, signer);
+  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+  readRetry(function(){ return op.isApprovedForAll(account, ADDRS.processor); }).then(function(ok){
+    var chain = Promise.resolve();
+    if (!ok) {
+      setMsg("migMsg","info","未授权迁移，先发送授权交易（请确认签名）…");
+      chain = chain.then(function(){ return op.setApprovalForAll(ADDRS.processor, true, { gasLimit: 200000 }); }).then(function(tx){ return tx.wait(); });
+    }
+    return chain.then(function(){
+      var ids = []; for (var i = 3; i <= 26; i++) ids.push(i);
+      setMsg("migMsg","info","发送迁移交易…");
+      return proc.migrateParts(ADDRS.oldProcessor, ids, { gasLimit: 3000000 });
+    });
+  }).then(function(tx){
+    setMsg("migMsg","info","迁移交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+    return tx.wait();
+  }).then(function(receipt){
+    logTx("迁移旧部件", receipt.hash);
+    setMsg("migMsg","ok","迁移完成！旧部件已 1:1 转入新版，可以正常组装与交易。");
+    toast("旧部件迁移完成");
+    oldPartsCache.at = 0;
+    refresh();
+    busy(btn, false);
+  }).catch(function(e){
+    setMsg("migMsg","err","迁移失败：" + humanErr(e).slice(0,220));
+    busy(btn, false);
+  });
+}
+(function(){ var mb = $("migBtn"); if (mb) mb.addEventListener("click", doMigrateOld); })();
 $("mkList").addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("button") : null;
   if (!b) return;
