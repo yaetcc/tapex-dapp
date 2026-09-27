@@ -6980,7 +6980,7 @@ function renderMine(){
         myNfts = v6.owned.slice();
         staked = v6.staked.slice();
         v3Staked = [];
-        return readPcDetails(myNfts, staked).then(function(pcs){
+        return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
           return renderMineView(acc, staked, pcs, myNfts, v3Staked);
         }).then(function(){
           return v45p.then(function(s1){
@@ -6990,14 +6990,14 @@ function renderMine(){
             var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice() };
             window.__rigCache = c;
             try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){}
-            return readPcDetails(myNfts, staked).then(function(pcs2){
+            return readPcDetails(myNfts.concat(staked), staked).then(function(pcs2){
               return renderMineView(acc, staked, pcs2, myNfts, v3Staked);
             });
           });
         });
       });
     }
-    return readPcDetails(myNfts, staked).then(function(pcs){
+    return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
       return renderMineView(acc, staked, pcs, myNfts, v3Staked);
     });
   }).catch(function(e){
