@@ -5363,7 +5363,7 @@ input:focus,textarea:focus,select:focus{
 .q-btn:hover{border-color:#00e5a0;color:#00e5a0}
 </style>
 </head>
-<body>
+<body><div id="verBadge" style="position:fixed;right:8px;bottom:6px;z-index:99999;font-size:10px;color:#8a8f98;background:rgba(10,12,16,.7);padding:2px 6px;border-radius:6px;pointer-events:none">v3fb49d0b+</div>
 
 <!-- ===== 导航 ===== -->
 <nav>
@@ -5697,6 +5697,7 @@ input:focus,textarea:focus,select:focus{
 <script>
 (function(){
 "use strict";
+console.log("%cTapeX DApp v3fb49d0b+ (2026-09-27 根治版: 批量视图+分批详情+uint8部件修复)", "color:#e8c46a");
 
 /* ===== 全局队列执行器（批量操作进度 / 失败重试）===== */
 var Q = (function(){
@@ -6664,7 +6665,7 @@ function renderMine(){
   $("myAssets").dataset.ready = "1";
   // 全部链上读项合并为 1 次 multicall（27 个调用，1 个 RPC 请求），规避 OKX 7req/s 限流
   var IFC_TOK = new ethers.Interface(["function balanceOf(address) view returns (uint256)"]);
-  var IFC_PROC = new ethers.Interface(["function balanceOfType(address,uint256) view returns (uint256)", "function mintCount() view returns (uint256)"]);
+  var IFC_PROC = new ethers.Interface(["function balanceOfType(address,uint8) view returns (uint256)", "function mintCount() view returns (uint256)"]);
   var IFC_CIR = new ethers.Interface(["function balanceOf(address) view returns (uint256)", "function lastTokenId() view returns (uint256)"]);
   var IFC_MINE = new ethers.Interface(["function earned(address) view returns (uint256)", "function userShares(address) view returns (uint256)", "function totalShares() view returns (uint256)"]);
   // 批量视图接口：定义在 readAll 回调顶层（else 之外），保证缓存命中路径也能用（此前定义在 else 内，缓存命中时值为 undefined → encodeFunctionData 报错）
