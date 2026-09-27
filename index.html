@@ -6721,13 +6721,26 @@ function renderMine(){
         allCalls.push({ target: circV6.target, callData: ownerSel + tidHex(t6m) });
         allCalls.push({ target: mine6.target, callData: stake6Sel + tidHex(t6m) });
       }
-      var BATCH = 400, out = [], idx = 0;
+      var BATCH = 300, out = [], idx = 0, __totalChunks = Math.ceil(allCalls.length / BATCH), __doneChunks = 0;
       var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
+      function scanHint(){
+        var el = $("myAssets"); if (!el) return;
+        var li = el.querySelector("li");
+        if (li && li.innerHTML.indexOf(t("a.loading")) !== -1)
+          li.innerHTML = '<span class="nm">' + t("a.loading") + '</span><span class="v">' + __doneChunks + "/" + __totalChunks + '</span>';
+      }
       function step(){
         if (idx >= allCalls.length) return Promise.resolve(out);
-        var chunk = allCalls.slice(idx, idx + BATCH); idx += BATCH;
-        return readRetry(function(){ return mc.tryAggregate.staticCall(false, chunk); }, 1).then(function(res){
-          out = out.concat(res); return step();
+        var jobs = [], chunks = [];
+        while (jobs.length < 4 && idx < allCalls.length){
+          var chunk = allCalls.slice(idx, idx + BATCH); idx += BATCH;
+          chunks.push(chunk);
+          jobs.push(readRetry(function(ch){ return mc.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 1));
+        }
+        return Promise.all(jobs).then(function(res){
+          for (var k = 0; k < res.length; k++) out = out.concat(res[k]);
+          __doneChunks += res.length; scanHint();
+          return step();
         });
       }
       function saveCache(myN, st){
