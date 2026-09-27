@@ -6871,20 +6871,23 @@ function renderMine(){
       }
       function step(){
         if (idx >= allCalls.length) return Promise.resolve(out);
-        var jobs = [];
-        while (jobs.length < 1 && idx < allCalls.length){
-          var chunk = allCalls.slice(idx, idx + 1296); idx += 1296;
-          jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 5));
-        }
-        return Promise.all(jobs).then(function(res){
-          var k;
-          for (k = 0; k < res.length; k++) out = out.concat(Array.isArray(res[k]) ? res[k] : []);
-          doneChunks += res.length; scanHint();
-          return step();
-        }).catch(function(e){
-          rpcFail();
-          throw e;
-        });
+        var chunk = allCalls.slice(idx, idx + BATCH); idx += chunk.length;
+        return readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 3)
+          .then(function(res){
+            out = out.concat(Array.isArray(res) ? res : []);
+            doneChunks++; scanHint();
+            return step();
+          }).catch(function(e){
+            rpcFail();
+            if (BATCH > 50){          // 大批次响应大、弱网易超时 → 自适应降级重扫（1296→324→81→50）
+              BATCH = Math.max(50, Math.floor(BATCH / 4));
+              idx = 0; out = [];
+              doneChunks = 0; totalChunks = Math.ceil(allCalls.length / BATCH);
+              console.warn("V4 扫描批次降级: " + BATCH);
+              return step();
+            }
+            throw e;
+          });
       }
       function collect(ret){
         var v4End = lastV4 * PER;
