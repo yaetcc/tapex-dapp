@@ -7070,6 +7070,7 @@ function renderMine(){
       } catch(e){}
     }
     var myNfts, staked, v3Staked = [];
+    var __bfFail = 0;
     if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && (rigCache.myNfts.length || rigCache.staked.length) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
       myNfts = rigCache.myNfts.slice();
       staked = rigCache.staked.slice();
@@ -7091,6 +7092,13 @@ function renderMine(){
         }
       }).catch(function(e){
         console.warn("v45 cache-backfill", e);
+        __bfFail++;
+        if (__bfFail >= 3){
+          try { localStorage.removeItem("rigCache"); } catch(e9){}
+          window.__rigCache = null;
+          console.warn("v45 backfill gave up, rigCache cleared");
+          return;
+        }
         var rlB = $("rigList");
         if (rlB) rlB.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
         setTimeout(function(){ readV4V5(acc).then(function(s2){
@@ -7106,6 +7114,13 @@ function renderMine(){
           }
         }).catch(function(e4){
           console.warn("v45 backfill retry", e4);
+          __bfFail++;
+          if (__bfFail >= 3){
+            try { localStorage.removeItem("rigCache"); } catch(e9){}
+            window.__rigCache = null;
+            console.warn("v45 backfill gave up, rigCache cleared");
+            return;
+          }
           var rlB2 = $("rigList");
           if (rlB2 && !$("rigBackfill")) rlB2.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
           setTimeout(function(){ readV4V5(acc).then(function(s3){
