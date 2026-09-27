@@ -5518,6 +5518,11 @@ input:focus,textarea:focus,select:focus{
 
     <div class="card" id="mine">
       <div class="kicker">My · <span data-i18n="mine.title">我的资产</span></div>
+      <div class="migrate-bar" id="migBar2" style="display:none">
+        <span id="migText2"></span>
+        <button class="action-btn sec auto" id="migBtn2">迁移旧部件</button>
+        <div class="msg" id="migMsg2"></div>
+      </div>
       <ul class="asset-list" id="myAssets">
         <li><span class="nm" data-i18n="ph.noWallet">未连接钱包</span><span class="v">—</span></li>
       </ul>
@@ -8420,7 +8425,7 @@ $("mkListBtn").addEventListener("click", doMarketList);
 
 /* ---------- 旧版部件迁移（旧 Processor → ProcessorV3 1:1） ---------- */
 var ABI_OLD = [
-  "function balanceOfBatch(address[],uint256[]) view returns (uint256[])",
+  "function balanceOfType(address,uint8) view returns (uint256)",
   "function setApprovalForAll(address,bool)",
   "function isApprovedForAll(address,address) view returns (bool)"
 ];
@@ -8430,20 +8435,21 @@ function checkOldParts(){
   if (!account) { bar.style.display = "none"; return Promise.resolve(); }
   if (Date.now() - oldPartsCache.at < 60000 && oldPartsCache.checked) { renderMigBar(); return Promise.resolve(); }
   var op = new ethers.Contract(ADDRS.oldProcessor, ABI_OLD, pubProvider);
-  var ids = []; for (var i = 3; i <= 26; i++) ids.push(i);
-  return readRetry(function(){ return op.balanceOfBatch([account], ids); }).then(function(bs){
+  var q = [];
+  for (var t = 1; t <= 8; t++) q.push(readRetry(function(t2){ return op.balanceOfType(account, t2); }.bind(null, t), 2));
+  return Promise.all(q).then(function(bs){
     var n = bs.reduce(function(a, b){ return a + Number(b); }, 0);
     oldPartsCache = { n: n, at: Date.now(), checked: true };
     renderMigBar();
   }).catch(function(){ bar.style.display = "none"; });
 }
 function renderMigBar(){
-  var bar = $("migBar"); if (!bar) return;
+  var bar = $("migBar"), bar2 = $("migBar2");
   if (oldPartsCache.n > 0) {
-    bar.style.display = "";
-    var mt = $("migText");
-    if (mt) mt.innerHTML = "检测到旧版部件 <b>" + oldPartsCache.n + "</b> 件（旧处理器 <code>" + String(ADDRS.oldProcessor).slice(0,6) + "…</code>），迁移后即可正常组装与交易。";
-  } else bar.style.display = "none";
+    var txt = "检测到旧版部件 <b>" + oldPartsCache.n + "</b> 件（旧处理器 <code>" + String(ADDRS.oldProcessor).slice(0,6) + "…</code>），迁移后即可正常组装与交易。";
+    if (bar) { bar.style.display = ""; var mt = $("migText"); if (mt) mt.innerHTML = txt; }
+    if (bar2) { bar2.style.display = ""; var mt2 = $("migText2"); if (mt2) mt2.innerHTML = txt; }
+  } else { if (bar) bar.style.display = "none"; if (bar2) bar2.style.display = "none"; }
 }
 function doMigrateOld(){
   if (!signer || !account) { setMsg("migMsg","err","请先连接钱包。"); return; }
@@ -8479,7 +8485,7 @@ function doMigrateOld(){
     busy(btn, false);
   });
 }
-(function(){ var mb = $("migBtn"); if (mb) mb.addEventListener("click", doMigrateOld); })();
+(function(){ var mb = $("migBtn"); if (mb) mb.addEventListener("click", doMigrateOld); var mb2 = $("migBtn2"); if (mb2) mb2.addEventListener("click", doMigrateOld); })();
 $("mkList").addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("button") : null;
   if (!b) return;
