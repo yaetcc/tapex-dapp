@@ -6911,7 +6911,7 @@ function renderMine(){
         }
         return { myNfts: myNfts, staked: staked, v3Staked: v3Staked };
       }
-      return safe(step, []).then(function(ret2){ return collect(Array.isArray(ret2) ? ret2 : []); });
+      return step().then(function(ret2){ return collect(Array.isArray(ret2) ? ret2 : []); }); // 扫描失败抛错→全局重试（不静默返回空导致老矿机不显示）
     });
 
   }
@@ -6920,10 +6920,9 @@ function renderMine(){
   function readV6(acc){
     var n6 = Number(acc[18] || 0);
     if (n6 <= 0) return Promise.resolve({ owned: [], staked: [] });
-    return safe(function(){
-      var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
-      return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000);
-    }, null).then(function(raw1){
+    var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
+    // 读取失败抛错（readRetry 3 次后）→ 触发全局 catch 的 rpcFail+重试；不静默返回空（否则 RPC 限流时显示"无 PC"且不重试）
+    return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000).then(function(raw1){
       if (!raw1) return { owned: [], staked: [] };
       var ids;
       try { ids = IFC_C.decodeFunctionResult("pcsOfOwner", raw1)[0]; } catch(e){ return { owned: [], staked: [] }; }
@@ -6931,10 +6930,8 @@ function renderMine(){
       ids = ids.map(function(x){ return Number(x); });
       var owned = ids.map(function(x){ return "2|" + x; });
       if (!ids.length) return { owned: owned, staked: [] };
-      return safe(function(){
-        var cd2 = IFC_M6.encodeFunctionData("stakedStatusOf", [ids]);
-        return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: cd2 }); }, 2, 8000);
-      }, null).then(function(raw2){
+      var cd2 = IFC_M6.encodeFunctionData("stakedStatusOf", [ids]);
+      return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: cd2 }); }, 2, 8000).then(function(raw2){
         if (!raw2) return { owned: owned, staked: [] };
         var flags;
         try { flags = IFC_M6.decodeFunctionResult("stakedStatusOf", raw2)[0]; } catch(e){ return { owned: owned, staked: [] }; }
@@ -8469,6 +8466,14 @@ function doBatchStake(){
         return circ6.setApprovalForAll(ADDRS.miningV6, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
       });
     });
+    if (grp0Old.length) chain = chain.then(function(){
+      var circ3m = new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, signer);
+      return readRetry(function(){ return circ3m.isApprovedForAll(account, ADDRS.miningV3); }).then(function(ok){
+        if (ok) return;
+        rigLog("info", "授权旧矿场（V3M PC，一次签名）…");
+        return circ3m.setApprovalForAll(ADDRS.miningV3, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
+      });
+    });
     return chain;
   }
   function one(q){
@@ -8482,6 +8487,7 @@ function doBatchStake(){
     rigLog("info", t("o.stakeProgress") + (donePrev + 1) + "/" + total + "（本批 " + n + " 台，一次签名）");
     var p;
     if (item.kind === 0) p = mine5.batchStake(item.arr, { gasLimit: 15000000 });
+    else if (item.kind === 3) p = mineV3.batchStake(item.arr, { gasLimit: 15000000 });
     else if (item.kind === 1) p = mine6.batchStake(item.arr.map(function(){ return 0; }), item.arr, { gasLimit: 15000000 });
     else p = mine6.batchStake(item.arr.map(function(){ return 1; }), item.arr, { gasLimit: 15000000 });
     p.then(function(tx){
@@ -8724,7 +8730,7 @@ function renderPartMarket(){
     var q = [];
     for (var i = 0; i < cnt; i++) q.push(readRetry(function(idx){ return pm.partAt(idx); }.bind(null, i), 2));
     return Promise.all(q).then(function(rows){
-      var active = rows.filter(function(r){ return r && r.seller && r.seller !== ethers.ZeroAddress; });
+      var active = rows.map(function(r, i){ if (r && r.seller && r.seller !== ethers.ZeroAddress) { r.idx = i; return r; } return null; }).filter(Boolean);
       pmCache.rows = active; pmCache.loadedAt = Date.now();
       var sc = $("pmCount"); if (sc) sc.textContent = t("mk.onSaleH") + " · " + active.length + " 单";
       renderPmPage();
