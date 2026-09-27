@@ -2127,6 +2127,8 @@ footer b{
 }
 
 /* ===== 08 矿机 · 质押 ===== */
+.rig-mig{margin:8px 2px 10px;padding:9px 12px;border:1px solid rgba(255,176,64,.35);border-radius:10px;background:linear-gradient(135deg,rgba(255,176,64,.10),rgba(255,176,64,.03));color:var(--txt);font-size:12px;line-height:1.55;}
+.rig-mig b{color:var(--gold);}
 .rig-ops #rigBatchStake{
   background:linear-gradient(135deg,#f4c25c,#d9a441);
   color:#101828;
@@ -5735,7 +5737,8 @@ var ADDRS = {
   token: "0xefac9e6D56eAE13c7D7e071297D3B16D09aB7DE5",
   processor: "0x7e8aBC042ceA2f5566298e159E2801b721Bb3AA0",
   circuit: "0x20420E212E0f38EF5e29b3B3ea945F77fbC128E6",
-  mining: "0xA12D7d971E316Dc37689fCbd01Cd2f259f342018",
+  mining: "0x061d07cF45BecC698581571Ff15C8e0f2d607293",
+  miningV3: "0xA12D7d971E316Dc37689fCbd01Cd2f259f342018",
   market: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8",
   tapex: "0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE",
   dividend: "0xA86e125b6F824483fC16616d963481C8a346f5dF"
@@ -6170,6 +6173,8 @@ var ABI_MINING = [
   "function halvingEpochs() view returns (uint256)",
   "function secondsToNextHalving() view returns (uint256)",
   "function stake(uint256)",
+  "function batchStake(uint256[])",
+  "function batchUnstake(uint256[])",
   "function stakes(uint256) view returns (address owner,uint256 amount,uint256 share)",
   "function totalShares() view returns (uint256)",
   "function unstake(uint256)",
@@ -6429,10 +6434,11 @@ function renderGlobal(){
   var proc  = new ethers.Contract(ADDRS.processor, ABI_PROC, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, pubProvider);
   return Promise.all([
     readRetry(function(){ return token.totalSupply(); }),
     readRetry(function(){ return token.balanceOf(ADDRS.mining); }),
-    readRetry(function(){ return mine.totalShares(); }),
+    readRetry(function(){ return Promise.all([mine.totalShares(), mineV3.totalShares()]).then(function(a){ return a[0] + a[1]; }); }),
     readRetry(function(){ return mine.epochDuration(); }),
     readRetry(function(){ return mine.emissionPerEpoch(); }),
     readRetry(function(){ return proc.config(); }),
@@ -6567,6 +6573,7 @@ function renderMine(){
   var proc  = new ethers.Contract(ADDRS.processor, ABI_PROC, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, pubProvider);
   var mineCard = $("mine");
   if (mineCard) mineCard.classList.add("refreshing");      // 轻度加载态（保留旧数据）
   var first = !$("myAssets").dataset.ready;
@@ -6583,10 +6590,10 @@ function renderMine(){
     readRetry(function(){ return proc.balanceOfType(account, 7); }),
     readRetry(function(){ return proc.balanceOfType(account, 8); }),
     readRetry(function(){ return circ.balanceOf(account); }),
-    readRetry(function(){ return mine.earned(account); }),
-    readRetry(function(){ return mine.userShares(account); }),
+    readRetry(function(){ return Promise.all([mine.earned(account), mineV3.earned(account)]).then(function(a){ return a[0] + a[1]; }); }),
+    readRetry(function(){ return Promise.all([mine.userShares(account), mineV3.userShares(account)]).then(function(a){ return a[0] + a[1]; }); }),
     readRetry(function(){ return circ.lastTokenId(); }),
-    readRetry(function(){ return mine.totalShares(); }),
+    readRetry(function(){ return Promise.all([mine.totalShares(), mineV3.totalShares()]).then(function(a){ return a[0] + a[1]; }); }),
     readRetry(function(){ return proc.mintCount(); }),
     readRetry(function(){ return tapex.balanceOf(account); })
   ]).then(function(r){
@@ -6615,9 +6622,11 @@ function renderMine(){
       var stakeSel = new ethers.Interface(["function stakes(uint256) view returns (address,uint256,uint256)"]).getFunction("stakes").selector;
       function tidHex(t){ return ethers.toBeHex(BigInt(t), 32).slice(2); }
       var allCalls = [];
+      var mineV3 = new ethers.Contract(ADDRS.miningV3, ["function stakes(uint256) view returns (address,uint256,uint256)"], pubProvider);
       for (var t2 = from; t2 <= last; t2++){
         allCalls.push({ target: circ.target, callData: ownerSel + tidHex(t2) });
         allCalls.push({ target: mine.target, callData: stakeSel + tidHex(t2) });
+        allCalls.push({ target: mineV3.target, callData: stakeSel + tidHex(t2) });
       }
       var BATCH = 400, out = [], idx = 0;
       var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
@@ -6634,22 +6643,28 @@ function renderMine(){
         try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e){}
       }
       scan = step().then(function(ret){
-        var staked = [];
-        for (var i = 0; i < ret.length; i += 2){
-          var tid = from + (i >> 1);
-          var own = ret[i], stR = ret[i + 1];
+        var staked = [], v3Staked = [];
+        for (var i = 0; i < ret.length; i += 3){
+          var tid = from + (i / 3);
+          var own = ret[i], stR = ret[i + 1], st3R = ret[i + 2];
           if (own && own.success && own.returnData && own.returnData.length >= 64){
             var rh = ethers.hexlify(own.returnData);
             if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push(tid);
           }
-          if (stR && stR.success && stR.returnData && stR.returnData.length >= 192){
-            var sh = ethers.hexlify(stR.returnData);
-            var stOwner = "0x" + sh.slice(26, 66);
-            var share = BigInt("0x" + sh.slice(66, 130));
-            if (stOwner.toLowerCase() === account.toLowerCase() && share > 0n) staked.push(tid);
+          function hit(r){
+            if (r && r.success && r.returnData && r.returnData.length >= 192){
+              var sh = ethers.hexlify(r.returnData);
+              var stOwner = "0x" + sh.slice(26, 66);
+              var share = BigInt("0x" + sh.slice(66, 130));
+              return stOwner.toLowerCase() === account.toLowerCase() && share > 0n;
+            }
+            return false;
           }
+          if (hit(stR)) staked.push(tid);
+          if (hit(st3R)) v3Staked.push(tid);
         }
         saveCache(myNfts, staked);
+        window.__v3Staked = v3Staked;
         return staked;
       }).catch(function(e){
         console.warn("multicall fail, fallback per-id scan", e);
@@ -6666,13 +6681,18 @@ function renderMine(){
           }
           return stp();
         }
+        var mineV3 = new ethers.Contract(ADDRS.miningV3, ["function stakes(uint256) view returns (address,uint256,uint256)"], pubProvider);
         return batchRead(ids, function(tid){ return circ.ownerOf(tid); }).then(function(own){
           own.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push(from + i); });
           return batchRead(ids, function(stid){ return mine.stakes(stid); }).then(function(stRows){
-            var staked2 = [];
-            stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push(from + i); });
-            saveCache(myNfts, staked2);
-            return staked2;
+            return batchRead(ids, function(stid){ return mineV3.stakes(stid); }).then(function(st3Rows){
+              var staked2 = [], v3Staked2 = [];
+              stRows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push(from + i); });
+              st3Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) v3Staked2.push(from + i); });
+              saveCache(myNfts, staked2);
+              window.__v3Staked = v3Staked2;
+              return staked2;
+            });
           });
         });
       });
@@ -6717,6 +6737,7 @@ function renderMine(){
           ? t("a.yourIds") + myNfts.join("、") + (staked.length ? t("a.stakedIds") + staked.join("、") + t("a.clickHintStaked") : t("a.clickHintIdle"))
           : t("a.noPc");
         rigData.staked = staked.slice();
+        rigData.v3Staked = (window.__v3Staked || []).slice();
         rigData.pcs = pcs.slice();
         rigData.totalH = Number(r[11]) || 0;
         rigData.pending = fmtWei(r[10]) + " XCHIP";
@@ -7623,7 +7644,8 @@ function renderRigList(){
     '<div class="batch-grp"><button class="action-btn auto mini" id="rigBatchStake">' + t("rig.stake") + '</button><button class="action-btn sec mini" id="rigBatchUnstake">' + t("act.unstake") + '</button><button class="action-btn" id="rigClaimBtn">' + t("act.claim") + '</button></div>' +
     pg +
     '</div>';
-  var lh = hd + ops + '<div class="rig-main">' + body + '</div>'; if (rl.innerHTML !== lh) rl.innerHTML = lh;
+  var migTip = (rigData.v3Staked && rigData.v3Staked.length) ? '<div class="rig-mig"><b>旧矿场 · ' + rigData.v3Staked.length + ' 台</b><span>先领取旧矿场奖励，再逐台解押，最后勾选矿机到新矿场批量质押（一次签名批量操作）</span><button class="action-btn auto mini" id="v3ClaimBtn">领取旧矿场奖励</button></div>' : '';
+  var lh = hd + migTip + ops + '<div class="rig-main">' + body + '</div>'; if (rl.innerHTML !== lh) rl.innerHTML = lh;
 }
 function renderRigModal(tid){
   var p = null;
@@ -7784,25 +7806,43 @@ function doBatchStake(){
   rigLog("info", t("o.batchStake") + ids.length + t("o.batchStakeMid"));
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
-  (function one(i){
+  var BATCH = 100;   // 单笔交易上限 100 台，超出自动分批（体验上不设上限）
+  var chunks = [];
+  for (var ci = 0; ci < ids.length; ci += BATCH) chunks.push(ids.slice(ci, ci + BATCH));
+  var doneCnt = 0;
+  function ensureApprove(){
+    return readRetry(function(){ return circ.isApprovedForAll(account, ADDRS.mining); }).then(function(ok){
+      if (ok) return;
+      rigLog("info", "授权新矿场合约（一次签名）…");
+      return circ.setApprovalForAll(ADDRS.mining, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
+    });
+  }
+  function one(c){
     if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (i >= ids.length) {
+    if (c >= chunks.length) {
       rigLog("ok", t("o.batchStakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.stakeOkShort"));
       rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("批量质押完成"); return;
     }
-    var id = ids[i];
-    rigLog("info", t("o.stakeProgress") + (i + 1) + "/" + ids.length + t("o.stakeProgressMid") + id + t("o.stakeProgressTail"));
-    readRetry(function(){ return circ.getApproved(id); }).then(function(app){
-      var chain = app.toLowerCase() === ADDRS.mining.toLowerCase() ? Promise.resolve() : circ.approve(ADDRS.mining, id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
-      return chain.then(function(){ return mine.stake(id, { gasLimit: 300000 }); });
-    }).then(function(tx){ return tx.wait(); }).then(function(receipt){
-      logTx("质押 #" + id, receipt.hash); Q.ok(i + 1, "质押 #" + id + " 成功");
-      one(i + 1);
+    var chunk = chunks[c];
+    var donePrev = doneCnt;
+    rigLog("info", t("o.stakeProgress") + (donePrev + 1) + "/" + ids.length + "（本批 " + chunk.length + " 台，一次签名）");
+    mine.batchStake(chunk, { gasLimit: 15000000 }).then(function(tx){
+      rigLog("info", "第 " + (c + 1) + "/" + chunks.length + " 批已发送，等待确认…");
+      return tx.wait();
+    }).then(function(receipt){
+      logTx("批量质押 " + chunk.length + " 台", receipt.hash);
+      doneCnt += chunk.length; Q.ok(doneCnt, "批量质押 " + chunk.length + " 台成功");
+      one(c + 1);
     }).catch(function(e){
-      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80));
-      one(i + 1);
+      if (Q.stopped()) { one(chunks.length); return; }
+      rigLog("err", t("o.batchFail") + (c + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 120) + t("o.skip")); Q.fail(chunk.length, "本批失败：" + humanErr(e).slice(0, 80));
+      one(c + 1);
     });
-  })(0);
+  }
+  ensureApprove().then(function(){ one(0); }).catch(function(e){
+    rigLog("err", "授权失败：" + humanErr(e).slice(0, 160));
+    busy(btn, false); Q.done("授权失败");
+  });
 }
 function doBatchUnstake(){
   var ids = [];
@@ -7812,23 +7852,35 @@ function doBatchUnstake(){
   Q.start("批量解押 " + ids.length + " 台", ids.length, function(){ doBatchUnstake(); });
   rigLog("info", t("o.batchUnstake") + ids.length + t("o.batchStakeMid"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
-  (function one(i){
+  var BATCH = 100;   // 单笔交易上限 100 台，超出自动分批
+  var chunks = [];
+  for (var ci = 0; ci < ids.length; ci += BATCH) chunks.push(ids.slice(ci, ci + BATCH));
+  var doneCnt = 0;
+  function one(c){
     if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (i >= ids.length) {
+    if (c >= chunks.length) {
       rigLog("ok", t("o.batchUnstakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.unstakeOkShort"));
       rigSel = {}; refresh(); busy(btn, false); Q.done("批量解押完成"); return;
     }
-    var id = ids[i];
-    rigLog("info", t("o.unstakeProgress") + (i + 1) + "/" + ids.length + t("o.stakeProgressMid") + id + t("o.stakeProgressTail"));
-    mine.unstake(id, { gasLimit: 200000 }).then(function(tx){ return tx.wait(); }).then(function(receipt){
-      logTx("解押 #" + id, receipt.hash); Q.ok(i + 1, "解押 #" + id + " 成功");
-      one(i + 1);
+    var chunk = chunks[c];
+    var donePrev = doneCnt;
+    rigLog("info", t("o.unstakeProgress") + (donePrev + 1) + "/" + ids.length + "（本批 " + chunk.length + " 台，一次签名）");
+    mine.batchUnstake(chunk, { gasLimit: 15000000 }).then(function(tx){
+      rigLog("info", "第 " + (c + 1) + "/" + chunks.length + " 批已发送，等待确认…");
+      return tx.wait();
+    }).then(function(receipt){
+      logTx("批量解押 " + chunk.length + " 台", receipt.hash);
+      doneCnt += chunk.length; Q.ok(doneCnt, "批量解押 " + chunk.length + " 台成功");
+      one(c + 1);
     }).catch(function(e){
-      rigLog("err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80));
-      one(i + 1);
+      if (Q.stopped()) { one(chunks.length); return; }
+      rigLog("err", t("o.batchFail") + (c + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 120) + t("o.skip")); Q.fail(chunk.length, "本批失败：" + humanErr(e).slice(0, 80));
+      one(c + 1);
     });
-  })(0);
+  }
+  one(0);
 }
+
 (function(){
   var rl = $("rigList"); if (!rl) return;
   rl.addEventListener("click", function(ev){
@@ -7843,6 +7895,7 @@ function doBatchUnstake(){
     if (ev.target.closest("#rigBatchStake")) { doBatchStake(); return; }
     if (ev.target.closest("#rigBatchUnstake")) { doBatchUnstake(); return; }
     if (ev.target.closest("#rigClaimBtn")) { doClaim(); return; }
+    if (ev.target.closest("#v3ClaimBtn")) { doClaimV3(); return; }
   });
   rl.addEventListener("change", function(ev){
     var all = ev.target.closest("#rigSelAll");
@@ -7870,6 +7923,30 @@ function doClaim(){
   }).then(function(receipt){
     stopSigWatch();
     logTx(t("o.claimTitle"), receipt.hash);
+    setMsg("rigMsg","ok", t("o.claimOk"));
+    toast(t("o.claimOkShort"));
+    refresh();
+    if (btn && btn.isConnected) busy(btn, false);
+  }).catch(function(e){
+    stopSigWatch();
+    var m = humanErr(e);
+    setMsg("rigMsg","err","失败：" + m.slice(0,220));
+    if (btn && btn.isConnected) busy(btn, false);
+  });
+}
+function doClaimV3(){
+  if (!signer || !account) { setMsg("rigMsg","err","请先连接钱包。"); return; }
+  if (!ensureNetMsg("rigMsg")) return;
+  var btn = $("v3ClaimBtn"); if (btn) busy(btn, true, t("o.claimBusy"));
+  setMsg("rigMsg","info", t("o.sendClaim"));
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
+  startSigWatch("rigMsg", btn);
+  mineV3.claim({ gasLimit: 200000 }).then(function(tx){
+    setMsg("rigMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+    return tx.wait();
+  }).then(function(receipt){
+    stopSigWatch();
+    logTx("旧矿场领取", receipt.hash);
     setMsg("rigMsg","ok", t("o.claimOk"));
     toast(t("o.claimOkShort"));
     refresh();
