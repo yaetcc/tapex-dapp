@@ -7511,7 +7511,13 @@ function doAssemble(btnEl){
       if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + t("o.missingPartsTail")); throw new Error("missing parts"); }
       setMsg("toMsg","info", t("o.sendAsm"));
       startSigWatch("toMsg", btn);
-      return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assemble({ gasLimit: 500000 });
+      return proc.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
+        if (ok) return Promise.resolve();
+        setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
+        return proc.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+      }).then(function(){
+        return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assemble({ gasLimit: 500000 });
+      });
     }).then(function(tx){
     setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
@@ -7542,6 +7548,7 @@ function doAssembleN(n){
   Q.start("批量组装 " + n + " 台", n, function(){ doAssembleN(n); });
   var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
+  var approved = null;
   (function one(i){
     if (Q.stopped()) { setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= n) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
@@ -7552,7 +7559,14 @@ function doAssembleN(n){
         bs.forEach(function(v, k){ if (Number(v) < 1) missing.push(PART_NAMES[k]); });
         if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + i + "/" + n + t("o.asmDoneTail")); busy(btn, false); throw new Error("missing parts"); }
         setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmSend"));
-        return circ.assemble({ gasLimit: 500000 });
+        return (approved === null ? proc.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
+          approved = ok;
+          if (ok) return;
+          setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
+          return proc.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+        }) : Promise.resolve()).then(function(){
+          return circ.assemble({ gasLimit: 500000 });
+        });
       })
       .then(function(tx){ return tx.wait(); })
       .then(function(receipt){ logTx("批量组装", receipt.hash); Q.ok(i + 1, "组装完成 第" + (i + 1) + " 台"); one(i + 1); })
