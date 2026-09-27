@@ -7097,6 +7097,9 @@ function renderMine(){
     if (mineCard) mineCard.classList.remove("refreshing");
     if (signer && account){
       __mineFailCount++;
+      var errTxt = humanErr(e).slice(0, 120);
+      var rl2 = $("rigList");
+      if (rl2) rl2.innerHTML = '<div class="rig-empty">' + t("a.readFail") + errTxt + t("a.retry15") + '</div>';
       if (__mineFailCount === 1){
         rpcFail();
         setTimeout(refresh, 1200);
@@ -7104,7 +7107,7 @@ function renderMine(){
       }
       __mineFailCount = 0;
       if (!$("myAssets").dataset.ok){
-        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + String(e && e.message || e) + t("a.retry15") + '</span><span class="v">—</span></li>';
+        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + errTxt + t("a.retry15") + '</span><span class="v">—</span></li>';
         setTimeout(refresh, 30000);
       } else {
         toast(t("a.refreshFail"));
