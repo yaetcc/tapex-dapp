@@ -6925,8 +6925,8 @@ function renderMine(){
           var jobs = [];
           if (bySrc["2"] && bySrc["2"].length){
             var ids6 = bySrc["2"];
-            // getCircuits 按 100 台/批查询（单批响应约 40KB），避免单次超大响应被 RPC 截断导致 decode 失败（object is not iterable）
-            var B6 = 100, i6 = 0;
+            // getCircuits 按 50 台/批查询（单批响应约 40KB），响应更小，彻底规避手机 WebView/代理对超大响应截断导致 decode 失败（object is not iterable）
+            var B6 = 50, i6 = 0;
             function st6(){
               if (i6 >= ids6.length) return Promise.resolve([]);
               var chunk = ids6.slice(i6, i6 + B6); i6 += B6;
