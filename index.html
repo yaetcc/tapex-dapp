@@ -5456,7 +5456,7 @@ input:focus,textarea:focus,select:focus{
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
+      <span class="asm-tier"><select id="asmTier"><option value="auto">品质：自动（低档优先）</option><option value="0">品质：标准</option><option value="1">品质：Pro</option><option value="2">品质：旗舰</option></select></span><button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
@@ -6184,7 +6184,11 @@ var ABI_PROC = [
 var ABI_CIRCUIT = [
   "function approve(address,uint256)",
   "function assemble() returns (uint256)",
+  "function assembleCustom(uint8[8]) returns (uint256)",
+  "function assembleTier(uint8) returns (uint256)",
   "function batchAssemble(uint256)",
+  "function batchAssembleCustom(uint8[8],uint256)",
+  "function batchAssembleTier(uint8,uint256)",
   "function BATCH_LIMIT() view returns (uint256)",
   "function balanceOf(address) view returns (uint256)",
   "function getApproved(uint256) view returns (address)",
@@ -7660,15 +7664,31 @@ function doAssemble(btnEl){
   var sel = [0,0,0,0,0,0,0,0], selN = 0;
   for (var k in asmSel) if (asmSel[k]) { sel[k] = 1; selN++; }
   if (!selN) { for (var z = 0; z < 8; z++) sel[z] = 1; selN = 8; }   // 未勾选 → 默认全选（兼容旧行为）
+  var tierEl = $("asmTier"); var tier = tierEl ? tierEl.value : "auto";
+  var isTier = tier !== "auto";                                     // 自选品质：消耗指定档位部件
   var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-  Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
-    .then(function(bs){
+  var check = isTier
+    ? Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOf(account, t * 3 + Number(tier)); }); }))
+    : Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }));
+  check.then(function(bs){
       var missing = [];
-      bs.forEach(function(v, i){ if (sel[i] && Number(v) < 1) missing.push(PART_NAMES[i]); });
-      if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + t("o.missingPartsTail")); throw new Error("missing parts"); }
-      setMsg("toMsg","info", t("o.sendAsm"));
-      startSigWatch("toMsg", btn);
-      return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer).assembleCustom(sel, { gasLimit: 500000 });
+      bs.forEach(function(v, i){ if (Number(v) < 1) missing.push(PART_NAMES[i]); });
+      if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + "（各需 1 件" + (isTier ? "，且必须为所选品质" : "") + "）" + t("o.missingPartsTail")); throw new Error("missing parts"); }
+      var chain = Promise.resolve();
+      if (isTier) {
+        chain = chain.then(function(){ return readRetry(function(){ return proc.isApprovedForAll(account, ADDRS.circuitV6); }); })
+          .then(function(ok){
+            if (ok) return;
+            setMsg("toMsg","info","品质组装需要授权组装合约转移部件，先发送授权交易（请确认签名）…");
+            return proc.setApprovalForAll(ADDRS.circuitV6, true, { gasLimit: 200000 }).then(function(tx){ return tx.wait(); });
+          });
+      }
+      return chain.then(function(){
+        setMsg("toMsg","info", t("o.sendAsm"));
+        startSigWatch("toMsg", btn);
+        var circ = new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer);
+        return isTier ? circ.assembleTier(Number(tier), { gasLimit: 700000 }) : circ.assembleCustom(sel, { gasLimit: 500000 });
+      });
     }).then(function(tx){
     setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
@@ -7686,6 +7706,7 @@ function doAssemble(btnEl){
   }).catch(function(e){
     stopSigWatch();
     asmBusy = false;
+    if (e.message === "missing parts") return;
     var m = humanErr(e);
     setMsg("toMsg","err", t("o.fail") + m.slice(0,220));
     busy(btn, false);
@@ -7700,34 +7721,50 @@ function doAssembleN(n){
   var sel = [0,0,0,0,0,0,0,0], selN = 0;
   for (var k in asmSel) if (asmSel[k]) { sel[k] = 1; selN++; }
   if (!selN) { for (var z = 0; z < 8; z++) sel[z] = 1; selN = 8; }
+  var tierEl = $("asmTier"); var tier = tierEl ? tierEl.value : "auto";
+  var isTier = tier !== "auto";
   var circ = new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer);
-  // 每批 <=100 台，一笔交易一次签名（batchAssembleCustom）
+  // 每批 <=100 台，一笔交易一次签名（batchAssembleCustom / batchAssembleTier）
   var batches = [], left = n, step = 100;
   while (left > 0) { var take = Math.min(step, left); batches.push(take); left -= take; }
   Q.start("批量组装 " + n + " 台（" + batches.length + " 笔交易）", batches.length, function(){ doAssembleN(n); });
   var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-  Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
-    .then(function(bs){
+  var check = isTier
+    ? Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOf(account, t * 3 + Number(tier)); }); }))
+    : Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }));
+  check.then(function(bs){
       var missing = [];
-      bs.forEach(function(v, k){ if (sel[k] && Number(v) < n) missing.push(PART_NAMES[k] + "(" + Number(v) + "/" + n + ")"); });
+      bs.forEach(function(v, kk){ if (Number(v) < n) missing.push(PART_NAMES[kk] + "(" + Number(v) + "/" + n + ")"); });
       if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + "0/" + n + t("o.asmDoneTail")); busy(btn, false); throw new Error("missing parts"); }
-      (function run(bi, done){
-        if (Q.stopped()) { setMsg("toMsg","info","已终止，未提交批次不再发送"); refresh(); busy(btn, false); Q.done("已终止"); return; }
-        if (bi >= batches.length) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
-        var k = batches[bi], from = done + 1, to = done + k;
-        setMsg("toMsg","info", t("o.asmProgress") + from + "-" + to + "/" + n + "，一次签名批量组装 " + k + " 台…");
-        circ.batchAssembleCustom(sel, k, { gasLimit: 6000000 })
-          .then(function(tx){ setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>"); return tx.wait(); })
-          .then(function(receipt){ logTx("批量组装 x" + k, receipt.hash); Q.ok(to, "第 " + from + "-" + to + " 台一次签名完成"); run(bi + 1, to); })
-          .catch(function(e){
-            if (e.message === "missing parts") return;
-            setMsg("toMsg","err", t("o.batchFail") + (from + "-" + to) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(to, "第 " + from + "-" + to + " 台：" + humanErr(e).slice(0, 80));
-            run(bi + 1, to);
+      var chain = Promise.resolve();
+      if (isTier) {
+        chain = chain.then(function(){ return readRetry(function(){ return proc.isApprovedForAll(account, ADDRS.circuitV6); }); })
+          .then(function(ok){
+            if (ok) return;
+            setMsg("toMsg","info","品质组装需要授权组装合约转移部件，先发送授权交易（请确认签名）…");
+            return proc.setApprovalForAll(ADDRS.circuitV6, true, { gasLimit: 200000 }).then(function(tx){ return tx.wait(); });
           });
-      })(0, 0);
+      }
+      return chain.then(function(){
+        (function run(bi, done){
+          if (Q.stopped()) { setMsg("toMsg","info","已终止，未提交批次不再发送"); refresh(); busy(btn, false); Q.done("已终止"); return; }
+          if (bi >= batches.length) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
+          var k = batches[bi], from = done + 1, to = done + k;
+          setMsg("toMsg","info", t("o.asmProgress") + from + "-" + to + "/" + n + "，一次签名批量组装 " + k + " 台…");
+          (isTier ? circ.batchAssembleTier(Number(tier), k, { gasLimit: 7000000 }) : circ.batchAssembleCustom(sel, k, { gasLimit: 6000000 }))
+            .then(function(tx){ setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>"); return tx.wait(); })
+            .then(function(receipt){ logTx("批量组装 x" + k, receipt.hash); Q.ok(to, "第 " + from + "-" + to + " 台一次签名完成"); run(bi + 1, to); })
+            .catch(function(e){
+              if (e.message === "missing parts") return;
+              setMsg("toMsg","err", t("o.batchFail") + (from + "-" + to) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(to, "第 " + from + "-" + to + " 台：" + humanErr(e).slice(0, 80));
+              run(bi + 1, to);
+            });
+        })(0, 0);
+      });
     })
     .catch(function(e){ if (e.message !== "missing parts") { setMsg("toMsg","err", t("o.fail") + humanErr(e).slice(0,200)); } busy(btn, false); });
 }
+
 (function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; if (v > 100 && !confirm("批量组装 " + v + " 台，将分多笔交易，确定继续？")) return; doAssembleN(v); }); })();
 /* ---------- 质押 / 解押 ---------- */
 var rigData = { staked: [], pcs: [], totalH: 0, pending: "—" };
