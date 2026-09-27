@@ -6846,7 +6846,7 @@ function renderMine(){
           if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
         }
         if (hit(stR)) staked.push("0|" + tid);
-        if (hit(st3R)) v3Staked.push("0|" + tid);
+        if (hit(st3R)) { v3Staked.push("0|" + tid); staked.push("0|" + tid); }  // 旧场质押并入 staked：资产页/挖矿页可见，解押自动走旧场合约
       }
       var v5End = v4End + lastV5;
       for (i = v4End; i < v5End && i < ret.length; i++){
@@ -8113,9 +8113,10 @@ function doRigUnstake(id){
   var ps = Number(String(id).split("|")[0]), tid = Number(String(id).split("|")[1]);
   var btn = $("rigModalBody").querySelector("[data-rig-unstake]"); if (btn) busy(btn, true, t("o.unstakeBusy"));
   setMsg("rigModalMsg","info", t("o.sendUnstake"));
-  var mine = ps === 0 ? new ethers.Contract(ADDRS.mining, ABI_MINING, signer) : new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
+  var isV3 = ps === 0 && window.__v3Staked && window.__v3Staked.indexOf(id) !== -1;
+  var mine = isV3 ? new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer) : (ps === 0 ? new ethers.Contract(ADDRS.mining, ABI_MINING, signer) : new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer));
   startSigWatch("rigModalMsg", btn);
-  (ps === 0 ? mine.unstake(tid, { gasLimit: 200000 }) : mine.unstake(ps - 1, tid, { gasLimit: 200000 })).then(function(tx){
+  (isV3 ? mine.unstake(tid, { gasLimit: 200000 }) : (ps === 0 ? mine.unstake(tid, { gasLimit: 200000 }) : mine.unstake(ps - 1, tid, { gasLimit: 200000 }))).then(function(tx){
     setMsg("rigModalMsg","info","交易已发送，等待确认…");
     return tx.wait();
   }).then(function(receipt){
@@ -8211,6 +8212,7 @@ function doBatchStake(){
   rigLog("info", t("o.batchStake") + total + t("o.batchStakeMid"));
   var mine5 = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   var mine6 = new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
   var circ4 = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var circ5 = new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, signer);
   var circ6 = new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer);
@@ -8220,7 +8222,7 @@ function doBatchStake(){
     if (!grp.length) return;
     for (var ci = 0; ci < grp.length; ci += BATCH) queue.push({ kind: kind, arr: grp.slice(ci, ci + BATCH) });
   }
-  push(grp0, 0); push(grp1, 1); push(grp2, 2);
+  push(grp0, 0); push(grp0Old, 3); push(grp1, 1); push(grp2, 2);
   var doneCnt = 0;
   function ensureApprove(){
     var chain = Promise.resolve();
@@ -8279,26 +8281,28 @@ function doBatchStake(){
   });
 }
 function doBatchUnstake(){
-  var grp0 = [], grp1 = [], grp2 = [];
+  var grp0 = [], grp0Old = [], grp1 = [], grp2 = [];
   for (var k in rigSel) if (rigSel[k]) {
     var gs = Number(String(k).split("|")[0]), gt = Number(String(k).split("|")[1]);
     if (rigData.staked.indexOf(k) === -1) continue;
-    if (gs === 0) grp0.push(gt); else if (gs === 1) grp1.push(gt); else if (gs === 2) grp2.push(gt);
+    if (gs === 0) { if (window.__v3Staked && window.__v3Staked.indexOf(k) !== -1) grp0Old.push(gt); else grp0.push(gt); }
+    else if (gs === 1) grp1.push(gt); else if (gs === 2) grp2.push(gt);
   }
-  var total = grp0.length + grp1.length + grp2.length;
+  var total = grp0.length + grp0Old.length + grp1.length + grp2.length;
   if (!total) { toast(t("o.selMining")); return; }
   var btn = $("rigBatchUnstake"); busy(btn, true, t("o.unstakeBusy"));
   Q.start("批量解押 " + total + " 台", total, function(){ doBatchUnstake(); });
   rigLog("info", t("o.batchUnstake") + total + t("o.batchStakeMid"));
   var mine5 = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   var mine6 = new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
   var BATCH = 100;
   var queue = [];
   function push(grp, kind){
     if (!grp.length) return;
     for (var ci = 0; ci < grp.length; ci += BATCH) queue.push({ kind: kind, arr: grp.slice(ci, ci + BATCH) });
   }
-  push(grp0, 0); push(grp1, 1); push(grp2, 2);
+  push(grp0, 0); push(grp0Old, 3); push(grp1, 1); push(grp2, 2);
   var doneCnt = 0;
   function one(q){
     if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; refresh(); busy(btn, false); Q.done("已终止"); return; }
@@ -8311,6 +8315,7 @@ function doBatchUnstake(){
     rigLog("info", t("o.unstakeProgress") + (donePrev + 1) + "/" + total + "（本批 " + n + " 台，一次签名）");
     var p;
     if (item.kind === 0) p = mine5.batchUnstake(item.arr, { gasLimit: 15000000 });
+    else if (item.kind === 3) p = mineV3.batchUnstake(item.arr, { gasLimit: 15000000 });
     else if (item.kind === 1) p = mine6.batchUnstake(item.arr.map(function(){ return 0; }), item.arr, { gasLimit: 15000000 });
     else p = mine6.batchUnstake(item.arr.map(function(){ return 1; }), item.arr, { gasLimit: 15000000 });
     p.then(function(tx){
@@ -8332,7 +8337,7 @@ function doBatchUnstake(){
   var rl = $("rigList"); if (!rl) return;
   rl.addEventListener("click", function(ev){
     var cb = ev.target.closest("input[data-tid]");
-    if (cb) { rigSel[Number(cb.getAttribute("data-tid"))] = cb.checked; renderRigList(); return; }
+    if (cb) { rigSel[cb.getAttribute("data-tid")] = cb.checked; renderRigList(); return; }
     var row = ev.target.closest("[data-rig]");
     if (row && !ev.target.closest(".rg-cb")) { openRigModal(Number(row.getAttribute("data-rig"))); return; }
     var f = ev.target.closest(".rt[data-f]");
@@ -8348,7 +8353,7 @@ function doBatchUnstake(){
     var all = ev.target.closest("#rigSelAll");
     if (all) {
       rigSel = {};
-      if (all.checked) for (var i = 0; i < rigData.pcs.length; i++) rigSel[rigData.pcs[i].tid] = true;
+      if (all.checked) for (var i = 0; i < rigData.pcs.length; i++) rigSel[rigData.pcs[i].src + "|" + rigData.pcs[i].tid] = true;
       renderRigList(); return;
     }
     var so = ev.target.closest("#rigS");
