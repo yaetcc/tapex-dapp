@@ -6959,6 +6959,7 @@ function renderMine(){
   return readBase().then(function(acc){
     var parts = [Number(acc[1]||0),Number(acc[2]||0),Number(acc[3]||0),Number(acc[4]||0),Number(acc[5]||0),Number(acc[6]||0),Number(acc[7]||0),Number(acc[8]||0)];
     window.__parts = parts;
+    try { renderPartsGrid(parts); } catch(e){ console.warn("partsGrid", e); }
     var last = Number(acc[12] || 0), lastV6 = Number(acc[17] || 0);
     var cacheKey = account.toLowerCase() + "|" + last + "|" + lastV6;
     var now = Date.now();
@@ -6970,9 +6971,27 @@ function renderMine(){
       } catch(e){}
     }
     var myNfts, staked, v3Staked = [];
-    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && now < (rigCache.exp || 0)){
+    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
       myNfts = rigCache.myNfts.slice();
       staked = rigCache.staked.slice();
+      // 缓存命中仍后台扫 V4/V5 老矿机补全（质押托管 + 合约升级可能让缓存过期，扫描结果只增不减）
+      readV4V5(acc).then(function(s1){
+        var merged = s1.myNfts.concat(myNfts);
+        var mergedSt = s1.staked.concat(staked);
+        var seen2 = {}, mm = [], ms = [], k2;
+        for (k2 = 0; k2 < merged.length; k2++){ if (!seen2[merged[k2]]) { seen2[merged[k2]] = 1; mm.push(merged[k2]); } }
+        var seen3 = {};
+        for (k2 = 0; k2 < mergedSt.length; k2++){ if (!seen3[mergedSt[k2]]) { seen3[mergedSt[k2]] = 1; ms.push(mergedSt[k2]); } }
+        if (ms.length > staked.length){
+          staked = ms; myNfts = mm;
+          var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice(), v: 2 };
+          window.__rigCache = c2;
+          try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e){}
+          readPcDetails(myNfts.concat(staked), staked).then(function(pcs3){
+            renderMineView(acc, staked, pcs3, myNfts, s1.v3Staked || []);
+          });
+        }
+      }).catch(function(e){ console.warn("v45 cache-backfill", e); });
     } else {
       // 两阶段：V6 批量视图先行渲染（毫秒级），V4/V5 老矿机全量扫描后台进行，扫完自动补渲染
       var v6p = readV6(acc);
@@ -6988,7 +7007,7 @@ function renderMine(){
             myNfts = s1.myNfts.concat(v6.owned);
             staked = s1.staked.concat(v6.staked);
             v3Staked = s1.v3Staked;
-            var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice() };
+            var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice(), v: 2 };
             window.__rigCache = c;
             try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){}
             return readPcDetails(myNfts.concat(staked), staked).then(function(pcs2){
@@ -8340,7 +8359,7 @@ function doBatchUnstake(){
     var cb = ev.target.closest("input[data-tid]");
     if (cb) { rigSel[cb.getAttribute("data-tid")] = cb.checked; renderRigList(); return; }
     var row = ev.target.closest("[data-rig]");
-    if (row && !ev.target.closest(".rg-cb")) { openRigModal(Number(row.getAttribute("data-rig"))); return; }
+    if (row && !ev.target.closest(".rg-cb")) { openRigModal(row.getAttribute("data-rig")); return; }
     var f = ev.target.closest(".rt[data-f]");
     if (f) { rigFilter = f.getAttribute("data-f"); rigPage = 0; renderRigList(); return; }
     var pg = ev.target.closest("[data-pg]");
