@@ -6380,6 +6380,11 @@ function rpcDiag(){
     return '<span style="margin-right:6px;color:' + (i === cur ? "#F0C267" : (rpcOk[i] === false ? "#e05a5a" : "#4FE0D0")) + '">' + host + ' ' + st + '</span>';
   });
   el.innerHTML = "RPC: " + parts.join("");
+  var allDown = true;
+  for (var i2 = 0; i2 < RPCS.length; i2++){ if (rpcOk[i2] !== false) { allDown = false; break; } }
+  if (allDown && Object.keys(rpcOk).length){
+    el.innerHTML += '<div style="margin-top:4px;color:#e05a5a">⚠ 所有 RPC 节点均无法连接。请依次尝试：① 关闭 VPN/代理 ② 换网络（手机热点）③ 换 DNS（223.5.5.5）④ 无痕模式，然后刷新页面。</div>';
+  }
 }
 function rpcProbe(){
   return Promise.all(RPCS.map(function(u, i){
