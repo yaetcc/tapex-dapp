@@ -7121,7 +7121,7 @@ function renderMineView(r, staked, pcs, myNfts, v3Staked){
   var mineCard = $("mine");
   var partsArr = [Number(r[1]||0),Number(r[2]||0),Number(r[3]||0),Number(r[4]||0),Number(r[5]||0),Number(r[6]||0),Number(r[7]||0),Number(r[8]||0)];
   var total = 0; var ti2; for (ti2 = 0; ti2 < partsArr.length; ti2++) total += partsArr[ti2];
-  __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
+  __mineSum = { xchip: fmtWei(r[0]), pcs: (pcs && pcs.length) || Number(r[9]), parts: total, pending: fmtWei(r[10]) }; // 钱包面板 PC 显示总台数（非仅 V4 待机）
   window.__v5Owned = myNfts.filter(function(x){ return String(x).indexOf("1|") === 0; });
   window.__v6Owned = myNfts.filter(function(x){ return String(x).indexOf("2|") === 0; });
   window.__v3Staked = (v3Staked || []).slice();
