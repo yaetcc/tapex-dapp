@@ -5521,6 +5521,7 @@ input:focus,textarea:focus,select:focus{
         <div class="statbox"><b id="stEpoch">—</b><span data-i18n="st.epoch">当前 epoch</span></div>
       </div>
       <p class="hint" data-i18n="数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。">数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。</p>
+      <div id="rpcDiag" style="margin:6px 0 0;font-size:11px;color:#7d8fb0;line-height:1.5"></div>
     </div>
 
     <div class="card" id="mine">
@@ -6362,6 +6363,7 @@ var rpcIdx = 0;
 var rpcOk = {};      // 健康探测结果：下标 → 是否可用（false=限流/故障冷却中，rpcProbe 每 5 分钟复测恢复）
 function makePub(){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); } // 显式 chainId + 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
 var pubProvider = makePub();
+setTimeout(function(){ rpcProbe(); }, 4000);
 function probeRpc(url){
   try {
     var p = new ethers.JsonRpcProvider(url, 196, { batchMaxCount: 1 }).send("eth_chainId", [])
@@ -6369,10 +6371,21 @@ function probeRpc(url){
     return Promise.race([p, new Promise(function(res){ setTimeout(function(){ res(false); }, 2500); })]).catch(function(){ return false; });
   } catch(e){ return Promise.resolve(false); }
 }
+function rpcDiag(){
+  var el = $("rpcDiag"); if (!el) return;
+  var cur = rpcIdx % RPCS.length;
+  var parts = RPCS.map(function(u, i){
+    var host = u.replace("https://", "").split("/")[0];
+    var st = rpcOk[i] === false ? "✗" : (i === cur ? "●" : "✓");
+    return '<span style="margin-right:6px;color:' + (i === cur ? "#F0C267" : (rpcOk[i] === false ? "#e05a5a" : "#4FE0D0")) + '">' + host + ' ' + st + '</span>';
+  });
+  el.innerHTML = "RPC: " + parts.join("");
+}
 function rpcProbe(){
   return Promise.all(RPCS.map(function(u, i){
     return probeRpc(u).then(function(ok){ rpcOk[i] = ok; });
   })).then(function(){
+    rpcDiag();
     if (rpcOk[rpcIdx % RPCS.length] !== false) return;   // 当前端点健康，不切换
     for (var k = 1; k <= RPCS.length; k++){
       var j = (rpcIdx + k) % RPCS.length;
@@ -6391,6 +6404,7 @@ function rpcFail(){
   }
   pubProvider = makePub();
   bindBlockWatch();
+  rpcDiag();
   console.warn(t("w.rpcLog") + RPCS[rpcIdx % RPCS.length]);
 }
 /* ---------- 链上自动刷新：监听新块，10 秒节流 + 防重入 ---------- */
