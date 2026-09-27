@@ -6667,6 +6667,9 @@ function renderMine(){
   var IFC_PROC = new ethers.Interface(["function balanceOfType(address,uint256) view returns (uint256)", "function mintCount() view returns (uint256)"]);
   var IFC_CIR = new ethers.Interface(["function balanceOf(address) view returns (uint256)", "function lastTokenId() view returns (uint256)"]);
   var IFC_MINE = new ethers.Interface(["function earned(address) view returns (uint256)", "function userShares(address) view returns (uint256)", "function totalShares() view returns (uint256)"]);
+  // 批量视图接口：定义在 readAll 回调顶层（else 之外），保证缓存命中路径也能用（此前定义在 else 内，缓存命中时值为 undefined → encodeFunctionData 报错）
+  var IFC_C = new ethers.Interface(["function pcsOfOwner(address) view returns (uint256[])", "function getCircuits(uint256[]) view returns ((uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt)[])"]);
+  var IFC_M6 = new ethers.Interface(["function stakedStatusOf(uint256[]) view returns (bool[])"]);
   function mkReadCalls(){
     var c = [];
     function add(to, iface, fn, args){ c.push({ target: to, callData: iface.encodeFunctionData(fn, args), iface: iface, fn: fn }); }
@@ -6730,11 +6733,11 @@ function renderMine(){
     var cacheKey = account.toLowerCase() + "|" + last + "|" + Number(r[17] || 0);
     var now = Date.now();
     var rigCache = window.__rigCache;
-    if (!(rigCache && rigCache.key === cacheKey && now < rigCache.exp)) {
+    if (!(rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && now < rigCache.exp)) {
       try { var lc = JSON.parse(localStorage.getItem("rigCache")); if (lc && lc.key === cacheKey && lc.exp > now) rigCache = lc; } catch(e){}
     }
     var scan;
-    if (rigCache && rigCache.key === cacheKey && now < rigCache.exp) {
+    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && now < rigCache.exp) {
       myNfts = rigCache.myNfts.slice();
       scan = Promise.resolve(rigCache.staked.slice());
     } else {
@@ -6778,8 +6781,6 @@ function renderMine(){
         }
         return st3();
       }
-      var IFC_C = new ethers.Interface(["function pcsOfOwner(address) view returns (uint256[])", "function getCircuits(uint256[]) view returns ((uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt)[])"]);
-      var IFC_M6 = new ethers.Interface(["function stakedStatusOf(uint256[]) view returns (bool[])"]);
       function readV6(){
         // 批量视图：1 次 pcsOfOwner 拿全部 ID + 1 次 stakedStatusOf 拿质押状态，替代 706 次 RPC（规避 OKX 7req/s 限流）
         var n6 = Number(r[18] || 0);
@@ -6924,13 +6925,25 @@ function renderMine(){
           var jobs = [];
           if (bySrc["2"] && bySrc["2"].length){
             var ids6 = bySrc["2"];
-            jobs.push(readRetry(function(){
-              var cd = IFC_C.encodeFunctionData("getCircuits", [ids6]);
-              return pubProvider.call({ to: ADDRS.circuitV6, data: cd }).then(function(raw){
-                var cs = IFC_C.decodeFunctionResult("getCircuits", raw)[0];
-                return cs.map(function(g, i){ return { src: 2, tid: ids6[i], tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
+            // getCircuits 按 100 台/批查询（单批响应约 40KB），避免单次超大响应被 RPC 截断导致 decode 失败（object is not iterable）
+            var B6 = 100, i6 = 0;
+            function st6(){
+              if (i6 >= ids6.length) return Promise.resolve([]);
+              var chunk = ids6.slice(i6, i6 + B6); i6 += B6;
+              return readRetry(function(){
+                var cd = IFC_C.encodeFunctionData("getCircuits", [chunk]);
+                return pubProvider.call({ to: ADDRS.circuitV6, data: cd }).then(function(raw){
+                  try {
+                    var cs = IFC_C.decodeFunctionResult("getCircuits", raw)[0];
+                    if (!Array.isArray(cs)) return [];
+                    return cs.map(function(g, i){ return { src: 2, tid: chunk[i], tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
+                  } catch(e){ return []; }
+                });
+              }, 2, 8000).then(function(batch){
+                return st6().then(function(rest){ return batch.concat(rest); });
               });
-            }, 2, 8000));
+            }
+            jobs.push(st6().catch(function(){ return []; }));
           }
           ["0","1"].forEach(function(src){
             if (!bySrc[src] || !bySrc[src].length) return;
