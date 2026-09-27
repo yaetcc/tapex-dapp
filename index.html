@@ -6852,7 +6852,9 @@ function renderMine(){
         var o5 = ret[i];
         if (o5 && o5[0] && o5[1] && typeof o5[1] === "string" && o5[1].length >= 64){
           var rh5 = ethers.hexlify(o5[1]);
-          if (("0x" + rh5.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("1|" + (i - v4End + 1));
+          var oAddr5 = ("0x" + rh5.slice(26, 66)).toLowerCase();
+          if (oAddr5 === account.toLowerCase()) myNfts.push("1|" + (i - v4End + 1));
+          else if (oAddr5 === ADDRS.miningV6.toLowerCase()) staked.push("1|" + (i - v4End + 1));  // V5 质押托管：NFT 转移给 miningV6(type0)
         }
       }
       return { myNfts: myNfts, staked: staked, v3Staked: v3Staked };
@@ -6939,12 +6941,22 @@ function renderMine(){
       var c = src === "1" ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider) : circ;
       var tidList = bySrc[src];
       jobs.push(safe(function(){
-        return Promise.all(tidList.map(function(tid){
-          return safe(function(){ return readRetry(function(){ return c.getCircuit(tid); }, 2); }, null).then(function(g){
-            if (!g) return null;
-            return { src: Number(src), tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) };
+        // V4/V5 无 getCircuits，只能单查；分批(15/批)+串行轮转，防老矿机量大时并发触发 OKX 限流导致详情缺失
+        var out2 = [], ix2 = 0;
+        function bstep2(){
+          if (ix2 >= tidList.length) return Promise.resolve(out2);
+          var chunk = tidList.slice(ix2, ix2 + 15); ix2 += 15;
+          return Promise.all(chunk.map(function(tid){
+            return safe(function(){ return readRetry(function(){ return c.getCircuit(tid); }, 2); }, null).then(function(g){
+              if (!g) return null;
+              return { src: Number(src), tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) };
+            });
+          })).then(function(rs){
+            for (var x2 = 0; x2 < rs.length; x2++) if (rs[x2]) out2.push(rs[x2]);
+            return bstep2();
           });
-        })).then(function(rs){ return rs.filter(function(x){ return x !== null; }); });
+        }
+        return bstep2();
       }, []));
     }
     return Promise.all(jobs).then(function(groups){
@@ -7870,13 +7882,18 @@ function doBatchCancel(){
   var btn = $("mkCancelAll"); busy(btn, true, t("mkt.busyCancel"));
   setMsg("mkMsg","info", t("mkt.batchCancel") + rows.length + t("mkt.batchCancelMid"));
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
+  var mk6 = new ethers.Contract(ADDRS.marketV6, ABI_MARKET5, signer);
   Q.start("批量撤单 " + rows.length + " 单", rows.length, function(){ doBatchCancel(); });
   (function one(i){
     if (Q.stopped()) { setMsg("mkMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); Q.done("批量撤单完成"); return; }
     var id = rows[i].r.tid;
+    var kps = String(rows[i].r.key || "").split("|");
+    var kmkt = Number(kps[0] || 0), ksrc = Number(kps[1] || 1);
     setMsg("mkMsg","info", t("mkt.cancelProgress") + (i + 1) + "/" + rows.length + t("mkt.cancelProgressMid") + id + t("mkt.cancelProgressTail"));
-    mk.cancel(id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); })
+    var mkc = kmkt === 0 ? mk : mk6;
+    var txp2 = kmkt === 0 ? mkc.cancel(id, { gasLimit: 150000 }) : mkc.cancel(ksrc, id, { gasLimit: 150000 });
+    txp2.then(function(tx){ return tx.wait(); })
       .then(function(receipt){ logTx("批量撤单", receipt.hash); Q.ok(i + 1, "撤单 #" + id + " 成功"); one(i + 1); })
       .catch(function(e){ setMsg("mkMsg","err", t("o.batchFail") + (i + 1) + t("mkt.singleFail") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80)); one(i + 1); });
   })(0);
@@ -8389,6 +8406,7 @@ function doClaim(){
   setMsg("rigMsg","info", t("o.sendClaim"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   var mine6 = new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
+  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
   startSigWatch("rigMsg", btn);
   mine.claim({ gasLimit: 200000 }).then(function(tx){
     setMsg("rigMsg","info","旧矿场领取交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
@@ -8401,8 +8419,17 @@ function doClaim(){
       return tx.wait();
     });
   }).then(function(receipt2){
+    if (window.__v3Staked && window.__v3Staked.length){
+      setMsg("rigMsg","info","新矿场领取完成，继续领取旧矿场（V3）奖励…");
+      return mineV3.claim({ gasLimit: 200000 }).then(function(tx){
+        setMsg("rigMsg","info","旧矿场领取交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+        return tx.wait();
+      }).then(function(r3){ logTx("旧矿场(V3)领取", r3.hash); return r3; });
+    }
+    return receipt2;
+  }).then(function(receipt3){
     stopSigWatch();
-    logTx(t("o.claimTitle") + " (V6)", receipt2.hash);
+    logTx(t("o.claimTitle") + " (V6)", receipt3.hash);
     setMsg("rigMsg","ok", t("o.claimOk"));
     toast(t("o.claimOkShort"));
     refresh();
