@@ -6898,9 +6898,11 @@ function renderMine(){
           });
       }
       function collect(ret){
+        if (!account) return;
         var v4End = lastV4 * PER;
         var i;
         function hit(r){
+          if (!account) return false;
           if (r && r[0] && r[1] && typeof r[1] === "string" && r[1].length >= 192){
             var sh = ethers.hexlify(r[1]);
             var stOwner = "0x" + sh.slice(26, 66);
@@ -6914,7 +6916,7 @@ function renderMine(){
           var own = v4Free > 0 ? ret[i] : null, stR = ret[v4Free > 0 ? i + 1 : i], st3R = ret[v4Free > 0 ? i + 2 : i + 1];
           if (own && own[0] && own[1] && typeof own[1] === "string" && own[1].length >= 64){
             var rh = ethers.hexlify(own[1]);
-            if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
+            if (account && ("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
           }
           if (hit(stR)) staked.push("0|" + tid);
           if (hit(st3R)) { v3Staked.push("0|" + tid); staked.push("0|" + tid); }
