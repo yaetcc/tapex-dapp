@@ -6785,9 +6785,8 @@ function renderMine(){
 
   /* ---- 步骤 2：V4/V5 台数扫描（ownerOf + stakes multicall），仅在用户有 V4/V5 台时执行 ---- */
   function readV4V5(acc){
-    var v4Count = Number(acc[19] || 0), v5Count = Number(acc[20] || 0);
-    var lastV4 = v4Count > 0 ? Number(acc[12] || 0) : 0;
-    var lastV5 = v5Count > 0 ? Number(acc[16] || 0) : 0;
+    // V4/V5 质押为托管模式：质押矿机 balanceOf=0（ownerOf 指向矿场），不能用 balanceOf 短路，有存量就全量扫描
+    var lastV4 = Number(acc[12] || 0), lastV5 = Number(acc[16] || 0);
     var myNfts = [], staked = [], v3Staked = [];
     if (lastV4 <= 0 && lastV5 <= 0) return Promise.resolve({ myNfts: myNfts, staked: staked, v3Staked: v3Staked });
     var ownerSel = "0x6352211e";
