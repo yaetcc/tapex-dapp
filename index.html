@@ -6918,8 +6918,7 @@ function renderMine(){
 
   /* ---- 步骤 3：V6 批量视图（pcsOfOwner + stakedStatusOf，2 次调用替代逐台读） ---- */
   function readV6(acc){
-    var n6 = Number(acc[18] || 0);
-    if (n6 <= 0) return Promise.resolve({ owned: [], staked: [] });
+    // 不能以 V6 balanceOf 短路：质押为托管模式，全质押时 balanceOf=0 但 pcsOfOwner 有 353 台
     var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
     // 读取失败抛错（readRetry 3 次后）→ 触发全局 catch 的 rpcFail+重试；不静默返回空（否则 RPC 限流时显示"无 PC"且不重试）
     return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000).then(function(raw1){
@@ -7044,7 +7043,7 @@ function renderMine(){
       } catch(e){}
     }
     var myNfts, staked, v3Staked = [];
-    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
+    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && (rigCache.myNfts.length || rigCache.staked.length) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
       myNfts = rigCache.myNfts.slice();
       staked = rigCache.staked.slice();
       // 缓存命中仍后台扫 V4/V5 老矿机补全（质押托管 + 合约升级可能让缓存过期，扫描结果只增不减）
@@ -7058,8 +7057,7 @@ function renderMine(){
         if (ms.length > staked.length){
           staked = ms; myNfts = mm;
           var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice(), v: 2 };
-          window.__rigCache = c2;
-          try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e){}
+          if (mm.length || ms.length) { window.__rigCache = c2; try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e){} }
           readPcDetails(myNfts.concat(staked), staked).then(function(pcs3){
             renderMineView(acc, staked, pcs3, myNfts, s1.v3Staked || []);
           });
@@ -7081,8 +7079,7 @@ function renderMine(){
             staked = s1.staked.concat(v6.staked);
             v3Staked = s1.v3Staked;
             var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice(), v: 2 };
-            window.__rigCache = c;
-            try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){}
+            if (myNfts.length || staked.length) { window.__rigCache = c; try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){} }
             return readPcDetails(myNfts.concat(staked), staked).then(function(pcs2){
               return renderMineView(acc, staked, pcs2, myNfts, v3Staked);
             });
