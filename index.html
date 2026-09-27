@@ -8219,7 +8219,7 @@ function rigLog(type, txt){
   if (rm) setMsg("rigModalMsg", type, txt);
 }
 function doBatchStake(){
-  var grp0 = [], grp1 = [], grp2 = [], skipped = [];
+  var grp0 = [], grp0Old = [], grp1 = [], grp2 = [], skipped = [];  // grp0Old 仅为兼容 doBatchUnstake 误引，恒为空
   for (var k in rigSel) if (rigSel[k]) {
     var gs = Number(String(k).split("|")[0]), gt = Number(String(k).split("|")[1]);
     if (rigData.staked.indexOf(k) !== -1) continue;
