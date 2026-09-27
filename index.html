@@ -6306,7 +6306,7 @@ function detectWallet(){
 }
 et = detectWallet();
 initEIP6963();
-var RPCS = ["https://rpc.xlayer.tech", "https://xlayerrpc.okx.com"]; // 仅保留实测可达的两个主网 RPC（xlayer-mainnet-rpc.okx.com 已实测不可达，移除）
+var RPCS = ["https://xlayerrpc.okx.com", "https://rpc.xlayer.tech"]; // 仅保留实测可达的两个主网 RPC（xlayer-mainnet-rpc.okx.com 已实测不可达，移除）
 var rpcIdx = 0;
 var rpcOk = {};      // 健康探测结果：下标 → 是否可用
 function makePub(){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); } // 显式 chainId + 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
@@ -6662,29 +6662,65 @@ function renderMine(){
   var first = !$("myAssets").dataset.ready;
   if (first) $("myAssets").innerHTML = '<li><span class="nm">' + t("a.loading") + '</span><span class="v">—</span></li>';
   $("myAssets").dataset.ready = "1";
-  return Promise.all([
-    readRetry(function(){ return token.balanceOf(account); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 1); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 2); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 3); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 4); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 5); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 6); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 7); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.balanceOfType(account, 8); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return circ.balanceOf(account); }).catch(function(){ return 0n; }),
-    readRetry(function(){ return Promise.all([mine.earned(account), mineV3.earned(account), mine6.earned(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }, 2, 5000).catch(function(){ return 0n; }),
-    readRetry(function(){ return Promise.all([mine.userShares(account), mineV3.userShares(account), mine6.userShares(account)]).then(function(a){ return a[0] + a[1] + a[2]; }); }, 2, 5000).catch(function(){ return 0n; }),
-    (function(){ return readRetry(function(){ return circ.lastTokenId(); }, 1, 3000).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last4")||"0")); } catch(e){ return 0n; } }); })(),
-    readRetry(function(){ return Promise.all([mine.totalShares(), mineV3.totalShares(), mine6.totalShares()]).then(function(a){ return a[0] + a[1] + a[2]; }); }, 2, 5000).catch(function(){ return 0n; }),
-    readRetry(function(){ return proc.mintCount(); }, 2, 5000).catch(function(){ return 0n; }),
-    readRetry(function(){ return tapex.balanceOf(account); }, 2, 5000).catch(function(){ return 0n; }),
-    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last5")||"0")); } catch(e){ return 0n; } }); })(),
-    (function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 2).catch(function(){ try { return BigInt(Number(localStorage.getItem("tapec_last6")||"0")); } catch(e){ return 0n; } }); })(),
-    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 2).catch(function(){ return 0n; }),
-    readRetry(function(){ return circ.balanceOf(account); }, 1, 3000).catch(function(){ return 0n; }),
-    readRetry(function(){ return new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider).balanceOf(account); }, 1, 3000).catch(function(){ return 0n; })
-  ]).then(function(r){
+  // 全部链上读项合并为 1 次 multicall（27 个调用，1 个 RPC 请求），规避 OKX 7req/s 限流
+  var IFC_TOK = new ethers.Interface(["function balanceOf(address) view returns (uint256)"]);
+  var IFC_PROC = new ethers.Interface(["function balanceOfType(address,uint256) view returns (uint256)", "function mintCount() view returns (uint256)"]);
+  var IFC_CIR = new ethers.Interface(["function balanceOf(address) view returns (uint256)", "function lastTokenId() view returns (uint256)"]);
+  var IFC_MINE = new ethers.Interface(["function earned(address) view returns (uint256)", "function userShares(address) view returns (uint256)", "function totalShares() view returns (uint256)"]);
+  function mkReadCalls(){
+    var c = [];
+    function add(to, iface, fn, args){ c.push({ target: to, callData: iface.encodeFunctionData(fn, args), iface: iface, fn: fn }); }
+    add(ADDRS.token, IFC_TOK, "balanceOf", [account]);                 // 0 XCHIP
+    for (var t = 1; t <= 8; t++) add(ADDRS.processor, IFC_PROC, "balanceOfType", [account, t]); // 1..8 部件
+    add(ADDRS.circuit, IFC_CIR, "balanceOf", [account]);               // 9 V4 台数
+    add(ADDRS.mining, IFC_MINE, "earned", [account]);                  // 10
+    add(ADDRS.miningV3, IFC_MINE, "earned", [account]);                // 11
+    add(ADDRS.miningV6, IFC_MINE, "earned", [account]);                // 12
+    add(ADDRS.mining, IFC_MINE, "userShares", [account]);              // 13
+    add(ADDRS.miningV3, IFC_MINE, "userShares", [account]);            // 14
+    add(ADDRS.miningV6, IFC_MINE, "userShares", [account]);            // 15
+    add(ADDRS.circuit, IFC_CIR, "lastTokenId", []);                    // 16 V4 last
+    add(ADDRS.mining, IFC_MINE, "totalShares", []);                    // 17
+    add(ADDRS.miningV3, IFC_MINE, "totalShares", []);                  // 18
+    add(ADDRS.miningV6, IFC_MINE, "totalShares", []);                  // 19
+    add(ADDRS.processor, IFC_PROC, "mintCount", []);                   // 20
+    add(ADDRS.tapex, IFC_TOK, "balanceOf", [account]);                 // 21
+    add(ADDRS.circuitV5, IFC_CIR, "lastTokenId", []);                  // 22
+    add(ADDRS.circuitV6, IFC_CIR, "lastTokenId", []);                  // 23
+    add(ADDRS.circuitV6, IFC_CIR, "balanceOf", [account]);             // 24
+    add(ADDRS.circuit, IFC_CIR, "balanceOf", [account]);               // 25
+    add(ADDRS.circuitV5, IFC_CIR, "balanceOf", [account]);             // 26
+    return c;
+  }
+  function readAll(){
+    var calls = mkReadCalls();
+    var mc3 = new ethers.Contract("0xcA11bde05977b3631167028862bE2a173976CA11", ["function tryAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) view returns (tuple(bool success, bytes returnData)[])"], pubProvider);
+    return readRetry(function(){
+      return mc3.tryAggregate.staticCall(false, calls.map(function(c){ return { target: c.target, callData: c.callData }; }));
+    }, 2, 8000).then(function(rows){
+      var r = new Array(21).fill(0n);
+      rows.forEach(function(row, i){
+        if (!row[0]) return;
+        try { var v = calls[i].iface.decodeFunctionResult(calls[i].fn, ethers.hexlify(row[1]))[0] || 0n; } catch(e){ return; }
+        if (i === 0) r[0] = v;                 // XCHIP
+        else if (i >= 1 && i <= 8) r[i] = v;   // 部件
+        else if (i === 9) r[9] = v;            // V4 台数
+        else if (i === 10 || i === 11 || i === 12) r[10] += v;  // earned 聚合
+        else if (i === 13 || i === 14 || i === 15) r[11] += v;  // userShares 聚合
+        else if (i === 16) r[12] = v;          // V4 last
+        else if (i === 17 || i === 18 || i === 19) r[13] += v;  // totalShares 聚合
+        else if (i === 20) r[14] = v;          // mintCount
+        else if (i === 21) r[15] = v;          // tapex
+        else if (i === 22) r[16] = v;          // V5 last
+        else if (i === 23) r[17] = v;          // V6 last
+        else if (i === 24) r[18] = v;          // V6 balanceOf
+        else if (i === 25) r[19] = v;          // V4 balanceOf
+        else if (i === 26) r[20] = v;          // V5 balanceOf
+      });
+      return r;
+    }).catch(function(){ return new Array(21).fill(0n); });
+  }
+  return readAll().then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
     renderPartsGrid(parts);
@@ -6742,41 +6778,25 @@ function renderMine(){
         }
         return st3();
       }
-      var toiSel = new ethers.Interface(["function tokenOfOwnerByIndex(address,uint256) view returns (uint256)"]).getFunction("tokenOfOwnerByIndex").selector;
-      var addrP = "000000000000000000000000" + String(account).toLowerCase().slice(2);
+      var IFC_C = new ethers.Interface(["function pcsOfOwner(address) view returns (uint256[])", "function getCircuits(uint256[]) view returns ((uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt)[])"]);
+      var IFC_M6 = new ethers.Interface(["function stakedStatusOf(uint256[]) view returns (bool[])"]);
       function readV6(){
+        // 批量视图：1 次 pcsOfOwner 拿全部 ID + 1 次 stakedStatusOf 拿质押状态，替代 706 次 RPC（规避 OKX 7req/s 限流）
         var n6 = Number(r[18] || 0);
         if (n6 <= 0) return Promise.resolve({ owned: [], staked: [] });
-        var calls = [];
-        for (var k6 = 0; k6 < n6; k6++) calls.push({ target: circV6.target, callData: toiSel + addrP + tidHex(k6) });
-        return chunkCall(calls).then(function(ret){
-          var ids = [];
-          for (var k6 = 0; k6 < ret.length; k6++){
-            var x = ret[k6];
-            if (x && x[0] && x[1] && x[1].length >= 64){
-              var raw = ethers.hexlify(x[1]);
-              var id = BigInt("0x" + raw.slice(2, 66));
-              if (id > 0n) ids.push(Number(id));
-            }
-          }
-          var sc = [];
-          for (var k6 = 0; k6 < ids.length; k6++) sc.push({ target: mine6.target, callData: stake6Sel + tidHex(ids[k6]) });
-          if (!sc.length) return { owned: [], staked: [] };
-          return chunkCall(sc).then(function(ret2){
-            var owned = [], staked = [];
-            for (var k6 = 0; k6 < ret2.length; k6++){
-              owned.push("2|" + ids[k6]);
-              var x = ret2[k6];
-              if (x && x[0] && x[1] && x[1].length >= 192){
-                var sh = ethers.hexlify(x[1]);
-                var stOwner = "0x" + sh.slice(26, 66);
-                var share = BigInt("0x" + sh.slice(66, 130));
-                if (stOwner.toLowerCase() === account.toLowerCase() && share > 0n) staked.push("2|" + ids[k6]);
-              }
-            }
+        var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
+        return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000).then(function(raw){
+          var ids = IFC_C.decodeFunctionResult("pcsOfOwner", raw)[0].map(function(x){ return Number(x); });
+          var owned = ids.map(function(t){ return "2|" + t; });
+          if (!ids.length) return { owned: owned, staked: [] };
+          var cd2 = IFC_M6.encodeFunctionData("stakedStatusOf", [ids]);
+          return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: cd2 }); }, 2, 8000).then(function(raw2){
+            var flags = IFC_M6.decodeFunctionResult("stakedStatusOf", raw2)[0];
+            var staked = [];
+            flags.forEach(function(f, i){ if (f) staked.push("2|" + ids[i]); });
             return { owned: owned, staked: staked };
           });
-        });
+        }).catch(function(e){ console.warn("readV6 batch fail", e); return { owned: [], staked: [] }; });
       }
       function scanHint(){
         var el = $("myAssets"); if (!el) return;
@@ -6872,18 +6892,18 @@ function renderMine(){
               st3Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) v3Staked2.push("0|" + (from + i)); });
               var ids5 = [];
               for (var t5b = 1; t5b <= lastV5f; t5b++) ids5.push(t5b);
-              var v6CountF = Number(r[18] || 0);
-              var ids6 = [];
-              for (var t6b = 0; t6b < v6CountF; t6b++) ids6.push(t6b);
               return batchRead(ids5, function(tid5){ return circV5f.ownerOf(tid5); }).then(function(own5){
                 own5.forEach(function(o, i){ if (o && o.toLowerCase() === account.toLowerCase()) myNfts.push("1|" + (1 + i)); });
                 window.__v5Owned = myNfts.filter(function(x){ return x.indexOf("1|") === 0; });
-                return batchRead(ids6, function(k6){ return circV6.tokenOfOwnerByIndex(account, k6); }).then(function(own6){
-                  var v6owned = [], v6ids = [];
-                  own6.forEach(function(o, i){ if (o && Number(o) > 0n) { var tid = Number(o); v6ids.push(tid); v6owned.push("2|" + tid); myNfts.push("2|" + tid); } });
-                  window.__v6Owned = v6owned;
-                  return batchRead(v6ids, function(tid6){ return mine6.stakes(ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["uint8","uint256"],[1, tid6]))); }).then(function(st6Rows){
-                    st6Rows.forEach(function(st, i){ if (st && st.owner && st.owner.toLowerCase() === account.toLowerCase() && Number(st.share) > 0n) staked2.push("2|" + v6ids[i]); });
+                // V6 批量（fallback 同样用批量视图函数，1 次 pcsOfOwner + 1 次 stakedStatusOf）
+                return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: IFC_C.encodeFunctionData("pcsOfOwner", [account]) }); }, 2, 8000).then(function(raw6o){
+                  var v6ids = IFC_C.decodeFunctionResult("pcsOfOwner", raw6o)[0].map(function(x){ return Number(x); });
+                  v6ids.forEach(function(tid){ myNfts.push("2|" + tid); });
+                  window.__v6Owned = v6ids.map(function(t){ return "2|" + t; });
+                  if (!v6ids.length){ saveCache(myNfts, staked2); window.__v3Staked = v3Staked2; return staked2; }
+                  return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: IFC_M6.encodeFunctionData("stakedStatusOf", [v6ids]) }); }, 2, 8000).then(function(raw6s){
+                    var flags = IFC_M6.decodeFunctionResult("stakedStatusOf", raw6s)[0];
+                    flags.forEach(function(f, i){ if (f) staked2.push("2|" + v6ids[i]); });
                     saveCache(myNfts, staked2);
                     window.__v3Staked = v3Staked2;
                     return staked2;
@@ -6898,11 +6918,30 @@ function renderMine(){
     return scan.then(function(staked){
         var allIds = myNfts.slice();
         staked.forEach(function(t){ if (allIds.indexOf(t) === -1) allIds.push(t); });
-        var pcQ = allIds.map(function(srckey){
-          var src = Number(srckey.split("|")[0]), tid = Number(srckey.split("|")[1]);
-          var c = src === 1 ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider) : (src === 2 ? new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, pubProvider) : circ);
-          return readRetry(function(){ return c.getCircuit(tid); }, 2).then(function(g){ return { src: src, tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
-        });
+        var pcQ = (function(){
+          var bySrc = {};
+          allIds.forEach(function(k){ var p = k.split("|"); (bySrc[p[0]] = bySrc[p[0]] || []).push(Number(p[1])); });
+          var jobs = [];
+          if (bySrc["2"] && bySrc["2"].length){
+            var ids6 = bySrc["2"];
+            jobs.push(readRetry(function(){
+              var cd = IFC_C.encodeFunctionData("getCircuits", [ids6]);
+              return pubProvider.call({ to: ADDRS.circuitV6, data: cd }).then(function(raw){
+                var cs = IFC_C.decodeFunctionResult("getCircuits", raw)[0];
+                return cs.map(function(g, i){ return { src: 2, tid: ids6[i], tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
+              });
+            }, 2, 8000));
+          }
+          ["0","1"].forEach(function(src){
+            if (!bySrc[src] || !bySrc[src].length) return;
+            var c = src === "1" ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider) : circ;
+            var tidList = bySrc[src];
+            jobs.push(Promise.all(tidList.map(function(tid){
+              return readRetry(function(){ return c.getCircuit(tid); }, 2).then(function(g){ return { src: Number(src), tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
+            })));
+          });
+          return Promise.all(jobs).then(function(groups){ var all = []; groups.forEach(function(g){ all = all.concat(g); }); return all; });
+        })();
         return Promise.all(pcQ).then(function(pcs){
         var freePcs = pcs.filter(function(p){ return staked.indexOf(p.src + "|" + p.tid) === -1; });
         function srcTag(p){ return p.src >= 1 ? '<i class="new-tag" title="新合约 PC">NEW</i>' : ''; }
