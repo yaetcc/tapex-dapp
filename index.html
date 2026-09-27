@@ -2723,13 +2723,6 @@ footer b{
 }
 
 /* ===== 08 矿机 · 质押 ===== */
-/* 旧合约迁移弹窗 */
-.mig-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid rgba(79,224,208,.14);border-radius:8px;margin:0 0 6px;background:rgba(17,31,59,.6);cursor:pointer}
-.mig-row:hover{border-color:rgba(79,224,208,.4)}
-.mig-row input{accent-color:#4FE0D0;width:15px;height:15px}
-.mig-src{font-style:normal;font-size:11px;color:#8fa3c8;border:1px solid rgba(143,163,200,.35);border-radius:4px;padding:0 5px}
-.mig-row .m-h{margin-left:auto;color:#F0C267}
-.mig-row .grade{margin-left:2px}
 .rig-empty{
   font-size:12px;
   color:var(--tx3);
@@ -5521,7 +5514,6 @@ input:focus,textarea:focus,select:focus{
         <div class="statbox"><b id="stEpoch">—</b><span data-i18n="st.epoch">当前 epoch</span></div>
       </div>
       <p class="hint" data-i18n="数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。">数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。</p>
-      <div id="rpcDiag" style="margin:6px 0 0;font-size:11px;color:#7d8fb0;line-height:1.5"></div>
     </div>
 
     <div class="card" id="mine">
@@ -5622,20 +5614,6 @@ input:focus,textarea:focus,select:focus{
           <a href="https://www.oklink.com/xlayer/token/0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
         </div>
       </div>
-      <div class="tapex-links" style="margin-top:14px">
-        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--teal)"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><b data-i18n="d.xchip">XCHIP v4 · 合约与旧币兑换</b></div>
-        <div class="tl-addr">
-          <code>0xF38B60311BB4210A1d07fc39c35dE5e40f8Ea2CD</code>
-          <button class="tl-copy" id="xchipCopy" data-i18n="d.copy">复制</button>
-        </div>
-        <div class="tl-mig">
-          <div class="tl-mig-row">
-            <span data-i18n="d.oldBal">旧币余额</span><b id="oldChipBal" class="mono">—</b>
-            <button class="btn primary" id="migChipBtn" disabled data-i18n="d.mig">1:1 兑换为 XCHIP v4</button>
-          </div>
-          <p class="hint" style="margin-top:8px;font-size:12px" data-i18n="d.migHint">旧 XCHIP（0xefac…DE5）按 1:1 兑换为新 XCHIP v4，兑换后旧币回收锁定；新 XCHIP 总量 2100 万，miningV6 矿场奖励、资产页余额均使用新币。</p>
-        </div>
-      </div>
     </div>
 
 </main>
@@ -5714,16 +5692,11 @@ input:focus,textarea:focus,select:focus{
     <div id="rigModalBody"></div>
   </div>
 </div>
-<div id="migModal">
-  <div class="rm-box">
-    <button class="rm-close" id="migModalClose">×</button>
-    <div id="migModalBody"></div>
-  </div>
-</div>
-<script src="assets/ethers.umd.min.js"></script><script>
+<script src="assets/ethers.umd.min.js"></script>
+<script>
 (function(){
 "use strict";
-console.log("%cTapeX DApp v20260927-migrate (旧合约迁移版: V3/V4/V5→V6 换发)", "color:#e8c46a");
+console.log("%cTapeX DApp v20260927-rewrite (重写版: 防御式读取链+safe 全链)", "color:#e8c46a");
 function showErrBanner(){
   try {
     var eb = document.getElementById("errBanner");
@@ -5811,7 +5784,7 @@ var RPC = "https://rpc.xlayer.tech";
 var EXPLORER = "https://www.okx.com/web3/explorer/xlayer";
 var MKT_SRC = { V4: 1, V5: 2, V6: 3 };  // MarketV6 四源：0=V3 1=V4(旧PC) 2=V5 3=V6(新PC)
 var ADDRS = {
-  token: "0xF38B60311BB4210A1d07fc39c35dE5e40f8Ea2CD",  // XCHIP v4（2100万，旧币 0xefac 已废弃）
+  token: "0xefac9e6D56eAE13c7D7e071297D3B16D09aB7DE5",
   processor: "0x7e8aBC042ceA2f5566298e159E2801b721Bb3AA0",
   circuit: "0x20420E212E0f38EF5e29b3B3ea945F77fbC128E6",
   mining: "0x061d07cF45BecC698581571Ff15C8e0f2d607293",
@@ -5849,10 +5822,6 @@ var I18N = {
   "d.noWallet": {zh:"连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPEX holdings and dividends."},
   "d.pending": {zh:"分红合约部署中，稍后开放领取。", en:"Dividend contract deploying; claiming opens soon."},
   "d.claimed": {zh:"XCHIP 分红已领取", en:"XCHIP dividends claimed"},
-  "d.xchip": {zh:"XCHIP v4 · 合约与旧币兑换", en:"XCHIP v4 · Contract & Legacy Swap"},
-  "d.oldBal": {zh:"旧币余额", en:"Legacy Balance"},
-  "d.mig": {zh:"1:1 兑换为 XCHIP v4", en:"Swap 1:1 to XCHIP v4"},
-  "d.migHint": {zh:"旧 XCHIP（0xefac…DE5）按 1:1 兑换为新 XCHIP v4，兑换后旧币回收锁定；新 XCHIP 总量 2100 万，miningV6 矿场奖励、资产页余额均使用新币。", en:"Legacy XCHIP (0xefac…DE5) swaps 1:1 to XCHIP v4; legacy tokens are burned/locked. New XCHIP total supply 21M; miningV6 rewards & asset balances use the new token."},
   "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
   "d.links": {zh:"TAPEX · 合约与购买", en:"TAPEX · Contract & Buy"},
   "d.copy": {zh:"复制", en:"Copy"},
@@ -6003,7 +5972,6 @@ var I18N = {
   "e.funds": {zh:"钱包余额不足（OKB 或 gas）", en:"Insufficient balance (OKB or gas)"},
   "e.gas": {zh:"gas 超出预估，请稍后再试", en:"Gas exceeds estimate, retry later"},
   "e.revert": {zh:"链上拒绝执行（请检查 NFT 归属 / 授权 / 是否已挂单）", en:"Rejected on-chain (check NFT ownership / approval / listing)"},
-  "e.network": {zh:"网络连接异常，请检查网络后自动重试", en:"Network error, retrying automatically"},
   "e.timeout": {zh:"RPC 响应超时，请稍后重试", en:"RPC timeout, retry later"},
   "ms.hash": {zh:"全网算力 ", en:"Network Hash "},
   "ms.halving": {zh:" H · 减半 L", en:" H · Halving L"},
@@ -6257,7 +6225,6 @@ var ABI_CIRCUIT = [
   "function getApproved(uint256) view returns (address)",
   "function getCircuit(uint256) view returns (tuple(uint256 tokenId,bytes32 seed,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 assembledAt))",
   "function isApprovedForAll(address,address) view returns (bool)",
-  "function migratePCs(address,uint256[])",
   "function lastTokenId() view returns (uint256)",
   "function ownerOf(uint256) view returns (address)",
   "function tokenOfOwnerByIndex(address,uint256) view returns (uint256)",
@@ -6358,15 +6325,11 @@ function detectWallet(){
 }
 et = detectWallet();
 initEIP6963();
-var RPCS = ["https://xlayerrpc.okx.com", "https://xlayer.drpc.org", "https://rpc.nodeflare.app/xlayer/public", "https://rpc.xlayer.tech"]; // 4 个主网 RPC（NodeFlare 多区域自动故障转移、非 OKX 域名，2026-09-28 实测可达）
+var RPCS = ["https://xlayerrpc.okx.com", "https://rpc.xlayer.tech"]; // 仅保留实测可达的两个主网 RPC（xlayer-mainnet-rpc.okx.com 已实测不可达，移除）
 var rpcIdx = 0;
-var rpcOk = {};      // 健康探测结果：下标 → 是否可用（false=限流/故障冷却中，rpcProbe 每 5 分钟复测恢复）
-function makePub(){
-  try { return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], new ethers.Network("xlayer", 196), { batchMaxCount: 1, staticNetwork: true }); }
-  catch(e){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); }
-} // 显式 chainId + staticNetwork 跳过自动网络检测（部分公共端点检测会失败）+ 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
+var rpcOk = {};      // 健康探测结果：下标 → 是否可用
+function makePub(){ return new ethers.JsonRpcProvider(RPCS[rpcIdx % RPCS.length], 196, { batchMaxCount: 1 }); } // 显式 chainId + 禁用批量请求：X Layer 公共 RPC 拒绝大 batch（-32014 too many RPC calls in batch request），逐请求发送
 var pubProvider = makePub();
-setTimeout(function(){ rpcProbe(); }, 4000);
 function probeRpc(url){
   try {
     var p = new ethers.JsonRpcProvider(url, 196, { batchMaxCount: 1 }).send("eth_chainId", [])
@@ -6374,26 +6337,10 @@ function probeRpc(url){
     return Promise.race([p, new Promise(function(res){ setTimeout(function(){ res(false); }, 2500); })]).catch(function(){ return false; });
   } catch(e){ return Promise.resolve(false); }
 }
-function rpcDiag(){
-  var el = $("rpcDiag"); if (!el) return;
-  var cur = rpcIdx % RPCS.length;
-  var parts = RPCS.map(function(u, i){
-    var host = u.replace("https://", "").split("/")[0];
-    var st = rpcOk[i] === false ? "✗" : (i === cur ? "●" : "✓");
-    return '<span style="margin-right:6px;color:' + (i === cur ? "#F0C267" : (rpcOk[i] === false ? "#e05a5a" : "#4FE0D0")) + '">' + host + ' ' + st + '</span>';
-  });
-  el.innerHTML = "RPC: " + parts.join("");
-  var allDown = true;
-  for (var i2 = 0; i2 < RPCS.length; i2++){ if (rpcOk[i2] !== false) { allDown = false; break; } }
-  if (allDown && Object.keys(rpcOk).length){
-    el.innerHTML += '<div style="margin-top:4px;color:#e05a5a">⚠ 所有 RPC 节点均无法连接。请依次尝试：① 关闭 VPN/代理 ② 换网络（手机热点）③ 换 DNS（223.5.5.5）④ 无痕模式，然后刷新页面。</div>';
-  }
-}
 function rpcProbe(){
   return Promise.all(RPCS.map(function(u, i){
     return probeRpc(u).then(function(ok){ rpcOk[i] = ok; });
   })).then(function(){
-    rpcDiag();
     if (rpcOk[rpcIdx % RPCS.length] !== false) return;   // 当前端点健康，不切换
     for (var k = 1; k <= RPCS.length; k++){
       var j = (rpcIdx + k) % RPCS.length;
@@ -6405,14 +6352,12 @@ function rpcProbe(){
   });
 }
 function rpcFail(){
-  rpcOk[rpcIdx % RPCS.length] = false;   // 当前端点限流/故障 → 冷却，避免立刻切回（rpcProbe 每 5 分钟复测后恢复）
   for (var k = 1; k <= RPCS.length; k++){
     var j = (rpcIdx + k) % RPCS.length;
     if (rpcOk[j] !== false) { rpcIdx = j; break; }
   }
   pubProvider = makePub();
   bindBlockWatch();
-  rpcDiag();
   console.warn(t("w.rpcLog") + RPCS[rpcIdx % RPCS.length]);
 }
 /* ---------- 链上自动刷新：监听新块，10 秒节流 + 防重入 ---------- */
@@ -6578,12 +6523,13 @@ function humanErr(e){
   if (/gas required exceeds/i.test(m)) return t("e.gas");
   if (/execution reverted|revert/i.test(m)) return t("e.revert");
   if (/timeout|timeout exceeded/i.test(m)) return t("e.timeout");
-  if (/failed to fetch|network error|net::|load failed|could not connect|fetch failed|ENOTFOUND|ECONNREFUSED|ERR_CONNECTION|ERR_INTERNET|getaddrinfo/i.test(m)) return t("e.network");
   return m.slice(0, 220);
 }
 
 
 /* ---------- 全网状态（公共 RPC，无需钱包） ---------- */
+
+/* ===== 业务逻辑层（v2026-09-27 重写版）===== */
 /* ============================================================
    TapeX DApp — 业务逻辑层·读取与状态管理（v2026-09-27 重写版）
    设计原则：
@@ -6711,7 +6657,6 @@ function renderDividend(){
     var can = BigInt(r[1] || 0n) > 0n;
     var btn2 = $("hdClaimBtn");
     if (btn2){ btn2.disabled = !can; btn2.textContent = t("d.claimBtn"); btn2.dataset.ready = "1"; }
-    refreshOldChipBal();
     return null;
   });
 }
@@ -6842,8 +6787,6 @@ function renderMine(){
   function readV4V5(acc){
     // V4/V5 质押为托管模式：质押矿机 balanceOf=0（ownerOf 指向矿场），不能用 balanceOf 短路，有存量就全量扫描
     var lastV4 = Number(acc[12] || 0), lastV5 = Number(acc[16] || 0);
-    var v4Free = Number(acc[9] || 0);   // V4 balanceOf（待机数；质押托管模式下=0）
-    var PER = v4Free > 0 ? 3 : 2;       // V4 无待机时跳过 ownerOf 全扫（减 1/3 调用）
     var myNfts = [], staked = [], v3Staked = [];
     if (lastV4 <= 0 && lastV5 <= 0) return Promise.resolve({ myNfts: myNfts, staked: staked, v3Staked: v3Staked });
     var ownerSel = "0x6352211e";
@@ -6852,7 +6795,7 @@ function renderMine(){
     var allCalls = [];
     var t2;
     for (t2 = 1; t2 <= lastV4; t2++){
-      if (v4Free > 0) allCalls.push({ target: circ.target, callData: ownerSel + tidHex(t2) });  // 仅 V4 有待机时读 ownerOf
+      allCalls.push({ target: circ.target, callData: ownerSel + tidHex(t2) });
       allCalls.push({ target: mine.target, callData: stakeSel + tidHex(t2) });
       allCalls.push({ target: mineV3.target, callData: stakeSel + tidHex(t2) });
     }
@@ -6860,100 +6803,72 @@ function renderMine(){
     for (t2 = 1; t2 <= lastV5; t2++){
       allCalls.push({ target: circV5.target, callData: ownerSel + tidHex(t2) });
     }
-    // V3（circuitV3M）待机扫描：lastV3 单独读（readBase 索引已满），有存量才扫；质押在 miningV3 的由 ownerOf==miningV3 识别
-    var lastV3 = 0;
-    var v3Done = safe(function(){ return readRetry(function(){ return new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, pubProvider).lastTokenId(); }, 1); }, 0);
-    return v3Done.then(function(lv3){
-      lastV3 = Number(lv3 || 0);
-      var circV3 = new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, pubProvider);
-      for (t2 = 1; t2 <= lastV3; t2++){
-        allCalls.push({ target: circV3.target, callData: ownerSel + tidHex(t2) });
+    if (!allCalls.length) return Promise.resolve({ myNfts: myNfts, staked: staked, v3Staked: v3Staked });
+    var BATCH = 50, out = [], idx = 0, totalChunks = Math.ceil(allCalls.length / BATCH), doneChunks = 0;  // 50/批：与 getCircuits 同策略，防 OKX 超大响应截断
+    function scanHint(){
+      var el = $("myAssets"); if (!el) return;
+      var li = el.querySelector("li");
+      if (li && li.innerHTML.indexOf(t("a.loading")) !== -1)
+        li.innerHTML = '<span class="nm">' + t("a.loading") + '</span><span class="v">' + doneChunks + "/" + totalChunks + '</span>';
+    }
+    function step(){
+      if (idx >= allCalls.length) return Promise.resolve(out);
+      var jobs = [];
+      while (jobs.length < 3 && idx < allCalls.length){
+        var chunk = allCalls.slice(idx, idx + 50); idx += 50;
+        jobs.push(readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 1));
       }
-      if (!allCalls.length) return Promise.resolve({ myNfts: myNfts, staked: staked, v3Staked: v3Staked });
-      var BATCH = 1296, out = [], idx = 0, totalChunks = Math.ceil(allCalls.length / BATCH), doneChunks = 0;
-      function scanHint(){
-        var el = $("myAssets"); if (!el) return;
-        var li = el.querySelector("li");
-        if (li && li.innerHTML.indexOf(t("a.loading")) !== -1)
-          li.innerHTML = '<span class="nm">' + t("a.loading") + '</span><span class="v">' + doneChunks + "/" + totalChunks + '</span>';
+      return Promise.all(jobs).then(function(res){
+        var k;
+        for (k = 0; k < res.length; k++) out = out.concat(Array.isArray(res[k]) ? res[k] : []);
+        doneChunks += res.length; scanHint();
+        return step();
+      });
+    }
+    function collect(ret){
+      var v4End = lastV4 * 3;
+      var i;
+      function hit(r){
+        if (r && r[0] && r[1] && typeof r[1] === "string" && r[1].length >= 192){
+          var sh = ethers.hexlify(r[1]);
+          var stOwner = "0x" + sh.slice(26, 66);
+          var share = BigInt("0x" + sh.slice(66, 130));
+          return stOwner.toLowerCase() === account.toLowerCase() && share > 0n;
+        }
+        return false;
       }
-      function step(){
-        if (idx >= allCalls.length) return Promise.resolve(out);
-        var chunk = allCalls.slice(idx, idx + BATCH); idx += chunk.length;
-        return readRetry(function(ch){ return mc3.tryAggregate.staticCall(false, ch); }.bind(null, chunk), 3)
-          .then(function(res){
-            out = out.concat(Array.isArray(res) ? res : []);
-            doneChunks++; scanHint();
-            return step();
-          }).catch(function(e){
-            rpcFail();
-            if (BATCH > 50){          // 大批次响应大、弱网易超时 → 自适应降级重扫（1296→324→81→50）
-              BATCH = Math.max(50, Math.floor(BATCH / 4));
-              idx = 0; out = [];
-              doneChunks = 0; totalChunks = Math.ceil(allCalls.length / BATCH);
-              console.warn("V4 扫描批次降级: " + BATCH);
-              return step();
-            }
-            throw e;
-          });
+      for (i = 0; i < v4End && i < ret.length; i += 3){
+        var tid = 1 + (i / 3);
+        var own = ret[i], stR = ret[i + 1], st3R = ret[i + 2];
+        if (own && own[0] && own[1] && typeof own[1] === "string" && own[1].length >= 64){
+          var rh = ethers.hexlify(own[1]);
+          if (("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
+        }
+        if (hit(stR)) staked.push("0|" + tid);
+        if (hit(st3R)) { v3Staked.push("0|" + tid); staked.push("0|" + tid); }  // 旧场质押并入 staked：资产页/挖矿页可见，解押自动走旧场合约
       }
-      function collect(ret){
-        if (!account) return;
-        var v4End = lastV4 * PER;
-        var i;
-        function hit(r){
-          if (!account) return false;
-          if (r && r[0] && r[1] && typeof r[1] === "string" && r[1].length >= 192){
-            var sh = ethers.hexlify(r[1]);
-            var stOwner = "0x" + sh.slice(26, 66);
-            var share = BigInt("0x" + sh.slice(66, 130));
-            return stOwner.toLowerCase() === account.toLowerCase() && share > 0n;
-          }
-          return false;
+      var v5End = v4End + lastV5;
+      for (i = v4End; i < v5End && i < ret.length; i++){
+        var o5 = ret[i];
+        if (o5 && o5[0] && o5[1] && typeof o5[1] === "string" && o5[1].length >= 64){
+          var rh5 = ethers.hexlify(o5[1]);
+          if (("0x" + rh5.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("1|" + (i - v4End + 1));
         }
-        for (i = 0; i < v4End && i < ret.length; i += PER){
-          var tid = 1 + (i / PER);
-          var own = v4Free > 0 ? ret[i] : null, stR = ret[v4Free > 0 ? i + 1 : i], st3R = ret[v4Free > 0 ? i + 2 : i + 1];
-          if (own && own[0] && own[1] && typeof own[1] === "string" && own[1].length >= 64){
-            var rh = ethers.hexlify(own[1]);
-            if (account && ("0x" + rh.slice(26, 66)).toLowerCase() === account.toLowerCase()) myNfts.push("0|" + tid);
-          }
-          if (hit(stR)) staked.push("0|" + tid);
-          if (hit(st3R)) { v3Staked.push("0|" + tid); staked.push("0|" + tid); }
-        }
-        var v5End = v4End + lastV5;
-        for (i = v4End; i < v5End && i < ret.length; i++){
-          var o5 = ret[i];
-          if (o5 && o5[0] && o5[1] && typeof o5[1] === "string" && o5[1].length >= 64){
-            var rh5 = ethers.hexlify(o5[1]);
-            var oAddr5 = ("0x" + rh5.slice(26, 66)).toLowerCase();
-            if (oAddr5 === account.toLowerCase()) myNfts.push("1|" + (i - v4End + 1));
-            else if (oAddr5 === ADDRS.miningV6.toLowerCase()) staked.push("1|" + (i - v4End + 1));
-          }
-        }
-        var v3End = v5End + lastV3;
-        for (i = v5End; i < v3End && i < ret.length; i++){
-          var o3 = ret[i];
-          if (o3 && o3[0] && o3[1] && typeof o3[1] === "string" && o3[1].length >= 64){
-            var rh3 = ethers.hexlify(o3[1]);
-            var oAddr3 = ("0x" + rh3.slice(26, 66)).toLowerCase();
-            if (oAddr3 === account.toLowerCase()) myNfts.push("3|" + (i - v5End + 1));
-            else if (oAddr3 === ADDRS.miningV3.toLowerCase()) staked.push("3|" + (i - v5End + 1));
-          }
-        }
-        return { myNfts: myNfts, staked: staked, v3Staked: v3Staked };
       }
-      return step().then(function(ret2){ return collect(Array.isArray(ret2) ? ret2 : []); }); // 扫描失败抛错→全局重试（不静默返回空导致老矿机不显示）
-    });
-
+      return { myNfts: myNfts, staked: staked, v3Staked: v3Staked };
+    }
+    // 后台扫描（不设硬超时）：V6 先行渲染，老矿机扫完后补渲染；批次失败由 safe 兜底为 []，不会无限卡死
+    return safe(step, []).then(function(ret){ return collect(Array.isArray(ret) ? ret : []); });
   }
 
   /* ---- 步骤 3：V6 批量视图（pcsOfOwner + stakedStatusOf，2 次调用替代逐台读） ---- */
   function readV6(acc){
-    // 不能以 V6 balanceOf 短路：质押为托管模式，全质押时 balanceOf=0 但 pcsOfOwner 有 353 台
-    var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
-    // 读取失败抛错（readRetry 3 次后）→ 触发全局 catch 的 rpcFail+重试；不静默返回空（否则 RPC 限流时显示"无 PC"且不重试）
-    return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000).then(function(raw1){
+    var n6 = Number(acc[18] || 0);
+    if (n6 <= 0) return Promise.resolve({ owned: [], staked: [] });
+    return safe(function(){
+      var cd1 = IFC_C.encodeFunctionData("pcsOfOwner", [account]);
+      return readRetry(function(){ return pubProvider.call({ to: ADDRS.circuitV6, data: cd1 }); }, 2, 8000);
+    }, null).then(function(raw1){
       if (!raw1) return { owned: [], staked: [] };
       var ids;
       try { ids = IFC_C.decodeFunctionResult("pcsOfOwner", raw1)[0]; } catch(e){ return { owned: [], staked: [] }; }
@@ -6961,8 +6876,10 @@ function renderMine(){
       ids = ids.map(function(x){ return Number(x); });
       var owned = ids.map(function(x){ return "2|" + x; });
       if (!ids.length) return { owned: owned, staked: [] };
-      var cd2 = IFC_M6.encodeFunctionData("stakedStatusOf", [ids]);
-      return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: cd2 }); }, 2, 8000).then(function(raw2){
+      return safe(function(){
+        var cd2 = IFC_M6.encodeFunctionData("stakedStatusOf", [ids]);
+        return readRetry(function(){ return pubProvider.call({ to: ADDRS.miningV6, data: cd2 }); }, 2, 8000);
+      }, null).then(function(raw2){
         if (!raw2) return { owned: owned, staked: [] };
         var flags;
         try { flags = IFC_M6.decodeFunctionResult("stakedStatusOf", raw2)[0]; } catch(e){ return { owned: owned, staked: [] }; }
@@ -7015,41 +6932,20 @@ function renderMine(){
       jobs.push(st6().then(function(all){ window.__pcBySrc["2"] = all.slice(); return all; }));
       }
     }
-    var srcKeys = ["0", "1", "3"];
+    var srcKeys = ["0", "1"];
     for (var si = 0; si < srcKeys.length; si++){
       var src = srcKeys[si];
       if (!bySrc[src] || !bySrc[src].length) continue;
-      var c = src === "1" ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider) : (src === "3" ? new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, pubProvider) : circ);
+      var c = src === "1" ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, pubProvider) : circ;
       var tidList = bySrc[src];
-      (function(c2, tidList2, src2){   // IIFE 绑定：避免 var 闭包串位（旧实现 c 被循环覆盖导致 V4 详情误读 V5 合约）
-        jobs.push(safe(function(){
-          // V4/V5 无 getCircuits，用 multicall 批量单查（50/批，4 并发轮转），比逐台单查快数倍
-          var out2 = [], ix2 = 0;
-          var ifc = new ethers.Interface(["function getCircuit(uint256) view returns (tuple(uint256 tokenId,bytes32 seed,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 assembledAt))"]);
-          function bstep2(){
-            if (ix2 >= tidList2.length) return Promise.resolve(out2);
-            var chunk = tidList2.slice(ix2, ix2 + 50); ix2 += 50;
-            var calls = chunk.map(function(tid){ return { target: c2.target, callData: ifc.encodeFunctionData("getCircuit", [tid]) }; });
-            return safe(function(){
-              return mc3.tryAggregate.staticCall(false, calls);
-            }, []).then(function(rows){
-              if (Array.isArray(rows)){
-                var k;
-                for (k = 0; k < rows.length && k < chunk.length; k++){
-                  var row = rows[k];
-                  if (row && row[0] && row[1]){
-                    var g;
-                    try { g = ifc.decodeFunctionResult("getCircuit", ethers.hexlify(row[1]))[0]; } catch(e){ continue; }
-                    if (g) out2.push({ src: Number(src2), tid: chunk[k], tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) });
-                  }
-                }
-              }
-              return bstep2();
-            });
-          }
-          return bstep2();
-        }, []));
-      })(c, tidList, src);
+      jobs.push(safe(function(){
+        return Promise.all(tidList.map(function(tid){
+          return safe(function(){ return readRetry(function(){ return c.getCircuit(tid); }, 2); }, null).then(function(g){
+            if (!g) return null;
+            return { src: Number(src), tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) };
+          });
+        })).then(function(rs){ return rs.filter(function(x){ return x !== null; }); });
+      }, []));
     }
     return Promise.all(jobs).then(function(groups){
       var all = [];
@@ -7059,7 +6955,7 @@ function renderMine(){
     });
   }
 
-  /* ---- 主流程（重写 v2）：分步渐进 base → V6 秒出 → V4 后台循环补全，每步独立容错 ---- */
+  /* ---- 主流程：base → 缓存判定 → V4V5 → V6 → 详情 → 渲染 ---- */
   return readBase().then(function(acc){
     var parts = [Number(acc[1]||0),Number(acc[2]||0),Number(acc[3]||0),Number(acc[4]||0),Number(acc[5]||0),Number(acc[6]||0),Number(acc[7]||0),Number(acc[8]||0)];
     window.__parts = parts;
@@ -7067,80 +6963,68 @@ function renderMine(){
     var last = Number(acc[12] || 0), lastV6 = Number(acc[17] || 0);
     var cacheKey = account.toLowerCase() + "|" + last + "|" + lastV6;
     var now = Date.now();
-    var myNfts = [], staked = [], v3Staked = [];
-    /* 读缓存：仅老矿机缓存（V6 始终实时读），空结果或过期一律不命中 */
-    try {
-      var lc = JSON.parse(localStorage.getItem("rigCache"));
-      if (lc && lc.key === cacheKey && lc.exp > now &&
-          ((Array.isArray(lc.myNfts) && lc.myNfts.length) || (Array.isArray(lc.staked) && lc.staked.length))){
-        myNfts = lc.myNfts.slice(); staked = lc.staked.slice();
-      }
-    } catch(e){}
-
-    /* ---- Step A: V6 读取（独立重试 2 次 + RPC 切换，毫秒级秒出）---- */
-    function v6WithRetry(tries){
-      tries = tries || 0;
-      return readV6(acc).catch(function(e){
-        console.warn("v6 retry", tries, e);
-        if (tries < 2){ rpcFail(); return v6WithRetry(tries + 1); }
-        throw e;
-      });
+    var rigCache = window.__rigCache;
+    if (!(rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && now < (rigCache.exp || 0))){
+      try {
+        var lc = JSON.parse(localStorage.getItem("rigCache"));
+        if (lc && lc.key === cacheKey && lc.exp > now) rigCache = lc;
+      } catch(e){}
     }
-    var v6p = v6WithRetry(0);
-
-    /* ---- Step B: V4/V5 老矿机扫描（独立后台循环，成功自动合并渲染）---- */
-    function v4Backfill(){
-      if (!signer || !account) return;
+    var myNfts, staked, v3Staked = [];
+    if (rigCache && Array.isArray(rigCache.myNfts) && Array.isArray(rigCache.staked) && rigCache.key === cacheKey && rigCache.v === 2 && now < (rigCache.exp || 0)){
+      myNfts = rigCache.myNfts.slice();
+      staked = rigCache.staked.slice();
+      // 缓存命中仍后台扫 V4/V5 老矿机补全（质押托管 + 合约升级可能让缓存过期，扫描结果只增不减）
       readV4V5(acc).then(function(s1){
-        var seen = {}, mm = [], ms = [], k;
-        for (k = 0; k < s1.myNfts.length; k++){ if (!seen[s1.myNfts[k]]) { seen[s1.myNfts[k]] = 1; mm.push(s1.myNfts[k]); } }
-        for (k = 0; k < myNfts.length; k++){ if (!seen[myNfts[k]]) { seen[myNfts[k]] = 1; mm.push(myNfts[k]); } }
-        var seen2 = {};
-        for (k = 0; k < s1.staked.length; k++){ if (!seen2[s1.staked[k]]) { seen2[s1.staked[k]] = 1; ms.push(s1.staked[k]); } }
-        for (k = 0; k < staked.length; k++){ if (!seen2[staked[k]]) { seen2[staked[k]] = 1; ms.push(staked[k]); } }
-        var hasNew = ms.length > staked.length;
-        if (hasNew){
+        var merged = s1.myNfts.concat(myNfts);
+        var mergedSt = s1.staked.concat(staked);
+        var seen2 = {}, mm = [], ms = [], k2;
+        for (k2 = 0; k2 < merged.length; k2++){ if (!seen2[merged[k2]]) { seen2[merged[k2]] = 1; mm.push(merged[k2]); } }
+        var seen3 = {};
+        for (k2 = 0; k2 < mergedSt.length; k2++){ if (!seen3[mergedSt[k2]]) { seen3[mergedSt[k2]] = 1; ms.push(mergedSt[k2]); } }
+        if (ms.length > staked.length){
           staked = ms; myNfts = mm;
-          var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice() };
-          window.__rigCache = c2; try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e2){}
-          readPcDetails(mm.concat(ms), ms).then(function(pcs){
-            renderMineView(acc, ms, pcs, mm, s1.v3Staked || []);
-            var bfEl = $("rigBackfill"); if (bfEl) bfEl.remove();
+          var c2 = { key: cacheKey, exp: Date.now() + 60000, myNfts: mm.slice(), staked: ms.slice(), v: 2 };
+          window.__rigCache = c2;
+          try { localStorage.setItem("rigCache", JSON.stringify(c2)); } catch(e){}
+          readPcDetails(myNfts.concat(staked), staked).then(function(pcs3){
+            renderMineView(acc, staked, pcs3, myNfts, s1.v3Staked || []);
           });
-        } else {
-          var bfEl2 = $("rigBackfill"); if (bfEl2) bfEl2.remove();
         }
-      }).catch(function(e){
-        console.warn("v4 backfill", e);
-        rpcFail();
-        var rlB = $("rigList");
-        if (rlB && !$("rigBackfill")) rlB.insertAdjacentHTML("beforeend", '<div class="rig-empty" id="rigBackfill" style="color:#F0C267">正在补全老矿机…（网络不稳定，自动重试中）</div>');
-        setTimeout(v4Backfill, 15000);
+      }).catch(function(e){ console.warn("v45 cache-backfill", e); });
+    } else {
+      // 两阶段：V6 批量视图先行渲染（毫秒级），V4/V5 老矿机全量扫描后台进行，扫完自动补渲染
+      var v6p = readV6(acc);
+      var v45p = readV4V5(acc);
+      return v6p.then(function(v6){
+        myNfts = v6.owned.slice();
+        staked = v6.staked.slice();
+        v3Staked = [];
+        return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
+          return renderMineView(acc, staked, pcs, myNfts, v3Staked);
+        }).then(function(){
+          return v45p.then(function(s1){
+            myNfts = s1.myNfts.concat(v6.owned);
+            staked = s1.staked.concat(v6.staked);
+            v3Staked = s1.v3Staked;
+            var c = { key: cacheKey, exp: now + 60000, myNfts: myNfts.slice(), staked: staked.slice(), v: 2 };
+            window.__rigCache = c;
+            try { localStorage.setItem("rigCache", JSON.stringify(c)); } catch(e2){}
+            return readPcDetails(myNfts.concat(staked), staked).then(function(pcs2){
+              return renderMineView(acc, staked, pcs2, myNfts, v3Staked);
+            });
+          });
+        });
       });
     }
-    if (last > 0) v4Backfill();
-
-    /* ---- 编排：V6（合并缓存老矿机）渲染 ---- */
-    return v6p.then(function(v6){
-      var seen = {}, mm = [], k;
-      for (k = 0; k < myNfts.length; k++){ if (!seen[myNfts[k]]) { seen[myNfts[k]] = 1; mm.push(myNfts[k]); } }
-      for (k = 0; k < v6.owned.length; k++){ if (!seen[v6.owned[k]]) { seen[v6.owned[k]] = 1; mm.push(v6.owned[k]); } }
-      var seen2 = {};
-      var ms = [];
-      for (k = 0; k < staked.length; k++){ if (!seen2[staked[k]]) { seen2[staked[k]] = 1; ms.push(staked[k]); } }
-      for (k = 0; k < v6.staked.length; k++){ if (!seen2[v6.staked[k]]) { seen2[v6.staked[k]] = 1; ms.push(v6.staked[k]); } }
-      return readPcDetails(mm.concat(ms), ms).then(function(pcs){
-        return renderMineView(acc, ms, pcs, mm, v3Staked);
-      });
+    return readPcDetails(myNfts.concat(staked), staked).then(function(pcs){
+      return renderMineView(acc, staked, pcs, myNfts, v3Staked);
     });
   }).catch(function(e){
     console.warn("renderMine fail", e);
     if (mineCard) mineCard.classList.remove("refreshing");
     if (signer && account){
       __mineFailCount++;
-      var errTxt = humanErr(e).slice(0, 120);
-      var rl2 = $("rigList");
-      if (rl2) rl2.innerHTML = '<div class="rig-empty">' + t("a.readFail") + errTxt + t("a.retry15") + '</div>';
       if (__mineFailCount === 1){
         rpcFail();
         setTimeout(refresh, 1200);
@@ -7148,7 +7032,7 @@ function renderMine(){
       }
       __mineFailCount = 0;
       if (!$("myAssets").dataset.ok){
-        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + errTxt + t("a.retry15") + '</span><span class="v">—</span></li>';
+        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + String(e && e.message || e) + t("a.retry15") + '</span><span class="v">—</span></li>';
         setTimeout(refresh, 30000);
       } else {
         toast(t("a.refreshFail"));
@@ -7161,7 +7045,7 @@ function renderMineView(r, staked, pcs, myNfts, v3Staked){
   var mineCard = $("mine");
   var partsArr = [Number(r[1]||0),Number(r[2]||0),Number(r[3]||0),Number(r[4]||0),Number(r[5]||0),Number(r[6]||0),Number(r[7]||0),Number(r[8]||0)];
   var total = 0; var ti2; for (ti2 = 0; ti2 < partsArr.length; ti2++) total += partsArr[ti2];
-  __mineSum = { xchip: fmtWei(r[0]), pcs: (pcs && pcs.length) || Number(r[9]), parts: total, pending: fmtWei(r[10]) }; // 钱包面板 PC 显示总台数（非仅 V4 待机）
+  __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
   window.__v5Owned = myNfts.filter(function(x){ return String(x).indexOf("1|") === 0; });
   window.__v6Owned = myNfts.filter(function(x){ return String(x).indexOf("2|") === 0; });
   window.__v3Staked = (v3Staked || []).slice();
@@ -7206,7 +7090,6 @@ function renderMineView(r, staked, pcs, myNfts, v3Staked){
         rigData.totalH = Number(r[11]) || 0;
         rigData.pending = fmtWei(r[10]) + " XCHIP";
         renderRigList();
-        var bfEl = $("rigBackfill"); if (bfEl) bfEl.remove();
         if (Number(r[11]) > 0) rigOn(fmtInt(r[11])); else rigOff();
         return r;
 }
@@ -7987,18 +7870,13 @@ function doBatchCancel(){
   var btn = $("mkCancelAll"); busy(btn, true, t("mkt.busyCancel"));
   setMsg("mkMsg","info", t("mkt.batchCancel") + rows.length + t("mkt.batchCancelMid"));
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
-  var mk6 = new ethers.Contract(ADDRS.marketV6, ABI_MARKET5, signer);
   Q.start("批量撤单 " + rows.length + " 单", rows.length, function(){ doBatchCancel(); });
   (function one(i){
     if (Q.stopped()) { setMsg("mkMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); Q.done("批量撤单完成"); return; }
     var id = rows[i].r.tid;
-    var kps = String(rows[i].r.key || "").split("|");
-    var kmkt = Number(kps[0] || 0), ksrc = Number(kps[1] || 1);
     setMsg("mkMsg","info", t("mkt.cancelProgress") + (i + 1) + "/" + rows.length + t("mkt.cancelProgressMid") + id + t("mkt.cancelProgressTail"));
-    var mkc = kmkt === 0 ? mk : mk6;
-    var txp2 = kmkt === 0 ? mkc.cancel(id, { gasLimit: 150000 }) : mkc.cancel(ksrc, id, { gasLimit: 150000 });
-    txp2.then(function(tx){ return tx.wait(); })
+    mk.cancel(id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); })
       .then(function(receipt){ logTx("批量撤单", receipt.hash); Q.ok(i + 1, "撤单 #" + id + " 成功"); one(i + 1); })
       .catch(function(e){ setMsg("mkMsg","err", t("o.batchFail") + (i + 1) + t("mkt.singleFail") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80)); one(i + 1); });
   })(0);
@@ -8177,10 +8055,10 @@ function renderRigList(){
     '' +
     '<select id="rigS"><option value="hashD">' + t("rig.sortHashD") + '</option><option value="hashA"' + (rigSort === "hashA" ? " selected" : "") + '>' + t("rig.sortHashA") + '</option><option value="gradeD"' + (rigSort === "gradeD" ? " selected" : "") + '>' + t("rig.sortGrade") + '</option></select>' +
     '' +
-    '<div class="batch-grp"><button class="action-btn auto mini" id="rigBatchStake">' + t("rig.stake") + '</button><button class="action-btn sec mini" id="rigBatchUnstake">' + t("act.unstake") + '</button><button class="action-btn" id="rigClaimBtn">' + t("act.claim") + '</button>' + (migN ? '<button class="action-btn sec mini" id="rigMigBtn">旧版迁移 · ' + migN + '</button>' : '') + '</div>' +
+    '<div class="batch-grp"><button class="action-btn auto mini" id="rigBatchStake">' + t("rig.stake") + '</button><button class="action-btn sec mini" id="rigBatchUnstake">' + t("act.unstake") + '</button><button class="action-btn" id="rigClaimBtn">' + t("act.claim") + '</button></div>' +
     pg +
     '</div>';
-  var migTip = (rigData.v3Staked && rigData.v3Staked.length) ? '<div class="rig-mig"><b>旧矿场 · ' + rigData.v3Staked.length + ' 台</b><span>旧矿场奖励已停发。请先领取已累计奖励 → 解押 → 迁移到新版（V6）换发新整机</span><button class="action-btn sec mini" id="v3ClaimBtn">领取奖励</button><button class="action-btn auto mini" id="rigMigBtnTip" style="margin-left:6px">迁移到新版</button></div>' : '';
+  var migTip = (rigData.v3Staked && rigData.v3Staked.length) ? '<div class="rig-mig"><b>旧矿场 · ' + rigData.v3Staked.length + ' 台</b><span>先领取旧矿场奖励，再逐台解押，最后勾选矿机到新矿场批量质押（一次签名批量操作）</span><button class="action-btn auto mini" id="v3ClaimBtn">领取旧矿场奖励</button></div>' : '';
   var lh = hd + migTip + ops + '<div class="rig-main">' + body + '</div>'; if (rl.innerHTML !== lh) rl.innerHTML = lh;
 }
 function renderRigModal(tid){
@@ -8210,136 +8088,15 @@ function renderRigModal(tid){
 }
 function openRigModal(tid){ renderRigModal(tid); openPop($("rigModal")); }
 function closeRigModal(){ closePop($("rigModal")); }
-/* ---------- 旧合约迁移（V3/V4/V5 → V6，1:1 换发） ---------- */
-var migSel = {};
-function openMigModal(){ renderMigList(); openPop($("migModal")); }
-function closeMigModal(){ closePop($("migModal")); }
-function renderMigList(){
-  var b = $("migModalBody"); if (!b) return;
-  var list = [];
-  for (var i = 0; i < rigData.pcs.length; i++){
-    var p = rigData.pcs[i];
-    if (p.src !== 0 && p.src !== 1 && p.src !== 3) continue;
-    var key = p.src + "|" + p.tid;
-    if (rigData.staked.indexOf(key) !== -1) continue;
-    list.push({ key: key, p: p });
-  }
-  var selN = 0; for (var k in migSel) if (migSel[k]) selN++;
-  var srcName = { "3": "V3", "1": "V5", "0": "V4" };
-  var stakedOld = 0;
-  for (var so = 0; so < rigData.pcs.length; so++){
-    var sp = rigData.pcs[so];
-    if (sp.src !== 0 && sp.src !== 1 && sp.src !== 3) continue;
-    if (rigData.staked.indexOf(sp.src + "|" + sp.tid) !== -1) stakedOld++;
-  }
-  b.innerHTML =
-    '<div class="rm-head"><b>旧合约迁移 → 新合约（V6）</b></div>' +
-    '<p class="hint" style="margin:6px 0 10px">V3/V4/V5 整机 1:1 换发为 V6 新整机，算力与档位保持，旧整机迁移后冻结销毁（不可逆）。' +
-    (stakedOld ? '<span style="color:#F0C267">质押中 ' + stakedOld + ' 台需先解押后再迁移。</span>' : '') + '</p>' +
-    (list.length ? "" : '<div class="rig-empty">没有可迁移的旧整机（待机 V3/V4/V5）</div>') +
-    '<div style="max-height:46vh;overflow:auto;margin:0 0 10px">' + list.map(function(o){
-      var g = o.p.grade || 1;
-      return '<label class="mig-row"><input type="checkbox" data-mig="' + o.key + '"' + (migSel[o.key] ? " checked" : "") + '>' +
-        '<span class="grade g' + g + '">' + (GRADE_NAMES[g] || "") + '</span>' +
-        '<b>#' + o.tid + '</b><i class="mig-src">' + (srcName[o.p.src] || ("S" + o.p.src)) + '</i><span class="m-h">' + fmtInt(o.p.hash) + ' H</span></label>';
-    }).join("") + '</div>' +
-    '<div class="rm-acts">' +
-      (list.length ? '<button class="action-btn sec" id="migSelAll">' + (selN === list.length ? "取消全选" : "全选") + '</button>' : "") +
-      '<button class="action-btn auto" id="migGo" ' + (selN ? "" : "disabled") + '>迁移 ' + selN + ' 台（一次签名）</button></div>' +
-    '<div class="msg" id="migMsg"></div>';
-}
-function doMigratePCs(){
-  if (!signer || !account) { setMsg("migMsg","err","请先连接钱包。"); return; }
-  if (!ensureNetMsg("migMsg")) return;
-  var grp = { "0": [], "1": [], "3": [] };
-  var total = 0;
-  for (var k in migSel) if (migSel[k]){
-    var ps = String(k).split("|");
-    if (grp[ps[0]]) { grp[ps[0]].push(Number(ps[1])); total++; }
-  }
-  if (!total) { toast("请先勾选要迁移的整机"); return; }
-  var btn = $("migGo"); busy(btn, true, "迁移中…");
-  Q.start("旧整机迁移 " + total + " 台", total, function(){ doMigratePCs(); });
-  var circAddr = { "0": ADDRS.circuit, "1": ADDRS.circuitV5, "3": ADDRS.circuitV3M };
-  var chain = Promise.resolve();
-  var srcs = Object.keys(grp);
-  for (var si2 = 0; si2 < srcs.length; si2++){
-    (function(s){
-      if (!grp[s].length) return;
-      var oldC = new ethers.Contract(circAddr[s], ABI_CIRCUIT, signer);
-      chain = chain.then(function(){
-        return readRetry(function(){ return oldC.isApprovedForAll(account, ADDRS.circuitV6); }).then(function(ok){
-          if (ok) return;
-          setMsg("migMsg","info","授权旧合约 → 新合约（一次签名）…");
-          return oldC.setApprovalForAll(ADDRS.circuitV6, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
-        });
-      });
-    })(srcs[si2]);
-  }
-  var circ6 = new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer);
-  var queue = [];
-  for (var si3 = 0; si3 < srcs.length; si3++){
-    var arr = grp[srcs[si3]];
-    for (var ci2 = 0; ci2 < arr.length; ci2 += 50) queue.push({ src: srcs[si3], arr: arr.slice(ci2, ci2 + 50) });
-  }
-  var doneCnt = 0;
-  function one(q){
-    if (Q.stopped()) { setMsg("migMsg","info","已终止"); migSel = {}; invalidateRigCache(); refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (q >= queue.length){
-      setMsg("migMsg","ok","迁移完成！" + total + " 台已换发为 V6 新整机。"); toast("旧整机迁移完成");
-      migSel = {}; invalidateRigCache(); refresh(); busy(btn, false); Q.done("迁移完成"); return;
-    }
-    var item = queue[q], n = item.arr.length;
-    setMsg("migMsg","info","迁移 " + (doneCnt + 1) + "/" + total + "（本批 " + n + " 台，一次签名）…");
-    circ6.migratePCs(circAddr[item.src], item.arr, { gasLimit: 15000000 }).then(function(tx){
-      setMsg("migMsg","info","第 " + (q + 1) + "/" + queue.length + " 批已发送，等待确认…");
-      return tx.wait();
-    }).then(function(receipt){
-      logTx("旧整机迁移 " + n + " 台", receipt.hash);
-      doneCnt += n; Q.ok(doneCnt, "迁移 " + n + " 台成功");
-      one(q + 1);
-    }).catch(function(e){
-      if (Q.stopped()) { one(queue.length); return; }
-      setMsg("migMsg","err","本批失败：" + humanErr(e).slice(0, 110) + "（跳过继续）"); Q.fail(n, "迁移失败：" + humanErr(e).slice(0, 60));
-      one(q + 1);
-    });
-  }
-  chain.then(function(){ one(0); }).catch(function(e){
-    setMsg("migMsg","err","授权失败：" + humanErr(e).slice(0, 160));
-    busy(btn, false); Q.done("授权失败");
-  });
-}
-(function(){
-  var mm = $("migModal"); if (!mm) return;
-  mm.addEventListener("click", function(ev){
-    if (ev.target === mm || ev.target.closest("#migModalClose")) { closeMigModal(); return; }
-    var cb = ev.target.closest("input[data-mig]");
-    if (cb) { migSel[cb.getAttribute("data-mig")] = cb.checked; renderMigList(); return; }
-    var sa = ev.target.closest("#migSelAll");
-    if (sa) {
-      var all = [];
-      for (var i = 0; i < rigData.pcs.length; i++){
-        var p = rigData.pcs[i];
-        if (p.src !== 0 && p.src !== 1 && p.src !== 3) continue;
-        var key = p.src + "|" + p.tid;
-        if (rigData.staked.indexOf(key) === -1) all.push(key);
-      }
-      var allSel = all.length > 0 && all.every(function(k2){ return migSel[k2]; });
-      for (var j2 = 0; j2 < all.length; j2++) migSel[all[j2]] = !allSel;
-      renderMigList(); return;
-    }
-    if (ev.target.closest("#migGo")) { doMigratePCs(); return; }
-  });
-})();
 function doRigStake(id){
   if (!signer || !account) { setMsg("rigModalMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("rigModalMsg")) return;
   var ps = Number(String(id).split("|")[0]), tid = Number(String(id).split("|")[1]);
   var btn = $("rigModalBody").querySelector("[data-rig-stake]"); if (btn) busy(btn, true, t("o.stakeBusy"));
   setMsg("rigModalMsg","info", t("o.checkApprove"));
-  var circ = ps === 1 ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, signer) : (ps === 2 ? new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer) : (ps === 3 ? new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, signer) : new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer)));
-  var mine = ps === 0 ? new ethers.Contract(ADDRS.mining, ABI_MINING, signer) : (ps === 3 ? new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer) : new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer));
-  var mineAddr = ps === 0 ? ADDRS.mining : (ps === 3 ? ADDRS.miningV3 : ADDRS.miningV6);
+  var circ = ps === 1 ? new ethers.Contract(ADDRS.circuitV5, ABI_CIRCUIT, signer) : (ps === 2 ? new ethers.Contract(ADDRS.circuitV6, ABI_CIRCUIT, signer) : new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer));
+  var mine = ps === 0 ? new ethers.Contract(ADDRS.mining, ABI_MINING, signer) : new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
+  var mineAddr = ps === 0 ? ADDRS.mining : ADDRS.miningV6;
   readRetry(function(){ return circ.ownerOf(tid); }).then(function(owner){
     if (owner.toLowerCase() !== account.toLowerCase()) { setMsg("rigModalMsg","err", t("o.tokenId") + tid + t("o.notMine")); throw new Error("not your nft"); }
     return circ.getApproved(tid);
@@ -8353,7 +8110,7 @@ function doRigStake(id){
   }).then(function(){
     setMsg("rigModalMsg","info", t("o.sendStake"));
     startSigWatch("rigModalMsg", btn);
-    return (ps === 0 || ps === 3) ? mine.stake(tid, { gasLimit: 300000 }) : mine.stake(ps - 1, tid, { gasLimit: 300000 });
+    return ps === 0 ? mine.stake(tid, { gasLimit: 300000 }) : mine.stake(ps - 1, tid, { gasLimit: 300000 });
   }).then(function(tx){
     setMsg("rigModalMsg","info","交易已发送，等待确认…");
     return tx.wait();
@@ -8376,7 +8133,7 @@ function doRigUnstake(id){
   var ps = Number(String(id).split("|")[0]), tid = Number(String(id).split("|")[1]);
   var btn = $("rigModalBody").querySelector("[data-rig-unstake]"); if (btn) busy(btn, true, t("o.unstakeBusy"));
   setMsg("rigModalMsg","info", t("o.sendUnstake"));
-  var isV3 = ps === 3 || (ps === 0 && window.__v3Staked && window.__v3Staked.indexOf(id) !== -1);
+  var isV3 = ps === 0 && window.__v3Staked && window.__v3Staked.indexOf(id) !== -1;
   var mine = isV3 ? new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer) : (ps === 0 ? new ethers.Contract(ADDRS.mining, ABI_MINING, signer) : new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer));
   startSigWatch("rigModalMsg", btn);
   (isV3 ? mine.unstake(tid, { gasLimit: 200000 }) : (ps === 0 ? mine.unstake(tid, { gasLimit: 200000 }) : mine.unstake(ps - 1, tid, { gasLimit: 200000 }))).then(function(tx){
@@ -8510,14 +8267,6 @@ function doBatchStake(){
         return circ6.setApprovalForAll(ADDRS.miningV6, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
       });
     });
-    if (grp0Old.length) chain = chain.then(function(){
-      var circ3m = new ethers.Contract(ADDRS.circuitV3M, ABI_CIRCUIT, signer);
-      return readRetry(function(){ return circ3m.isApprovedForAll(account, ADDRS.miningV3); }).then(function(ok){
-        if (ok) return;
-        rigLog("info", "授权旧矿场（V3M PC，一次签名）…");
-        return circ3m.setApprovalForAll(ADDRS.miningV3, true, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); });
-      });
-    });
     return chain;
   }
   function one(q){
@@ -8531,7 +8280,6 @@ function doBatchStake(){
     rigLog("info", t("o.stakeProgress") + (donePrev + 1) + "/" + total + "（本批 " + n + " 台，一次签名）");
     var p;
     if (item.kind === 0) p = mine5.batchStake(item.arr, { gasLimit: 15000000 });
-    else if (item.kind === 3) p = mineV3.batchStake(item.arr, { gasLimit: 15000000 });
     else if (item.kind === 1) p = mine6.batchStake(item.arr.map(function(){ return 0; }), item.arr, { gasLimit: 15000000 });
     else p = mine6.batchStake(item.arr.map(function(){ return 1; }), item.arr, { gasLimit: 15000000 });
     p.then(function(tx){
@@ -8616,7 +8364,6 @@ function doBatchUnstake(){
     if (f) { rigFilter = f.getAttribute("data-f"); rigPage = 0; renderRigList(); return; }
     var pg = ev.target.closest("[data-pg]");
     if (pg) { rigPage += Number(pg.getAttribute("data-pg")); renderRigList(); return; }
-    if (ev.target.closest("#rigMigBtn") || ev.target.closest("#rigMigBtnTip")) { openMigModal(); return; }
     if (ev.target.closest("#rigBatchStake")) { doBatchStake(); return; }
     if (ev.target.closest("#rigBatchUnstake")) { doBatchUnstake(); return; }
     if (ev.target.closest("#rigClaimBtn")) { doClaim(); return; }
@@ -8642,76 +8389,34 @@ function doClaim(){
   setMsg("rigMsg","info", t("o.sendClaim"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   var mine6 = new ethers.Contract(ADDRS.miningV6, ABI_MINING6, signer);
-  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
   startSigWatch("rigMsg", btn);
-  // 先读三个矿场 earned，只领取有奖励的矿场（earned=0 的 claim 会 revert，阻塞整条链）
-  Promise.all([
-    readRetry(function(){ return mine.earned(account); }, 1),
-    readRetry(function(){ return mineV3.earned(account); }, 1),
-    readRetry(function(){ return mine6.earned(account); }, 1)
-  ]).then(function(es){
-    var e0 = BigInt(es[0] || 0n), e3 = BigInt(es[1] || 0n), e6 = BigInt(es[2] || 0n);
-    if (e0 === 0n && e3 === 0n && e6 === 0n){
-      stopSigWatch();
-      setMsg("rigMsg","err","没有可领取的 XCHIP 奖励。");
-      if (btn && btn.isConnected) busy(btn, false);
-      return;
-    }
-    var steps = [];
-    if (e0 > 0n) steps.push({ name: "V4 矿场", fn: function(){ return mine.claim({ gasLimit: 200000 }); } });
-    if (e6 > 0n) steps.push({ name: "V6 矿场", fn: function(){ return mine6.claim({ gasLimit: 200000 }); } });
-    if (e3 > 0n) steps.push({ name: "旧矿场", fn: function(){ return mineV3.claim({ gasLimit: 200000 }); } });
-    var qi = 0;
-    function runStep(){
-      if (qi >= steps.length){
-        stopSigWatch();
-        setMsg("rigMsg","ok", t("o.claimOk"));
-        toast(t("o.claimOkShort"));
-        refresh();
-        if (btn && btn.isConnected) busy(btn, false);
-        return;
-      }
-      var st = steps[qi];
-      setMsg("rigMsg","info","领取" + st.name + "奖励，等待钱包确认…<br><a href='" + EXPLORER + "' target='_blank' rel='noopener'>" + EXPLORER + "</a>");
-      st.fn().then(function(tx){
-        setMsg("rigMsg","info", st.name + "领取交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
-        return tx.wait();
-      }).then(function(receipt){
-        logTx(st.name + "领取", receipt.hash);
-        qi++; runStep();
-      }).catch(function(e){
-        stopSigWatch();
-        var m = humanErr(e);
-        setMsg("rigMsg","err", st.name + "领取失败：" + m.slice(0,220));
-        if (btn && btn.isConnected) busy(btn, false);
-      });
-    }
-    runStep();
+  mine.claim({ gasLimit: 200000 }).then(function(tx){
+    setMsg("rigMsg","info","旧矿场领取交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+    return tx.wait();
+  }).then(function(receipt){
+    logTx(t("o.claimTitle"), receipt.hash);
+    setMsg("rigMsg","info","旧矿场领取完成，继续领取新矿场奖励…");
+    return mine6.claim({ gasLimit: 200000 }).then(function(tx){
+      setMsg("rigMsg","info","新矿场领取交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+      return tx.wait();
+    });
+  }).then(function(receipt2){
+    stopSigWatch();
+    logTx(t("o.claimTitle") + " (V6)", receipt2.hash);
+    setMsg("rigMsg","ok", t("o.claimOk"));
+    toast(t("o.claimOkShort"));
+    refresh();
+    if (btn && btn.isConnected) busy(btn, false);
   }).catch(function(e){
     stopSigWatch();
-    setMsg("rigMsg","err","读取奖励失败：" + humanErr(e).slice(0,160));
+    var m = humanErr(e);
+    setMsg("rigMsg","err","失败：" + m.slice(0,220));
     if (btn && btn.isConnected) busy(btn, false);
   });
 }
 function doClaimV3(){
   if (!signer || !account) { setMsg("rigMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("rigMsg")) return;
-  var btn = $("v3ClaimBtn"); if (btn) busy(btn, true, t("o.claimBusy"));
-  setMsg("rigMsg","info", t("o.sendClaim"));
-  var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
-  readRetry(function(){ return mineV3.earned(account); }, 1).then(function(ev){
-    if (BigInt(ev || 0n) === 0n){
-      setMsg("rigMsg","err","旧矿场没有可领取的奖励（已领清或未产生）。");
-      if (btn && btn.isConnected) busy(btn, false);
-      return;
-    }
-    doClaimV3Tx();
-  }).catch(function(e){
-    setMsg("rigMsg","err","读取旧矿场奖励失败：" + humanErr(e).slice(0,160));
-    if (btn && btn.isConnected) busy(btn, false);
-  });
-}
-function doClaimV3Tx(){
   var btn = $("v3ClaimBtn"); if (btn) busy(btn, true, t("o.claimBusy"));
   setMsg("rigMsg","info", t("o.sendClaim"));
   var mineV3 = new ethers.Contract(ADDRS.miningV3, ABI_MINING, signer);
@@ -8774,7 +8479,7 @@ function renderPartMarket(){
     var q = [];
     for (var i = 0; i < cnt; i++) q.push(readRetry(function(idx){ return pm.partAt(idx); }.bind(null, i), 2));
     return Promise.all(q).then(function(rows){
-      var active = rows.map(function(r, i){ if (r && r.seller && r.seller !== ethers.ZeroAddress) { r.idx = i; return r; } return null; }).filter(Boolean);
+      var active = rows.filter(function(r){ return r && r.seller && r.seller !== ethers.ZeroAddress; });
       pmCache.rows = active; pmCache.loadedAt = Date.now();
       var sc = $("pmCount"); if (sc) sc.textContent = t("mk.onSaleH") + " · " + active.length + " 单";
       renderPmPage();
@@ -8921,7 +8626,7 @@ function doPartCancelAll(){
     }
     var t2 = typs.slice(c, c + BATCH), i2 = idxs.slice(c, c + BATCH);
     pm.batchCancel(t2, i2, { gasLimit: 3000000 }).then(function(tx){ return tx.wait(); })
-      .then(function(){ logTx("批量撤下部件挂单", ""); run(c + BATCH); })
+      .then(function(){ logTx("批量撤下部件挂单", run.h ? "" : ""); run(c + BATCH); })
       .catch(function(e){ setMsg("pmMsg","err","批量撤单失败：" + humanErr(e).slice(0,220)); });
   })(0);
 }
@@ -9085,54 +8790,6 @@ $("assembleBtn").addEventListener("click", doAssemble);
     catch(e){ toast(t("d.copied")); }
   });
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
-  // XCHIP v4 旧币兑换
-  var LEGACY_CHIP = "0xefac9e6D56eAE13c7D7e071297D3B16D09aB7DE5";
-  var NEW_CHIP = "0xF38B60311BB4210A1d07fc39c35dE5e40f8Ea2CD";
-  var xchipCopy = $("xchipCopy");
-  if (xchipCopy) xchipCopy.addEventListener("click", function(){
-    try { navigator.clipboard.writeText(NEW_CHIP).then(function(){ toast(t("d.copied")); }); }
-    catch(e){ toast(t("d.copied")); }
-  });
-  window.refreshOldChipBal = function(){
-    var balEl = $("oldChipBal"), btn = $("migChipBtn");
-    if (!balEl || !btn) return;
-    if (!account || !pubProvider){ balEl.textContent = "—"; btn.disabled = true; return; }
-    readRetry(function(){ return new ethers.Contract(LEGACY_CHIP, ["function balanceOf(address) view returns (uint256)"], pubProvider).balanceOf(account); }, 1)
-      .then(function(b){
-        var v = BigInt(b || 0n);
-        balEl.textContent = fmtWei(v);
-        btn.disabled = v <= 0n;
-      })
-      .catch(function(){ balEl.textContent = "—"; btn.disabled = true; });
-  }
-  var migBtn = $("migChipBtn");
-  if (migBtn) migBtn.addEventListener("click", function(){
-    if (!signer || !account) { toast("请先连接钱包。"); return; }
-    if (!ensureNetMsg()) return;
-    busy(migBtn, true);
-    toast("检查旧币授权…");
-    var oldT = new ethers.Contract(LEGACY_CHIP, ["function allowance(address,address) view returns (uint256)", "function approve(address,uint256) returns (bool)"], signer);
-    var newT = new ethers.Contract(NEW_CHIP, ["function migrateTokens(address)"], signer);
-    readRetry(function(){ return oldT.allowance(account, NEW_CHIP); }, 1).then(function(al){
-      var chain = Promise.resolve();
-      if (BigInt(al || 0n) === 0n){
-        toast("请确认授权旧币（签名）…");
-        chain = chain.then(function(){ return oldT.approve(NEW_CHIP, ethers.MaxUint256, { gasLimit: 100000 }); }).then(function(tx){ return tx.wait(); });
-      }
-      return chain.then(function(){ toast("兑换交易已发送，等待确认…"); return newT.migrateTokens(LEGACY_CHIP, { gasLimit: 200000 }); });
-    }).then(function(tx){
-      return tx.wait();
-    }).then(function(receipt){
-      logTx("旧币兑换 XCHIP v4", receipt.hash);
-      toast("兑换成功！旧币已 1:1 兑换为新 XCHIP v4");
-      refresh();
-      busy(migBtn, false);
-    }).catch(function(e){
-      var m = humanErr(e);
-      toast("兑换失败：" + m.slice(0,140));
-      busy(migBtn, false);
-    });
-  });
   var om = $("partsOwnModal"); if (om) om.addEventListener("click", function(ev){ if (ev.target === om) closePop(om); });
 })();
 (function(){
