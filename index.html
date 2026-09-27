@@ -6683,7 +6683,7 @@ function renderMine(){
     __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
     var myNfts = [];
     var last = Number(r[12]);
-    var cacheKey = account.toLowerCase() + "|" + last;
+    var cacheKey = account.toLowerCase() + "|" + last + "|" + Number(r[17] || 0);
     var now = Date.now();
     var rigCache = window.__rigCache;
     if (!(rigCache && rigCache.key === cacheKey && now < rigCache.exp)) {
@@ -6713,8 +6713,13 @@ function renderMine(){
         allCalls.push({ target: mine.target, callData: stakeSel + tidHex(t2) });
         allCalls.push({ target: mineV3.target, callData: stakeSel + tidHex(t2) });
       }
+      var stake6Sel = new ethers.Interface(["function stakes(bytes32) view returns (address,uint256,uint256)"]).getFunction("stakes").selector;
       for (var t5 = from; t5 <= lastV5; t5++){
         allCalls.push({ target: circV5.target, callData: ownerSel + tidHex(t5) });
+      }
+      for (var t6m = from; t6m <= lastV6; t6m++){
+        allCalls.push({ target: circV6.target, callData: ownerSel + tidHex(t6m) });
+        allCalls.push({ target: mine6.target, callData: stake6Sel + tidHex(t6m) });
       }
       var BATCH = 400, out = [], idx = 0;
       var mc = new ethers.Contract(MC_ADDR, MC_ABI, pubProvider);
@@ -6752,7 +6757,8 @@ function renderMine(){
           if (hit(stR)) staked.push("0|" + tid);
           if (hit(st3R)) v3Staked.push("0|" + tid);
         }
-        for (var i5 = v4Count, idx5 = 0; i5 < ret.length; i5++, idx5++){
+        var v5End = v4Count + (lastV5 - from + 1);
+        for (var i5 = v4Count, idx5 = 0; i5 < v5End; i5++, idx5++){
           var o5 = ret[i5];
           if (o5 && o5.success && o5.returnData && o5.returnData.length >= 64){
             var rh5 = ethers.hexlify(o5.returnData);
@@ -6760,6 +6766,15 @@ function renderMine(){
           }
         }
         window.__v5Owned = v5Owned;
+        for (var i6 = v5End, idx6 = 0; i6 < ret.length; i6 += 2, idx6++){
+          var o6 = ret[i6], st6R = ret[i6 + 1];
+          if (o6 && o6.success && o6.returnData && o6.returnData.length >= 64){
+            var rh6 = ethers.hexlify(o6.returnData);
+            if (("0x" + rh6.slice(26, 66)).toLowerCase() === account.toLowerCase()) { myNfts.push("2|" + (from + idx6)); }
+          }
+          if (hit(st6R)) staked.push("2|" + (from + idx6));
+        }
+        window.__v6Owned = myNfts.filter(function(x){ return x.indexOf("2|") === 0; });
         saveCache(myNfts, staked);
         window.__v3Staked = v3Staked;
         return staked;
@@ -7669,6 +7684,10 @@ function doBatchCancel(){
 }
 (function(){ var ca = $("mkCancelAll"); if (ca) ca.addEventListener("click", doBatchCancel); })();
 /* ---------- 组装电脑（无签名门槛） ---------- */
+function invalidateRigCache(){
+  window.__rigCache = null;
+  try { localStorage.removeItem("rigCache"); } catch(e){}
+}
 function doAssemble(btnEl){
   if (!signer || !account) { setMsg("toMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("toMsg")) return;
@@ -7714,6 +7733,7 @@ function doAssemble(btnEl){
     if (bx) { bx.classList.add("on"); setTimeout(function(){ bx.classList.remove("on"); }, 1600); }
     toast(t("o.asmOkShort"));
     asmSel = {}; asmBusy = false;
+    invalidateRigCache();
     refresh();
     busy(btn, false);
   }).catch(function(e){
@@ -7761,7 +7781,7 @@ function doAssembleN(n){
       return chain.then(function(){
         (function run(bi, done){
           if (Q.stopped()) { setMsg("toMsg","info","已终止，未提交批次不再发送"); refresh(); busy(btn, false); Q.done("已终止"); return; }
-          if (bi >= batches.length) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
+          if (bi >= batches.length) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); invalidateRigCache(); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
           var k = batches[bi], from = done + 1, to = done + k;
           setMsg("toMsg","info", t("o.asmProgress") + from + "-" + to + "/" + n + "，一次签名批量组装 " + k + " 台…");
           (isTier ? circ.batchAssembleTier(Number(tier), k, { gasLimit: 7000000 }) : circ.batchAssembleCustom(sel, k, { gasLimit: 6000000 }))
@@ -8478,6 +8498,7 @@ function doMigrateOld(){
     setMsg("migMsg","ok","迁移完成！旧部件已 1:1 转入新版，可以正常组装与交易。");
     toast("旧部件迁移完成");
     oldPartsCache.at = 0;
+    invalidateRigCache();
     refresh();
     busy(btn, false);
   }).catch(function(e){
