@@ -8206,7 +8206,7 @@ function renderRigModal(tid){
   var shr = rigData.totalH > 0 && st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "—";
   var acts;
   if (rigSell[tid]) {
-    acts = '<input class="ast-price" type="number" step="0.000001" min="0.000001" placeholder="价格 OKB"><button class="action-btn auto" data-rig-sell-ok="' + tid + '>' + t("act.confirm") + '</button><button class="action-btn sec" data-rig-sell-cancel="' + tid + '>' + t("act.cancelOrder") + '</button>';
+    acts = '<input class="ast-price" type="number" step="0.000001" min="0.000001" placeholder="价格 OKB"><button class="action-btn auto" data-rig-sell-ok="' + tid + '">' + t("act.confirm") + '</button><button class="action-btn sec" data-rig-sell-cancel="' + tid + '">' + t("act.cancelOrder") + '</button>';
   } else if (st) {
     acts = '<button class="action-btn" data-rig-unstake="' + tid + '">解押</button>';
   } else {
