@@ -97,7 +97,7 @@ body::after{
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
-nav,main,footer{
+nav,main{
   position:relative;
   z-index:1;
 }
@@ -494,16 +494,6 @@ nav{
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
-footer{
-  border-top:1px solid transparent;
-  padding:26px 24px;
-  background:linear-gradient(180deg,#0b1424,#060b16);
-  font-size:12px;
-  color:var(--tx3);
-  font-weight:300;
-  line-height:1.8;
-  position:relative;
-}
 
 /* ===== 05 表单 ===== */
 input::placeholder{
@@ -1483,14 +1473,6 @@ input:focus{
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
-footer .wrap{
-  max-width:1280px;
-  margin:0 auto;
-}
-footer b{
-  color:var(--tx2);
-  font-weight:500;
-}
 
 /* ===== 12 弹窗 · 提示 ===== */
 #toast{
@@ -2874,82 +2856,6 @@ footer b{
 #partsOwnModal.closing .rm-box{
   animation:modalOut .15s ease forwards;
 }
-#chgModal{
-  position:fixed;
-  inset:0;
-  z-index:99;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:rgba(6,10,20,.74);
-}
-#chgModal.open,#chgModal.closing{
-  display:flex;
-}
-#chgModal.open{
-  animation:maskIn .18s ease;
-}
-#chgModal.closing{
-  animation:maskOut .15s ease forwards;
-}
-#chgModal.open .rm-box{
-  animation:modalIn .22s cubic-bezier(.2,.9,.3,1.15);
-}
-#chgModal.closing .rm-box{
-  animation:modalOut .15s ease forwards;
-}
-.chg-scroll{
-  max-height:62vh;
-  overflow-y:auto;
-  padding:2px 2px 4px;
-}
-.chg-sec{
-  margin-bottom:14px;
-}
-.chg-sec:last-child{
-  margin-bottom:0;
-}
-.chg-t{
-  font-size:12.5px;
-  font-weight:600;
-  color:var(--gold);
-  margin-bottom:7px;
-  letter-spacing:.2px;
-}
-.chg-list{
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.chg-list li{
-  position:relative;
-  padding-left:15px;
-  font-size:12.5px;
-  color:var(--tx2);
-  line-height:1.55;
-}
-.chg-list li::before{
-  content:"";
-  position:absolute;
-  left:1px;
-  top:7px;
-  width:5px;
-  height:5px;
-  border-radius:2px;
-  background:var(--teal);
-  box-shadow:0 0 6px rgba(79,224,208,.5);
-}
-.chg-list.plan li::before{
-  background:var(--gold);
-  box-shadow:0 0 6px rgba(217,164,65,.5);
-}
-.f-log{
-  text-align:center;
-  margin-top:8px;
-}
 .link-btn{
   background:none;
   border:none;
@@ -3999,15 +3905,6 @@ footer b{
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
-footer::before{
-  content:"";
-  position:absolute;
-  top:-1px;
-  left:0;
-  right:0;
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(217,164,65,.55),transparent);
-}
 
 /* ===== 14 其他 ===== */
 .hint,.mk-empty,.mk-page{
@@ -4453,14 +4350,6 @@ main .card:nth-child(3){
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
-footer .f-line1{
-  color:var(--tx3);
-}
-footer .f-line2{
-  color:var(--tx2);
-  font-weight:400;
-  margin-top:4px;
-}
 
 /* ===== 14 其他 ===== */
 #forgeCore:hover{
@@ -5370,12 +5259,6 @@ main#mainTabs.one-col>div{grid-column:1;}
 #menuPanel a.tab-on{color:var(--gold);background:rgba(217,164,65,.12);}
 main#mainTabs.one-col .card.tab-on{max-width:860px;margin-left:auto;margin-right:auto;}
 /* 步骤条 */
-#stepBar{display:none;max-width:1280px;margin:14px auto 0;padding:0 24px;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;scroll-margin-top:76px;}
-.step-item{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(17,31,59,.7);border:1px solid rgba(130,160,215,.25);color:var(--tx2);font-size:12.5px;opacity:.75;}
-.step-item i{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(130,160,215,.18);font-style:normal;font-size:11px;font-weight:700;}
-.step-item.on{opacity:1;color:var(--tx);border-color:rgba(240,194,103,.55);background:linear-gradient(135deg,rgba(217,164,65,.14),rgba(79,224,208,.10));}
-.step-item.on i{background:linear-gradient(135deg,#D9A441,#8a6620);color:#0a1226;}
-.step-line{width:26px;height:1px;background:linear-gradient(90deg,rgba(217,164,65,.5),rgba(79,224,208,.4));}
 /* 市场加载骨架 */
 @keyframes skelSweep{from{background-position:200% 0}to{background-position:-200% 0}}
 .mk-list .mk-empty{background:linear-gradient(90deg,rgba(130,160,215,.10),rgba(130,160,215,.22),rgba(130,160,215,.10));background-size:200% 100%;animation:skelSweep 1.3s linear infinite;color:transparent;border-radius:8px;}
@@ -5390,10 +5273,6 @@ html::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .kicker{border-color:rgba(240,194,103,.65);background:linear-gradient(135deg,rgba(217,164,65,.18),rgba(79,224,208,.08));box-shadow:0 0 12px rgba(217,164,65,.12),inset 0 0 8px rgba(217,164,65,.06);}
 .tl-head{position:relative;padding-left:12px;}
 .tl-head::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:2px;background:linear-gradient(180deg,#F0C267,#4FE0D0);}
-.step-item.done{opacity:1;border-color:rgba(240,194,103,.4);}
-.step-item.done i{background:linear-gradient(135deg,#F0C267,#c98a2e);color:#0a1226;position:relative;font-size:0;}
-.step-item.done i::after{content:"✓";font-size:11px;font-weight:800;}
-.step-item.done + .step-line{background:linear-gradient(90deg,#F0C267,rgba(79,224,208,.55));}
 .wallet-hint{position:relative;padding-left:46px;}
 .wallet-hint::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23D9A441" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M15.5 12.5h.01"/><path d="M3 9h18"/></svg>') center/contain no-repeat;}
 .rig-empty{position:relative;padding-left:46px;}
@@ -5408,9 +5287,6 @@ html::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .grade-tag{background:linear-gradient(135deg,rgba(140,160,200,.18),rgba(90,110,150,.10));border:1px solid rgba(160,180,220,.28);}
 @media (max-width:640px){
   .card{padding:16px;}
-  #stepBar{padding:0 14px;gap:6px;}
-  .step-item{padding:5px 9px;font-size:11.5px;}
-  .step-line{width:14px;}
 }
 @supports (padding-bottom:env(safe-area-inset-bottom)){
   .card{padding-bottom:calc(16px + env(safe-area-inset-bottom));}
@@ -5426,10 +5302,6 @@ html::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 #menuPanel a[data-tab-link="mine"]{border-top:1px solid rgba(130,160,215,.18);margin-top:6px;padding-top:12px;}
 /* focus 环统一 */
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(240,194,103,.75);outline-offset:2px;border-radius:6px;}
-/* 步骤条可点击 */
-#stepBar .step-item{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
-#stepBar .step-item:hover{transform:translateY(-1px);border-color:rgba(240,194,103,.8);box-shadow:0 0 14px rgba(217,164,65,.18);}
-#stepBar .step-item.on{cursor:default;}
 /* 数值体系统一（statbox 渐变） */
 .statbox b{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;}
 /* 长文案折叠 */
@@ -5442,10 +5314,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .mk-list .mk-empty:not(.skel){color:var(--tx2);display:flex;align-items:center;gap:8px;}
 .mk-list .mk-empty:not(.skel)::before{content:"";width:16px;height:16px;flex:none;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%237E90B8" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6M11 8v6"/></svg>') center/contain no-repeat;opacity:.8;}
 /* 首访引导：步骤条辉光脉冲 */
-@keyframes guidePulse{0%,100%{box-shadow:0 0 0 0 rgba(240,194,103,.55)}50%{box-shadow:0 0 0 8px rgba(240,194,103,0)}}
-.step-item.guide-pulse{animation:guidePulse 1.4s ease-in-out 3;}
-.guide-bubble{position:fixed;z-index:2200;background:linear-gradient(135deg,#1b2a4e,#14203c);border:1px solid rgba(240,194,103,.55);color:var(--tx);padding:8px 14px;border-radius:12px;font-size:12.5px;box-shadow:0 10px 28px rgba(3,7,16,.6);pointer-events:none;animation:bubbleIn .3s ease both;}
-@keyframes bubbleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* toast 成功强化 */
 #toast{border:1px solid rgba(240,194,103,.45);box-shadow:0 8px 24px rgba(3,7,16,.55),0 0 18px rgba(240,194,103,.12);}
 /* ===== 动画 v1（2026-10-19） ===== */
@@ -5457,16 +5325,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 #walletBtn.connected .dot{animation:dotPulse 1.7s ease-in-out infinite;}
 @keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(63,212,196,.45)}50%{box-shadow:0 0 0 4px rgba(63,212,196,0)}}
 /* 6 点击涟漪 */
-.btn.primary,.action-btn,.bb-body,.step-item{position:relative;}
+.btn.primary,.action-btn,.bb-body{position:relative;}
 .action-btn{overflow:hidden;}
 .ripple{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(240,194,103,.38),transparent 62%);transform:scale(0);animation:ripple .45s ease-out forwards;pointer-events:none;z-index:5;}
 @keyframes ripple{to{transform:scale(1);opacity:0}}
-/* 8/9 步骤点亮 + 呼吸 */
-.step-item.on{animation:stepPop .5s ease both,stepBreathe 2.6s ease-in-out .7s infinite;}
-@keyframes stepPop{0%{transform:scale(1)}35%{transform:scale(1.1)}100%{transform:scale(1)}}
-@keyframes stepBreathe{0%,100%{box-shadow:0 0 8px rgba(240,194,103,.12)}50%{box-shadow:0 0 16px rgba(240,194,103,.34)}}
-.step-item.done i::after{animation:tickPop .32s ease both;}
-@keyframes tickPop{from{transform:scale(0)}to{transform:scale(1)}}
 /* 10 抽卡按压 */
 .bb-body{transition:transform .12s ease;}
 .bb-body:active{transform:scale(.97);}
@@ -5483,7 +5345,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media (prefers-reduced-motion:reduce){
   .card[data-tab].tab-on{animation:none;}
   #mainTabs.view-leave{transition:none;opacity:1;transform:none;}
-  .step-item.on,.step-item.done i::after{animation:none;}
   .mk-list .mk-empty.skel{animation:none;opacity:1;}
   .count-flash{text-shadow:none;}
   .ripple{display:none;}
@@ -5503,8 +5364,6 @@ main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-
 .mk-toolbar{position:sticky;top:72px;z-index:20;background:linear-gradient(180deg,rgba(17,31,59,.97),rgba(17,31,59,.92));padding:8px 2px 10px;margin-top:4px;backdrop-filter:blur(6px);border-radius:0 0 10px 10px;}
 /* 6 资产页提示居中放大 */
 #mine .wallet-hint{max-width:440px;margin:16px auto;padding:16px 18px 16px 50px;background:rgba(16,29,56,.7);border:1px solid rgba(130,160,215,.22);border-radius:12px;font-size:13.5px;line-height:1.7;}
-/* 7 步骤条左对齐（与卡标题视觉对齐） */
-#stepBar{justify-content:flex-start;}
 /* 8 中屏导航收拢：≤1100 转汉堡菜单 */
 @media (max-width:1100px){
   .nav-right > .nav-anchor{display:none;}
@@ -5525,6 +5384,31 @@ main#mainTabs.one-col .card.tab-on{max-width:100% !important;}
 .card .sub,.card .hint,.prob-note{max-width:1000px;}
 /* divd 卡强制全宽（历史隐式宽度约束兜底） */
 main#mainTabs.one-col #divd.tab-on{width:100% !important;max-width:100% !important;}
+/* ===== 市场页 v2（2026-10-19）：多选筛选/价格区间/刷新/空态CTA/状态 ===== */
+.mk-filter{display:flex;align-items:center;gap:5px;}
+.mk-fch{background:transparent;border:1px solid rgba(130,160,215,.28);color:var(--tx2);border-radius:999px;padding:3px 11px;font-size:12px;cursor:pointer;transition:all .18s ease;}
+.mk-fch:hover{color:var(--tx);border-color:rgba(240,194,103,.55);}
+.mk-fch.on{color:#101828;font-weight:700;background:linear-gradient(135deg,#F0C267,#D9A441);border-color:rgba(240,194,103,.6);box-shadow:0 0 10px rgba(240,194,103,.22);}
+.mk-price-min,.mk-price-max{width:70px;background:var(--field);border:1px solid var(--field-line);border-radius:8px;color:var(--tx);padding:4px 8px;font-size:12.5px;font-family:"JetBrains Mono",monospace;}
+.mk-price-min:focus,.mk-price-max:focus{outline:none;border-color:rgba(240,194,103,.6);}
+.mk-range-sep{color:var(--tx3);font-size:12px;}
+.mk-refresh{background:transparent;border:1px solid rgba(79,224,208,.32);color:var(--teal);border-radius:8px;width:30px;height:28px;cursor:pointer;font-size:15px;line-height:1;transition:all .18s ease;}
+.mk-refresh:hover{background:rgba(79,224,208,.12);}
+.mk-refresh.spin{animation:mkSpin .6s ease;}
+@keyframes mkSpin{to{transform:rotate(360deg)}}
+.mk-updated{font-size:11.5px;color:var(--tx3);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.mk-nowallet{margin:10px 0 0;text-align:center;}
+.mk-empty-cta{display:flex;gap:10px;justify-content:center;padding:6px 0 2px;}
+.mk-empty-cta .mk-go{background:transparent;border:1px dashed rgba(240,194,103,.5);color:var(--gold);border-radius:999px;padding:6px 16px;font-size:12.5px;cursor:pointer;transition:all .18s ease;}
+.mk-empty-cta .mk-go:hover{background:rgba(240,194,103,.12);border-style:solid;}
+.mk-buy.need-wallet{opacity:.62;border-style:dashed;}
+.mk-state{font-size:10.5px;border:1px solid rgba(79,224,208,.45);color:var(--teal);border-radius:999px;padding:1px 7px;margin-left:6px;white-space:nowrap;}
+.mk-mine-item .mk-price2{width:120px;background:var(--field);border:1px solid var(--field-line);border-radius:8px;color:var(--tx);padding:4px 8px;font-family:"JetBrains Mono",monospace;font-size:12.5px;}
+@media (max-width:640px){
+  .mk-filter{flex-wrap:wrap;}
+  .mk-price-min,.mk-price-max{width:56px;padding:3px 6px;}
+  .mk-updated{display:none;}
+}
 /* ===== 风格 v1（2026-10-19）：色彩收敛/质感/文字/按钮/品牌/背景 ===== */
 /* 1 语义变量补充（散落表面色收敛） */
 :root{
@@ -5625,17 +5509,6 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 
 <!-- ===== 网络提示 ===== -->
 <div id="netbar">当前网络不是 X Layer 主网（Chain 196），合约交互会失败。<button id="switchNet" data-i18n="切换到主网">切换到主网</button></div>
-<div id="errBar"></div>
-
-<div id="stepBar" aria-hidden="true">
-  <div class="step-item on" data-step="1"><i>1</i><span>铸造</span></div>
-  <div class="step-line"></div>
-  <div class="step-item" data-step="2"><i>2</i><span>组装</span></div>
-  <div class="step-line"></div>
-  <div class="step-item" data-step="3"><i>3</i><span>质押</span></div>
-  <div class="step-line"></div>
-  <div class="step-item" data-step="4"><i>4</i><span>领取</span></div>
-</div>
 <main id="mainTabs">
   <!-- 左：操作区 -->
   <div>
@@ -5752,6 +5625,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
     <div class="card" id="market" data-tab="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
       <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
+      <div class="wallet-hint mk-nowallet" id="mkNoWallet" data-i18n="m.noWallet">连接钱包后可浏览在售挂单并购买 / 挂单。</div>
       <div class="mk-stats">
         <div class="mk-stat"><b id="mkStatCount">—</b><span data-i18n="mk.onSale">在售挂单</span></div>
         <div class="mk-stat gold"><b id="mkStatFloor">—</b><span data-i18n="mk.floorLb">地板价</span></div>
@@ -5773,13 +5647,18 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
           <option value="hashDesc" data-i18n="算力 ↓">算力 ↓</option>
           <option value="hashAsc" data-i18n="算力 ↑">算力 ↑</option>
         </select>
-        <select id="mkFilter">
-          <option value="0" data-i18n="全部稀有度">全部稀有度</option>
-          <option value="1" data-i18n="C 级">C 级</option>
-          <option value="2" data-i18n="B 级">B 级</option>
-          <option value="3" data-i18n="A 级">A 级</option>
-          <option value="4" data-i18n="S 级">S 级</option>
-        </select>
+        <div class="mk-filter" id="mkFilter" role="group" aria-label="稀有度筛选">
+          <button type="button" class="mk-fch on" data-g="0" data-i18n="m.all">全部</button>
+          <button type="button" class="mk-fch" data-g="1" title="C 级">C</button>
+          <button type="button" class="mk-fch" data-g="2" title="B 级">B</button>
+          <button type="button" class="mk-fch" data-g="3" title="A 级">A</button>
+          <button type="button" class="mk-fch" data-g="4" title="S 级">S</button>
+        </div>
+        <input class="mk-price-min" id="mkPmin" type="number" min="0" step="0.000001" aria-label="最低价">
+        <span class="mk-range-sep">–</span>
+        <input class="mk-price-max" id="mkPmax" type="number" min="0" step="0.000001" aria-label="最高价">
+        <button type="button" class="mk-refresh" id="mkRefresh" title="刷新">⟳</button>
+        <span class="mk-updated" id="mkUpdated"></span>
         <span class="mk-page" id="mkPage">—</span>
         <button class="mk-pg" id="mkPrev">‹</button>
         <button class="mk-pg" id="mkNext">›</button>
@@ -5836,45 +5715,6 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
     </div>
   </div>
 </div>
-
-<footer>
-  <div class="wrap">
-    <p class="f-line1"><b data-i18n="免责声明：">免责声明：</b>本页面为演示 / 设计级实现，部署于 X Layer 主网（Chain 196），合约未经第三方审计。</p>
-    <p class="f-line2"><b data-i18n="主网交互使用真实资产，一旦转账不可逆转。">主网交互使用真实资产，一旦转账不可逆转。</b>抽卡为链上伪随机（演示级）。参与前请自行核验合约源码与权限清单。</p>
-    <p class="f-log"><button class="link-btn" id="btnChangelog">更新日志 · 2026-09-26</button></p>
-  </div>
-</footer>
-
-<div id="chgModal">
-  <div class="rm-box">
-    <button class="rm-close" id="chgClose">×</button>
-    <div class="rm-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:20px;height:20px;color:var(--gold);flex:none"><path d="M4 20V8l4-3 4 3 4-3 4 3v12H4z"/><path d="M8 20v-6h8v6M8 5v0M16 5v0" opacity=".6"/></svg><b>更新日志</b></div>
-    <div class="chg-scroll">
-      <div class="chg-sec">
-        <div class="chg-t">今日优化 · 2026-09-26</div>
-        <ul class="chg-list">
-          <li>全局队列执行器：批量组装 / 铸造等操作排队执行，进度面板可收起，支持终止后续全部、失败项一键重试</li>
-          <li>批量组装不设上限（超 50 台二次确认防误触），默认 10 台；铸造自动分批，减少钱包反复签名</li>
-          <li>My 资产页重构：待机 / 质押分块，长列表改为内部滚动</li>
-          <li>标头精简：「待机 · N 台」「质押 · N 台」，数字金色、居右</li>
-          <li>质押与待机算力行显示内容统一（ID · 档位 · 部件 · 算力 · 状态）</li>
-          <li>统计行数值居右：质押算力 / 份额占比 / 硬件部件</li>
-          <li>名称与细节清理：「已抽硬件部件」→「硬件部件」，移除多余提示与标头图标</li>
-        </ul>
-      </div>
-      <div class="chg-sec">
-        <div class="chg-t">后续计划</div>
-        <ul class="chg-list plan">
-          <li>合约升级：追加 batch 批量函数，批量组装 / 质押 / 解押 / 领取一键完成，减少钱包反复签名</li>
-          <li>XCHIP 赋能 · 盲盒系统：消耗 XCHIP 创建盲盒（自定义盒数、部件比例与定价），他人开盒铸造部件，创建者赚取铸造费</li>
-          <li>TapeOut Protocol：盲盒部件合成 PC NFT，提供部件 / NFT 交易市场，持有 NFT 享权益分红</li>
-          <li>XCHIP 场景扩充：铸造消耗、市场手续费、平台销毁机制，持续为 XCHIP 提供价值</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="toast">done</div>
 
 <div id="shareModal">
@@ -6122,6 +5962,16 @@ var I18N = {
   "m.readFail": {zh:"市场读取失败：", en:"Market read failed: "},
   "m.noMatch": {zh:"暂无符合条件的在售挂单", en:"No matching listings"},
   "m.floor": {zh:"地板价 ", en:"Floor "},
+  "m.floorTip": {zh:"最低在售价 · 共 ", en:"Floor price · "},
+  "m.floorTipTail": {zh:" 单", en:" listings"},
+  "m.all": {zh:"全部", en:"All"},
+  "m.noWallet": {zh:"连接钱包后可浏览在售挂单并购买 / 挂单。", en:"Connect wallet to browse listings, buy and list."},
+  "m.goMint": {zh:"去铸造", en:"Go Mint"},
+  "m.goMine": {zh:"去资产挂单", en:"List from Assets"},
+  "m.stateOn": {zh:"在售", en:"Live"},
+  "m.justNow": {zh:"刚刚更新", en:"Just now"},
+  "m.secAgoTail": {zh:" 秒前", en:"s ago"},
+  "m.minAgoTail": {zh:" 分钟前", en:"m ago"},
   "mk.onSale": {zh:"在售挂单", en:"Listed"},
   "mk.onSaleH": {zh:"在售挂单", en:"Active listings"},
   "mk.mineH": {zh:"我的挂单", en:"My listings"},
@@ -6306,11 +6156,9 @@ var I18N = {
   "← 返回官网": {zh:"← 返回官网", en:"← Official Site"},
   "一键组装电脑": {zh:"一键组装电脑", en:"Assemble PC"},
   "主板": {zh:"主板", en:"Motherboard"},
-  "主网交互使用真实资产，一旦转账不可逆转。": {zh:"主网交互使用真实资产，一旦转账不可逆转。", en:"Mainnet uses real assets — transfers are irreversible."},
   "价格 ↑": {zh:"价格 ↑", en:"Price ↑"},
   "价格 ↓": {zh:"价格 ↓", en:"Price ↓"},
   "保存分享图": {zh:"保存分享图", en:"Save Image"},
-  "免责声明：": {zh:"免责声明：", en:"Disclaimer: "},
   "全部撤下": {zh:"全部撤下", en:"Cancel All"},
   "全部稀有度": {zh:"全部稀有度", en:"All Rarity"},
   "关闭": {zh:"关闭", en:"Close"},
@@ -7201,6 +7049,9 @@ function claimFlow(){
 /* ---------- 交易市场 ---------- */
 var marketDirty = false;
 function mkHeadOf(ul){ var h = ul && ul.querySelector(".mk-head-row"); return h ? h.outerHTML : ""; }
+function fmtOkbN(n){ if (!isFinite(n)) return "—"; return n.toLocaleString("en-US",{maximumFractionDigits:4}); }
+function mkEmptyCta(){ return '<div class="mk-empty-cta"><button type="button" class="mk-go" data-go="mint" data-i18n="m.goMint">' + t("m.goMint") + '</button><button type="button" class="mk-go" data-go="mine" data-i18n="m.goMine">' + t("m.goMine") + '</button></div>'; }
+function mkUpdText(){ var t0 = window.__mkLoadedAt || 0; if (!t0) return ""; var s = Math.max(0, Math.round((Date.now()-t0)/1000)); return s < 5 ? t("m.justNow") : (s < 60 ? s + t("m.secAgoTail") : Math.round(s/60) + t("m.minAgoTail")); }
 function renderMarket(){
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, pubProvider);
   var list = $("mkList");
@@ -7222,7 +7073,13 @@ function renderMarket(){
         return readRetry(function(){ return mk.listings(tid); }, 2).then(function(l){ return { l: l, tid: tid }; });
       })).then(function(rows){
         var active = rows.filter(function(r){ return r.l.active; });
-        if (!active.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.empty") + '</li>'; return; }
+        if (!active.length) {
+          window.__mkActive = [];
+          window.__mkLoadedAt = Date.now();
+          var upEl0 = $("mkUpdated"); if (upEl0) upEl0.textContent = mkUpdText();
+          list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.empty") + '</li>' + mkEmptyCta();
+          return;
+        }
         var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
         var PART_ABBR = ["CPU","MB","GPU","RAM","SSD","PSU","FAN","CASE"];
         var TIER_NAME = ["标准","Pro","旗舰"];
@@ -7232,10 +7089,13 @@ function renderMarket(){
           });
         })).then(function(rows2){
           var floor = Math.min.apply(null, rows2.map(function(rd){ return Number(rd.r.l.price); }))/1e18;
-          $("mkFloor").textContent = t("m.floor") + floor + " OKB";
+          $("mkFloor").textContent = t("m.floor") + fmtOkbN(floor) + " OKB";
+          $("mkFloor").title = t("m.floorTip") + rows2.length + t("m.floorTipTail");
           var stC = $("mkStatCount"), stF = $("mkStatFloor");
           if (stC) stC.textContent = rows2.length;
-          if (stF) stF.textContent = floor + " OKB";
+          if (stF) { stF.textContent = fmtOkbN(floor) + " OKB"; stF.title = t("m.floorTip") + rows2.length + t("m.floorTipTail"); }
+          var upEl = $("mkUpdated");
+          if (upEl) upEl.textContent = mkUpdText();
           window.__mkActive = rows2;
           window.__mkLoadedAt = Date.now();
           mkPage = 0;
@@ -7251,7 +7111,8 @@ function renderMarket(){
             else ml.innerHTML = mkHeadOf(ml) + mineRows.map(function(rd){
               return '<li class="mk-mine-item" data-id="' + rd.r.tid + '">' +
                 '<span class="mk-tid">#' + rd.r.tid + '</span>' +
-                '<span class="mk-price">' + Number(rd.r.l.price) / 1e18 + ' OKB</span>' +
+                '<span class="mk-price">' + fmtOkbN(Number(rd.r.l.price) / 1e18) + ' OKB</span>' +
+                '<span class="mk-state" data-i18n="m.stateOn">' + t("m.stateOn") + '</span>' +
                 '<span class="mk-actions"><button class="action-btn sec mk-reprice">' + t("act.reprice") + '</button><button class="action-btn auto mk-cancel">' + t("act.cancel") + '</button></span></li>';
             }).join("");
           }
@@ -7265,13 +7126,16 @@ function renderMarket(){
   });
 }
 
-var mkSortV = "priceAsc", mkFilterV = 0, mkPage = 0, MK_PER_PAGE = 6;
+var mkSortV = "priceAsc", mkPage = 0, MK_PER_PAGE = 6;
 function renderMkPage(){
   var list = $("mkList"); if (!list) return;
   var rows = (window.__mkActive || []).slice();
-  var fSel = $("mkFilter"), sSel = $("mkSort");
-  var f = fSel ? Number(fSel.value) : 0;
-  if (f > 0) rows = rows.filter(function(rd){ return (Number(rd.grade)||1) === f; });
+  var sSel = $("mkSort");
+  var fset = window.__mkFilter || new Set();
+  if (fset.size) rows = rows.filter(function(rd){ return fset.has(Number(rd.grade)||1); });
+  var pmin = parseFloat($("mkPmin") ? $("mkPmin").value : ""), pmax = parseFloat($("mkPmax") ? $("mkPmax").value : "");
+  if (isFinite(pmin)) rows = rows.filter(function(rd){ return Number(rd.r.l.price)/1e18 >= pmin; });
+  if (isFinite(pmax)) rows = rows.filter(function(rd){ return Number(rd.r.l.price)/1e18 <= pmax; });
   var s = sSel ? sSel.value : "priceAsc";
   rows.sort(function(a,b){
     if (s === "priceDesc") return Number(b.r.l.price) - Number(a.r.l.price);
@@ -7287,7 +7151,7 @@ function renderMkPage(){
   var prev = $("mkPrev"), next = $("mkNext");
   if (prev) prev.disabled = mkPage <= 0;
   if (next) next.disabled = mkPage >= pages - 1;
-  if (!rows.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.noMatch") + '</li>'; return; }
+  if (!rows.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.noMatch") + '</li>' + mkEmptyCta(); return; }
   var headHtml = mkHeadOf(list);
   list.innerHTML = headHtml;
   var floorPx = Math.min.apply(null, rows.map(function(rd){ return Number(rd.r.l.price); }));
@@ -7306,9 +7170,9 @@ function renderMkPage(){
       '<span class="mk-tid">#' + r.tid + '</span>' +
       '<span class="mk-tier">' + dotsHtml + '<span class="mk-hash">' + rd.hash + ' H</span>' +
       '<span class="grade-tag g' + gr + '">' + (GRADE_NAMES[gr] || t("g.c")) + '</span></span>' +
-      '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + Number(r.l.price)/1e18 + ' OKB</span>' +
+      '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + fmtOkbN(Number(r.l.price)/1e18) + ' OKB</span>' +
       '<span class="mk-seller" title="' + r.l.seller + '">' + shortAddr(r.l.seller) + '</span>' +
-      '<button class="action-btn sec mk-buy" data-id="' + r.tid + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
+      '<button class="action-btn sec mk-buy' + (signer && account ? "" : " need-wallet") + '" data-id="' + r.tid + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
       '<button class="action-btn auto mk-cancel" data-id="' + r.tid + '"' + (mine ? '' : ' style="display:none"') + '>撤单</button>';
     list.appendChild(li);
   });
@@ -7486,6 +7350,7 @@ function connect(){
     $("walletBtn").classList.add("connected");
     $("walletLabel").textContent = shortAddr(account);
     $("walletHint").innerHTML = t("w.connectedBody") + "<b class='mono'>" + shortAddr(account) + "</b>" + t("w.connectedTail");
+    var mkNW = $("mkNoWallet"); if (mkNW) mkNW.style.display = "none";
     var wb = $("walletBtn"); wb.classList.add("pop"); setTimeout(function(){ wb.classList.remove("pop"); }, 500);
     return checkChain();
   }).then(function(){
@@ -7504,6 +7369,7 @@ function disconnect(){
   $("walletBtn").classList.remove("connected");
   $("walletLabel").textContent = t("w.connectBtn");
   $("walletHint").innerHTML = t("w.connectHint");
+  var mkNW2 = $("mkNoWallet"); if (mkNW2) mkNW2.style.display = "";
   refresh();
 }
 function checkChain(){
@@ -7703,39 +7569,7 @@ $("shareCopy").addEventListener("click", function(){
   if (navigator.clipboard) navigator.clipboard.writeText("【TAPE·X 出货】" + $("shareTag").textContent);
   toast(t("w.copyOk"));
 });
-$("shareClose").addEventListener("click", function(){ closePop($("shareModal")); });
-$("btnChangelog").addEventListener("click", function(){ openPop($("chgModal")); });
-$("chgClose").addEventListener("click", function(){ closePop($("chgModal")); });
-$("chgModal").addEventListener("click", function(ev){ if (ev.target === this) closePop($("chgModal")); });
-document.addEventListener("keydown", function(ev){
-  if (ev.key === "Escape") {
-    var cm = $("chgModal");
-    if (cm && cm.classList.contains("open")) closePop(cm);
-  }
-});
-
-function doBatchCancel(){
-  var rows = window.mkMineRows || [];
-  if (!rows.length) { toast(t("mkt.noMineList")); return; }
-  if (!signer || !account) { toast(t("t.connectFirst")); return; }
-  if (!ensureNetMsg("mkMsg")) return;
-  var btn = $("mkCancelAll"); busy(btn, true, t("mkt.busyCancel"));
-  setMsg("mkMsg","info", t("mkt.batchCancel") + rows.length + t("mkt.batchCancelMid"));
-  var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
-  Q.start("批量撤单 " + rows.length + " 单", rows.length, function(){ doBatchCancel(); });
-  (function one(i){
-    if (Q.stopped()) { setMsg("mkMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (i >= rows.length) { setMsg("mkMsg","ok", t("mkt.batchCancelDone")); toast(t("mkt.batchCancelDoneShort")); refresh(); busy(btn, false); Q.done("批量撤单完成"); return; }
-    var id = rows[i].r.tid;
-    setMsg("mkMsg","info", t("mkt.cancelProgress") + (i + 1) + "/" + rows.length + t("mkt.cancelProgressMid") + id + t("mkt.cancelProgressTail"));
-    mk.cancel(id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); })
-      .then(function(receipt){ logTx("批量撤单", receipt.hash); Q.ok(i + 1, "撤单 #" + id + " 成功"); one(i + 1); })
-      .catch(function(e){ setMsg("mkMsg","err", t("o.batchFail") + (i + 1) + t("mkt.singleFail") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "#" + id + "：" + humanErr(e).slice(0, 80)); one(i + 1); });
-  })(0);
-}
-(function(){ var ca = $("mkCancelAll"); if (ca) ca.addEventListener("click", doBatchCancel); })();
-/* ---------- 组装电脑（无签名门槛） ---------- */
-function doAssemble(btnEl){
+$("shareClose").addEventListener("click", function(){ closePop($("shareModal")); });function doAssemble(btnEl){
   if (!signer || !account) { setMsg("toMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("toMsg")) return;
   var btn = btnEl || $("assembleBtn"); busy(btn, true, t("o.asmBusy"));
@@ -7777,7 +7611,6 @@ function doAssemble(btnEl){
     busy(btn, false);
   });
 }
-
 function doAssembleN(n){
   if (!signer || !account) { setMsg("toMsg","err", t("o.connectFirst")); return; }
   if (!ensureNetMsg("toMsg")) return;
@@ -8168,10 +8001,34 @@ $("mkList").addEventListener("click", function(ev){
   var id = Number(b.getAttribute("data-id"));
   if (b.classList.contains("mk-buy")) { busy(b, true, t("w.busyBuy")); doMarketBuy(id, BigInt(b.getAttribute("data-price")), b); }
   else if (b.classList.contains("mk-cancel")) { busy(b, true, t("mkt.busyCancel")); doMarketCancel(id, b); }
+  else if (b.classList.contains("mk-go")) { switchTab(b.getAttribute("data-go"), {push:true}); }
 });
-var __sSel = $("mkSort"), __fSel = $("mkFilter");
+var __sSel = $("mkSort");
 if (__sSel) __sSel.addEventListener("change", function(){ mkPage = 0; renderMkPage(); });
-if (__fSel) __fSel.addEventListener("change", function(){ mkPage = 0; renderMkPage(); });
+var __fGroup = $("mkFilter");
+if (__fGroup) __fGroup.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest(".mk-fch") : null; if (!b) return;
+  var g = Number(b.getAttribute("data-g"));
+  var f = window.__mkFilter || new Set();
+  if (g === 0) {
+    f = new Set();
+    __fGroup.querySelectorAll(".mk-fch").forEach(function(x){ x.classList.toggle("on", x === b); });
+  } else {
+    if (f.has(g)) { f.delete(g); b.classList.remove("on"); }
+    else { f.add(g); b.classList.add("on"); var all = __fGroup.querySelector('.mk-fch[data-g="0"]'); if (all) all.classList.remove("on"); }
+  }
+  window.__mkFilter = f;
+  mkPage = 0; renderMkPage();
+});
+["mkPmin","mkPmax"].forEach(function(id){ var el = $(id); if (el) el.addEventListener("change", function(){ mkPage = 0; renderMkPage(); }); });
+var __mkr = $("mkRefresh");
+if (__mkr) __mkr.addEventListener("click", function(){
+  marketDirty = true;
+  __mkr.classList.add("spin");
+  setTimeout(function(){ __mkr.classList.remove("spin"); }, 650);
+  renderMarket();
+});
+setInterval(function(){ var el = $("mkUpdated"); if (el) el.textContent = mkUpdText(); }, 1000);
 var __pv = $("mkPrev"), __nx = $("mkNext");
 if (__pv) __pv.addEventListener("click", function(){ if (mkPage > 0) { mkPage--; renderMkPage(); } });
 if (__nx) __nx.addEventListener("click", function(){
@@ -8442,16 +8299,6 @@ function renderWalletPanel(){
     if(mp)mp.classList.remove("open");
     var mb=document.getElementById("menuBtn");
     if(mb)mb.setAttribute("aria-expanded","false");
-    var sb=document.getElementById("stepBar");
-    if(sb){
-      var st=TAB_STEP[t]||0;
-      sb.style.display=st?"flex":"none";
-      var items=sb.querySelectorAll(".step-item");
-      for(var si=0;si<items.length;si++){
-        items[si].classList.toggle("done",si<st-1);
-        items[si].classList.toggle("on",si===st-1);
-      }
-    }
     try{localStorage.setItem("tapex_tab",t);}catch(e){}
     if(opts.push){try{history.pushState(null,"","#"+t);}catch(e){}}
     else{try{history.replaceState(null,"","#"+t);}catch(e){}}
@@ -8494,7 +8341,7 @@ function renderWalletPanel(){
   };
   /* 动画 v1：点击涟漪 */
   document.addEventListener("click",function(e){
-    var btn=e.target.closest?e.target.closest(".btn.primary,.action-btn,.bb-body,.step-item"):null;
+    var btn=e.target.closest?e.target.closest(".btn.primary,.action-btn,.bb-body"):null;
     if(!btn||btn.disabled)return;
     var r=btn.getBoundingClientRect();
     var d=Math.max(r.width,r.height)*1.15;
@@ -8522,19 +8369,6 @@ function renderWalletPanel(){
     window.addEventListener("resize",upd);
     upd();
   })();
-  /* 步骤条可点击跳转（设计 v1） */
-  (function(){
-    var STEP_TAB={1:"mint",2:"asm",3:"stake",4:"stake"};
-    document.querySelectorAll("#stepBar .step-item").forEach(function(it){
-      it.addEventListener("click",function(){
-        var st=it.getAttribute("data-step");
-        if(!STEP_TAB[st])return;
-        var cur=(location.hash||"mint").replace("#","");
-        if(STEP_TAB[st]===cur)return;
-        switchTab(STEP_TAB[st],{push:true});
-      });
-    });
-  })();
   /* 长文案折叠展开（设计 v1） */
   (function(){
     document.querySelectorAll(".fold").forEach(function(p){
@@ -8546,31 +8380,6 @@ function renderWalletPanel(){
         btn.textContent=open?"收起":"展开";
       });
     });
-  })();
-  /* 首访引导（设计 v1）：首次进入流程页，步骤条当前步脉冲 + 下一步气泡 */
-  (function(){
-    var guided=null;
-    try{guided=localStorage.getItem("tapex_guide");}catch(e){}
-    if(guided)return;
-    var cur=(location.hash||"mint").replace("#","");
-    var NEXT={mint:"组装",asm:"质押",stake:"领取"};
-    var stepItems=document.querySelectorAll("#stepBar .step-item");
-    if(stepItems.length&&NEXT[cur]){
-      var curStep=cur==="mint"?0:(cur==="asm"?1:2);
-      stepItems[curStep].classList.add("guide-pulse");
-      setTimeout(function(){
-        var r=stepItems[curStep].getBoundingClientRect();
-        var b=document.createElement("div");
-        b.className="guide-bubble";
-        b.textContent="下一步："+NEXT[cur];
-        b.style.top=Math.max(8,r.bottom+10)+"px";
-        b.style.left=Math.min(r.left,window.innerWidth-150)+"px";
-        document.body.appendChild(b);
-        setTimeout(function(){b.remove();},3000);
-        stepItems[curStep].classList.remove("guide-pulse");
-      },700);
-    }
-    try{localStorage.setItem("tapex_guide","1");}catch(e){}
   })();
   var init=(location.hash||"").slice(1)||"";
   if(TAB_OK.indexOf(init)<0){try{init=localStorage.getItem("tapex_tab")||"mint";}catch(e){init="mint";}}
