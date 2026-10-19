@@ -5495,6 +5495,57 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 @media (min-width:1200px){
   main#mainTabs.one-col #market.tab-on .mk-cols{grid-template-columns:1.5fr 1fr;}
 }
+
+/* ===== 内容层动态（2026-10-19）：导航流动/卡片浮起/按钮回弹/数字闪亮/列表交错/刷新呼吸/金条滑入 ===== */
+.nav-right > .nav-anchor.tab-on{
+  background:linear-gradient(135deg,rgba(79,224,208,.22),rgba(240,194,103,.18),rgba(79,224,208,.22));
+  background-size:260% 100%;
+  animation:tabFlow 4s linear infinite;
+}
+.card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(240,194,103,.45);
+  box-shadow:0 16px 34px rgba(3,7,16,.6),0 0 18px rgba(240,194,103,.10),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn{transition:transform .12s ease;}
+.btn:active{transform:scale(.96);}
+.panel-stat,.mk-stat,.statbox b,.miner-status b{animation:statBlink 7s ease-in-out infinite;}
+#mkList .mk-item,#mkMineList .mk-item,#rigList .rig{animation:rowIn .3s ease both;}
+#mkList .mk-item:nth-child(2),#mkMineList .mk-item:nth-child(2),#rigList .rig:nth-child(2){animation-delay:.04s;}
+#mkList .mk-item:nth-child(3),#mkMineList .mk-item:nth-child(3),#rigList .rig:nth-child(3){animation-delay:.08s;}
+#mkList .mk-item:nth-child(4),#mkMineList .mk-item:nth-child(4),#rigList .rig:nth-child(4){animation-delay:.12s;}
+#mkList .mk-item:nth-child(5),#mkMineList .mk-item:nth-child(5),#rigList .rig:nth-child(5){animation-delay:.16s;}
+#mkList .mk-item:nth-child(6),#mkMineList .mk-item:nth-child(6),#rigList .rig:nth-child(6){animation-delay:.20s;}
+.card.refreshing{border-color:rgba(79,224,208,.35);animation:cardIn .5s ease both,refBreathe 1.8s ease-in-out infinite;}
+.mk-item{position:relative;}
+.mk-item::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:2px;background:linear-gradient(180deg,#f0c267,#d9a441);transform:scaleY(0);transform-origin:center;transition:transform .22s ease;}
+.mk-item:hover::before{transform:scaleY(1);}
+@keyframes tabFlow{
+  0%{background-position:0% 0;}
+  100%{background-position:260% 0;}
+}
+@keyframes statBlink{
+  0%,86%,100%{opacity:1;text-shadow:none;}
+  90%{opacity:.62;text-shadow:0 0 10px rgba(240,194,103,.45);}
+  94%{opacity:1;text-shadow:0 0 6px rgba(240,194,103,.25);}
+}
+@keyframes rowIn{
+  from{opacity:0;transform:translateY(5px);}
+  to{opacity:1;transform:none;}
+}
+@keyframes refBreathe{
+  0%,100%{border-color:rgba(79,224,208,.35);}
+  50%{border-color:rgba(79,224,208,.65);}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav-right > .nav-anchor.tab-on{animation:none;background:linear-gradient(135deg,rgba(79,224,208,.20),rgba(240,194,103,.16));}
+  .card:hover{transform:none;}
+  .btn:active{transform:none;}
+  .panel-stat,.mk-stat,.statbox b,.miner-status b{animation:none;}
+  #mkList .mk-item,#mkMineList .mk-item,#rigList .rig{animation:none;}
+  .card.refreshing{animation:cardIn .5s ease both;}
+  .mk-item::before{transition:none;}
+}
 </style>
 </head>
 <body>
@@ -7228,7 +7279,7 @@ function renderMkPage(){
       '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + fmtOkbN(Number(r.l.price)/1e18) + ' OKB</span>' +
       '<span class="mk-seller" title="' + r.l.seller + '">' + shortAddr(r.l.seller) + '</span>' +
       '<button class="action-btn sec mk-buy' + (signer && account ? "" : " need-wallet") + '" data-id="' + r.tid + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
-      '<button class="action-btn auto mk-cancel" data-id="' + r.tid + '"' + (mine ? '' : ' style="display:none"') + '>撤单</button>';
+      '<button class="action-btn auto mk-cancel" data-id="' + r.tid + '"' + (mine ? '' : ' style="display:none"') + '>' + t("act.cancel") + '</button>';
     list.appendChild(li);
   });
 }
