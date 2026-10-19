@@ -5556,6 +5556,39 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
   .card.refreshing{animation:cardIn .5s ease both;}
   .mk-item::before{transition:none;}
 }
+
+/* ===== 炫酷高级动效（2026-10-19）：glitch标题/霓虹呼吸/扫光/3D浮卡 ===== */
+.kicker{animation:glitchPop .55s steps(2) both;}
+.kicker::before{content:"> ";color:#00e676;font-family:"JetBrains Mono",monospace;letter-spacing:0;margin-right:2px;}
+.card[data-tab].tab-on,#claimCard.tab-on{animation:cardIn .5s ease both,cardNeon 6s ease-in-out infinite;}
+.btn.primary,.action-btn.auto{animation:btnNeon 2.8s ease-in-out infinite;}
+.nav-right > .nav-anchor{position:relative;overflow:hidden;}
+.nav-right > .nav-anchor::after{content:"";position:absolute;top:0;bottom:0;width:44%;left:-60%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-18deg);transition:left .5s ease;pointer-events:none;}
+.nav-right > .nav-anchor:hover::after{left:125%;}
+.mk-item,.rig{transition:transform .32s cubic-bezier(.2,.9,.3,1.1);}
+.mk-item:hover,.rig:hover{transform:perspective(720px) rotateX(1.6deg) translateY(-3px);}
+@keyframes glitchPop{
+  0%{opacity:0;text-shadow:3px 0 rgba(0,230,118,.9),-3px 0 rgba(51,204,255,.9);transform:translateX(-2px);}
+  25%{opacity:1;transform:translateX(2px);}
+  50%{text-shadow:-3px 0 rgba(0,230,118,.8),3px 0 rgba(51,204,255,.8);transform:translateX(-1px);}
+  75%{transform:translateX(1px);}
+  100%{opacity:1;transform:none;text-shadow:none;}
+}
+@keyframes cardNeon{
+  0%,100%{box-shadow:0 10px 26px rgba(3,7,16,.5),inset 0 1px 0 rgba(255,255,255,.06),0 0 0 rgba(0,230,118,0);}
+  50%{box-shadow:0 10px 26px rgba(3,7,16,.5),inset 0 1px 0 rgba(255,255,255,.06),0 0 28px rgba(0,230,118,.13);}
+}
+@keyframes btnNeon{
+  0%,100%{box-shadow:0 0 0 rgba(0,230,118,0);}
+  50%{box-shadow:0 0 16px rgba(0,230,118,.4);}
+}
+@media (prefers-reduced-motion:reduce){
+  .kicker{animation:none;}
+  .card[data-tab].tab-on,#claimCard.tab-on{animation:cardIn .5s ease both;}
+  .btn.primary,.action-btn.auto{animation:none;}
+  .nav-right > .nav-anchor::after{transition:none;display:none;}
+  .mk-item,.rig{transition:none;}
+}
 </style>
 </head>
 <body>
