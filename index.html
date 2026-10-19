@@ -5519,6 +5519,64 @@ main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-
   #mint .forge-track{position:fixed;left:0;right:0;bottom:0;z-index:120;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(11,19,40,.96);backdrop-filter:blur(10px);border-top:1px solid rgba(240,194,103,.28);box-shadow:0 -8px 26px rgba(3,7,16,.5);}
   main{padding-bottom:96px;}
 }
+/* ===== 全宽布局 v1（2026-10-19）：每页视图占满容器宽度 ===== */
+main#mainTabs.one-col .card.tab-on{max-width:100% !important;}
+/* 全宽下保护长文本可读性（说明/提示行限宽，数值/列表不限） */
+.card .sub,.card .hint,.prob-note{max-width:1000px;}
+/* divd 卡强制全宽（历史隐式宽度约束兜底） */
+main#mainTabs.one-col #divd.tab-on{width:100% !important;max-width:100% !important;}
+/* ===== 风格 v1（2026-10-19）：色彩收敛/质感/文字/按钮/品牌/背景 ===== */
+/* 1 语义变量补充（散落表面色收敛） */
+:root{
+  --field:#121A2E;--field-line:#26314D;
+  --card-line:rgba(130,160,215,.30);
+  --card-bg:linear-gradient(180deg,rgba(31,54,98,.94),rgba(17,31,59,.99));
+  --g1:#A9C6F0;--g2:#6FE0B4;--g3:#B79AFF;--g4:#F0C267;--g5:#FFB37A;
+  --up:#F0C267;--down:#FF6B55;--info:#4FE0D0;
+}
+.card{background:var(--card-bg);border-color:var(--card-line);}
+.mk-toolbar select{background:var(--field);border-color:var(--field-line);}
+/* 2 稀有度色阶统一（C/B/A/S/旗舰） */
+.grade-tag{border:1px solid currentColor;}
+.grade-tag.g1{background:rgba(96,125,168,.25);color:var(--g1);}
+.grade-tag.g2{background:rgba(79,224,208,.14);color:var(--g2);}
+.grade-tag.g3{background:rgba(183,154,255,.16);color:var(--g3);}
+.grade-tag.g4{background:rgba(240,194,103,.16);color:var(--g4);}
+/* 3 语义色别名（收益/消耗/信息） */
+.up{color:var(--up);}.down{color:var(--down);}.info{color:var(--info);}
+/* 4 卡片顶部高光边 */
+.card{position:relative;}
+.card::before{content:"";position:absolute;top:0;left:14px;right:14px;height:1px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(240,194,103,.55),rgba(79,224,208,.32),transparent);pointer-events:none;}
+/* 5 头部图标统一圆形容器 */
+.card h3 svg{border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(240,194,103,.16),rgba(17,31,59,.92));box-shadow:0 0 8px rgba(240,194,103,.12),inset 0 0 6px rgba(240,194,103,.06);}
+/* 6 列表分隔线渐变 */
+.mk-list li,.mk-mine-list li,.rig-list li,.asset-list li{border-image:linear-gradient(90deg,transparent,rgba(240,194,103,.32),transparent) 1;}
+/* 7 数值等宽+字重统一 */
+.mono,.mk-stat b,.statbox b,.price-line b,.mk-item .price,#mintPrice,#forgePicked,#forgeTotal,.own-sum b,#pendingAmt{font-variant-numeric:tabular-nums;font-weight:800;}
+/* 8 标题字距统一 */
+.card h3{letter-spacing:-.01em;line-height:1.35;}
+/* 9 说明文字三级 */
+.card .sub{font-size:13.5px;color:var(--tx2);line-height:1.65;font-weight:300;}
+.card .hint{font-size:13px;color:var(--tx3);line-height:1.7;}
+.mint-note,.mk-floor{font-size:12px;color:var(--tx3);}
+/* 10 辅助按钮 ghost 统一（分页/快捷量/图标） */
+.mk-pg,.mq,.icon-btn{background:transparent;color:var(--teal);border:1px solid rgba(79,224,208,.32);box-shadow:none;text-shadow:none;}
+.mk-pg:hover:not(:disabled),.mq:hover:not(:disabled),.icon-btn:hover{background:rgba(79,224,208,.12);color:#EAFCFA;}
+/* 11 禁用态统一 */
+.action-btn:disabled,.btn.primary:disabled,.mk-pg:disabled,.mq:disabled{opacity:.45;filter:grayscale(.4);cursor:not-allowed;}
+.btn.primary:disabled::after,.action-btn:disabled::after{animation:none;opacity:0;}
+/* 12 导航激活质感（胶囊+底部金线） */
+.nav-right > .nav-anchor.tab-on{box-shadow:0 2px 0 rgba(240,194,103,.55),0 0 12px rgba(240,194,103,.18);}
+#menuPanel .nav-anchor.tab-on{border-bottom:2px solid rgba(240,194,103,.55);border-radius:8px;}
+/* 13 字标 hover 辉光（badge 已胶囊达标） */
+.hero-title{transition:text-shadow .25s ease;}
+.hero-title:hover{text-shadow:0 0 16px rgba(240,194,103,.65);}
+/* 14 背景噪点层（main 级 fixed，不占用 body 伪元素） */
+main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;background-image:radial-gradient(rgba(244,248,255,.06) 1px,transparent 1px);background-size:180px 180px;mix-blend-mode:overlay;}
+/* 全宽下市场双栏与分区更舒展：双栏保持，网格列宽自适应 */
+@media (min-width:1200px){
+  main#mainTabs.one-col #market.tab-on .mk-cols{grid-template-columns:1.5fr 1fr;}
+}
 </style>
 </head>
 <body>
@@ -5537,6 +5595,7 @@ main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-
     <a class="nav-anchor" href="#mine" data-tab-link="mine" data-i18n="nav.assets">资产</a>
     <a class="nav-anchor" href="#divd" data-tab-link="divd" data-i18n="nav.divd">分红</a>
     <a class="nav-anchor" href="#market" data-tab-link="market" data-i18n="nav.market">市场</a>
+    <a class="nav-anchor" href="#net" data-tab-link="net" data-i18n="nav.net">全网</a>
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
     <button id="walletBtn"><span class="dot"></span><span id="walletLabel" data-i18n="nav.connect">连接钱包</span></button>
@@ -5560,6 +5619,7 @@ main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-
     <a class="nav-anchor" href="#mine" data-tab-link="mine" data-i18n="nav.assets">资产</a>
     <a class="nav-anchor" href="#divd" data-tab-link="divd" data-i18n="nav.divd">分红</a>
     <a class="nav-anchor" href="#market" data-tab-link="market" data-i18n="nav.market">市场</a>
+    <a class="nav-anchor" href="#net" data-tab-link="net" data-i18n="nav.net">全网</a>
   </div>
 </nav>
 
@@ -5663,7 +5723,7 @@ main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-
 
   <!-- 右：状态面板 -->
   <div>
-    <div class="card" id="overview" data-tab="mint">
+    <div class="card" id="overview" data-tab="net">
       <div class="kicker" data-i18n="Network · 全网状态">Network · 全网状态</div>
       <div class="miner-status" id="minerStatus">
         <div class="mw"><span class="ring"></span><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="26" stroke-width="3"/><circle cx="32" cy="32" r="9" fill="currentColor" opacity=".85"/><path d="M32 4v12M32 48v12M4 32h12M48 32h12" stroke-width="2" opacity=".5"/></svg></div>
@@ -5926,6 +5986,7 @@ var I18N = {
   "nav.asm": {zh:"组装", en:"Assemble"},
   "nav.assets": {zh:"资产", en:"Assets"},
   "nav.market": {zh:"市场", en:"Market"},
+  "nav.net": {zh:"全网状态", en:"Network"},
   "nav.divd": {zh:"分红", en:"Dividends"},
   "d.title": {zh:"持币分红", en:"Hold-to-Earn"},
   "d.desc": {zh:"持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。", en:"Holding TAPEX auto-accrues XCHIP dividends: 1,000 XCHIP released every 6h and split by holding share; claim anytime. Sell/transfer to stop accruing."},
@@ -8354,7 +8415,7 @@ function renderWalletPanel(){
 <script>
 /* ===== Tab 分页视图逻辑 v2（全部改进：动效/记忆/历史/无障碍/步骤条/滚动） ===== */
 (function(){
-  var TAB_OK=["mint","asm","stake","mine","divd","market"];
+  var TAB_OK=["mint","asm","stake","mine","divd","market","net"];
   var TAB_STEP={mint:1,asm:2,stake:3};
   function switchTab(t,opts){
     opts=opts||{};
