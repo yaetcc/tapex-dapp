@@ -7947,7 +7947,7 @@ function doRefresh(){
   try { var _c = document.querySelector(".card.tab-on"); if (_c) tb = _c.getAttribute("data-tab") || ""; } catch(e){}
   var jobs = [ renderGlobal().catch(function(e){ console.warn("global read fail", e); }) ];
   if (tb === "market") jobs.push(renderMarket().catch(function(e){ console.warn("market read fail", e); }));
-  else if (tb === "mine" || tb === "stake" || tb === "asm") jobs.push(renderMine().catch(function(e){ console.warn("mine read fail", e); }));
+  else if (tb === "mine" || tb === "stake" || tb === "asm" || tb === "mint") jobs.push(renderMine().catch(function(e){ console.warn("mine read fail", e); }));   // mint 页 #partsGrid 由 renderMine 驱动
   else if (tb === "divd") jobs.push(renderDividend().catch(function(e){ console.warn("dividend read fail", e); }));
   Promise.all(jobs).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
 }
