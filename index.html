@@ -144,7 +144,7 @@ nav,main{
   font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 .serif{
-  font-family:"Noto Serif SC",serif;
+  font-family:"JetBrains Mono",monospace;
 }
 
 /* ===== 01 变量 · 基础 ===== */
@@ -5737,7 +5737,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
       <div class="kicker" data-i18n="Network · 全网状态">Network · 全网状态</div>
       <div class="miner-status" id="minerStatus">
         <div class="mw"><span class="ring"></span><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="26" stroke-width="3"/><circle cx="32" cy="32" r="9" fill="currentColor" opacity=".85"/><path d="M32 4v12M32 48v12M4 32h12M48 32h12" stroke-width="2" opacity=".5"/></svg></div>
-        <div class="ms-txt"><b id="msState">待机</b><span id="msSub">全网算力 0 H，质押后开始产出</span></div>
+        <div class="ms-txt"><b id="msState" data-i18n="f.idle">待机</b><span id="msSub" data-i18n="ms.sub">全网算力 0 H，质押后开始产出</span></div>
       </div>
       <div class="panel-stat">
         <div class="statbox"><b id="stXchip">—</b><span data-i18n="st.supply">XCHIP 总供应</span></div>
@@ -5891,7 +5891,7 @@ var Q = (function(){
       '<div class="q-bar"><i class="q-fill"></i></div>' +
       '<div class="q-txt"></div>' +
       '<div class="q-fails"></div>' +
-      '<div class="q-ops"><button class="q-btn q-stop">终止</button><button class="q-btn q-retry">重试失败项</button><button class="q-btn q-hide">收起</button></div>';
+      '<div class="q-ops"><button class="q-btn q-stop">' + t("q.stop") + '</button><button class="q-btn q-retry">' + t("q.retry") + '</button><button class="q-btn q-hide">' + t("q.hide") + '</button></div>';
     document.body.appendChild(el);
     label = el.querySelector('.q-title'); bar = el.querySelector('.q-fill');
     txt = el.querySelector('.q-txt'); fails = el.querySelector('.q-fails');
@@ -5930,7 +5930,7 @@ var Q = (function(){
       if (!state.running) return;
       state.stopped = true;
       state.running = false;
-      txt.textContent = '已终止，剩余任务不再执行';
+      txt.textContent = t("q.stopped");
       paint();
     },
     stopped: function(){ return state.stopped; }
@@ -6044,6 +6044,11 @@ var I18N = {
   "b.units": {zh:"台", en:"units"},
   "w.connectPre": {zh:"连接钱包后可抽硬件、组装电脑、质押与领取。", en:"Connect to mint, assemble, stake & claim. "},
   "k.divdTag": {zh:"分红代币", en:"Dividend"},
+  "app.title": {zh:"TapeX DApp — 矿机版 Pump · 主网控制台", en:"TapeX DApp — Miner Pump · Mainnet Console"},
+  "q.stop": {zh:"终止", en:"Stop"},
+  "q.retry": {zh:"重试失败项", en:"Retry failed"},
+  "q.hide": {zh:"收起", en:"Collapse"},
+  "q.stopped": {zh:"已终止，剩余任务不再执行", en:"Stopped · remaining tasks cancelled"},
   "k.mintH": {zh:"盲盒铸造：随机抽 1 件硬件", en:"Blind box: draw 1 random part"},
   "k.asmH": {zh:"组装流片：8 类部件 → 整机 PC NFT", en:"Assemble: 8 parts → 1 PC NFT"},
   "k.stH": {zh:"质押 PC NFT 挖矿", en:"Stake PC NFT to mine"},
@@ -6349,6 +6354,7 @@ function applyLang(noRefresh){
   var lb = $("langBtn"); if (lb) lb.textContent = (LANG === "zh") ? "EN" : "中";
   var mbx = $("menuBtn"); if (mbx) mbx.setAttribute("aria-label", (LANG === "zh") ? "菜单" : "Menu");
   refreshNames();
+  try { document.title = t("app.title"); } catch(e4){}
   var wl = $("walletLabel");
   if (wl && wl.textContent !== t("nav.connect")) { /* 钱包状态文本保留原逻辑 */ }
   if (!noRefresh) { try { refresh(); } catch(e3){} }
@@ -7691,11 +7697,11 @@ function drawShare(name, tier){
   for (var y = 0; y < H; y += 28){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
   ctx.strokeStyle = "rgba(0,200,83,.6)"; ctx.lineWidth = 2;
   ctx.strokeRect(14, 14, W - 28, H - 28);
-  ctx.fillStyle = "#e8c46a"; ctx.font = "700 34px 'Noto Serif SC',serif";
+  ctx.fillStyle = "#00e676"; ctx.font = "700 34px 'JetBrains Mono',monospace";
   ctx.textAlign = "center";
   ctx.fillText(t("s.title"), W / 2, 80);
   var cx = W / 2, cy = 196;
-  ctx.strokeStyle = "#e8c46a"; ctx.lineWidth = 3;
+  ctx.strokeStyle = "#00e676"; ctx.lineWidth = 3;
   ctx.strokeRect(cx - 64, cy - 64, 128, 128);
   for (var i = 0; i < 8; i++){
     ctx.beginPath(); ctx.moveTo(cx - 64, cy - 64 + 16 + i * 17); ctx.lineTo(cx - 100, cy - 64 + 16 + i * 17); ctx.stroke();
