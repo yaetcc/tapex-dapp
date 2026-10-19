@@ -29,21 +29,21 @@ input[type=number]{
   appearance:textfield;
 }
 :root{
-  --bg:#16181D;
-  --panel:#111F3B;
-  --panel2:#16294C;
-  --line:#3A3D46;
-  --gold:#0A84FF;
-  --teal:#64D2FF;
-  --tx:#F4F8FF;
-  --tx2:#C5D2EA;
-  --tx3:#93A6C8;
+  --bg:#171210;
+  --panel:#2A1E1B;
+  --panel2:#382622;
+  --line:#5A4A44;
+  --gold:#FFD93D;
+  --teal:#00E5A0;
+  --tx:#FFF6E9;
+  --tx2:#F0DFC8;
+  --tx3:#C9B49E;
   --red:#FF6B55;
-  --ok:#64D2FF;
-  --r-card:20px;
-  --r-in:12px;
-  --r-btn:13px;
-  --hi:inset 1px 1px 0 rgba(255,255,255,.05);
+  --ok:#00E5A0;
+  --r-card:22px;
+  --r-in:14px;
+  --r-btn:999px;
+  --hi:inset 1px 1px 0 rgba(255,255,255,.08);
 }
 *{
   box-sizing:border-box;
@@ -63,11 +63,11 @@ body{
   word-break:break-word;
   /* 最后防线：即使个别元素在 WebView 中溢出，页面也不可左右滑动 */
   overflow-x:hidden;
-  background:radial-gradient(1100px 480px at 18% -8%, rgba(100,210,255,.21), transparent 62%),
-    radial-gradient(900px 420px at 88% 4%, rgba(10,132,255,.17), transparent 60%),
-    radial-gradient(760px 320px at 50% -14%, rgba(96,64,190,.16), transparent 62%),
-    radial-gradient(1200px 800px at 50% 122%, rgba(96,64,190,.20), transparent 65%),
-    linear-gradient(180deg,#12141A,#171A21);
+  background:radial-gradient(1100px 480px at 18% -8%, rgba(255,217,61,.16), transparent 62%),
+    radial-gradient(900px 420px at 88% 4%, rgba(255,107,203,.13), transparent 60%),
+    radial-gradient(760px 320px at 50% -14%, rgba(179,136,255,.12), transparent 62%),
+    radial-gradient(1200px 800px at 50% 122%, rgba(0,229,160,.12), transparent 65%),
+    linear-gradient(180deg,#191410,#141110);
   color:var(--tx);
   font-family:"Noto Sans SC",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
   line-height:1.65;
@@ -1453,7 +1453,7 @@ input:focus{
 .btn.primary:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 8px 22px rgba(10,132,255,.28);}
 .btn.primary:active:not(:disabled){transform:scale(.985);}
 .btn.primary:disabled{
-  background:linear-gradient(135deg,#3A4A6E,#33405E);
+  background:linear-gradient(135deg,#4A4038,#3A322C);
   color:#7E90B8;cursor:not-allowed;
   box-shadow:none;
 }
@@ -5648,9 +5648,134 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
   .d-up,.d-down{text-shadow:none;}
   .card{background-image:none;}
 }
+
+/* ===== Meme 币风格换肤（贴纸 × 高饱和撞色 × 霓虹） ===== */
+.card{
+  border:2px solid rgba(255,217,61,.35);
+  box-shadow:5px 5px 0 rgba(255,217,61,.14), var(--hi);
+  background:linear-gradient(180deg, rgba(255,217,61,.05), rgba(255,107,203,.04)), #201917;
+  transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.card:hover{ border-color:rgba(255,217,61,.6); box-shadow:7px 7px 0 rgba(255,107,203,.18), var(--hi); }
+.statbox{
+  border:2px solid rgba(255,217,61,.3);
+  box-shadow:4px 4px 0 rgba(0,229,160,.12), var(--hi);
+  background:linear-gradient(180deg, rgba(255,217,61,.07), rgba(179,136,255,.05)), #241B19;
+}
+.statbox::before{ background:var(--gold); box-shadow:0 0 10px rgba(255,217,61,.6); }
+.statbox b{
+  background:linear-gradient(135deg,#FFD93D,#FF6BCB 55%,#B388FF);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  font-weight:800;
+}
+.statbox span{ font-weight:700; letter-spacing:.3px; }
+.btn.primary,.action-btn{
+  background:linear-gradient(135deg,#FFD93D,#FF9F45 45%,#FF6BCB);
+  color:#241505;
+  border:2px solid #fff2;
+  box-shadow:0 5px 0 #B36A00, 0 12px 24px rgba(255,159,69,.35);
+  font-weight:800; letter-spacing:.5px;
+  transition:transform .12s ease, box-shadow .12s ease, filter .15s ease;
+}
+.btn.primary:hover:not(:disabled),.action-btn:hover:not(:disabled){
+  filter:brightness(1.07);
+  transform:translateY(-2px);
+  box-shadow:0 7px 0 #B36A00, 0 16px 28px rgba(255,107,203,.4);
+}
+.btn.primary:active:not(:disabled),.action-btn:active:not(:disabled){
+  transform:translateY(4px);
+  box-shadow:0 1px 0 #B36A00, 0 4px 10px rgba(255,159,69,.3);
+}
+.btn.primary:disabled,.action-btn:disabled{ filter:grayscale(.4) brightness(.75); box-shadow:0 3px 0 #5a4a44; background:linear-gradient(135deg,#4A4038,#3A322C); color:#B5A99A; }
+.nav-anchor{
+  border-radius:999px;
+  border:1.5px solid transparent;
+  font-weight:700;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .18s, border-color .18s;
+}
+.nav-anchor:hover{ transform:translateY(-3px) scale(1.06) rotate(-2deg); border-color:rgba(255,217,61,.5); }
+.nav-anchor.tab-on{
+  background:linear-gradient(135deg,rgba(255,217,61,.18),rgba(255,107,203,.14));
+  border-color:rgba(255,217,61,.55);
+  color:#FFD93D;
+}
+.slot{
+  border:2px solid rgba(255,217,61,.4);
+  box-shadow:4px 4px 0 rgba(255,107,203,.15);
+  border-radius:16px;
+}
+.slot:hover{ transform:translateY(-2px) rotate(-1deg); box-shadow:6px 6px 0 rgba(255,107,203,.22); }
+.prob-bar i, .m-bar i, .rg-bar i, .h-bar i, .bar i{
+  background:linear-gradient(90deg,#FFD93D,#FF6BCB 40%,#00E5A0 70%,#B388FF) !important;
+  background-size:220% 100% !important;
+  animation:memeShine 2.4s linear infinite !important;
+}
+@keyframes memeShine{ 0%{background-position:0% 0;} 100%{background-position:220% 0;} }
+.brand em{ background:linear-gradient(135deg,#FFD93D,#FF6BCB); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.badge.on{ background:linear-gradient(135deg,#FFD93D,#FF9F45); color:#241505; font-weight:800; }
+/* 卡片入场弹跳 */
+.card{ animation:cardPop .45s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes cardPop{ 0%{opacity:0; transform:translateY(14px) scale(.96);} 100%{opacity:1; transform:none;} }
+/* 标题 emoji 点缀（语言无关，走 kicker::after 不破坏原装饰线） */
+.card[data-tab="mint"] .kicker::after{ content:" 🎰"; }
+.card[data-tab="asm"] .kicker::after{ content:" 🛠️"; }
+.card[data-tab="stake"] .kicker::after{ content:" ⛏️"; }
+.card[data-tab="mine"] .kicker::after{ content:" 💎"; }
+.card[data-tab="divd"] .kicker::after{ content:" 💰"; }
+.card[data-tab="market"] .kicker::after{ content:" 🛒"; }
+.card[data-tab="net"] .kicker::after{ content:" 🌐"; }
+/* 数值荧光 */
+.statbox b{ text-shadow:0 0 18px rgba(255,107,203,.35); }
+/* 连接钱包按钮 */
+#walletBtn{ border:2px solid rgba(255,217,61,.5); border-radius:999px; }
+#walletBtn:hover{ transform:translateY(-2px) scale(1.04); box-shadow:0 6px 18px rgba(255,217,61,.25); }
+/* 语言按钮 */
+#langBtn{ border-radius:999px; border:1.5px solid rgba(255,255,255,.3); font-weight:700; }
+#langBtn:hover{ transform:scale(1.08) rotate(4deg); border-color:#FFD93D; color:#FFD93D; }
+/* 概率权重行 hover 抖动 */
+.prob-row:hover{ animation:wiggle .4s ease; }
+@keyframes wiggle{ 0%,100%{transform:rotate(0);} 25%{transform:rotate(-1.2deg);} 75%{transform:rotate(1.2deg);} }
+/* 矿机卡片 */
+.rig-card, .rig-row{ border:2px solid rgba(255,217,61,.3); border-radius:18px; box-shadow:4px 4px 0 rgba(0,229,160,.1); }
+/* 阶梯/标签 */
+.tk-tag, .mk-fch{ border-radius:999px; font-weight:800; }
+.mk-fch.on{ background:linear-gradient(135deg,#FFD93D,#FF6BCB); color:#241505; }
+/* 折叠按钮贴纸 */
+.fold-btn{ border-radius:999px; border:1.5px solid rgba(255,217,61,.45); font-weight:700; transition:transform .15s; }
+.fold-btn:hover{ transform:scale(1.1) rotate(-3deg); color:#FFD93D; }
+/* 页面顶部流光进度条 */
+#scrollProgress{ background:linear-gradient(90deg,#FFD93D,#FF6BCB,#00E5A0,#B388FF,#FFD93D) !important; background-size:300% 100% !important; animation:memeShine 4s linear infinite !important; box-shadow:0 0 12px rgba(255,217,61,.5) !important; }
+/* 背景霓虹覆盖动态层色调 */
+.db-orb-a{ background:radial-gradient(circle at center, rgba(255,217,61,.28), transparent 68%) !important; }
+.db-orb-b{ background:radial-gradient(circle at center, rgba(255,107,203,.22), transparent 68%) !important; }
+.db-orb-c{ background:radial-gradient(circle at center, rgba(179,136,255,.20), transparent 68%) !important; }
+/* 吉祥物 */
+.meme-mascot{
+  position:fixed; left:18px; bottom:20px; width:84px; height:84px; z-index:1200;
+  pointer-events:none; filter:drop-shadow(0 6px 14px rgba(255,217,61,.35));
+  animation:mascotFloat 6s ease-in-out infinite;
+}
+@keyframes mascotFloat{ 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-12px) rotate(2deg);} }
+/* 漂浮 emoji 背景层 */
+.meme-float{
+  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+}
+.meme-float i{
+  position:absolute; bottom:-60px; font-style:normal; font-size:26px; opacity:.22;
+  animation:memeUp linear infinite; filter:saturate(1.4);
+}
+@keyframes memeUp{ 0%{transform:translateY(0) rotate(0deg); opacity:0;} 8%{opacity:.22;} 100%{transform:translateY(-115vh) rotate(340deg); opacity:0;} }
+@media (max-width:760px){
+  .meme-mascot{ width:56px; height:56px; left:8px; bottom:8px; }
+  .meme-float i{ font-size:18px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .meme-float i, .meme-mascot{ animation:none !important; }
+}
 </style>
 </head>
-<body>
+<body><div class="meme-float" aria-hidden="true"><i style="left:6%;animation-duration:22s;animation-delay:0s">🚀</i><i style="left:15%;animation-duration:30s;animation-delay:3s">💰</i><i style="left:26%;animation-duration:25s;animation-delay:6s">🌙</i><i style="left:38%;animation-duration:33s;animation-delay:1s">⛏️</i><i style="left:52%;animation-duration:27s;animation-delay:9s">🪙</i><i style="left:64%;animation-duration:31s;animation-delay:4s">✨</i><i style="left:76%;animation-duration:24s;animation-delay:7s">💎</i><i style="left:88%;animation-duration:29s;animation-delay:2s">🔥</i></div>
+<svg class="meme-mascot" viewBox="0 0 84 84" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 46c0-12 9-20 22-20s22 8 22 20v12c0 6-4 10-10 10H30c-6 0-10-4-10-10z" fill="#FFD93D" stroke="#241505" stroke-width="3"/><path d="M26 50c-3-4-6-12-4-18 2-6 8-9 13-9" stroke="#241505" stroke-width="3"/><path d="M58 50c3-4 6-12 4-18-2-6-8-9-13-9" stroke="#241505" stroke-width="3"/><circle cx="32" cy="46" r="3.4" fill="#241505"/><circle cx="52" cy="46" r="3.4" fill="#241505"/><path d="M38 56c2.5 2 5.5 2 8 0" stroke="#241505" stroke-width="3"/><path d="M28 36h28v4H28z" fill="#FF6BCB" stroke="#241505" stroke-width="2.5"/><rect x="34" y="18" width="16" height="12" rx="3" fill="#FF6BCB" stroke="#241505" stroke-width="2.5"/><path d="M30 24H18c-3 0-5 2-5 5s2 5 5 5h12" stroke="#241505" stroke-width="3"/><path d="M24 20l-3-5M20 21l-4-4M36 15l2-6M42 15l4-5" stroke="#FFD93D" stroke-width="2.6"/></g></svg>
 
 <!-- ===== 动态背景（光晕漂移/星尘/扫描线，纯CSS GPU合成，prefers-reduced-motion 降级） ===== -->
 <div class="dyn-bg" aria-hidden="true">
