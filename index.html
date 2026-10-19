@@ -8109,7 +8109,7 @@ function doMint(){
   if (!signer || !account) { setMsg("mintMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("mintMsg")) return;
   var amt = $("mintAmt").value.trim();
-  if (!amt || Number(amt) <= 0) { setMsg("mintMsg","err", t("mint.validQty")); return; }
+  if (!amt || Number(amt) <= 0 || !/^\d+$/.test(amt)) { setMsg("mintMsg","err", t("mint.validQty")); return; }
   var amtBN = BigInt(amt);
   if (amtBN > 10000n) { setMsg("mintMsg","err", t("mint.maxQty")); return; }
   __minting = true; setMintBusy(true);
@@ -8292,14 +8292,15 @@ function doAssembleN(n){
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var approved = null;
   (function one(i){
-    if (Q.stopped()) { setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (i >= n) { setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
+    if (Q.stopped()) { stopSigWatch(); setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
+    if (i >= n) { stopSigWatch(); setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
     setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmProgressMid"));
+    startSigWatch("toMsg", btn);
     Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
       .then(function(bs){
         var missing = [];
         bs.forEach(function(v, k){ if (Number(v) < 1) missing.push(PART_NAMES[k]); });
-        if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + i + "/" + n + t("o.asmDoneTail")); busy(btn, false); throw new Error("missing parts"); }
+        if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + i + "/" + n + t("o.asmDoneTail")); busy(btn, false); Q.done("部件不足，已停止"); throw new Error("missing parts"); }
         setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmSend"));
         return (approved === null ? proc.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
           approved = ok;
@@ -8314,6 +8315,7 @@ function doAssembleN(n){
       .then(function(receipt){ logTx("批量组装", receipt.hash); Q.ok(i + 1, "组装完成 第" + (i + 1) + " 台"); one(i + 1); })
       .catch(function(e){
         if (e.message === "missing parts") return;
+        stopSigWatch();
         setMsg("toMsg","err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "第" + (i + 1) + " 台：" + humanErr(e).slice(0, 80));
         one(i + 1);
       });
