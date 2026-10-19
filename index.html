@@ -6301,13 +6301,13 @@ body::before{ animation:none !important; }
       <div class="tapex-links">
         <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPEX · 合约与购买</b></div>
         <div class="tl-addr">
-          <code>0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE</code>
+          <code>0xbBa154B45a5e6C606Cb41790f03c80903592Eeee</code>
           <button class="tl-copy" id="hdCopy" data-i18n="d.copy">复制</button>
         </div>
         <div class="tl-links">
-          <a class="tl-buy" href="https://ignix.bot/launch?token=0xf154c55bbff1b889d4ae279c0e3e9d31671feeee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
-          <a class="tl-buy" href="https://web3.okx.com/zh-hans/token/x-layer/0xf154c55bbff1b889d4ae279c0e3e9d31671feeee" target="_blank" rel="noopener" data-i18n="d.dex">OKX 购买</a>
-          <a href="https://www.oklink.com/xlayer/token/0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
+          <a class="tl-buy" href="https://ignix.bot/launch?token=0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
+          <a class="tl-buy" href="https://web3.okx.com/zh-hans/token/x-layer/0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.dex">OKX 购买</a>
+          <a href="https://www.oklink.com/xlayer/token/0xbBa154B45a5e6C606Cb41790f03c80903592Eeee" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
         </div>
       </div>
     </div>
@@ -6426,7 +6426,7 @@ var ADDRS = {
   circuit: "0x20420E212E0f38EF5e29b3B3ea945F77fbC128E6",
   mining: "0xA12D7d971E316Dc37689fCbd01Cd2f259f342018",
   market: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8",
-  tapex: "0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE",
+  tapex: "0xbBa154B45a5e6C606Cb41790f03c80903592Eeee",  // 分红代币合约已更换
   dividend: "0xA86e125b6F824483fC16616d963481C8a346f5dF"
 };
 
@@ -8769,7 +8769,7 @@ var el=$("assembleBtn"); if (el) el.addEventListener("click", doAssemble);
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
   var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
   var hdCopy = $("hdCopy"); if (hdCopy) hdCopy.addEventListener("click", function(){
-    try { navigator.clipboard.writeText("0xF154C55BbFf1B889d4AE279c0e3E9D31671fEEeE").then(function(){ toast(t("d.copied")); }); }
+    try { navigator.clipboard.writeText("0xbBa154B45a5e6C606Cb41790f03c80903592Eeee").then(function(){ toast(t("d.copied")); }); }
     catch(e){ toast(t("d.copied")); }
   });
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
