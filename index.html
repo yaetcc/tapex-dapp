@@ -107,36 +107,36 @@ body::after{
 .db-dust{inset:-12%;background-image:radial-gradient(rgba(255,244,224,.85) 1px,transparent 1.4px),radial-gradient(rgba(0,229,160,.7) 1px,transparent 1.5px);background-size:180px 180px,240px 240px;background-position:0 0,0 0;opacity:.5;animation:dbDust 60s linear infinite;}
 .db-dust-b{inset:-14%;background-image:radial-gradient(rgba(0,229,160,.32) 1px,transparent 1.5px);background-size:320px 320px;opacity:.32;animation:dbDustB 140s linear infinite;}
 .db-grid2{inset:-6%;background-image:linear-gradient(rgba(0,229,160,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.04) 1px,transparent 1px);background-size:68px 68px;opacity:.55;animation:dbGrid2 45s linear infinite reverse;}
-.db-scan{left:-6%;width:112%;height:110px;top:-15%;background:linear-gradient(180deg,transparent,rgba(255,217,61,.04) 45%,rgba(255,217,61,.08) 50%,rgba(255,217,61,.04) 55%,transparent);opacity:0;animation:dbScan 45s linear infinite;}
+.db-scan{left:-6%;width:112%;height:110px;top:-15%;background:linear-gradient(180deg,transparent,rgba(255,217,61,.018) 45%,rgba(255,217,61,.035) 50%,rgba(255,217,61,.018) 55%,transparent);opacity:0;animation:dbScan 45s linear infinite;}
 .db-arc{top:-18%;left:50%;width:86vw;height:30vh;background:radial-gradient(ellipse at 50% 0%,rgba(0,229,160,.09),transparent 60%);}
 .db-navglow{top:0;left:0;right:0;height:120px;background:radial-gradient(ellipse at 50% -20%,rgba(255,217,61,.11),transparent 65%);}
 .db-shade{bottom:0;left:0;right:0;height:22vh;background:linear-gradient(180deg,transparent,rgba(6,8,12,.36));}
 @keyframes dbOrbA{
-  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg);opacity:.8;}
-  33%{transform:translate3d(4vw,2vh,0) scale(1.08) rotate(6deg);opacity:1;}
-  66%{transform:translate3d(-3vw,6vh,0) scale(1.02) rotate(-4deg);opacity:.7;}
-  100%{transform:translate3d(-4vw,8vh,0) scale(.94) rotate(-2deg);opacity:.62;}
+  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg);opacity:.72;}
+  33%{transform:translate3d(4vw,2vh,0) scale(1.08) rotate(6deg);opacity:.85;}
+  66%{transform:translate3d(-3vw,6vh,0) scale(1.02) rotate(-4deg);opacity:.68;}
+  100%{transform:translate3d(-4vw,8vh,0) scale(.94) rotate(-2deg);opacity:.65;}
 }
 @keyframes dbOrbB{
-  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg);opacity:.7;}
-  33%{transform:translate3d(-5vw,-3vh,0) scale(1.05) rotate(-7deg);opacity:1;}
-  66%{transform:translate3d(3vw,2vh,0) scale(1.02) rotate(4deg);opacity:.75;}
-  100%{transform:translate3d(5vw,-3vh,0) scale(.9) rotate(2deg);opacity:.55;}
+  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg);opacity:.65;}
+  33%{transform:translate3d(-5vw,-3vh,0) scale(1.05) rotate(-7deg);opacity:.8;}
+  66%{transform:translate3d(3vw,2vh,0) scale(1.02) rotate(4deg);opacity:.7;}
+  100%{transform:translate3d(5vw,-3vh,0) scale(.9) rotate(2deg);opacity:.6;}
 }
 @keyframes dbOrbC{
   0%{transform:translate3d(-2vw,0,0) scale(.96);opacity:.6;}
-  50%{transform:translate3d(2vw,3vh,0) scale(1.08);opacity:.95;}
-  100%{transform:translate3d(-1vw,5vh,0) scale(1);opacity:.55;}
+  50%{transform:translate3d(2vw,3vh,0) scale(1.08);opacity:.78;}
+  100%{transform:translate3d(-1vw,5vh,0) scale(1);opacity:.58;}
 }
 @keyframes dbDust{
-  0%{background-position:0 0,0 0;opacity:.42;}
-  50%{background-position:-90px 60px,-120px 40px;opacity:.62;}
-  100%{background-position:-180px 120px,-240px 80px;opacity:.42;}
+  0%{background-position:0 0,0 0;opacity:.4;}
+  50%{background-position:-90px 60px,-120px 40px;opacity:.5;}
+  100%{background-position:-180px 120px,-240px 80px;opacity:.4;}
 }
 @keyframes dbDustB{
-  0%{background-position:0 0;opacity:.28;}
-  50%{background-position:160px 100px;opacity:.4;}
-  100%{background-position:320px 200px;opacity:.28;}
+  0%{background-position:0 0;opacity:.26;}
+  50%{background-position:160px 100px;opacity:.34;}
+  100%{background-position:320px 200px;opacity:.26;}
 }
 @keyframes dbGrid2{
   0%{background-position:0 0,0 0;}
@@ -144,8 +144,8 @@ body::after{
 }
 @keyframes dbScan{
   0%{transform:translateY(-6vh);opacity:0;}
-  3%{opacity:.9;}
-  96%{opacity:.9;}
+  3%{opacity:.38;}
+  96%{opacity:.38;}
   100%{transform:translateY(112vh);opacity:0;}
 }
 @media (prefers-reduced-motion:reduce){
@@ -3815,7 +3815,7 @@ input:focus{
   box-shadow:0 0 16px rgba(0,229,160,.12),0 6px 16px rgba(3,7,16,.36);
 }
 .statbox.flash{
-  background:rgba(0,229,160,.1);
+  background:rgba(255,217,61,.045);
 }
 
 /* ===== 02 布局 · 导航 · Hero ===== */
@@ -4981,7 +4981,7 @@ from{left:-40%}to{left:120%}}
 @keyframes cardIn{
 from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes statPulse{
-0%{box-shadow:0 0 0 rgba(255,159,69,0)}50%{box-shadow:0 0 20px rgba(255,159,69,.4)}100%{box-shadow:0 0 0 rgba(255,159,69,0)}}
+0%{box-shadow:0 0 0 rgba(255,159,69,0)}50%{box-shadow:0 0 9px rgba(255,159,69,.18)}100%{box-shadow:0 0 0 rgba(255,159,69,0)}}
 @keyframes boxGlow{
 0%{filter:brightness(1)}25%{filter:brightness(1.4)}60%{filter:brightness(1.06)}100%{filter:brightness(1)}}
 @keyframes shareBurst{
