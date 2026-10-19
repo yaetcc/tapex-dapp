@@ -7937,16 +7937,19 @@ function refresh(){
   clearTimeout(__refreshTimer);
   __refreshTimer = setTimeout(doRefresh, 250);
 }
+window.__refreshNow = refresh;   // 暴露给 Tab 分页块：切 Tab 时触发刷新（性能优化：数据按需新鲜）
 function doRefresh(){
   if (__refreshing) { __refreshingDirty = true; return; }
   __refreshing = true;
   marketDirty = true;   // 交易后强制重读市场
-  Promise.all([
-    renderGlobal().catch(function(e){ console.warn("global read fail", e); }),
-    renderMine().catch(function(e){ console.warn("mine read fail", e); }),
-    renderMarket().catch(function(e){ console.warn("market read fail", e); }),
-    renderDividend().catch(function(e){ console.warn("dividend read fail", e); })
-  ]).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
+  // 性能优化：按当前激活 Tab 条件刷新（global 必跑驱动 statbox/minerStatus/价格，其余仅刷当前视图，降低公共 RPC 压力）
+  var tb = "";
+  try { var _c = document.querySelector(".card.tab-on"); if (_c) tb = _c.getAttribute("data-tab") || ""; } catch(e){}
+  var jobs = [ renderGlobal().catch(function(e){ console.warn("global read fail", e); }) ];
+  if (tb === "market") jobs.push(renderMarket().catch(function(e){ console.warn("market read fail", e); }));
+  else if (tb === "mine" || tb === "stake" || tb === "asm") jobs.push(renderMine().catch(function(e){ console.warn("mine read fail", e); }));
+  else if (tb === "divd") jobs.push(renderDividend().catch(function(e){ console.warn("dividend read fail", e); }));
+  Promise.all(jobs).then(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); }).catch(function(){ __refreshing = false; if (__refreshingDirty) { __refreshingDirty = false; refresh(); } killOverflow(); });
 }
 // 运行时溢出扫描：实测任何超出视口的元素并收缩（连接钱包/数据渲染后 WebView 字体度量差异导致溢出的最终兜底）
 function killOverflow(){
@@ -9045,7 +9048,7 @@ function renderSpark(){
     if(cur===t)return;
     var m=document.getElementById("mainTabs");
     if(m)m.classList.add("view-leave");
-    setTimeout(function(){switchTab(t,{push:true});},110);
+    setTimeout(function(){switchTab(t,{push:true}); if (window.__refreshNow) window.__refreshNow();},110);
   }
   /* 动画 v1：卡片交错 stagger + 视图级过渡收尾 */
   var _origSwitch=switchTab;
