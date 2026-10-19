@@ -5357,6 +5357,168 @@ input:focus,textarea:focus,select:focus{
 .q-ops{display:flex;gap:8px;margin-top:10px}
 .q-btn{flex:1;background:#15222c;border:1px solid #24303c;color:#d7e2ea;border-radius:9px;padding:7px 0;font-size:12px;cursor:pointer;transition:.2s}
 .q-btn:hover{border-color:#00e5a0;color:#00e5a0}
+
+/* ===== Tab 分页视图（整理版新增 v2） ===== */
+.card[data-tab]{display:none;}
+.card[data-tab].tab-on{display:block;}
+main#mainTabs.one-col{grid-template-columns:1fr;}
+main#mainTabs.one-col>div{grid-column:1;}
+@keyframes tabIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card[data-tab].tab-on{animation:tabIn .28s ease both;}
+#mint,#asm{scroll-margin-top:118px;}
+.nav-right > .nav-anchor.tab-on{color:#fff;background:linear-gradient(135deg,rgba(79,224,208,.20),rgba(240,194,103,.16));border:1px solid rgba(240,194,103,.55);border-radius:999px;box-shadow:0 0 12px rgba(240,194,103,.18);}
+#menuPanel a.tab-on{color:var(--gold);background:rgba(217,164,65,.12);}
+main#mainTabs.one-col .card.tab-on{max-width:860px;margin-left:auto;margin-right:auto;}
+/* 步骤条 */
+#stepBar{display:none;max-width:1280px;margin:14px auto 0;padding:0 24px;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;scroll-margin-top:76px;}
+.step-item{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(17,31,59,.7);border:1px solid rgba(130,160,215,.25);color:var(--tx2);font-size:12.5px;opacity:.75;}
+.step-item i{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(130,160,215,.18);font-style:normal;font-size:11px;font-weight:700;}
+.step-item.on{opacity:1;color:var(--tx);border-color:rgba(240,194,103,.55);background:linear-gradient(135deg,rgba(217,164,65,.14),rgba(79,224,208,.10));}
+.step-item.on i{background:linear-gradient(135deg,#D9A441,#8a6620);color:#0a1226;}
+.step-line{width:26px;height:1px;background:linear-gradient(90deg,rgba(217,164,65,.5),rgba(79,224,208,.4));}
+/* 市场加载骨架 */
+@keyframes skelSweep{from{background-position:200% 0}to{background-position:-200% 0}}
+.mk-list .mk-empty{background:linear-gradient(90deg,rgba(130,160,215,.10),rgba(130,160,215,.22),rgba(130,160,215,.10));background-size:200% 100%;animation:skelSweep 1.3s linear infinite;color:transparent;border-radius:8px;}
+/* ===== 页面美化 v1（2026-10-19） ===== */
+html::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(820px 460px at 86% 6%,rgba(240,194,103,.13),transparent 62%),radial-gradient(640px 380px at 12% 96%,rgba(79,224,208,.08),transparent 60%);}
+.brand span:first-of-type{background:linear-gradient(120deg,#F0C267,#4FE0D0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.brand span:first-of-type em{background:linear-gradient(120deg,#4FE0D0,#F0C267);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.mk-stat b,#hdRate,.price-line b{background:linear-gradient(135deg,#F5CF7E,#E3A94E 55%,#c98a2e);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.mk-stat{position:relative;overflow:hidden;}
+.mk-stat::after{content:"";display:block;height:3px;border-radius:2px;margin-top:7px;background:linear-gradient(90deg,rgba(79,224,208,.55),rgba(79,224,208,.06));}
+.mk-stat.gold::after{background:linear-gradient(90deg,rgba(240,194,103,.65),rgba(240,194,103,.06));}
+.kicker{border-color:rgba(240,194,103,.65);background:linear-gradient(135deg,rgba(217,164,65,.18),rgba(79,224,208,.08));box-shadow:0 0 12px rgba(217,164,65,.12),inset 0 0 8px rgba(217,164,65,.06);}
+.tl-head{position:relative;padding-left:12px;}
+.tl-head::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:2px;background:linear-gradient(180deg,#F0C267,#4FE0D0);}
+.step-item.done{opacity:1;border-color:rgba(240,194,103,.4);}
+.step-item.done i{background:linear-gradient(135deg,#F0C267,#c98a2e);color:#0a1226;position:relative;font-size:0;}
+.step-item.done i::after{content:"✓";font-size:11px;font-weight:800;}
+.step-item.done + .step-line{background:linear-gradient(90deg,#F0C267,rgba(79,224,208,.55));}
+.wallet-hint{position:relative;padding-left:46px;}
+.wallet-hint::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23D9A441" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M15.5 12.5h.01"/><path d="M3 9h18"/></svg>') center/contain no-repeat;}
+.rig-empty{position:relative;padding-left:46px;}
+.rig-empty::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%233FD4C4" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/><path d="M2 9v6M22 9v6"/></svg>') center/contain no-repeat;}
+.btn.primary{position:relative;overflow:hidden;}
+.btn.primary::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:45%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-16deg);animation:btnSweep 3.4s ease-in-out infinite;}
+.bb-body{position:relative;overflow:hidden;}
+.bb-body::after{content:"";position:absolute;top:0;bottom:0;left:-70%;width:45%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.32),transparent);transform:skewX(-16deg);animation:btnSweep 3.8s ease-in-out infinite;}
+@keyframes btnSweep{0%{left:-70%}60%{left:135%}100%{left:135%}}
+.badge.on{background:linear-gradient(135deg,rgba(63,212,196,.22),rgba(79,224,208,.08));border-color:rgba(63,212,196,.55);color:#4FE0D0;box-shadow:0 0 10px rgba(63,212,196,.15);}
+.fchip{background:linear-gradient(135deg,rgba(127,178,255,.16),rgba(63,212,196,.08));border:1px solid rgba(130,160,215,.28);}
+.grade-tag{background:linear-gradient(135deg,rgba(140,160,200,.18),rgba(90,110,150,.10));border:1px solid rgba(160,180,220,.28);}
+@media (max-width:640px){
+  .card{padding:16px;}
+  #stepBar{padding:0 14px;gap:6px;}
+  .step-item{padding:5px 9px;font-size:11.5px;}
+  .step-line{width:14px;}
+}
+@supports (padding-bottom:env(safe-area-inset-bottom)){
+  .card{padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+}
+/* ===== 设计 v1（2026-10-19） ===== */
+:root{
+  --grad-gold:linear-gradient(135deg,#F5CF7E,#E3A94E 55%,#c98a2e);
+  --grad-goldteal:linear-gradient(120deg,#F0C267,#4FE0D0);
+  --grad-tealbar:linear-gradient(90deg,rgba(79,224,208,.55),rgba(79,224,208,.06));
+}
+/* 导航分组：资产前竖分隔线（桌面） */
+.nav-anchor[data-tab-link="mine"]::before{content:"";display:inline-block;width:1px;height:16px;background:rgba(130,160,215,.30);margin-right:12px;vertical-align:middle;}
+#menuPanel a[data-tab-link="mine"]{border-top:1px solid rgba(130,160,215,.18);margin-top:6px;padding-top:12px;}
+/* focus 环统一 */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(240,194,103,.75);outline-offset:2px;border-radius:6px;}
+/* 步骤条可点击 */
+#stepBar .step-item{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;}
+#stepBar .step-item:hover{transform:translateY(-1px);border-color:rgba(240,194,103,.8);box-shadow:0 0 14px rgba(217,164,65,.18);}
+#stepBar .step-item.on{cursor:default;}
+/* 数值体系统一（statbox 渐变） */
+.statbox b{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;}
+/* 长文案折叠 */
+.fold{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;transition:color .15s ease;}
+.fold.open{-webkit-line-clamp:unset;}
+.fold-btn{display:inline-block;margin:4px 0 0 2px;padding:2px 8px;border:1px solid rgba(130,160,215,.3);border-radius:999px;background:rgba(17,31,59,.6);color:var(--tx2);font-size:11px;cursor:pointer;}
+.fold-btn:hover{color:var(--gold);border-color:rgba(240,194,103,.5);}
+/* 市场加载/空态区分 */
+.mk-list .mk-empty.skel{background:linear-gradient(90deg,rgba(130,160,215,.10),rgba(130,160,215,.22),rgba(130,160,215,.10));background-size:200% 100%;animation:skelSweep 1.3s linear infinite;color:transparent;border-radius:8px;}
+.mk-list .mk-empty:not(.skel){color:var(--tx2);display:flex;align-items:center;gap:8px;}
+.mk-list .mk-empty:not(.skel)::before{content:"";width:16px;height:16px;flex:none;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%237E90B8" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6M11 8v6"/></svg>') center/contain no-repeat;opacity:.8;}
+/* 首访引导：步骤条辉光脉冲 */
+@keyframes guidePulse{0%,100%{box-shadow:0 0 0 0 rgba(240,194,103,.55)}50%{box-shadow:0 0 0 8px rgba(240,194,103,0)}}
+.step-item.guide-pulse{animation:guidePulse 1.4s ease-in-out 3;}
+.guide-bubble{position:fixed;z-index:2200;background:linear-gradient(135deg,#1b2a4e,#14203c);border:1px solid rgba(240,194,103,.55);color:var(--tx);padding:8px 14px;border-radius:12px;font-size:12.5px;box-shadow:0 10px 28px rgba(3,7,16,.6);pointer-events:none;animation:bubbleIn .3s ease both;}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* toast 成功强化 */
+#toast{border:1px solid rgba(240,194,103,.45);box-shadow:0 8px 24px rgba(3,7,16,.55),0 0 18px rgba(240,194,103,.12);}
+/* ===== 动画 v1（2026-10-19） ===== */
+/* 2 双向过渡：视图容器淡出 */
+#mainTabs.view-leave{opacity:0;transform:translateY(8px);transition:opacity .11s ease,transform .11s ease;pointer-events:none;}
+/* 1 卡片交错由 JS 设 animation-delay；切换时旧卡退出 */
+.card[data-tab].tab-out{opacity:0;transform:translateY(8px);transition:opacity .12s ease,transform .12s ease;}
+/* 5 钱包连接状态点呼吸 */
+#walletBtn.connected .dot{animation:dotPulse 1.7s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(63,212,196,.45)}50%{box-shadow:0 0 0 4px rgba(63,212,196,0)}}
+/* 6 点击涟漪 */
+.btn.primary,.action-btn,.bb-body,.step-item{position:relative;}
+.action-btn{overflow:hidden;}
+.ripple{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(240,194,103,.38),transparent 62%);transform:scale(0);animation:ripple .45s ease-out forwards;pointer-events:none;z-index:5;}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
+/* 8/9 步骤点亮 + 呼吸 */
+.step-item.on{animation:stepPop .5s ease both,stepBreathe 2.6s ease-in-out .7s infinite;}
+@keyframes stepPop{0%{transform:scale(1)}35%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes stepBreathe{0%,100%{box-shadow:0 0 8px rgba(240,194,103,.12)}50%{box-shadow:0 0 16px rgba(240,194,103,.34)}}
+.step-item.done i::after{animation:tickPop .32s ease both;}
+@keyframes tickPop{from{transform:scale(0)}to{transform:scale(1)}}
+/* 10 抽卡按压 */
+.bb-body{transition:transform .12s ease;}
+.bb-body:active{transform:scale(.97);}
+/* 4 countUp 到达闪光 / 刷新淡入 */
+.count-flash{text-shadow:0 0 14px rgba(240,194,103,.85);}
+.val-swap{opacity:.25;transition:opacity .18s ease;}
+.mk-stat b,.statbox b,.price-line b{transition:opacity .18s ease;}
+/* 13 骨架呼吸（叠加扫光） */
+.mk-list .mk-empty.skel{animation:skelSweep 1.3s linear infinite,skelBreathe 2.2s ease-in-out infinite;}
+@keyframes skelBreathe{0%,100%{opacity:.72}50%{opacity:1}}
+/* 空态修正：非骨架时清除扫光背景/动画 */
+.mk-list .mk-empty:not(.skel){background:none;animation:none;}
+/* 3 reduced-motion 全部降级 */
+@media (prefers-reduced-motion:reduce){
+  .card[data-tab].tab-on{animation:none;}
+  #mainTabs.view-leave{transition:none;opacity:1;transform:none;}
+  .step-item.on,.step-item.done i::after{animation:none;}
+  .mk-list .mk-empty.skel{animation:none;opacity:1;}
+  .count-flash{text-shadow:none;}
+  .ripple{display:none;}
+  #walletBtn.connected .dot{animation:none;}
+}
+/* ===== 布局 v1（2026-10-19） ===== */
+/* 1 双列比例自适应（右列 300-400px） */
+main{grid-template-columns:minmax(0,1fr) minmax(300px,400px);}
+/* 3 单列宽度分级：市场 960 / 资产·质押 760 / 分红 860 */
+main#mainTabs.one-col #market.tab-on{max-width:960px;}
+main#mainTabs.one-col #mine.tab-on,main#mainTabs.one-col [data-tab="stake"].tab-on,main#mainTabs.one-col #claimCard.tab-on{max-width:760px;}
+/* 4 市场双栏（≥1000：在售 | 我的挂单） */
+@media (min-width:1000px){
+  main#mainTabs.one-col #market.tab-on .mk-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:14px 18px;align-items:start;}
+}
+/* 5 市场筛选条吸顶 */
+.mk-toolbar{position:sticky;top:72px;z-index:20;background:linear-gradient(180deg,rgba(17,31,59,.97),rgba(17,31,59,.92));padding:8px 2px 10px;margin-top:4px;backdrop-filter:blur(6px);border-radius:0 0 10px 10px;}
+/* 6 资产页提示居中放大 */
+#mine .wallet-hint{max-width:440px;margin:16px auto;padding:16px 18px 16px 50px;background:rgba(16,29,56,.7);border:1px solid rgba(130,160,215,.22);border-radius:12px;font-size:13.5px;line-height:1.7;}
+/* 7 步骤条左对齐（与卡标题视觉对齐） */
+#stepBar{justify-content:flex-start;}
+/* 8 中屏导航收拢：≤1100 转汉堡菜单 */
+@media (max-width:1100px){
+  .nav-right > .nav-anchor{display:none;}
+  #menuBtn{display:inline-flex;}
+  .nav-right{flex-wrap:nowrap;}
+}
+/* 9/10/11 移动端密度与固定操作行 */
+@media (max-width:640px){
+  .part-cell{min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  #mkList .mk-item{grid-template-columns:30px 1fr auto 48px;}
+  #mkList .mk-seller{display:none;}
+  #mint .forge-track{position:fixed;left:0;right:0;bottom:0;z-index:120;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(11,19,40,.96);backdrop-filter:blur(10px);border-top:1px solid rgba(240,194,103,.28);box-shadow:0 -8px 26px rgba(3,7,16,.5);}
+  main{padding-bottom:96px;}
+}
 </style>
 </head>
 <body>
@@ -5369,11 +5531,12 @@ input:focus,textarea:focus,select:focus{
     <span class="badge on" data-i18n="nav.mainnet">Mainnet 196</span>
   </div>
   <div class="nav-right">
-    <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
-    <a class="nav-anchor" href="#asm" data-i18n="nav.asm">组装</a>
-    <a class="nav-anchor" href="#mine" data-i18n="nav.assets">资产</a>
-    <a class="nav-anchor" href="#divd" data-i18n="nav.divd">分红</a>
-    <a class="nav-anchor" href="#market" data-i18n="nav.market">市场</a>
+    <a class="nav-anchor" href="#mint" data-tab-link="mint" data-i18n="nav.mint">铸造</a>
+    <a class="nav-anchor" href="#asm" data-tab-link="asm" data-i18n="nav.asm">组装</a>
+    <a class="nav-anchor" href="#stake" data-tab-link="stake" data-i18n="nav.stake">质押</a>
+    <a class="nav-anchor" href="#mine" data-tab-link="mine" data-i18n="nav.assets">资产</a>
+    <a class="nav-anchor" href="#divd" data-tab-link="divd" data-i18n="nav.divd">分红</a>
+    <a class="nav-anchor" href="#market" data-tab-link="market" data-i18n="nav.market">市场</a>
     <a class="link-home" href="TapeX官网.html" data-i18n="← 返回官网">← 返回官网</a>
     <button id="langBtn">EN</button>
     <button id="walletBtn"><span class="dot"></span><span id="walletLabel" data-i18n="nav.connect">连接钱包</span></button>
@@ -5391,11 +5554,12 @@ input:focus,textarea:focus,select:focus{
     <button id="menuBtn" aria-label="菜单" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div id="menuPanel">
-    <a class="nav-anchor" href="#mint" data-i18n="nav.mint">铸造</a>
-    <a class="nav-anchor" href="#asm" data-i18n="nav.asm">组装</a>
-    <a class="nav-anchor" href="#mine" data-i18n="nav.assets">资产</a>
-    <a class="nav-anchor" href="#divd" data-i18n="nav.divd">分红</a>
-    <a class="nav-anchor" href="#market" data-i18n="nav.market">市场</a>
+    <a class="nav-anchor" href="#mint" data-tab-link="mint" data-i18n="nav.mint">铸造</a>
+    <a class="nav-anchor" href="#asm" data-tab-link="asm" data-i18n="nav.asm">组装</a>
+    <a class="nav-anchor" href="#stake" data-tab-link="stake" data-i18n="nav.stake">质押</a>
+    <a class="nav-anchor" href="#mine" data-tab-link="mine" data-i18n="nav.assets">资产</a>
+    <a class="nav-anchor" href="#divd" data-tab-link="divd" data-i18n="nav.divd">分红</a>
+    <a class="nav-anchor" href="#market" data-tab-link="market" data-i18n="nav.market">市场</a>
   </div>
 </nav>
 
@@ -5403,10 +5567,19 @@ input:focus,textarea:focus,select:focus{
 <div id="netbar">当前网络不是 X Layer 主网（Chain 196），合约交互会失败。<button id="switchNet" data-i18n="切换到主网">切换到主网</button></div>
 <div id="errBar"></div>
 
-<main>
+<div id="stepBar" aria-hidden="true">
+  <div class="step-item on" data-step="1"><i>1</i><span>铸造</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" data-step="2"><i>2</i><span>组装</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" data-step="3"><i>3</i><span>质押</span></div>
+  <div class="step-line"></div>
+  <div class="step-item" data-step="4"><i>4</i><span>领取</span></div>
+</div>
+<main id="mainTabs">
   <!-- 左：操作区 -->
   <div>
-    <div class="card" id="mint">
+    <div class="card" id="mint" data-tab="mint">
       <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg>盲盒铸造：随机抽 1 件硬件</h3>
       <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。">花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。</p>
@@ -5438,7 +5611,7 @@ input:focus,textarea:focus,select:focus{
       <p class="hint">主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 <b data-i18n="0.0001 OKB / 件">0.0001 OKB / 件</b>；阶梯价：每累计抽满 10 万件上涨 5%（最高约 ×2.92）。随机抽，不保证稀有件。</p>
     </div>
 
-    <div class="card" id="asm">
+    <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg>组装流片：8 类部件 → 整机 PC NFT</h3>
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。</p>
@@ -5456,7 +5629,7 @@ input:focus,textarea:focus,select:focus{
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
-    <div class="card">
+    <div class="card" data-tab="stake">
       <div class="kicker">Step 3 · Stake / Unstake</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 4v8l-7 4-7-4V7z"/><path d="M12 12l7-4M12 12v8"/></svg>质押 PC NFT 挖矿</h3>
       <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。">质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。</p>
@@ -5477,10 +5650,10 @@ input:focus,textarea:focus,select:focus{
       <div class="msg" id="rigMsg" style="margin-top:8px"></div>
     </div>
 
-    <div class="card" id="claimCard">
+    <div class="card" id="claimCard" data-tab="stake">
       <div class="kicker">Step 4 · Claim</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>领取 XCHIP 奖励</h3>
-      <p class="sub" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。">按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。</p>
+      <p class="sub fold" title="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。">按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。</p>
       <div class="claim-flow" id="claimFlow"><span class="cf-chip"></span><span class="cf-tube"></span><svg class="cf-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 14h2"/></svg></div>
       <div class="price-line">可领取 <b id="pendingAmt">—</b></div>
       <div class="msg" id="claimMsg"></div>
@@ -5490,7 +5663,7 @@ input:focus,textarea:focus,select:focus{
 
   <!-- 右：状态面板 -->
   <div>
-    <div class="card" id="overview">
+    <div class="card" id="overview" data-tab="mint">
       <div class="kicker" data-i18n="Network · 全网状态">Network · 全网状态</div>
       <div class="miner-status" id="minerStatus">
         <div class="mw"><span class="ring"></span><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="26" stroke-width="3"/><circle cx="32" cy="32" r="9" fill="currentColor" opacity=".85"/><path d="M32 4v12M32 48v12M4 32h12M48 32h12" stroke-width="2" opacity=".5"/></svg></div>
@@ -5507,7 +5680,7 @@ input:focus,textarea:focus,select:focus{
       <p class="hint" data-i18n="数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。">数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。</p>
     </div>
 
-    <div class="card" id="mine">
+    <div class="card" id="mine" data-tab="mine">
       <div class="kicker">My · <span data-i18n="mine.title">我的资产</span></div>
       <ul class="asset-list" id="myAssets">
         <li><span class="nm" data-i18n="ph.noWallet">未连接钱包</span><span class="v">—</span></li>
@@ -5516,7 +5689,7 @@ input:focus,textarea:focus,select:focus{
       <div class="wallet-hint" id="walletHint">连接钱包后可抽硬件、组装电脑、质押与领取。<b data-i18n="首次使用请先切到 X Layer 主网">首次使用请先切到 X Layer 主网</b>。</div>
     </div>
 
-    <div class="card" id="market">
+    <div class="card" id="market" data-tab="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
       <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
       <div class="mk-stats">
@@ -5551,17 +5724,19 @@ input:focus,textarea:focus,select:focus{
         <button class="mk-pg" id="mkPrev">‹</button>
         <button class="mk-pg" id="mkNext">›</button>
       </div>
+      <div class="mk-cols">
       <div class="mk-head"><span data-i18n="mk.onSaleH">在售挂单</span><span class="mk-floor" id="mkFloor"></span></div>
-      <ul class="mk-list" id="mkList"><li class="mk-head-row"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPc">PC</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colSeller">卖家</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
+      <ul class="mk-list" id="mkList"><li class="mk-head-row"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPc">PC</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colSeller">卖家</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
       <div class="mk-head"><span data-i18n="mk.mineH">我的挂单</span><button class="action-btn auto mk-cancel-all" id="mkCancelAll" data-i18n="全部撤下">全部撤下</button></div>
-      <ul class="mk-list" id="mkMineList"><li class="mk-head-row mk-head-mine"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty" data-i18n="加载中…">加载中…</li></ul>
+      <ul class="mk-list" id="mkMineList"><li class="mk-head-row mk-head-mine"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
+      </div>
       <p class="hint">合约 <code>0x83eB…CD8</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
     </div>
   </div>
 
-    <div class="card" id="divd">
+    <div class="card" id="divd" data-tab="divd">
       <div class="kicker">TAPEX · <span data-i18n="d.title">持币分红</span></div>
-      <p class="hint" data-i18n="d.desc">持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。</p>
+      <p class="hint fold" title="持有 TAPEX 自动累积 XCHIP 分红，按持币份额分配。点击展开/收起" data-i18n="d.desc">持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。</p>
       <div class="panel-stat" id="divdStats">
         <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
         <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 XCHIP</span></div>
@@ -5746,6 +5921,7 @@ var LANG = "zh";
 try { LANG = localStorage.getItem("tapx_lang") === "en" ? "en" : "zh"; } catch(e){}
 var I18N = {
   "nav.mint": {zh:"铸造", en:"Mint"},
+  "nav.stake": {zh:"质押", en:"Stake"},
   "nav.ov": {zh:"概览", en:"Overview"},
   "nav.asm": {zh:"组装", en:"Assemble"},
   "nav.assets": {zh:"资产", en:"Assets"},
@@ -8174,5 +8350,204 @@ function renderWalletPanel(){
 })();
 </script>
 <div id="bbReveal" class="bb-reveal"></div>
+
+<script>
+/* ===== Tab 分页视图逻辑 v2（全部改进：动效/记忆/历史/无障碍/步骤条/滚动） ===== */
+(function(){
+  var TAB_OK=["mint","asm","stake","mine","divd","market"];
+  var TAB_STEP={mint:1,asm:2,stake:3};
+  function switchTab(t,opts){
+    opts=opts||{};
+    t=String(t||"").replace("#","");
+    if(TAB_OK.indexOf(t)<0)t="mint";
+    document.querySelectorAll(".card[data-tab]").forEach(function(c){c.classList.toggle("tab-on",c.dataset.tab===t);});
+    document.querySelectorAll("[data-tab-link]").forEach(function(a){
+      var on=a.getAttribute("data-tab-link")===t;
+      a.classList.toggle("tab-on",on);
+      if(a.setAttribute)a.setAttribute("aria-selected",on?"true":"false");
+    });
+    var main=document.getElementById("mainTabs");
+    if(main){
+      var cols=main.children,visCols=0;
+      function hasOn(c){return (c.classList&&c.classList.contains("tab-on"))||(c.querySelector&&c.querySelector(".card.tab-on"));}
+      for(var ci=0;ci<cols.length;ci++){
+        var on=hasOn(cols[ci]);
+        cols[ci].style.display=on?"":"none";
+        if(on)visCols++;
+      }
+      main.classList.toggle("one-col",visCols<=1);
+    }
+    var mp=document.getElementById("menuPanel");
+    if(mp)mp.classList.remove("open");
+    var mb=document.getElementById("menuBtn");
+    if(mb)mb.setAttribute("aria-expanded","false");
+    var sb=document.getElementById("stepBar");
+    if(sb){
+      var st=TAB_STEP[t]||0;
+      sb.style.display=st?"flex":"none";
+      var items=sb.querySelectorAll(".step-item");
+      for(var si=0;si<items.length;si++){
+        items[si].classList.toggle("done",si<st-1);
+        items[si].classList.toggle("on",si===st-1);
+      }
+    }
+    try{localStorage.setItem("tapex_tab",t);}catch(e){}
+    if(opts.push){try{history.pushState(null,"","#"+t);}catch(e){}}
+    else{try{history.replaceState(null,"","#"+t);}catch(e){}}
+    if(opts.scroll!==false&&main){
+      var target=main.querySelector(".card.tab-on");
+      if(target){try{target.scrollIntoView({behavior:"smooth",block:"start"});}catch(e){target.scrollIntoView();}}
+    }
+  }
+  document.querySelectorAll("[data-tab-link]").forEach(function(a){
+    a.addEventListener("click",function(e){e.preventDefault();goTab(a.getAttribute("data-tab-link"));});
+    a.addEventListener("keydown",function(e){
+      if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
+      var vis=Array.prototype.slice.call(document.querySelectorAll("[data-tab-link]")).filter(function(x){return x.offsetParent!==null;});
+      var idx=vis.indexOf(a);
+      var n=e.key==="ArrowRight"?(idx+1)%vis.length:(idx-1+vis.length)%vis.length;
+      e.preventDefault();
+      goTab(vis[n].getAttribute("data-tab-link"));
+      vis[n].focus();
+    });
+  });
+  window.addEventListener("hashchange",function(){switchTab((location.hash||"mint").slice(1),{scroll:false});});
+  /* 动画 v1：goTab 双向过渡（旧视图淡出后切换） */
+  function goTab(t){
+    var cur=(location.hash||"mint").replace("#","");
+    if(cur===t)return;
+    var m=document.getElementById("mainTabs");
+    if(m)m.classList.add("view-leave");
+    setTimeout(function(){switchTab(t,{push:true});},110);
+  }
+  /* 动画 v1：卡片交错 stagger + 视图级过渡收尾 */
+  var _origSwitch=switchTab;
+  switchTab=function(t,opts){
+    _origSwitch(t,opts);
+    var main=document.getElementById("mainTabs");
+    if(main){
+      var cards=main.querySelectorAll(".card.tab-on");
+      for(var ci=0;ci<cards.length;ci++)cards[ci].style.animationDelay=(ci*40)+"ms";
+      main.classList.remove("view-leave");
+    }
+  };
+  /* 动画 v1：点击涟漪 */
+  document.addEventListener("click",function(e){
+    var btn=e.target.closest?e.target.closest(".btn.primary,.action-btn,.bb-body,.step-item"):null;
+    if(!btn||btn.disabled)return;
+    var r=btn.getBoundingClientRect();
+    var d=Math.max(r.width,r.height)*1.15;
+    var sp=document.createElement("span");
+    sp.className="ripple";
+    sp.style.width=sp.style.height=d+"px";
+    sp.style.left=(e.clientX-r.left-d/2)+"px";
+    sp.style.top=(e.clientY-r.top-d/2)+"px";
+    btn.appendChild(sp);
+    setTimeout(function(){sp.remove();},500);
+  });
+  /* 动画 v1：滚动进度细线 */
+  (function(){
+    var bar=document.createElement("div");
+    bar.id="scrollProgress";
+    bar.style.cssText="position:fixed;top:0;left:0;height:3px;width:0;z-index:3000;background:linear-gradient(90deg,#F0C267,#4FE0D0);box-shadow:0 0 10px rgba(240,194,103,.4);pointer-events:none;";
+    document.body.appendChild(bar);
+    var ticking=false;
+    function upd(){
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      bar.style.width=(h>0?(window.scrollY/h*100):0)+"%";
+      ticking=false;
+    }
+    window.addEventListener("scroll",function(){if(!ticking){requestAnimationFrame(upd);ticking=true;}},{passive:true});
+    window.addEventListener("resize",upd);
+    upd();
+  })();
+  /* 步骤条可点击跳转（设计 v1） */
+  (function(){
+    var STEP_TAB={1:"mint",2:"asm",3:"stake",4:"stake"};
+    document.querySelectorAll("#stepBar .step-item").forEach(function(it){
+      it.addEventListener("click",function(){
+        var st=it.getAttribute("data-step");
+        if(!STEP_TAB[st])return;
+        var cur=(location.hash||"mint").replace("#","");
+        if(STEP_TAB[st]===cur)return;
+        switchTab(STEP_TAB[st],{push:true});
+      });
+    });
+  })();
+  /* 长文案折叠展开（设计 v1） */
+  (function(){
+    document.querySelectorAll(".fold").forEach(function(p){
+      var btn=document.createElement("button");
+      btn.type="button";btn.className="fold-btn";btn.textContent="展开";
+      p.parentNode.insertBefore(btn,p.nextSibling);
+      btn.addEventListener("click",function(){
+        var open=p.classList.toggle("open");
+        btn.textContent=open?"收起":"展开";
+      });
+    });
+  })();
+  /* 首访引导（设计 v1）：首次进入流程页，步骤条当前步脉冲 + 下一步气泡 */
+  (function(){
+    var guided=null;
+    try{guided=localStorage.getItem("tapex_guide");}catch(e){}
+    if(guided)return;
+    var cur=(location.hash||"mint").replace("#","");
+    var NEXT={mint:"组装",asm:"质押",stake:"领取"};
+    var stepItems=document.querySelectorAll("#stepBar .step-item");
+    if(stepItems.length&&NEXT[cur]){
+      var curStep=cur==="mint"?0:(cur==="asm"?1:2);
+      stepItems[curStep].classList.add("guide-pulse");
+      setTimeout(function(){
+        var r=stepItems[curStep].getBoundingClientRect();
+        var b=document.createElement("div");
+        b.className="guide-bubble";
+        b.textContent="下一步："+NEXT[cur];
+        b.style.top=Math.max(8,r.bottom+10)+"px";
+        b.style.left=Math.min(r.left,window.innerWidth-150)+"px";
+        document.body.appendChild(b);
+        setTimeout(function(){b.remove();},3000);
+        stepItems[curStep].classList.remove("guide-pulse");
+      },700);
+    }
+    try{localStorage.setItem("tapex_guide","1");}catch(e){}
+  })();
+  var init=(location.hash||"").slice(1)||"";
+  if(TAB_OK.indexOf(init)<0){try{init=localStorage.getItem("tapex_tab")||"mint";}catch(e){init="mint";}}
+  switchTab(init,{scroll:false});
+})();
+/* ===== 数字滚动 countUp（美化 v1） ===== */
+(function(){
+  var sel=["mkStatCount","mkStatFloor","mkStatMine","pendingAmt"];
+  var last={};
+  function num(v){var n=parseFloat(String(v).replace(/[,，\s]/g,""));return isNaN(n)?null:n;}
+  setInterval(function(){
+    sel.forEach(function(id){
+      var el=document.getElementById(id);if(!el)return;
+      var t=el.textContent.trim();
+      if(!t||t==="—"||t==="-"||t==="0"&&false){last[id]=t;return;}
+      var n=num(t);
+      if(n===null){last[id]=t;return;}
+      if(last[id]!==t){
+        var from=(typeof last[id]==="number")?last[id]:0;
+        var suf=t.replace(/[0-9.,，\s]/g,"");
+        last[id]=t;var dur=520,st=null;
+        el.classList.add("val-swap");
+        function step(ts){
+          if(!st)st=ts;
+          var p=Math.min((ts-st)/dur,1);
+          var v=from+(n-from)*(1-Math.pow(1-p,3));
+          el.textContent=(v<10?String(Math.round(v*100)/100):Math.round(v).toLocaleString("en-US"))+suf;
+          if(p<1){requestAnimationFrame(step);}
+          else{
+            el.classList.remove("val-swap");
+            el.classList.add("count-flash");
+            setTimeout(function(){el.classList.remove("count-flash");},360);
+          }
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  },700);
+})();</script>
 </body>
 </html>
