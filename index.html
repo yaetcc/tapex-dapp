@@ -96,6 +96,40 @@ body::after{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ===== 动态背景系统（2026-10-19）：环境光晕漂移 + 星尘上浮 + 金色扫描线 ===== */
+.dyn-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.dyn-bg i{position:absolute;display:block;pointer-events:none;}
+.db-orb{width:52vw;height:52vw;min-width:520px;min-height:520px;border-radius:50%;filter:blur(64px);will-change:transform,opacity;}
+.db-orb-a{top:-14%;left:-8%;background:radial-gradient(circle at 38% 38%,rgba(240,194,103,.30),rgba(240,194,103,.08) 46%,transparent 70%);animation:dbOrbA 34s ease-in-out infinite alternate;}
+.db-orb-b{bottom:-18%;right:-10%;width:60vw;height:60vw;min-width:640px;min-height:640px;background:radial-gradient(circle at 60% 40%,rgba(79,224,208,.24),rgba(79,224,208,.06) 48%,transparent 72%);animation:dbOrbB 42s ease-in-out infinite alternate;}
+.db-dust{inset:-12%;background-image:radial-gradient(rgba(255,244,224,.85) 1px,transparent 1.4px),radial-gradient(rgba(79,224,208,.7) 1px,transparent 1.5px);background-size:180px 180px,240px 240px;background-position:0 0,0 0;opacity:.5;animation:dbDust 90s linear infinite;}
+.db-scan{left:-6%;width:112%;height:120px;top:-15%;background:linear-gradient(180deg,transparent,rgba(240,194,103,.10) 45%,rgba(240,194,103,.22) 50%,rgba(240,194,103,.10) 55%,transparent);opacity:0;animation:dbScan 17s linear infinite;}
+@keyframes dbOrbA{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:.8;}
+  50%{transform:translate3d(6vw,4vh,0) scale(1.12);opacity:1;}
+  100%{transform:translate3d(-4vw,8vh,0) scale(.94);opacity:.62;}
+}
+@keyframes dbOrbB{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:.7;}
+  50%{transform:translate3d(-7vw,-5vh,0) scale(1.08);opacity:1;}
+  100%{transform:translate3d(5vw,-3vh,0) scale(.9);opacity:.55;}
+}
+@keyframes dbDust{
+  0%{background-position:0 0,0 0;opacity:.42;}
+  50%{background-position:-90px 60px,-120px 40px;opacity:.62;}
+  100%{background-position:-180px 120px,-240px 80px;opacity:.42;}
+}
+@keyframes dbScan{
+  0%{transform:translateY(-6vh);opacity:0;}
+  6%{opacity:1;}
+  92%{opacity:1;}
+  100%{transform:translateY(112vh);opacity:0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .db-orb-a,.db-orb-b{animation:none;opacity:.55;}
+  .db-dust,.db-scan{animation:none;opacity:.35;}
+}
+
 /* ===== 02 布局 · 导航 · Hero ===== */
 nav,main{
   position:relative;
@@ -5464,6 +5498,14 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 </style>
 </head>
 <body>
+
+<!-- ===== 动态背景（光晕漂移/星尘/扫描线，纯CSS GPU合成，prefers-reduced-motion 降级） ===== -->
+<div class="dyn-bg" aria-hidden="true">
+  <i class="db-orb db-orb-a"></i>
+  <i class="db-orb db-orb-b"></i>
+  <i class="db-dust"></i>
+  <i class="db-scan"></i>
+</div>
 
 <!-- ===== 导航 ===== -->
 <nav>
