@@ -5874,6 +5874,184 @@ body::before{ animation:none !important; }
 .db-grid2{ animation:none !important; }
 .db-scan{ animation:none !important; opacity:0 !important; }
 .dyn-bg i.db-orb{ will-change:auto; }
+
+/* ===== 市场页布局美化优化（2026-10-20） ===== */
+/* A1 双栏整卡化：渐变金描边+暖底+外发光 */
+.mk-cols{
+  background:linear-gradient(180deg,rgba(42,30,27,.55),rgba(23,18,16,.42));
+  border:2px solid rgba(255,217,61,.22);
+  border-radius:18px;
+  padding:14px 16px 18px;
+  margin-top:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,217,61,.08);
+}
+/* A2 列表头：emoji 图标+金色标题+分隔线 */
+.mk-head{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--gold);
+  letter-spacing:1px;
+  margin:12px 0 10px;
+}
+.mk-head::before{
+  content:"🛒";
+  width:auto;height:auto;
+  background:none;
+  font-size:13px;
+  margin-right:2px;
+}
+.mk-head:nth-of-type(2)::before{content:"📌";}
+.mk-head::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,rgba(255,217,61,.35),transparent);
+  margin-left:8px;
+}
+/* A3 表头行：深底+金线 */
+.mk-head-row{
+  background:rgba(20,14,11,.5);
+  border:1px solid rgba(255,217,61,.14);
+  border-radius:9px;
+  padding:7px 10px 7px 12px;
+  font-size:10.5px;
+  font-weight:600;
+  color:#E8DCCB;
+}
+/* B 统计卡：渐变描边+数值金色辉光+图标 */
+.mk-stats{gap:10px;margin:12px 0 4px;}
+.mk-stat{
+  position:relative;
+  background:linear-gradient(160deg,rgba(42,30,27,.85),rgba(23,18,16,.6));
+  border:1px solid rgba(255,217,61,.16);
+  border-radius:14px;
+  padding:12px 14px 11px 20px;
+  overflow:hidden;
+  transition:transform .18s ease,box-shadow .2s ease,border-color .2s;
+}
+.mk-stat::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:5px;
+  background:linear-gradient(180deg,#FFD93D,#FF9F45);
+  border-radius:0 4px 4px 0;
+  box-shadow:0 0 10px rgba(255,217,61,.5);
+}
+.mk-stat b{
+  font-size:17px;
+  background:linear-gradient(120deg,#FFF6E9,#FFD93D 60%,#FF9F45);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:#FFD93D;
+}
+.mk-stat span{font-size:11px;color:#C9B8A8;letter-spacing:.8px;}
+.mk-stat:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,217,61,.45);
+  box-shadow:0 6px 20px rgba(255,159,69,.18);
+}
+.mk-stat.gold{
+  border-color:rgba(255,217,61,.5);
+  background:linear-gradient(160deg,rgba(255,217,61,.14),rgba(23,18,16,.6));
+}
+/* C 挂单表单：金边渐变描边 */
+.mk-sell{
+  position:relative;
+  background:linear-gradient(160deg,rgba(42,30,27,.9),rgba(23,18,16,.65));
+  border:1px solid rgba(255,217,61,.25);
+  border-radius:16px;
+  padding:14px 16px 16px;
+  box-shadow:0 6px 24px rgba(0,0,0,.22);
+}
+.mk-form-label{font-size:13px;color:#FFF6E9;}
+.mk-form-label::before{box-shadow:0 0 10px rgba(255,217,61,.7);}
+.mk-field{
+  background:rgba(20,14,11,.7);
+  border:1px solid rgba(255,217,61,.2);
+  border-radius:10px;
+}
+.mk-field:focus-within{
+  border-color:#FFD93D;
+  box-shadow:0 0 10px rgba(255,217,61,.25), inset 0 0 6px rgba(255,217,61,.06);
+}
+.mk-sell .action-btn{
+  background:linear-gradient(120deg,#FFD93D,#FF9F45);
+  color:#241505;
+  font-weight:700;
+  border:none;
+  border-radius:12px;
+  box-shadow:0 4px 16px rgba(255,159,69,.35);
+  transition:transform .15s ease,box-shadow .2s ease,filter .2s;
+}
+.mk-sell .action-btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.06);
+  box-shadow:0 6px 22px rgba(255,159,69,.5);
+}
+/* D 列表行：价格亮色加粗、行间距 */
+.mk-list{gap:7px;}
+.mk-item{
+  background:rgba(23,18,16,.4);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  padding:8px 10px;
+}
+.mk-item:hover{
+  border-color:rgba(255,217,61,.5);
+  box-shadow:0 4px 18px rgba(0,0,0,.35), 0 0 0 1px rgba(255,217,61,.12);
+  transform:translateX(3px);
+}
+.mk-mine-item{
+  background:rgba(23,18,16,.4);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  padding:8px 10px;
+  transition:transform .15s ease,border-color .2s ease,box-shadow .2s;
+}
+.mk-mine-item:hover{
+  border-color:rgba(255,217,61,.5);
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+  transform:translateX(3px);
+}
+.mk-price{color:#FFF6E9;font-weight:600;}
+/* E 空态插画：虚线框+emoji */
+.mk-list .mk-empty:not(.skel){
+  border:1px dashed rgba(255,217,61,.28);
+  border-radius:12px;
+  background:rgba(23,18,16,.35);
+  color:#C9B8A8;
+  padding:22px 12px;
+  justify-content:center;
+  font-size:13px;
+  letter-spacing:.5px;
+}
+.mk-list .mk-empty:not(.skel)::after{
+  content:"🛒";
+  font-size:20px;
+  margin-left:8px;
+  opacity:.75;
+}
+/* F 底部合约提示胶囊化 */
+#market > .hint:last-child{
+  display:inline-flex;
+  align-items:center;
+  background:rgba(23,18,16,.55);
+  border:1px solid rgba(255,217,61,.18);
+  border-radius:999px;
+  padding:7px 16px;
+  font-size:12px;
+  color:#C9B8A8;
+  margin-top:14px;
+}
+/* G 移动端：双栏堆叠+统计自适应 */
+@media (max-width:760px){
+  .mk-cols{grid-template-columns:1fr !important;padding:10px;}
+  .mk-stats{grid-template-columns:1fr 1fr;}
+  .mk-stats .mk-stat:last-child{grid-column:1/-1;}
+  #market > .hint:last-child{display:flex;border-radius:12px;}
+}
 </style>
 </head>
 <body><div class="meme-float" aria-hidden="true"><i style="left:6%;animation-duration:22s;animation-delay:0s">🚀</i><i style="left:15%;animation-duration:30s;animation-delay:3s">💰</i><i style="left:26%;animation-duration:25s;animation-delay:6s">🌙</i><i style="left:38%;animation-duration:33s;animation-delay:1s">⛏️</i><i style="left:52%;animation-duration:27s;animation-delay:9s">🪙</i><i style="left:64%;animation-duration:31s;animation-delay:4s">✨</i><i style="left:76%;animation-duration:24s;animation-delay:7s">💎</i><i style="left:88%;animation-duration:29s;animation-delay:2s">🔥</i></div>
