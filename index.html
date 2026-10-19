@@ -160,9 +160,9 @@ nav{
   gap:14px;
   /* 水平内边距与 main 容器（max-width:1280px 居中）对齐，避免宽屏下导航内容超出页面内容区 */
   padding:12px max(24px, calc((100% - 1280px) / 2 + 24px));
-  background:rgba(11,19,40,.93);
-  backdrop-filter:blur(8px);
-  border-bottom:2px solid rgba(10,132,255,.30);
+  background:rgba(22,24,29,.72);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.10);
   box-shadow:0 2px 0 rgba(100,210,255,.14),0 12px 34px rgba(3,6,16,.5);
   padding-top:13px;
   padding-bottom:13px;
@@ -5577,6 +5577,32 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
   .nav-right > .nav-anchor::after{transition:none;display:none;}
   .mk-item,.rig{transition:none;}
 }
+
+/* ===== 优秀设计借鉴：Glass 质感 + 数据叙事 + 微交互（2026.10） ===== */
+.card::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);pointer-events:none;}
+.btn:active,.mq:active{box-shadow:inset 0 2px 6px rgba(0,0,0,.35);}
+.mq:active{transform:scale(.9);}
+.card:hover::before{opacity:.9;}
+.nav-right > .nav-anchor.tab-on{box-shadow:inset 0 -2px 0 rgba(10,132,255,.85);}
+.nav-right .btn:hover{box-shadow:0 0 14px rgba(10,132,255,.28);}
+.card[data-tab="net"] .statbox{animation:rowIn .5s ease both;}
+.card[data-tab="net"] .statbox:nth-child(2){animation-delay:40ms;}
+.card[data-tab="net"] .statbox:nth-child(3){animation-delay:80ms;}
+.card[data-tab="net"] .statbox:nth-child(4){animation-delay:120ms;}
+.card[data-tab="net"] .statbox:nth-child(5){animation-delay:160ms;}
+.card[data-tab="net"] .statbox:nth-child(6){animation-delay:200ms;}
+.trend-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;}
+.trend{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+.trend svg{width:100%;height:36px;display:block;}
+.trend-lb{display:flex;align-items:baseline;gap:8px;margin-top:8px;}
+.trend-lb b{font-size:17px;font-variant-numeric:tabular-nums;color:var(--tx);}
+.trend-lb span{font-size:11px;color:var(--tx3);}
+.trend-lb em{font-style:normal;font-size:11px;font-weight:600;margin-left:auto;}
+.d-up{color:#34C759;}
+.d-down{color:#FF6B6B;}
+.d-flat{color:var(--tx3);}
+.mk-nowallet::before{content:"";display:block;width:44px;height:44px;margin:0 auto 8px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="%23646D7F" stroke-width="2.4" stroke-linecap="round"><path d="M24 6l14 8v16l-14 8-14-8V14z"/><path d="M24 18v12M18 24h12"/></svg>') center/contain no-repeat;opacity:.7;}
+@media(max-width:760px){.trend-panel{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -5733,6 +5759,11 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
         <div class="statbox"><b id="stCap">—</b><span data-i18n="st.cap">总可铸上限</span></div>
         <div class="statbox"><b id="stShares">—</b><span data-i18n="st.hash">全网算力 H</span></div>
         <div class="statbox"><b id="stEpoch">—</b><span data-i18n="st.epoch">当前 epoch</span></div>
+      </div>
+      <div class="trend-panel">
+        <div class="trend"><svg id="spHash" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spHashV">—</b><span data-i18n="st.hash">全网算力 H</span><em id="spHashD" class="d-flat">—</em></div></div>
+        <div class="trend"><svg id="spPrice" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spPriceV">—</b><span data-i18n="tr.price">PC 价格 OKB</span><em id="spPriceD" class="d-flat">—</em></div></div>
+        <div class="trend"><svg id="spMint" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spMintV">—</b><span data-i18n="st.minted">已铸部件（件）</span><em id="spMintD" class="d-flat">—</em></div></div>
       </div>
       <p class="hint" data-i18n="数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。">数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。</p>
     </div>
@@ -6030,6 +6061,7 @@ var I18N = {
   "b.installed": {zh:"已装", en:"Installed"},
   "b.units": {zh:"台", en:"units"},
   "w.connectPre": {zh:"连接钱包后可抽硬件、组装电脑、质押与领取。", en:"Connect to mint, assemble, stake & claim. "},
+  "tr.price": {zh:"PC 价格 OKB", en:"PC Price OKB"},
   "k.divdTag": {zh:"分红代币", en:"Dividend"},
   "app.title": {zh:"TapeX DApp — 矿机版 Pump · 主网控制台", en:"TapeX DApp — Miner Pump · Mainnet Console"},
   "q.stop": {zh:"终止", en:"Stop"},
@@ -6675,6 +6707,13 @@ function renderGlobal(){
     if (setNum("stMinted", cfg.minted_, fmtNumUnit, fmtInt)) flashStat("stMinted");
     if (setNum("stCap", cfg.cap_, fmtNumUnit, fmtInt)) flashStat("stCap");
     if (setNum("stShares", r[2], fmtNumUnit, fmtInt)) flashStat("stShares");
+    if (typeof HIST==="undefined"){window.HIST={hash:[],price:[],mint:[]};}
+    var _hv=Number(r[2]), _pv=Number(r[10])/1e18, _mv=Number(cfg.minted_);
+    if(isFinite(_hv))HIST.hash.push(_hv);
+    if(isFinite(_pv))HIST.price.push(_pv);
+    if(isFinite(_mv))HIST.mint.push(_mv);
+    if(HIST.hash.length>8){HIST.hash.shift();HIST.price.shift();HIST.mint.shift();}
+    renderSpark();
     var halv = Number(r[7]); var em = Number(r[8]) / 1e18;
     var epTxt = "L" + halv + "-" + em.toLocaleString("en-US",{maximumFractionDigits:0});
     if ($("stEpoch")._tx !== epTxt) { $("stEpoch")._tx = epTxt; $("stEpoch").textContent = epTxt; flashStat("stEpoch"); }
@@ -8409,7 +8448,25 @@ function renderWalletPanel(){
 })();
 
 })();
-</script>
+function renderSpark(){
+  var W=120,HT=36;
+  function gid(id){return document.getElementById(id);}
+  function fmtN(v){return v>=1000?Math.round(v).toLocaleString("en-US"):String(Math.round(v*1000)/1000);}
+  function draw(id,arr){arr=(arr||[]).filter(function(v){return isFinite(v);});if(arr.length<2)return;var svg=gid(id);if(!svg)return;
+    var min=Math.min.apply(null,arr),max=Math.max.apply(null,arr),rng=(max-min)||1;
+    var pts=arr.map(function(v,i){return ((i/(arr.length-1))*W).toFixed(1)+","+(HT-4-((v-min)/rng)*(HT-8)).toFixed(1);}).join(" ");
+    var up=arr[arr.length-1]>=arr[0],col=up?"#0A84FF":"#FF6B6B";
+    svg.innerHTML='<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polygon points="'+pts+","+W+","+HT+",0,"+HT+'" fill="'+(up?"rgba(10,132,255,.10)":"rgba(255,107,107,.10)")+'"/>';
+  }
+  function setV(id,arr,fmt){arr=(arr||[]).filter(function(v){return isFinite(v);});var el=gid(id);if(el&&arr.length)el.textContent=fmt?fmt(arr[arr.length-1]):arr[arr.length-1];}
+  function setD(id,arr){arr=(arr||[]).filter(function(v){return isFinite(v);});var el=gid(id);if(!el||!arr.length)return;var d=arr[arr.length-1]-arr[0];
+    if(!d){el.textContent="\u2014";el.className="d-flat";}
+    else{el.textContent=(d>0?"\u25B2 +":"\u25BC ")+(Math.abs(d)>1000?fmtN(Math.abs(d)):Math.abs(d).toFixed(d>0?3:2));el.className=d>0?"d-up":"d-down";}}
+  var D=window.HIST||{hash:[],price:[],mint:[]};
+  draw("spHash",D.hash);draw("spPrice",D.price);draw("spMint",D.mint);
+  setV("spHashV",D.hash,fmtN);setV("spPriceV",D.price,function(v){return v.toFixed(4)+" OKB";});setV("spMintV",D.mint,fmtN);
+  setD("spHashD",D.hash);setD("spPriceD",D.price);setD("spMintD",D.mint);
+}</script>
 <div id="bbReveal" class="bb-reveal"></div>
 
 <script>
@@ -8561,6 +8618,7 @@ function renderWalletPanel(){
       }
     });
   },700);
-})();</script>
+})();
+</script>
 </body>
 </html>
