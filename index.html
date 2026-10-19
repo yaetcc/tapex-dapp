@@ -7077,7 +7077,7 @@ function renderMarket(){
           window.__mkActive = [];
           window.__mkLoadedAt = Date.now();
           var upEl0 = $("mkUpdated"); if (upEl0) upEl0.textContent = mkUpdText();
-          list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.empty") + '</li>' + mkEmptyCta();
+          list.innerHTML = mkHeadOf(list) + '<li class="mk-empty" data-i18n="m.empty">' + t("m.empty") + '</li>' + mkEmptyCta();
           return;
         }
         var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
@@ -7151,7 +7151,7 @@ function renderMkPage(){
   var prev = $("mkPrev"), next = $("mkNext");
   if (prev) prev.disabled = mkPage <= 0;
   if (next) next.disabled = mkPage >= pages - 1;
-  if (!rows.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty">' + t("m.noMatch") + '</li>' + mkEmptyCta(); return; }
+  if (!rows.length) { list.innerHTML = mkHeadOf(list) + '<li class="mk-empty" data-i18n="m.noMatch">' + t("m.noMatch") + '</li>' + mkEmptyCta(); return; }
   var headHtml = mkHeadOf(list);
   list.innerHTML = headHtml;
   var floorPx = Math.min.apply(null, rows.map(function(rd){ return Number(rd.r.l.price); }));
