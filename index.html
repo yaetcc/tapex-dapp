@@ -5846,10 +5846,31 @@ input[type=number]:focus,input[type=text]:focus,textarea:focus{
 @media (prefers-reduced-motion:reduce){
   .meme-sticker,.meme-mascot .eye-l,.meme-mascot .eye-r{ animation:none !important; }
 }
+
+/* ===== Meme 深化Ⅱ（彩带/toast 庆祝/吉祥物跳跃/矿机呼吸/数值脉冲） ===== */
+#confettiLayer{position:fixed;inset:0;z-index:1400;pointer-events:none;overflow:hidden;}
+#confettiLayer i.cf{position:absolute;top:-16px;width:8px;height:14px;border-radius:2px;opacity:.95;animation:cfFall 1.8s ease-in forwards;}
+@keyframes cfFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(108vh) rotate(var(--r));opacity:0;}}
+#toast.show{ animation:toastPop .32s cubic-bezier(.34,1.56,.64,1); }
+@keyframes toastPop{ 0%{transform:translateX(-50%) translateY(18px) scale(.85);} 100%{transform:translateX(-50%) translateY(0) scale(1);} }
+/* 吉祥物跳跃（6s 浮动 + 每周期一次跳） */
+@keyframes mascotFloat{ 0%,100%{transform:translateY(0) rotate(-2deg);} 40%{transform:translateY(-10px) rotate(2deg);} 55%{transform:translateY(0) rotate(-1deg);} 60%{transform:translateY(-26px) rotate(-6deg) scale(1.06);} 66%{transform:translateY(0) rotate(3deg);} 80%{transform:translateY(-6px) rotate(1deg);} }
+/* 矿机挖矿呼吸 */
+.rig-row.mining{ animation:mineGlow 2.8s ease-in-out infinite; }
+@keyframes mineGlow{ 0%,100%{box-shadow:4px 4px 0 rgba(0,229,160,.12), 0 0 8px rgba(255,217,61,.06);} 50%{box-shadow:4px 4px 0 rgba(0,229,160,.16), 0 0 22px rgba(255,217,61,.22);} }
+.rig-row.mining .rg-st.on,.rig-row.mining .rc-gauge i{ animation:stPulse 1.8s ease-in-out infinite; }
+@keyframes stPulse{ 0%,100%{opacity:1;} 50%{opacity:.55;} }
+/* 数值周期微脉冲 */
+.statbox b:nth-of-type(1){ animation:valPulse 6s ease-in-out infinite; }
+@keyframes valPulse{ 0%,92%,100%{transform:scale(1);} 95%{transform:scale(1.045);} }
+@media (prefers-reduced-motion:reduce){
+  #confettiLayer i.cf,.rig-row.mining,.statbox b:nth-of-type(1){ animation:none !important; }
+}
 </style>
 </head>
 <body><div class="meme-float" aria-hidden="true"><i style="left:6%;animation-duration:22s;animation-delay:0s">🚀</i><i style="left:15%;animation-duration:30s;animation-delay:3s">💰</i><i style="left:26%;animation-duration:25s;animation-delay:6s">🌙</i><i style="left:38%;animation-duration:33s;animation-delay:1s">⛏️</i><i style="left:52%;animation-duration:27s;animation-delay:9s">🪙</i><i style="left:64%;animation-duration:31s;animation-delay:4s">✨</i><i style="left:76%;animation-duration:24s;animation-delay:7s">💎</i><i style="left:88%;animation-duration:29s;animation-delay:2s">🔥</i></div>
 <svg class="meme-mascot" viewBox="0 0 84 84" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 46c0-12 9-20 22-20s22 8 22 20v12c0 6-4 10-10 10H30c-6 0-10-4-10-10z" fill="#FFD93D" stroke="#241505" stroke-width="3"/><path d="M26 50c-3-4-6-12-4-18 2-6 8-9 13-9" stroke="#241505" stroke-width="3"/><path d="M58 50c3-4 6-12 4-18-2-6-8-9-13-9" stroke="#241505" stroke-width="3"/><circle class="eye-l" cx="32" cy="46" r="3.4" fill="#241505"/><circle class="eye-r" cx="52" cy="46" r="3.4" fill="#241505"/><path d="M38 56c2.5 2 5.5 2 8 0" stroke="#241505" stroke-width="3"/><path d="M28 36h28v4H28z" fill="#FF6BCB" stroke="#241505" stroke-width="2.5"/><rect x="34" y="18" width="16" height="12" rx="3" fill="#FF6BCB" stroke="#241505" stroke-width="2.5"/><path d="M30 24H18c-3 0-5 2-5 5s2 5 5 5h12" stroke="#241505" stroke-width="3"/><path d="M24 20l-3-5M20 21l-4-4M36 15l2-6M42 15l4-5" stroke="#FFD93D" stroke-width="2.6"/></g></svg>
+<div id="confettiLayer" aria-hidden="true"></div>
 <div class="meme-sticker s1" aria-hidden="true"></div>
 <div class="meme-sticker s2" aria-hidden="true"></div>
 
@@ -5960,7 +5981,7 @@ input[type=number]:focus,input[type=text]:focus,textarea:focus{
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn">' + t("act.asmBatch") + '</button></span>
+      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button></span>
       <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
     </div>
 
@@ -6871,7 +6892,23 @@ function fitStatNums(){
 var __lastTap = null;
 document.addEventListener("click", function(e){ __lastTap = e.target; }, true);
 document.addEventListener("touchend", function(e){ __lastTap = e.target; }, true);
+function confettiBurst(){
+  var layer=$("confettiLayer");
+  if(!layer||document.hidden)return;
+  var colors=["#FFD93D","#FF6BCB","#00E5A0","#B388FF","#FF9F45","#FFF6E9"];
+  for(var i=0;i<14;i++){
+    var s=document.createElement("i");
+    s.className="cf";
+    s.style.left=(3+Math.random()*94)+"%";
+    s.style.background=colors[i%colors.length];
+    s.style.animationDelay=(Math.random()*.3)+"s";
+    s.style.setProperty("--r",(Math.round(Math.random()*720-360))+"deg");
+    layer.appendChild(s);
+    (function(el){setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},2300);})(s);
+  }
+}
 function toast(msg, anchor){
+  try{confettiBurst();}catch(e){}
   var t = $("toast"); if (!t) return;
   t.textContent = msg;
   var el = (anchor && anchor.isConnected) ? anchor : (__lastTap && __lastTap.isConnected ? __lastTap : null);
