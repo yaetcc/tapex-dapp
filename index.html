@@ -7130,7 +7130,7 @@ function logTx(label, hash){
 function readRetry(fn, tries){
   tries = tries || 3;
   return fn().catch(function(err){
-    if (tries > 1) return new Promise(function(res){ setTimeout(res, 1200); }).then(function(){ return readRetry(fn, tries-1); });
+    if (tries > 1) return new Promise(function(res){ setTimeout(res, Math.min(1200 * (4 - tries), 5000)); }).then(function(){ return readRetry(fn, tries-1); });
     throw err;
   });
 }
@@ -7206,23 +7206,25 @@ function renderGlobal(){
     renderSpark();
     var halv = Number(r[7]); var em = Number(r[8]) / 1e18;
     var epTxt = "L" + halv + "-" + em.toLocaleString("en-US",{maximumFractionDigits:0});
-    if ($("stEpoch")._tx !== epTxt) { $("stEpoch")._tx = epTxt; $("stEpoch").textContent = epTxt; flashStat("stEpoch"); }
+    var se = $("stEpoch");
+    if (se && se._tx !== epTxt) { se._tx = epTxt; se.textContent = epTxt; flashStat("stEpoch"); }
     var ms = $("minerStatus");
+    var msState = $("msState"), msSub = $("msSub");
     if (ms) {
       var tier = Number(r[2]) >= 1000 ? "hi" : (Number(r[2]) >= 100 ? "mid" : "lo");
       ms.setAttribute("data-tier", tier);   // 算力级联色：低青 → 高金
       if (Number(r[2]) > 0n) {
         ms.classList.add("mining");
         var stTxt = t("f.mining");
-        if ($("msState").textContent !== stTxt) $("msState").textContent = stTxt;
+        if (msState && msState.textContent !== stTxt) msState.textContent = stTxt;
         var subTxt = t("ms.hash") + fmtInt(r[2]) + t("ms.halving") + halv + "/6 · " + t("ms.nextHalving") + Math.round(Number(r[9])/3600) + "h";
-        if ($("msSub").textContent !== subTxt) $("msSub").textContent = subTxt;
+        if (msSub && msSub.textContent !== subTxt) msSub.textContent = subTxt;
       } else {
         ms.classList.remove("mining");
         var stTxt2 = t("f.idle");
-        if ($("msState").textContent !== stTxt2) $("msState").textContent = stTxt2;
+        if (msState && msState.textContent !== stTxt2) msState.textContent = stTxt2;
         var subTxt2 = t("ms.sub2");
-        if ($("msSub").textContent !== subTxt2) $("msSub").textContent = subTxt2;
+        if (msSub && msSub.textContent !== subTxt2) msSub.textContent = subTxt2;
       }
     }
     fitStatNums();
@@ -8231,17 +8233,17 @@ function drawShare(name, tier){
   ctx.fillStyle = "#C9B8A8"; ctx.font = "400 13px 'JetBrains Mono',monospace";
   ctx.fillText(t("s.subtitle"), cx, 360);
 }
-$("shareDl").addEventListener("click", function(){
+var el=$("shareDl"); if (el) el.addEventListener("click", function(){
   var a = document.createElement("a");
   a.download = "tapex-share.png";
   a.href = $("shareCanvas").toDataURL("image/png");
   a.click();
 });
-$("shareCopy").addEventListener("click", function(){
+var el=$("shareCopy"); if (el) el.addEventListener("click", function(){
   if (navigator.clipboard) navigator.clipboard.writeText("【TAPE·X 出货】" + $("shareTag").textContent);
   toast(t("w.copyOk"));
 });
-$("shareClose").addEventListener("click", function(){ closePop($("shareModal")); });function doAssemble(btnEl){
+var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePop($("shareModal")); });function doAssemble(btnEl){
   if (!signer || !account) { setMsg("toMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("toMsg")) return;
   var btn = btnEl || $("assembleBtn"); busy(btn, true, t("o.asmBusy"));
@@ -8668,8 +8670,8 @@ function startSigWatch(msgId, btn){
 function stopSigWatch(){ if (__sigW) { clearTimeout(__sigW); __sigW = null; } }
 
 /* ---------- 钱包环境自检 ---------- */
-$("mkListBtn").addEventListener("click", doMarketList);
-$("mkList").addEventListener("click", function(ev){
+var el=$("mkListBtn"); if (el) el.addEventListener("click", doMarketList);
+var el=$("mkList"); if (el) el.addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("button") : null;
   if (!b) return;
   var id = Number(b.getAttribute("data-id"));
@@ -8710,7 +8712,7 @@ if (__nx) __nx.addEventListener("click", function(){
   var pages = Math.max(1, Math.ceil(rows.length / MK_PER_PAGE));
   if (mkPage < pages - 1) { mkPage++; renderMkPage(); }
 });
-$("mkMineList").addEventListener("click", function(ev){
+var el=$("mkMineList"); if (el) el.addEventListener("click", function(ev){
   var b = ev.target.closest("button"); if (!b) return;
   var li = ev.target.closest(".mk-mine-item"); if (!li) return;
   var id = Number(li.getAttribute("data-id"));
@@ -8744,11 +8746,11 @@ if (window.self !== window.top) {
 }
 
 /* ---------- 绑定 ---------- */
-$("walletBtn").addEventListener("click", function(){
+var el=$("walletBtn"); if (el) el.addEventListener("click", function(){
   if (!signer) { connect().catch(function(e){ toast(e.message.slice(0,60)); }); return; }
   toggleWalletPanel();
 });
-$("switchNet").addEventListener("click", function(){ switchNet().catch(function(e){ toast(t("w.switchFail") + (e.message||"").slice(0,60)); }); });
+var el=$("switchNet"); if (el) el.addEventListener("click", function(){ switchNet().catch(function(e){ toast(t("w.switchFail") + (e.message||"").slice(0,60)); }); });
 (function(){
   var core = $("forgeCore");
   if (!core) return;
@@ -8759,7 +8761,7 @@ $("switchNet").addEventListener("click", function(){ switchNet().catch(function(
     core.classList.remove("coreTap"); void core.offsetWidth; core.classList.add("coreTap");
   });
 })();
-$("assembleBtn").addEventListener("click", doAssemble);
+var el=$("assembleBtn"); if (el) el.addEventListener("click", doAssemble);
 (function(){
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
   var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
@@ -8782,7 +8784,7 @@ $("assembleBtn").addEventListener("click", doAssemble);
     b.classList.add("on");
   });
 })();
-$("mintAmt").addEventListener("input", function(){
+var el=$("mintAmt"); if (el) el.addEventListener("input", function(){
   var amt = BigInt($("mintAmt").value || "0");
   if (amt > 0n) {
     var s = ethers.formatEther(UNIT_PRICE * amt);
