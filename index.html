@@ -5514,12 +5514,12 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
   <div>
     <div class="card" id="mint" data-tab="mint">
       <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg>盲盒铸造：随机抽 1 件硬件</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg><span data-i18n="k.mintH">盲盒铸造：随机抽 1 件硬件</span></h3>
       <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。">花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。</p>
       <label data-i18n="抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）">抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）</label>
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
-      <div class="price-line">应付 <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
-      <div class="price-line sub">阶梯价：<b id="mintLadder">—</b> · 距下一档 <b id="mintNext">—</b> 件</div>
+      <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
+      <div class="price-line sub"><span data-i18n="k.ladder">阶梯价：</span><b id="mintLadder">—</b><span data-i18n="k.nextIn"> · 距下一档 </span><b id="mintNext">—</b><span data-i18n="k.unitPcs"> 件</span></div>
       <div class="prob" id="probBox">
         <div class="prob-title" data-i18n="抽卡概率（类型权重）">抽卡概率（类型权重）</div>
         <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
@@ -5546,7 +5546,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg>组装流片：8 类部件 → 整机 PC NFT</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="bench" id="bench"></div>
@@ -5564,7 +5564,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 
     <div class="card" data-tab="stake">
       <div class="kicker">Step 3 · Stake / Unstake</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 4v8l-7 4-7-4V7z"/><path d="M12 12l7-4M12 12v8"/></svg>质押 PC NFT 挖矿</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 4v8l-7 4-7-4V7z"/><path d="M12 12l7-4M12 12v8"/></svg><span data-i18n="k.stH">质押 PC NFT 挖矿</span></h3>
       <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。">质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。</p>
       <div class="rig" id="rig">
         <svg viewBox="0 0 220 130" fill="none" stroke="currentColor">
@@ -5576,7 +5576,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
           <rect x="116" y="92" width="52" height="8" rx="4" fill="currentColor" opacity=".35"/>
           <path d="M20 26l-8 6M200 26l8 6" stroke-width="2" opacity=".5"/>
         </svg>
-        <div class="rig-txt"><b id="rigState">待机</b><span id="rigHash">未接入算力</span></div>
+        <div class="rig-txt"><b id="rigState" data-i18n="f.idle">待机</b><span id="rigHash" data-i18n="rig.noHash">未接入算力</span></div>
       </div>
       <p class="hint" id="stakeHint" data-i18n="在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。">在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。</p>
       <div id="rigList"><div class="rig-empty" data-i18n="ph.rigEmpty">连接钱包后显示质押中的矿机</div></div>
@@ -5585,10 +5585,10 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
 
     <div class="card" id="claimCard" data-tab="stake">
       <div class="kicker">Step 4 · Claim</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>领取 XCHIP 奖励</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><span data-i18n="k.claimH">领取 XCHIP 奖励</span></h3>
       <p class="sub fold" title="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。">按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。</p>
       <div class="claim-flow" id="claimFlow"><span class="cf-chip"></span><span class="cf-tube"></span><svg class="cf-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 14h2"/></svg></div>
-      <div class="price-line">可领取 <b id="pendingAmt">—</b></div>
+      <div class="price-line"><span data-i18n="k.claimAvail">可领取 </span><b id="pendingAmt">—</b></div>
       <div class="msg" id="claimMsg"></div>
       <button class="action-btn" id="claimBtn" data-i18n="领取">领取</button>
     </div>
@@ -5619,7 +5619,7 @@ main#mainTabs::before{content:"";position:fixed;inset:0;z-index:0;pointer-events
         <li><span class="nm" data-i18n="ph.noWallet">未连接钱包</span><span class="v">—</span></li>
       </ul>
       <div class="wallet-hint" id="openNewWinWrap" style="display:none"><a id="openNewWin" href="" target="_blank" rel="noopener" style="color:var(--teal);text-decoration:underline" data-i18n="此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站">此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站</a></div>
-      <div class="wallet-hint" id="walletHint">连接钱包后可抽硬件、组装电脑、质押与领取。<b data-i18n="首次使用请先切到 X Layer 主网">首次使用请先切到 X Layer 主网</b>。</div>
+      <div class="wallet-hint" id="walletHint"><span data-i18n="w.connectPre">连接钱包后可抽硬件、组装电脑、质押与领取。</span> <b data-i18n="首次使用请先切到 X Layer 主网">首次使用请先切到 X Layer 主网</b></div>
     </div>
 
     <div class="card" id="market" data-tab="market">
@@ -5905,6 +5905,17 @@ var I18N = {
   "b.ready": {zh:"装齐 8 件即可开机组装", en:"Install all 8 to boot"},
   "b.installed": {zh:"已装", en:"Installed"},
   "b.units": {zh:"台", en:"units"},
+  "w.connectPre": {zh:"连接钱包后可抽硬件、组装电脑、质押与领取。", en:"Connect to mint, assemble, stake & claim. "},
+  "k.divdTag": {zh:"分红代币", en:"Dividend"},
+  "k.mintH": {zh:"盲盒铸造：随机抽 1 件硬件", en:"Blind box: draw 1 random part"},
+  "k.asmH": {zh:"组装流片：8 类部件 → 整机 PC NFT", en:"Assemble: 8 parts → 1 PC NFT"},
+  "k.stH": {zh:"质押 PC NFT 挖矿", en:"Stake PC NFT to mine"},
+  "k.claimH": {zh:"领取 XCHIP 奖励", en:"Claim XCHIP rewards"},
+  "k.claimAvail": {zh:"可领取 ", en:"Claimable "},
+  "k.pay": {zh:"应付 ", en:"Pay "},
+  "k.ladder": {zh:"阶梯价：", en:"Ladder: "},
+  "k.nextIn": {zh:" · 距下一档 ", en:" · next tier in "},
+  "k.unitPcs": {zh:" 件", en:" parts"},
   "b.loaded": {zh:"已装入", en:"loaded"},
   "b.has": {zh:"有 ", en:"x"},
   "b.missing": {zh:"缺件", en:"missing"},
@@ -6638,13 +6649,15 @@ function renderMine(){
   if (!signer || !account) {
     $("myAssets").innerHTML =
       '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
-      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">分红代币</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
       '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
     $("forgePicked").textContent = "—";
     $("forgeTotal").textContent = "—";
     renderPartsGrid([0,0,0,0,0,0,0,0]);
     $("myAssets").dataset.ok = ""; $("myAssets").dataset.ready = "";
+    var msN = $("msState"); if (msN) msN.textContent = t("f.idle");
+    var msS = $("msSub"); if (msS) msS.textContent = t("ms.sub2");
     return Promise.resolve();
   }
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
@@ -6776,14 +6789,14 @@ function renderMine(){
               return '<li class="pc-row" data-rig="' + p.tid + '">' + miniIcon("nft") + '<span class="nm">PC #' + p.tid + ' <span class="grade g' + (p.grade||1) + '">' + GRADE_NAMES[p.grade||1] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + p.hash + ' H</span><span class="pc-act">' + t("f.idle") + ' ›</span></li>';
             });
         var nftRow = freePcs.length
-          ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">待机 · <b style="color:var(--gold)">' + freePcs.length + '</b> 台</span></div><div class="pc-scroll"><ul>' + pcRowsHtml.join("") + '</ul></div></li>'
+          ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("f.idle") + ' · <b style="color:var(--gold)">' + freePcs.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll"><ul>' + pcRowsHtml.join("") + '</ul></div></li>'
           : (pcs.length ? '' : '<li>' + miniIcon("nft") + '<span class="nm">' + t("a.pcnft") + '</span><span class="v">' + t("a.none") + '</span></li>');
         var stRow = staked.length
-          ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">质押 · <b style="color:var(--gold)">' + staked.length + '</b> 台</span></div><div class="pc-scroll st-scroll"><ul>' + staked.map(function(x){ var pg = 1, ph = 0, p = null, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { p = pcs[j]; pg = p.grade || 1; ph = p.hash || 0; break; } var dots = "", tip = []; if (p) { for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[tv]); } } return '<li class="pc-row" data-rig="' + x + '">' + miniIcon("nft") + '<span class="nm">PC #' + x + ' <span class="grade g' + pg + '">' + GRADE_NAMES[pg] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + fmtInt(ph) + ' H</span><span class="pc-act">' + t("a.staked") + ' ›</span></li>'; }).join("") + '</ul></div></li>'
+          ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("a.staked") + ' · <b style="color:var(--gold)">' + staked.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll st-scroll"><ul>' + staked.map(function(x){ var pg = 1, ph = 0, p = null, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { p = pcs[j]; pg = p.grade || 1; ph = p.hash || 0; break; } var dots = "", tip = []; if (p) { for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[tv]); } } return '<li class="pc-row" data-rig="' + x + '">' + miniIcon("nft") + '<span class="nm">PC #' + x + ' <span class="grade g' + pg + '">' + GRADE_NAMES[pg] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + fmtInt(ph) + ' H</span><span class="pc-act">' + t("a.staked") + ' ›</span></li>'; }).join("") + '</ul></div></li>'
           : '';
         var mineHtml =
           '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
-          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">分红代币</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
           nftRow +
           stRow +
           '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
