@@ -6195,7 +6195,7 @@ body::before{ animation:none !important; }
     <div class="card" id="claimCard" data-tab="stake">
       <div class="kicker">Step 4 · Claim</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><span data-i18n="k.claimH">领取 TAPE 奖励</span></h3>
-      <p class="sub fold" title="按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。" data-i18n-title="s.foldTip">按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。</p>
+      <p class="sub fold" title="按质押算力占总算力份额动态分配，随时可领；奖励池注资后按全网算力释放。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。" data-i18n-title="s.foldTip">按质押算力占总算力份额动态分配，随时可领；奖励池注资后按全网算力释放。</p>
       <div class="claim-flow" id="claimFlow"><span class="cf-chip"></span><span class="cf-tube"></span><svg class="cf-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 14h2"/></svg></div>
       <div class="price-line"><span data-i18n="k.claimAvail">可领取 </span><b id="pendingAmt">—</b></div>
       <div class="msg" id="claimMsg"></div>
@@ -6238,7 +6238,7 @@ body::before{ animation:none !important; }
 
     <div class="card" id="market" data-tab="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
-      <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
+      <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成；买方 10% 手续费，5% 销毁 + 5% 进分红池）。卖出前需先授权市场合约。</p>
       <div class="wallet-hint mk-nowallet" id="mkNoWallet" data-i18n="m.noWallet">连接钱包后可浏览在售挂单并购买 / 挂单。</div>
       <div class="mk-stats">
         <div class="mk-stat"><b id="mkStatCount">—</b><span data-i18n="mk.onSale">在售挂单</span></div>
@@ -6460,7 +6460,7 @@ var I18N = {
   "g.t2": {zh:"B 级", en:"Grade B"},
   "g.t3": {zh:"A 级", en:"Grade A"},
   "g.t4": {zh:"S 级", en:"Grade S"},
-  "s.foldTip": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。点击展开/收起", en:"Distributed by staked hash share; 5,000 TAPE every 6h, claim anytime. Click to expand/collapse."},
+  "s.foldTip": {zh:"按质押算力占总算力份额动态分配，随时可领；奖励池注资后按全网算力释放。点击展开/收起", en:"Dynamic by hashrate share, claim anytime; releases scale with network hashrate after reward pool is funded. Click to expand/collapse."},
   "d.foldTip": {zh:"持有 TAPE 自动累积分红，按持币份额分配。点击展开/收起", en:"Holding TAPE auto-accrues dividends by share. Click to expand/collapse."},
   "m.refresh": {zh:"刷新", en:"Refresh"},
   "d.copy": {zh:"复制", en:"Copy"},
@@ -6792,7 +6792,7 @@ var I18N = {
   "Market · 交易市场": {zh:"Market · 交易市场", en:"Market · Trade"},
   "Network · 全网状态": {zh:"Network · 全网状态", en:"Network · Global Stats"},
   "PC NFT 组装完成": {zh:"PC NFT 组装完成", en:"PC NFT Assembled"},
-  "PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。": {zh:"PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。", en:"List & trade your PC NFT here (priced in TAPE, in-page, no fees). Approve the market contract first."},
+  "PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。": {zh:"PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成；买方 10% 手续费，5% 销毁 + 5% 进分红池）。卖出前需先授权市场合约。", en:"List & trade your PC NFT here (priced in TAPE, in-page; buyer pays 10% — 5% burned + 5% dividends). Approve the market contract first."},
   "S 级": {zh:"S 级", en:"S Grade"},
   "Step 1 · Mint 盲盒抽硬件": {zh:"Step 1 · Mint 盲盒抽硬件", en:"Step 1 · Mint Hardware Blind Box"},
   "Step 2 · 组装电脑": {zh:"Step 2 · 组装电脑", en:"Step 2 · Assemble PC"},
@@ -6815,7 +6815,7 @@ var I18N = {
   "抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）": {zh:"抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）", en:"Quantity (max 10,000 per op · auto-batched 500 per tx)"},
   "拥有": {zh:"拥有", en:"Owned"},
   "挂单卖出 NFT Token ID": {zh:"挂单卖出 NFT Token ID", en:"List NFT Token ID"},
-  "按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。", en:"Distributed by hashrate share; 5,000 TAPE every 6h; claim anytime."},
+  "按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。": {zh:"按质押算力占总算力份额动态分配，随时可领；奖励池注资后按全网算力释放。", en:"Distributed by hashrate share; releases scale with network hashrate after funding; claim anytime."},
   "散热器": {zh:"散热器", en:"Cooler"},
   "数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。": {zh:"数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。", en:"Data from public RPC (rpc.xlayer.tech); a few seconds lag after txs — auto-updates."},
   "机箱": {zh:"机箱", en:"Case"},
@@ -7293,7 +7293,7 @@ function renderMine(){
   if (!signer || !account) {
     $("myAssets").innerHTML =
       '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
-      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
       '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
     $("forgePicked").textContent = "—";
@@ -7438,11 +7438,11 @@ function renderMine(){
           : '';
         var mineHtml =
           '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
-          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
           nftRow +
           stRow +
           '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
-          (Number(r[13]) > 0n ? '<li>' + miniIcon("xchip") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[11]) / Number(r[13]) * 100).toFixed(1) + '%</span></li>' : '') +
+          (Number(r[13]) > 0n ? '<li>' + miniIcon("tapex") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[11]) / Number(r[13]) * 100).toFixed(1) + '%</span></li>' : '') +
           '<li>' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
         if ($("myAssets").innerHTML !== mineHtml) $("myAssets").innerHTML = mineHtml;
         $("myAssets").dataset.ok = "1";
@@ -8354,7 +8354,7 @@ function renderRigList(){
       '<div class="rs-item"><div class="rs-top">' + miniIcon("rig") + '<span>' + t("rig.total") + '</span></div><b>' + rigData.pcs.length + '</b></div>' +
       '<div class="rs-item"><div class="rs-top">' + miniIcon("rig") + '<span>' + t("rig.staked") + '</span></div><b>' + rigData.staked.length + '</b></div>' +
       '<div class="rs-item"><div class="rs-top">' + miniIcon("rig") + '<span>' + t("rig.totalHash") + '</span></div><b>' + fmtInt(rigData.totalH) + ' H</b></div>' +
-      '<div class="rs-item"><div class="rs-top">' + miniIcon("xchip") + '<span>' + t("rig.pending") + '</span></div><b>' + rigData.pending + '</b></div>' +
+      '<div class="rs-item"><div class="rs-top">' + miniIcon("tapex") + '<span>' + t("rig.pending") + '</span></div><b>' + rigData.pending + '</b></div>' +
     '</div>' +
     '</div>';
   var body = slice.length ? slice.map(function(o){
