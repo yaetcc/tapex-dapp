@@ -6095,7 +6095,7 @@ body::before{ animation:none !important; }
     <div id="walletPanel">
       <div class="wp-addr"><b class="mono" id="wpAddr">—</b><button id="wpCopy" title="复制地址" data-i18n-title="d.copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
       <div class="wp-grid">
-        <div class="wp-cell"><b id="wpXchip">—</b><span>XCHIP</span></div>
+        <div class="wp-cell"><b id="wpTape">—</b><span>TAPE</span></div>
         <div class="wp-cell"><b id="wpPcs">—</b><span data-i18n="wp.pc">PC 整机</span></div>
         <div class="wp-cell"><b id="wpParts">—</b><span data-i18n="wp.parts">部件</span></div>
         <div class="wp-cell"><b id="wpPending">—</b><span data-i18n="wp.pending">待领</span></div>
@@ -6144,7 +6144,7 @@ body::before{ animation:none !important; }
       <div class="forge" id="forge">
         <div class="forge-track">
           <div class="slot sl-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgePicked">0</b><span data-i18n="已抽">已抽</span></div>
-          <div class="core" id="forgeCore"><div class="bb" id="bbBox"><div class="bb-lid"><span>TAPEX</span></div><div class="bb-body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 11l3-6 2 5 3-7-1 8H9z"/><path d="M7 15h9"/></svg><span data-i18n="点击抽卡">点击抽卡</span></div></div><div class="bb-beam" id="bbBeam"></div></div>
+          <div class="core" id="forgeCore"><div class="bb" id="bbBox"><div class="bb-lid"><span>TAPE·X</span></div><div class="bb-body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 11l3-6 2 5 3-7-1 8H9z"/><path d="M7 15h9"/></svg><span data-i18n="点击抽卡">点击抽卡</span></div></div><div class="bb-beam" id="bbBeam"></div></div>
           <div class="slot sl-box sl-own" id="forgeOwnSlot" title="点击查看全部部件" data-i18n-title="a.ownTip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgeTotal">0</b><span data-i18n="拥有">拥有</span></div>
         </div>
         <div class="fly-parts" id="flyParts"><span class="part pn"></span><span class="part pn"></span><span class="part pl"></span><span class="part pl"></span></div>
@@ -6156,7 +6156,7 @@ body::before{ animation:none !important; }
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
-      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。</p>
+      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
@@ -6174,7 +6174,7 @@ body::before{ animation:none !important; }
     <div class="card" data-tab="stake">
       <div class="kicker">Step 3 · Stake / Unstake</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 4v8l-7 4-7-4V7z"/><path d="M12 12l7-4M12 12v8"/></svg><span data-i18n="k.stH">质押 PC NFT 挖矿</span></h3>
-      <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。">质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。</p>
+      <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。">质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。</p>
       <div class="rig" id="rig">
         <svg viewBox="0 0 220 130" fill="none" stroke="currentColor">
           <rect x="20" y="18" width="180" height="94" rx="10" stroke-width="3"/>
@@ -6194,8 +6194,8 @@ body::before{ animation:none !important; }
 
     <div class="card" id="claimCard" data-tab="stake">
       <div class="kicker">Step 4 · Claim</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><span data-i18n="k.claimH">领取 XCHIP 奖励</span></h3>
-      <p class="sub fold" title="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。" data-i18n-title="s.foldTip">按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。</p>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><span data-i18n="k.claimH">领取 TAPE 奖励</span></h3>
+      <p class="sub fold" title="按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。点击展开/收起" data-i18n="按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。" data-i18n-title="s.foldTip">按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。</p>
       <div class="claim-flow" id="claimFlow"><span class="cf-chip"></span><span class="cf-tube"></span><svg class="cf-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 14h2"/></svg></div>
       <div class="price-line"><span data-i18n="k.claimAvail">可领取 </span><b id="pendingAmt">—</b></div>
       <div class="msg" id="claimMsg"></div>
@@ -6212,8 +6212,8 @@ body::before{ animation:none !important; }
         <div class="ms-txt"><b id="msState" data-i18n="f.idle">待机</b><span id="msSub" data-i18n="ms.sub">全网算力 0 H，质押后开始产出</span></div>
       </div>
       <div class="panel-stat">
-        <div class="statbox"><b id="stXchip">—</b><span data-i18n="st.supply">XCHIP 总供应</span></div>
-        <div class="statbox"><b id="stPool">—</b><span data-i18n="st.pool">奖励池 XCHIP</span></div>
+        <div class="statbox"><b id="stTape">—</b><span data-i18n="st.supply">TAPE 总供应</span></div>
+        <div class="statbox"><b id="stPool">—</b><span data-i18n="st.pool">奖励池 TAPE</span></div>
         <div class="statbox"><b id="stMinted">—</b><span data-i18n="st.minted">已铸部件（件）</span></div>
         <div class="statbox"><b id="stCap">—</b><span data-i18n="st.cap">总可铸上限</span></div>
         <div class="statbox"><b id="stShares">—</b><span data-i18n="st.hash">全网算力 H</span></div>
@@ -6238,7 +6238,7 @@ body::before{ animation:none !important; }
 
     <div class="card" id="market" data-tab="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
-      <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
+      <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。</p>
       <div class="wallet-hint mk-nowallet" id="mkNoWallet" data-i18n="m.noWallet">连接钱包后可浏览在售挂单并购买 / 挂单。</div>
       <div class="mk-stats">
         <div class="mk-stat"><b id="mkStatCount">—</b><span data-i18n="mk.onSale">在售挂单</span></div>
@@ -6249,7 +6249,7 @@ body::before{ animation:none !important; }
         <div class="mk-form-label" data-i18n="mk.sellTitle">挂单卖出 NFT</div>
         <div class="mk-row">
           <div class="mk-field"><span class="mk-prefix">#</span><input type="number" id="mkId" min="1" placeholder="PC NFT ID"></div>
-          <div class="mk-field"><input type="number" id="mkPrice" min="0" step="0.000001" placeholder="价格"><span class="mk-suffix">OKB</span></div>
+          <div class="mk-field"><input type="number" id="mkPrice" min="0" step="0.000001" placeholder="价格"><span class="mk-suffix">TAPE</span></div>
         </div>
         <button class="action-btn" id="mkListBtn" data-i18n="act.order">挂单</button>
         <div class="msg" id="mkMsg"></div>
@@ -6283,31 +6283,31 @@ body::before{ animation:none !important; }
       <div class="mk-head"><span data-i18n="mk.mineH">我的挂单</span><button class="action-btn auto mk-cancel-all" id="mkCancelAll" data-i18n="全部撤下">全部撤下</button></div>
       <ul class="mk-list" id="mkMineList"><li class="mk-head-row mk-head-mine"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
       </div>
-      <p class="hint">合约 <code>0x83eB…CD8</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
+      <p class="hint">合约 <code>0xd9A3…722</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
     </div>
   </div>
 
     <div class="card" id="divd" data-tab="divd">
-      <div class="kicker">TAPEX · <span data-i18n="d.title">持币分红</span></div>
-      <p class="hint fold" title="持有 TAPEX 自动累积 XCHIP 分红，按持币份额分配。点击展开/收起" data-i18n="d.desc" data-i18n-title="d.foldTip">持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。</p>
+      <div class="kicker">TAPE · <span data-i18n="d.title">持币分红</span></div>
+      <p class="hint fold" title="持有 TAPE 自动累积 TAPE 分红，按持币份额分配。点击展开/收起" data-i18n="d.desc" data-i18n-title="d.foldTip">持有 TAPE 自动累积分红：矿机/市场手续费 5% 注入分红池，按持币份额分配，随时可领取；卖出/转走即停止累积。</p>
       <div class="panel-stat" id="divdStats">
-        <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
-        <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 XCHIP</span></div>
-        <div class="statbox"><b id="hdRate">1,000 / 6h</b><span data-i18n="d.rate">释放速率</span></div>
+        <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPE 持仓</span></div>
+        <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 TAPE</span></div>
+        <div class="statbox"><b id="hdRate">按持仓比例</b><span data-i18n="d.rate">分红机制</span></div>
       </div>
-      <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 XCHIP</button>
-      <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
+      <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 TAPE</button>
+      <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPE 持仓与分红，持币即自动累积。</div>
       <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">分红合约部署中，稍后开放领取。</div>
       <div class="tapex-links">
-        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPEX · 合约与购买</b></div>
+        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPE · 合约与购买</b></div>
         <div class="tl-addr">
-          <code>0xbBa154B45a5e6C606Cb41790f03c80903592Eeee</code>
+          <code>0x72F82ca6E91c6fC2dB750928252e0e2661143BBA</code>
           <button class="tl-copy" id="hdCopy" data-i18n="d.copy">复制</button>
         </div>
         <div class="tl-links">
           <a class="tl-buy" href="https://ignix.bot/launch?token=0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
           <a class="tl-buy" href="https://web3.okx.com/zh-hans/token/x-layer/0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.dex">OKX 购买</a>
-          <a href="https://www.oklink.com/xlayer/token/0xbBa154B45a5e6C606Cb41790f03c80903592Eeee" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
+          <a href="https://www.oklink.com/xlayer/token/0x72F82ca6E91c6fC2dB750928252e0e2661143BBA" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
         </div>
       </div>
     </div>
@@ -6421,13 +6421,15 @@ var CHAIN_HEX = "0xc4";
 var RPC = "https://rpc.xlayer.tech";
 var EXPLORER = "https://www.okx.com/web3/explorer/xlayer";
 var ADDRS = {
-  token: "0xefac9e6D56eAE13c7D7e071297D3B16D09aB7DE5",
-  processor: "0x7e8aBC042ceA2f5566298e159E2801b721Bb3AA0",
-  circuit: "0x20420E212E0f38EF5e29b3B3ea945F77fbC128E6",
-  mining: "0xA12D7d971E316Dc37689fCbd01Cd2f259f342018",
-  market: "0x83eBB28beB18477Fb5221Da0106425C336B61CD8",
-  tapex: "0xbBa154B45a5e6C606Cb41790f03c80903592Eeee",  // 分红代币合约已更换
-  dividend: "0xA86e125b6F824483fC16616d963481C8a346f5dF"
+  token: "0x72F82ca6E91c6fC2dB750928252e0e2661143BBA",  // TAPE
+  circuit: "0x35639B2DE9717d6169A9A05AD5777DC41BaC576d", // CircuitV6 proxy
+  mining: "0xeaE8799e3Fcf9a1B8585122a1A3bfc5293c63f1f",   // MiningV6 proxy
+  part: "0xd1D06cC1b90C6365cEFDBC116B53Ba5c78e97a1c",     // PartToken proxy
+  market: "0xd9A39E2E3916EeEE50823bDaaD19a3f988a97322",  // MarketV6 proxy
+  tapeOut: "0x8e0A06B85fFF561567c6ccDbE3d4Cf563819D3Fe", // TapeOutV6 proxy
+  feeSplit: "0x421e9dbf442d2BcbD9cDF81FdAC585d114F55007", // FeeSplitterV6 proxy
+  burn: "0x000000000000000000000000000000000000dEaD",
+  oldCircV6: "0x7106F54Af0fCC382FA77B04e6D1C7Ff32ddBf626"  // 旧 V6（迁移来源）
 };
 
 /* ---------- 多语言 ---------- */
@@ -6443,23 +6445,23 @@ var I18N = {
   "nav.net": {zh:"全网状态", en:"Network"},
   "nav.divd": {zh:"分红", en:"Dividends"},
   "d.title": {zh:"持币分红", en:"Hold-to-Earn"},
-  "d.desc": {zh:"持有 TAPEX 自动累积 XCHIP 分红：每 6 小时释放 1,000 XCHIP 按持币份额分配给全体持有者，随时可领取；卖出/转走即停止累积。", en:"Holding TAPEX auto-accrues XCHIP dividends: 1,000 XCHIP released every 6h and split by holding share; claim anytime. Sell/transfer to stop accruing."},
-  "d.hold": {zh:"TAPEX 持仓", en:"TAPEX Held"},
-  "d.claim": {zh:"可领分红 XCHIP", en:"Claimable XCHIP"},
-  "d.rate": {zh:"释放速率", en:"Emission Rate"},
-  "d.claimBtn": {zh:"领取 XCHIP", en:"Claim XCHIP"},
-  "d.noWallet": {zh:"连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPEX holdings and dividends."},
+  "d.desc": {zh:"持有 TAPE 自动累积分红：矿机/市场手续费 5% 注入分红池，按持币份额分配，随时可领取；卖出/转走即停止累积。", en:"Holding TAPE auto-accrues dividends: 5% of mining/market fees flow into the pool and split by holding share; claim anytime. Sell/transfer to stop accruing."},
+  "d.hold": {zh:"TAPE 持仓", en:"TAPE Held"},
+  "d.claim": {zh:"可领分红 TAPE", en:"Claimable TAPE"},
+  "d.rate": {zh:"分红机制", en:"Payout"},
+  "d.claimBtn": {zh:"领取 TAPE", en:"Claim TAPE"},
+  "d.noWallet": {zh:"连接钱包后可查看 TAPE 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPE holdings and dividends."},
   "d.pending": {zh:"分红合约部署中，稍后开放领取。", en:"Dividend contract deploying; claiming opens soon."},
-  "d.claimed": {zh:"XCHIP 分红已领取", en:"XCHIP dividends claimed"},
+  "d.claimed": {zh:"TAPE 分红已领取", en:"TAPE dividends claimed"},
   "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
-  "d.links": {zh:"TAPEX · 合约与购买", en:"TAPEX · Contract & Buy"},
+  "d.links": {zh:"TAPE · 合约与购买", en:"TAPE · Contract & Buy"},
   "a.ownTip": {zh:"点击查看全部部件", en:"View all owned parts"},
   "g.t1": {zh:"C 级", en:"Grade C"},
   "g.t2": {zh:"B 级", en:"Grade B"},
   "g.t3": {zh:"A 级", en:"Grade A"},
   "g.t4": {zh:"S 级", en:"Grade S"},
-  "s.foldTip": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。点击展开/收起", en:"Distributed by staked hash share; 5,000 XCHIP every 6h, claim anytime. Click to expand/collapse."},
-  "d.foldTip": {zh:"持有 TAPEX 自动累积 XCHIP 分红，按持币份额分配。点击展开/收起", en:"Holding TAPEX auto-accrues XCHIP dividends by share. Click to expand/collapse."},
+  "s.foldTip": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。点击展开/收起", en:"Distributed by staked hash share; 5,000 TAPE every 6h, claim anytime. Click to expand/collapse."},
+  "d.foldTip": {zh:"持有 TAPE 自动累积分红，按持币份额分配。点击展开/收起", en:"Holding TAPE auto-accrues dividends by share. Click to expand/collapse."},
   "m.refresh": {zh:"刷新", en:"Refresh"},
   "d.copy": {zh:"复制", en:"Copy"},
   "d.copied": {zh:"已复制合约地址", en:"Contract address copied"},
@@ -6468,8 +6470,8 @@ var I18N = {
   "d.dex": {zh:"OKX 购买", en:"Buy on OKX"},
   "nav.connect": {zh:"连接钱包", en:"Connect Wallet"},
   "nav.mainnet": {zh:"X Layer", en:"X Layer"},
-  "st.supply": {zh:"XCHIP 总供应", en:"XCHIP Supply"},
-  "st.pool": {zh:"奖励池 XCHIP", en:"Reward Pool XCHIP"},
+  "st.supply": {zh:"TAPE 总供应", en:"TAPE Supply"},
+  "st.pool": {zh:"奖励池 TAPE", en:"Reward Pool TAPE"},
   "st.minted": {zh:"已铸部件（件）", en:"Parts Minted"},
   "st.cap": {zh:"总可铸上限", en:"Mint Cap"},
   "st.hash": {zh:"全网算力 H", en:"Network Hash H"},
@@ -6541,7 +6543,7 @@ var I18N = {
   "k.mintH": {zh:"盲盒铸造：随机抽 1 件硬件", en:"Blind box: draw 1 random part"},
   "k.asmH": {zh:"组装流片：8 类部件 → 整机 PC NFT", en:"Assemble: 8 parts → 1 PC NFT"},
   "k.stH": {zh:"质押 PC NFT 挖矿", en:"Stake PC NFT to mine"},
-  "k.claimH": {zh:"领取 XCHIP 奖励", en:"Claim XCHIP rewards"},
+  "k.claimH": {zh:"领取 TAPE 奖励", en:"Claim TAPE rewards"},
   "k.claimAvail": {zh:"可领取 ", en:"Claimable "},
   "k.pay": {zh:"应付 ", en:"Pay "},
   "k.ladder": {zh:"阶梯价：", en:"Ladder: "},
@@ -6707,17 +6709,17 @@ var I18N = {
   "o.unstakeProgress": {zh:"解押 ", en:"Unstaking "},
   "o.claimBusy": {zh:"领取中…", en:"Claiming…"},
   "o.sendClaim": {zh:"发送领取交易，请在钱包中确认签名…", en:"Sending claim tx…"},
-  "o.claimOk": {zh:"领取成功！XCHIP 已到账。", en:"Claimed! XCHIP received."},
+  "o.claimOk": {zh:"领取成功！TAPE 已到账。", en:"Claimed! TAPE received."},
   "o.claimOkShort": {zh:"领取成功", en:"Claimed"},
-  "o.claimTitle": {zh:"领取 XCHIP", en:"Claim XCHIP"},
+  "o.claimTitle": {zh:"领取 TAPE", en:"Claim TAPE"},
   "mkt.listLog": {zh:"市场挂单", en:"List"},
   "mkt.listOk": {zh:"挂单成功！", en:"Listed! "},
   "mkt.listOkMid": {zh:" 以 ", en:" at "},
-  "mkt.listOkTail": {zh:" OKB 在售。", en:" OKB."},
+  "mkt.listOkTail": {zh:" TAPE 在售。", en:" TAPE."},
   "mkt.listOkShort": {zh:"挂单成功", en:"Listed"},
   "mkt.buyConfirm": {zh:"购买 Token ID ", en:"Buying Token ID "},
   "mkt.buyConfirmMid": {zh:"，支付 ", en:" — pay "},
-  "mkt.buyConfirmTail": {zh:" OKB（请确认签名）…", en:" OKB (confirm signature)…"},
+  "mkt.buyConfirmTail": {zh:" TAPE（请确认签名）…", en:" TAPE (confirm signature)…"},
   "mkt.buyLog": {zh:"市场购买", en:"Buy"},
   "mkt.buyOk": {zh:"购买成功！PC NFT #", en:"Bought! PC NFT #"},
   "mkt.buyOkTail": {zh:" 已到账，可去质押挖矿。", en:" received — stake to mine."},
@@ -6742,14 +6744,14 @@ var I18N = {
   "mkt.repriceLog": {zh:"市场改价", en:"Reprice"},
   "mkt.repriceOk": {zh:"改价成功！PC #", en:"Repriced! PC #"},
   "mkt.repriceOkMid": {zh:" 现价 ", en:" to "},
-  "mkt.repriceOkTail": {zh:" OKB。", en:" OKB."},
+  "mkt.repriceOkTail": {zh:" TAPE。", en:" TAPE."},
   "mkt.inputInvalid": {zh:"请输入正确的 NFT Token ID 和价格。", en:"Enter a valid NFT Token ID and price."},
   "mkt.checkOwn": {zh:"校验 NFT 归属与授权…", en:"Verifying NFT ownership & approval…"},
   "mkt.sendApprove": {zh:"未授权市场合约，先发送授权交易（请确认签名）…", en:"Market not approved — sending approval (confirm signature)…"},
   "mkt.notMine": {zh:" 不属于当前钱包，无法挂单。", en:" not owned by this wallet — cannot list."},
   "mkt.txSent": {zh:"挂单交易已发送，等待确认…<br><a href='", en:"Listing tx sent, waiting…<br><a href='"},
   "mkt.repriceConfirm": {zh:"改价中：PC #", en:"Repricing: PC #"},
-  "mkt.repriceConfirmTail": {zh:" OKB，请在钱包确认…", en:" OKB, confirm in wallet…"},
+  "mkt.repriceConfirmTail": {zh:" TAPE，请在钱包确认…", en:" TAPE, confirm in wallet…"},
   "w.iframeBlock": {zh:"页面嵌在框架内，钱包扩展不会注入。请点上方「在新窗口打开」后重试。", en:"Page is in an iframe — wallet extension won't inject. Open in a new window."},
   "w.noExt": {zh:"未检测到钱包扩展。请在系统 Chrome 中确认 OKX Wallet / MetaMask 已启用，且已允许访问 file:// 文件网址（chrome://extensions → 钱包扩展 → 详细信息 → 允许访问文件网址）。", en:"No wallet extension detected. Enable OKX / MetaMask in system Chrome and allow file:// access."},
   "w.requestAuth": {zh:"正在请求钱包授权… 请留意浏览器右上角的钱包扩展图标（MetaMask / OKX），在弹窗中确认连接。", en:"Requesting wallet authorization — confirm in the extension popup (MetaMask / OKX)."},
@@ -6790,7 +6792,7 @@ var I18N = {
   "Market · 交易市场": {zh:"Market · 交易市场", en:"Market · Trade"},
   "Network · 全网状态": {zh:"Network · 全网状态", en:"Network · Global Stats"},
   "PC NFT 组装完成": {zh:"PC NFT 组装完成", en:"PC NFT Assembled"},
-  "PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。": {zh:"PC 整机 NFT 可在此直接挂单买卖（OKB 计价，网页内完成，无手续费）。卖出前需先授权市场合约。", en:"List & trade your PC NFT here (priced in OKB, in-page, no fees). Approve the market contract first."},
+  "PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。": {zh:"PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。", en:"List & trade your PC NFT here (priced in TAPE, in-page, no fees). Approve the market contract first."},
   "S 级": {zh:"S 级", en:"S Grade"},
   "Step 1 · Mint 盲盒抽硬件": {zh:"Step 1 · Mint 盲盒抽硬件", en:"Step 1 · Mint Hardware Blind Box"},
   "Step 2 · 组装电脑": {zh:"Step 2 · 组装电脑", en:"Step 2 · Assemble PC"},
@@ -6813,7 +6815,7 @@ var I18N = {
   "抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）": {zh:"抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）", en:"Quantity (max 10,000 per op · auto-batched 500 per tx)"},
   "拥有": {zh:"拥有", en:"Owned"},
   "挂单卖出 NFT Token ID": {zh:"挂单卖出 NFT Token ID", en:"List NFT Token ID"},
-  "按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 XCHIP，随时可领。", en:"Distributed by hashrate share; 5,000 XCHIP every 6h; claim anytime."},
+  "按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。": {zh:"按质押算力占总算力份额分配，每 6 小时释放 5,000 TAPE，随时可领。", en:"Distributed by hashrate share; 5,000 TAPE every 6h; claim anytime."},
   "散热器": {zh:"散热器", en:"Cooler"},
   "数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。": {zh:"数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。", en:"Data from public RPC (rpc.xlayer.tech); a few seconds lag after txs — auto-updates."},
   "机箱": {zh:"机箱", en:"Case"},
@@ -6825,8 +6827,8 @@ var I18N = {
   "算力 ↓": {zh:"算力 ↓", en:"Hash ↓"},
   "组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。": {zh:"组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。", en:"No signature or fee — parts only. Need 1 of each type; GPU is rarest, draw more."},
   "花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。", en:"Spend OKB for random parts (8 types × 3 tiers). Type first (GPU rarest), then tier."},
-  "质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 XCHIP；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn XCHIP by hashrate share; NFT held by the Mining contract, unstake anytime."},
-  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧），算力 = 部件档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first); hash = sum of tiers. No signature needed."},
+  "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
+  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first); hash = sum of tiers. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
 };
@@ -6857,77 +6859,66 @@ var ABI_TOKEN = [
   "function approve(address,uint256) returns (bool)",
   "function balanceOf(address) view returns (uint256)",
   "function decimals() view returns (uint8)",
-  "function migrateTokens(address)",
   "function symbol() view returns (string)",
-  "function totalCap() view returns (uint256)",
   "function totalSupply() view returns (uint256)",
   "function transfer(address,uint256) returns (bool)"
 ];
-var ABI_PROC = [
+var ABI_PART = [
   "function balanceOf(address,uint256) view returns (uint256)",
-  "function balanceOfType(address,uint8) view returns (uint256)",
-  "function baseHash(uint256) view returns (uint256)",
-  "function config() view returns (uint256 price, uint256 perAddr_, uint256 perTx_, uint256[8] tw, uint256[3] tW, uint256[8] bh, uint256[3] tm, uint256 cap_, uint256 minted_)",
-  "function currentPrice() view returns (uint256)",
+  "function balanceOf(address) view returns (uint256)",
+  "function mint(address,uint256,uint256)",
+  "function mintBatch(address,uint256[],uint256[])",
   "function isApprovedForAll(address,address) view returns (bool)",
-  "function mint(uint256) payable",
-  "function mintCount() view returns (uint256)",
-  "function mintWithXchip(uint256)",
-  "function nextPriceStep() view returns (uint256)",
-  "function setApprovalForAll(address,bool)",
-  "function tierMultiplier(uint256) view returns (uint256)",
-  "function tierWeights(uint256) view returns (uint256)",
-  "function tokenIdOf(uint8,uint8) view returns (uint256)",
-  "function typeNames(uint256) view returns (string)",
-  "function typeWeights(uint256) view returns (uint256)"
+  "function setApprovalForAll(address,bool)"
 ];
 var ABI_CIRCUIT = [
   "function approve(address,uint256)",
   "function assemble() returns (uint256)",
+  "function batchAssemble(uint256) returns (uint256)",
   "function balanceOf(address) view returns (uint256)",
   "function getApproved(uint256) view returns (address)",
-  "function getCircuit(uint256) view returns (tuple(uint256 tokenId,bytes32 seed,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 assembledAt))",
+  "function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))",
+  "function getCircuits(uint256[]) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt)[])",
   "function isApprovedForAll(address,address) view returns (bool)",
   "function lastTokenId() view returns (uint256)",
+  "function mintFee() view returns (uint256)",
+  "function assembleFee() view returns (uint256)",
+  "function mint(uint256) payable",
   "function ownerOf(uint256) view returns (address)",
-  "function setApprovalForAll(address,bool)"
+  "function setApprovalForAll(address,bool)",
+  "function symbol() view returns (string)"
 ];
 var ABI_MINING = [
-  "function claim()",
-  "function currentEmission() view returns (uint256)",
-  "function currentHalvingLayer() view returns (uint256)",
-  "function earned(address) view returns (uint256)",
-  "function emissionPerEpoch() view returns (uint256)",
-  "function epochDuration() view returns (uint256)",
-  "function halvingEpochs() view returns (uint256)",
-  "function secondsToNextHalving() view returns (uint256)",
+  "function claim(uint256[]) returns (uint256)",
   "function stake(uint256)",
-  "function stakes(uint256) view returns (address owner,uint256 amount,uint256 share)",
-  "function totalShares() view returns (uint256)",
+  "function batchStake(uint256[])",
   "function unstake(uint256)",
-  "function userShares(address) view returns (uint256)"
+  "function batchUnstake(uint256[])",
+  "function stakes(uint256) view returns (address owner,uint256 stakedAt,uint256 share,bool active)",
+  "function earned(uint256) view returns (uint256)",
+  "function userEarned(address) view returns (uint256)",
+  "function userShares(address) view returns (uint256)",
+  "function stakedPCsOf(address) view returns (uint256[])",
+  "function totalShares() view returns (uint256)"
 ];
 var ABI_MARKET = [
-  "function list(uint256,uint256)",
-  "function cancel(uint256)",
-  "function buy(uint256)",
-  "function listingCount() view returns (uint256)",
-  "function listingIds(uint256) view returns (uint256)",
-  "function listings(uint256) view returns (tuple(uint256 tokenId,address seller,uint256 price,uint256 listedAt,bool active))"
+  "function listPC(uint256,uint256)",
+  "function delistPC(uint256[])",
+  "function buyPC(uint256)",
+  "function listPart(uint256,uint256,uint256)",
+  "function delistPart(uint256[])",
+  "function buyPart(uint256,uint256)",
+  "function pcOrderCount() view returns (uint256)",
+  "function pcOrders(uint256) view returns (address seller,uint256 price,uint256 tokenId,bool active)",
+  "function activePCOrders() view returns (tuple(address seller,uint256 price,uint256 tokenId,bool active)[])",
+  "function partOrders(uint256) view returns (address seller,uint256 price,uint256 amount,uint8 partType,bool active)",
+  "function activePartOrders() view returns (tuple(address seller,uint256 price,uint256 amount,uint8 partType,bool active)[])"
 ];
-var ABI_DIVD = [
-  "function claim()",
-  "function claimable(address) view returns (uint256)",
-  "function earned(address) view returns (uint256)",
-  "function emissionPerEpoch() view returns (uint256)",
-  "function epochDuration() view returns (uint256)",
-  "function excluded(address) view returns (bool)",
-  "function rewardRate() view returns (uint256)",
-  "function rewardPerTokenStored() view returns (uint256)",
-  "function supplyBase() view returns (uint256)",
-  "function sync()",
-  "function tapex() view returns (address)",
-  "function xchip() view returns (address)"
+var ABI_FS = [
+  "function claim() returns (uint256)",
+  "function pending(address) view returns (uint256)",
+  "function deposit(uint256)",
+  "function totalDeposited() view returns (uint256)"
 ];
 
 var $ = function(id){ return document.getElementById(id); };
@@ -7065,7 +7056,7 @@ function setNum(id, v, fmt, fullFmt){
 function shortAddr(a){ return a.slice(0,6)+"…"+a.slice(-4); }
 /* 数字防溢出：卡片放不下时逐级缩小字号（保证长数字不被截断） */
 function fitStatNums(){
-  ["stXchip","stPool","stMinted","stCap","stShares","stEpoch"].forEach(function(id){
+  ["stTape","stPool","stMinted","stCap","stShares","stEpoch"].forEach(function(id){
     var el = $(id); if (!el) return;
     var g = el.parentElement; if (!g) return;
     var fs = parseFloat(getComputedStyle(el).fontSize) || 16;
@@ -7174,40 +7165,35 @@ function humanErr(e){
 var __gr = 0;
 function renderGlobal(){
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
-  var proc  = new ethers.Contract(ADDRS.processor, ABI_PROC, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
+  var mk    = new ethers.Contract(ADDRS.market, ABI_MARKET, pubProvider);
+  var fs    = new ethers.Contract(ADDRS.feeSplit, ABI_FS, pubProvider);
   return Promise.all([
     readRetry(function(){ return token.totalSupply(); }),
     readRetry(function(){ return token.balanceOf(ADDRS.mining); }),
     readRetry(function(){ return mine.totalShares(); }),
-    readRetry(function(){ return mine.epochDuration(); }),
-    readRetry(function(){ return mine.emissionPerEpoch(); }),
-    readRetry(function(){ return proc.config(); }),
-    readRetry(function(){ return mine.halvingEpochs(); }),
-    readRetry(function(){ return mine.currentHalvingLayer(); }),
-    readRetry(function(){ return mine.currentEmission(); }),
-    readRetry(function(){ return mine.secondsToNextHalving(); }),
-    readRetry(function(){ return proc.currentPrice(); }),
-    readRetry(function(){ return proc.nextPriceStep(); })
+    readRetry(function(){ return circ.lastTokenId(); }),
+    readRetry(function(){ return mk.pcOrderCount(); }),
+    readRetry(function(){ return fs.totalDeposited(); }),
+    readRetry(function(){ return circ.mintFee(); }),
+    readRetry(function(){ return circ.assembleFee(); })
   ]).then(function(r){
-    var cfg = r[5];
-    if (setNum("stXchip", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stXchip");
+    if (setNum("stTape", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stTape");
     if (setNum("stPool", r[1], fmtWeiUnit, fmtWei)) flashStat("stPool");
-    if (setNum("stMinted", cfg.minted_, fmtNumUnit, fmtInt)) flashStat("stMinted");
-    if (setNum("stCap", cfg.cap_, fmtNumUnit, fmtInt)) flashStat("stCap");
+    if (setNum("stMinted", r[3], fmtNumUnit, fmtInt)) flashStat("stMinted");
+    if (setNum("stCap", 21000000000000000000000000n, fmtNumUnit, fmtInt)) flashStat("stCap");
     if (setNum("stShares", r[2], fmtNumUnit, fmtInt)) flashStat("stShares");
     if (typeof HIST==="undefined"){window.HIST={hash:[],price:[],mint:[]};}
-    var _hv=Number(r[2]), _pv=Number(r[10])/1e18, _mv=Number(cfg.minted_);
+    var _hv=Number(r[2]), _pv=Number(r[6])/1e18, _mv=Number(r[3]);
     if(isFinite(_hv))HIST.hash.push(_hv);
     if(isFinite(_pv))HIST.price.push(_pv);
     if(isFinite(_mv))HIST.mint.push(_mv);
     if(HIST.hash.length>8){HIST.hash.shift();HIST.price.shift();HIST.mint.shift();}
     renderSpark();
-    var halv = Number(r[7]); var em = Number(r[8]) / 1e18;
-    var epTxt = "L" + halv + "-" + em.toLocaleString("en-US",{maximumFractionDigits:0});
+    var poolTxt = "池:" + fmtWei(r[5]);
     var se = $("stEpoch");
-    if (se && se._tx !== epTxt) { se._tx = epTxt; se.textContent = epTxt; flashStat("stEpoch"); }
+    if (se && se._tx !== poolTxt) { se._tx = poolTxt; se.textContent = poolTxt; flashStat("stEpoch"); }
     var ms = $("minerStatus");
     var msState = $("msState"), msSub = $("msSub");
     if (ms) {
@@ -7217,7 +7203,7 @@ function renderGlobal(){
         ms.classList.add("mining");
         var stTxt = t("f.mining");
         if (msState && msState.textContent !== stTxt) msState.textContent = stTxt;
-        var subTxt = t("ms.hash") + fmtInt(r[2]) + t("ms.halving") + halv + "/6 · " + t("ms.nextHalving") + Math.round(Number(r[9])/3600) + "h";
+        var subTxt = t("ms.hash") + fmtInt(r[2]) + " · PC " + fmtInt(r[3]);
         if (msSub && msSub.textContent !== subTxt) msSub.textContent = subTxt;
       } else {
         ms.classList.remove("mining");
@@ -7228,13 +7214,13 @@ function renderGlobal(){
       }
     }
     fitStatNums();
-    UNIT_PRICE = cfg.price;
+    UNIT_PRICE = r[6];                       // V6 固定抽卡费 0.001 OKB/件
     var okbP = Number(UNIT_PRICE)/1e18;
     $("mintPrice").textContent = okbP.toFixed(4) + (LANG === "en" ? " OKB / pc" : " OKB / 件");
     $("mintLadder").textContent = okbP.toFixed(4) + " OKB";
-    $("mintNext").textContent = fmtInt(r[11]);
+    $("mintNext").textContent = fmtInt(r[4]);   // 市场挂单数
     $("mintNote").textContent = "";
-    return cfg;
+    return r;
   }).catch(function(e){
     __gr++;
     if (__gr < 3 && RPCS.length > 1) { rpcFail(); return renderGlobal(); }
@@ -7254,10 +7240,10 @@ function refreshNames(){
 }
 refreshNames();
 var __mr = 0;
-/* ---------- TAPEX 持币分红 ---------- */
+/* ---------- TAPE 持币分红 ---------- */
 function renderDividend(){
   var pending = $("hdPending"), noWallet = $("hdNoWallet"), btn = $("hdClaimBtn");
-  if (!ADDRS.dividend) {
+  if (!ADDRS.feeSplit) {
     if (pending) pending.style.display = "";
     if (noWallet) noWallet.style.display = "none";
     if (btn) { btn.disabled = true; btn.textContent = t("d.claimBtn"); }
@@ -7270,18 +7256,15 @@ function renderDividend(){
     return Promise.resolve();
   }
   if (noWallet) noWallet.style.display = "none";
-  var divd = new ethers.Contract(ADDRS.dividend, ABI_DIVD, pubProvider);
-  var tapex = new ethers.Contract(ADDRS.tapex, ["function balanceOf(address) view returns (uint256)"], pubProvider);
+  var fs = new ethers.Contract(ADDRS.feeSplit, ABI_FS, pubProvider);
+  var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
   return Promise.all([
-    readRetry(function(){ return tapex.balanceOf(account); }),
-    readRetry(function(){ return divd.claimable(account); }),
-    readRetry(function(){ return divd.epochDuration(); }),
-    readRetry(function(){ return divd.emissionPerEpoch(); })
+    readRetry(function(){ return token.balanceOf(account); }),
+    readRetry(function(){ return fs.pending(account); })
   ]).then(function(r){
     $("hdTapex").textContent = fmtWei(r[0]);
     $("hdClaimable").textContent = fmtWei(r[1]);
-    var hrs = Number(r[2]) / 3600;
-    $("hdRate").textContent = fmtWei(r[3]) + " / " + (hrs >= 1 ? hrs + "h" : Number(r[2]) + "s");
+    $("hdRate").textContent = fmtWei(0n) + " / —";   // V6 分红线性按持仓，无固定速率
     var can = BigInt(r[1]) > 0n;
     var btn2 = $("hdClaimBtn");
     if (btn2) { btn2.disabled = !can; btn2.textContent = t("d.claimBtn"); btn2.dataset.ready = "1"; }
@@ -7290,11 +7273,11 @@ function renderDividend(){
 }
 function claimDividend(){
   if (!signer || !account) { toast(t("t.connectFirst")); return; }
-  if (!ADDRS.dividend) { toast(t("d.pending")); return; }
+  if (!ADDRS.feeSplit) { toast(t("d.pending")); return; }
   var btn = $("hdClaimBtn");
   if (btn && btn.disabled) return;
   if (btn) { btn.disabled = true; btn.textContent = t("a.loading"); }
-  var divd = new ethers.Contract(ADDRS.dividend, ABI_DIVD, signer);
+  var divd = new ethers.Contract(ADDRS.feeSplit, ABI_FS, signer);
   divd.claim().then(function(tx){
     if (btn) btn.textContent = t("mint.busy");
     return tx.wait();
@@ -7309,8 +7292,8 @@ function claimDividend(){
 function renderMine(){
   if (!signer || !account) {
     $("myAssets").innerHTML =
-      '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
-      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
       '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
     $("forgePicked").textContent = "—";
@@ -7322,8 +7305,7 @@ function renderMine(){
     return Promise.resolve();
   }
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
-  var tapex = new ethers.Contract(ADDRS.tapex, ["function balanceOf(address) view returns (uint256)"], pubProvider);
-  var proc  = new ethers.Contract(ADDRS.processor, ABI_PROC, pubProvider);
+  var part  = new ethers.Contract(ADDRS.part, ABI_PART, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
   var mineCard = $("mine");
@@ -7333,21 +7315,20 @@ function renderMine(){
   $("myAssets").dataset.ready = "1";
   return Promise.all([
     readRetry(function(){ return token.balanceOf(account); }),
-    readRetry(function(){ return proc.balanceOfType(account, 1); }),
-    readRetry(function(){ return proc.balanceOfType(account, 2); }),
-    readRetry(function(){ return proc.balanceOfType(account, 3); }),
-    readRetry(function(){ return proc.balanceOfType(account, 4); }),
-    readRetry(function(){ return proc.balanceOfType(account, 5); }),
-    readRetry(function(){ return proc.balanceOfType(account, 6); }),
-    readRetry(function(){ return proc.balanceOfType(account, 7); }),
-    readRetry(function(){ return proc.balanceOfType(account, 8); }),
+    readRetry(function(){ return part.balanceOf(account, 1); }),
+    readRetry(function(){ return part.balanceOf(account, 2); }),
+    readRetry(function(){ return part.balanceOf(account, 3); }),
+    readRetry(function(){ return part.balanceOf(account, 4); }),
+    readRetry(function(){ return part.balanceOf(account, 5); }),
+    readRetry(function(){ return part.balanceOf(account, 6); }),
+    readRetry(function(){ return part.balanceOf(account, 7); }),
+    readRetry(function(){ return part.balanceOf(account, 8); }),
     readRetry(function(){ return circ.balanceOf(account); }),
-    readRetry(function(){ return mine.earned(account); }),
+    readRetry(function(){ return mine.userEarned(account); }),
     readRetry(function(){ return mine.userShares(account); }),
     readRetry(function(){ return circ.lastTokenId(); }),
     readRetry(function(){ return mine.totalShares(); }),
-    readRetry(function(){ return proc.mintCount(); }),
-    readRetry(function(){ return tapex.balanceOf(account); })
+    readRetry(function(){ return token.balanceOf(account); })
   ]).then(function(r){
     var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
@@ -7440,7 +7421,7 @@ function renderMine(){
         var allIds = myNfts.slice();
         staked.forEach(function(t){ if (allIds.indexOf(t) === -1) allIds.push(t); });
         var pcQ = allIds.map(function(tid){
-          return readRetry(function(){ return circ.getCircuit(tid); }, 2).then(function(g){ return { tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
+          return readRetry(function(){ return circ.getCircuitInfo(tid); }, 2).then(function(g){ return { tid: tid, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) }; });
         });
         return Promise.all(pcQ).then(function(pcs){
         var freePcs = pcs.filter(function(p){ return staked.indexOf(p.tid) === -1; });
@@ -7456,8 +7437,8 @@ function renderMine(){
           ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("a.staked") + ' · <b style="color:var(--gold)">' + staked.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll st-scroll"><ul>' + staked.map(function(x){ var pg = 1, ph = 0, p = null, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { p = pcs[j]; pg = p.grade || 1; ph = p.hash || 0; break; } var dots = "", tip = []; if (p) { for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[tv]); } } return '<li class="pc-row" data-rig="' + x + '">' + miniIcon("nft") + '<span class="nm">PC #' + x + ' <span class="grade g' + pg + '">' + GRADE_NAMES[pg] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + fmtInt(ph) + ' H</span><span class="pc-act">' + t("a.staked") + ' ›</span></li>'; }).join("") + '</ul></div></li>'
           : '';
         var mineHtml =
-          '<li class="tk-li" data-copy="tapex" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPEX <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
-          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">XCHIP <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("xchip") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
           nftRow +
           stRow +
           '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
@@ -7468,7 +7449,7 @@ function renderMine(){
         __mineFailCount = 0;
         window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
-        $("pendingAmt").textContent = fmtWei(r[10]) + " XCHIP";
+        $("pendingAmt").textContent = fmtWei(r[10]) + " TAPE";
         $("forgePicked").textContent = fmtInt(BigInt(r[14]));
         $("forgeTotal").textContent = fmtInt(BigInt(total));
         var hint = $("stakeHint");
@@ -7478,7 +7459,7 @@ function renderMine(){
         rigData.staked = staked.slice();
         rigData.pcs = pcs.slice();
         rigData.totalH = Number(r[11]) || 0;
-        rigData.pending = fmtWei(r[10]) + " XCHIP";
+        rigData.pending = fmtWei(r[10]) + " TAPE";
         renderRigList();
         if (Number(r[11]) > 0) rigOn(fmtInt(r[11])); else rigOff();
         return r;
@@ -7737,37 +7718,35 @@ function renderMarket(){
     return Promise.resolve();
   }
   marketDirty = false;
-  return readRetry(function(){ return mk.listingCount(); }, 2).then(function(cnt){
-    var n = Number(cnt);
-    var ids = [];
-    for (var i = 0; i < n; i++) ids.push(readRetry(function(idx){ return mk.listingIds(idx); }.bind(null, i), 2));
-    return Promise.all(ids).then(function(tids){
-      tids = tids.filter(function(v, i, a){ return a.indexOf(v) === i; });   // 去重（防重复枚举）
-      return Promise.all(tids.map(function(tid){
-        return readRetry(function(){ return mk.listings(tid); }, 2).then(function(l){ return { l: l, tid: tid }; });
-      })).then(function(rows){
-        var active = rows.filter(function(r){ return r.l.active; });
-        if (!active.length) {
-          window.__mkActive = [];
-          window.__mkLoadedAt = Date.now();
-          var upEl0 = $("mkUpdated"); if (upEl0) upEl0.textContent = mkUpdText();
-          list.innerHTML = mkHeadOf(list) + '<li class="mk-empty" data-i18n="m.empty">' + t("m.empty") + '</li>' + mkEmptyCta();
-          return;
-        }
-        var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
-        var PART_ABBR = ["CPU","MB","GPU","RAM","SSD","PSU","FAN","CASE"];
-        var TIER_NAME = ["标准","Pro","旗舰"];
-        return Promise.all(active.map(function(r){
-          return readRetry(function(){ return circ.getCircuit(r.tid); }, 2).then(function(g){
-            return { r: r, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) };
-          });
-        })).then(function(rows2){
+  return readRetry(function(){ return mk.activePCOrders(); }, 2).then(function(orders){
+    var seen = {}, uniq = [];
+    for (var i = 0; i < orders.length; i++) {
+      var o = orders[i];
+      if (!o.active) continue;
+      var tid = Number(o.tokenId);
+      if (seen[tid]) continue;                       // 同 tokenId 去重（保留首条）
+      seen[tid] = 1;
+      uniq.push({ r: { orderId: i + 1, l: o, tid: tid }, tid: tid });
+    }
+    if (!uniq.length) {
+      window.__mkActive = [];
+      window.__mkLoadedAt = Date.now();
+      var upEl0 = $("mkUpdated"); if (upEl0) upEl0.textContent = mkUpdText();
+      list.innerHTML = mkHeadOf(list) + '<li class="mk-empty" data-i18n="m.empty">' + t("m.empty") + '</li>' + mkEmptyCta();
+      return;
+    }
+    var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
+    return Promise.all(uniq.map(function(rd){
+      return readRetry(function(){ return circ.getCircuitInfo(rd.tid); }, 2).then(function(g){
+        return { r: rd.r, tiers: g.tiers, hash: Number(g.hashRate), grade: Number(g.grade) };
+      });
+    })).then(function(rows2){
           var floor = Math.min.apply(null, rows2.map(function(rd){ return Number(rd.r.l.price); }))/1e18;
-          $("mkFloor").textContent = t("m.floor") + fmtOkbN(floor) + " OKB";
+          $("mkFloor").textContent = t("m.floor") + fmtOkbN(floor) + " TAPE";
           $("mkFloor").title = t("m.floorTip") + rows2.length + t("m.floorTipTail");
           var stC = $("mkStatCount"), stF = $("mkStatFloor");
           if (stC) stC.textContent = rows2.length;
-          if (stF) { stF.textContent = fmtOkbN(floor) + " OKB"; stF.title = t("m.floorTip") + rows2.length + t("m.floorTipTail"); }
+          if (stF) { stF.textContent = fmtOkbN(floor) + " TAPE"; stF.title = t("m.floorTip") + rows2.length + t("m.floorTipTail"); }
           var upEl = $("mkUpdated");
           if (upEl) upEl.textContent = mkUpdText();
           window.__mkActive = rows2;
@@ -7783,16 +7762,14 @@ function renderMarket(){
             if (stM) stM.textContent = (account && mineRows.length) ? mineRows.length : "0";
             if (!mineRows.length) ml.innerHTML = mkHeadOf(ml) + '<li class="mk-empty">' + t("m.mineEmpty") + '</li>';
             else ml.innerHTML = mkHeadOf(ml) + mineRows.map(function(rd){
-              return '<li class="mk-mine-item" data-id="' + rd.r.tid + '">' +
+              return '<li class="mk-mine-item" data-id="' + rd.r.orderId + '">' +
                 '<span class="mk-tid">#' + rd.r.tid + '</span>' +
-                '<span class="mk-price">' + fmtOkbN(Number(rd.r.l.price) / 1e18) + ' OKB</span>' +
+                '<span class="mk-price">' + fmtOkbN(Number(rd.r.l.price) / 1e18) + ' TAPE</span>' +
                 '<span class="mk-state" data-i18n="m.stateOn">' + t("m.stateOn") + '</span>' +
                 '<span class="mk-actions"><button class="action-btn sec mk-reprice">' + t("act.reprice") + '</button><button class="action-btn auto mk-cancel">' + t("act.cancel") + '</button></span></li>';
             }).join("");
           }
         });
-      });
-    });
   }).catch(function(e){
     if (window.__mkr && window.__mkr < 3 && RPCS.length > 1) { window.__mkr++; rpcFail(); return renderMarket(); }
     window.__mkr = 0;
@@ -7844,10 +7821,10 @@ function renderMkPage(){
       '<span class="mk-tid">#' + r.tid + '</span>' +
       '<span class="mk-tier">' + dotsHtml + '<span class="mk-hash">' + rd.hash + ' H</span>' +
       '<span class="grade-tag g' + gr + '">' + (GRADE_NAMES[gr] || t("g.c")) + '</span></span>' +
-      '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + fmtOkbN(Number(r.l.price)/1e18) + ' OKB</span>' +
+      '<span class="mk-price' + (isFloor ? " floor" : "") + '">' + fmtOkbN(Number(r.l.price)/1e18) + ' TAPE</span>' +
       '<span class="mk-seller" title="' + r.l.seller + '">' + shortAddr(r.l.seller) + '</span>' +
-      '<button class="action-btn sec mk-buy' + (signer && account ? "" : " need-wallet") + '" data-id="' + r.tid + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
-      '<button class="action-btn auto mk-cancel" data-id="' + r.tid + '"' + (mine ? '' : ' style="display:none"') + '>' + t("act.cancel") + '</button>';
+      '<button class="action-btn sec mk-buy' + (signer && account ? "" : " need-wallet") + '" data-id="' + rd.r.orderId + '" data-price="' + r.l.price + '"' + (mine ? ' style="display:none"' : '') + '>' + t("act.buy") + '</button>' +
+      '<button class="action-btn auto mk-cancel" data-id="' + rd.r.orderId + '"' + (mine ? '' : ' style="display:none"') + '>' + t("act.cancel") + '</button>';
     list.appendChild(li);
   });
 }
@@ -7872,7 +7849,7 @@ function doMarketList(){
       setMsg("mkMsg","info", t("mkt.sendApprove"));
       chain = chain.then(function(){ return circ.approve(ADDRS.market, id, { gasLimit: 150000 }); }).then(function(tx){ return tx.wait(); });
     }
-    return chain.then(function(){ return mk.list(id, price, { gasLimit: 300000 }); });
+    return chain.then(function(){ return mk.listPC(id, price, { gasLimit: 300000 }); });
   }).then(function(tx){
     setMsg("mkMsg","info", t("mkt.txSent") + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
@@ -7895,8 +7872,16 @@ function doMarketBuy(id, priceWei, btn){
   if (!signer || !account) { toast(t("t.connectFirst")); return; }
   if (!ensureNetMsg("mkMsg")) return;
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
-  setMsg("mkMsg","info", t("mkt.buyConfirm") + id + t("mkt.buyConfirmMid") + Number(priceWei)/1e18 + t("mkt.buyConfirmTail"));
-  mk.buy(id, { value: priceWei, gasLimit: 250000 }).then(function(tx){
+  var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
+  setMsg("mkMsg","info", t("mkt.buyConfirm") + id + t("mkt.buyConfirmMid") + Number(priceWei)/1e18 + " TAPE" + t("mkt.buyConfirmTail"));
+  token.allowance(account, ADDRS.market).then(function(al){
+    var chain = Promise.resolve();
+    if (al < priceWei) {
+      setMsg("mkMsg","info","TAPE 授权确认（市场购买需先授权）…");
+      chain = chain.then(function(){ return token.approve(ADDRS.market, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }); }).then(function(tx){ return tx.wait(); });
+    }
+    return chain.then(function(){ return mk.buyPC(id, { gasLimit: 250000 }); });
+  }).then(function(tx){
     setMsg("mkMsg","info","购买交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
   }).then(function(receipt){
@@ -7917,7 +7902,7 @@ function doMarketCancel(id, btn){
   if (!ensureNetMsg("mkMsg")) return;
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
   setMsg("mkMsg","info", t("mkt.cancelConfirm") + id + t("mkt.cancelConfirmTail"));
-  mk.cancel(id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); }).then(function(receipt){
+  mk.delistPC([id], { gasLimit: 150000 }).then(function(tx){ return tx.wait(); }).then(function(receipt){
     logTx(t("mkt.cancelLog"), receipt.hash);
     setMsg("mkMsg","ok", t("mkt.cancelOk"));
     toast(t("mkt.cancelOkShort"));
@@ -8121,7 +8106,8 @@ function doMint(){
   setMsg("mintMsg","info", t("mint.sending"));
   var mintDone = false;
   var sigTimer = null;
-  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+  var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
+  var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
   var resetSig = function(){
     clearTimeout(sigTimer);
@@ -8133,11 +8119,12 @@ function doMint(){
   };
   var shot = {};
   var shotP = SHARE_IDS.map(function(id){
-    return readRetry(function(){ return proc.balanceOf(account, id); }, 2).then(function(b){ shot[id] = Number(b); });
+    return readRetry(function(){ return part.balanceOf(account, id); }, 2).then(function(b){ shot[id] = Number(b); });
   });
   return Promise.all(shotP).then(function(){
-    return readRetry(function(){ return proc.config(); }).then(function(cfg){
-    var perTx = 500n;   // 前端分批上限（gas 安全；链上 perTx=10000）
+    var cfg = { price: 1000000000000000n };   // V6 固定抽卡费 0.001 OKB/件
+    return Promise.resolve(cfg).then(function(cfg){
+    var perTx = 500n;   // 前端分批上限（gas 安全；链上 mint 单次最多 10000）
     var batches = [];
     var left = amtBN;
     while (left > 0n) { var b = left > perTx ? perTx : left; batches.push(b); left -= b; }
@@ -8151,7 +8138,7 @@ function doMint(){
       var b = batches[i]; i++;
       resetSig();
       setMsg("mintMsg","info", t("mint.batch") + i + "/" + batches.length + t("mint.batchMid") + b + t("mint.batchMid2"));
-      var txP = Promise.resolve(proc.mint(b, { value: unitPrice * b, gasLimit: 4000000 }));
+      var txP = Promise.resolve(circ.mint(b, { value: unitPrice * b, gasLimit: 4000000 }));
       return txP.then(function(tx){
         setMsg("mintMsg","info","批次 " + i + "/" + batches.length + " 已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
         return tx.wait().then(function(receipt){ logTx(t("mint.batchLog"), receipt.hash); if (batches.length > 1) bbPulse(); Q.ok(i, "批次 " + i + "/" + batches.length + " 完成"); return run(); });
@@ -8175,7 +8162,7 @@ function doMint(){
     $("mintAmt").value = "";
     refresh();
     __minting = false; setMintBusy(false);
-    var diffP = SHARE_IDS.map(function(id){ return proc.balanceOf(account, id).then(function(b){ return { id: id, cnt: Number(b) - (shot[id]||0) }; }); });
+    var diffP = SHARE_IDS.map(function(id){ return part.balanceOf(account, id).then(function(b){ return { id: id, cnt: Number(b) - (shot[id]||0) }; }); });
     return Promise.all(diffP).then(function(diffs){
       var hits = diffs.filter(function(d){ return d.cnt > 0; });
       if (hits.length) { revealCard(hits, amtBN); showShare(hits); }
@@ -8251,18 +8238,22 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
   if (!ensureNetMsg("toMsg")) return;
   var btn = btnEl || $("assembleBtn"); busy(btn, true, t("o.asmBusy"));
   setMsg("toMsg","info", t("o.checkParts"));
-  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
-  Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
+  var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
+  var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
+  Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return part.balanceOf(account, t); }); }))
     .then(function(bs){
       var missing = [];
       bs.forEach(function(v, i){ if (Number(v) < 1) missing.push(PART_NAMES[i]); });
       if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + t("o.missingPartsTail")); throw new Error("missing parts"); }
       setMsg("toMsg","info", t("o.sendAsm"));
       startSigWatch("toMsg", btn);
-      return proc.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
-        if (ok) return Promise.resolve();
-        setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
-        return proc.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+      return part.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
+        var chain = ok ? Promise.resolve() : part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+        return chain.then(function(){ return token.allowance(account, ADDRS.circuit); }).then(function(al){
+          if (al >= 1000000000000000000n) return Promise.resolve();   // 组装费 1 TAPE
+          setMsg("toMsg","info","TAPE 授权确认（组装需消耗 1 TAPE）…");
+          return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+        });
       }).then(function(){
         return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assemble({ gasLimit: 500000 });
       });
@@ -8293,26 +8284,33 @@ function doAssembleN(n){
   if (!ensureNetMsg("toMsg")) return;
   var btn = $("asmBatchBtn"); busy(btn, true, "组装中…");
   Q.start("批量组装 " + n + " 台", n, function(){ doAssembleN(n); });
-  var proc = new ethers.Contract(ADDRS.processor, ABI_PROC, signer);
+  var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
+  var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
   var approved = null;
   (function one(i){
     if (Q.stopped()) { stopSigWatch(); setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= n) { stopSigWatch(); setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
     setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmProgressMid"));
     startSigWatch("toMsg", btn);
-    Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return proc.balanceOfType(account, t); }); }))
+    Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return part.balanceOf(account, t); }); }))
       .then(function(bs){
         var missing = [];
         bs.forEach(function(v, k){ if (Number(v) < 1) missing.push(PART_NAMES[k]); });
         if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + i + "/" + n + t("o.asmDoneTail")); busy(btn, false); Q.done("部件不足，已停止"); throw new Error("missing parts"); }
         setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmSend"));
-        return (approved === null ? proc.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
+        return (approved === null ? part.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
           approved = ok;
           if (ok) return;
           setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
-          return proc.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+          return part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
         }) : Promise.resolve()).then(function(){
+          return token.allowance(account, ADDRS.circuit).then(function(al){
+            if (al >= 1000000000000000000n) return Promise.resolve();   // 组装费 1 TAPE
+            setMsg("toMsg","info","TAPE 授权确认（组装需消耗 1 TAPE）…");
+            return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+          });
+        }).then(function(){
           return circ.assemble({ gasLimit: 500000 });
         });
       })
@@ -8477,7 +8475,7 @@ function doRigUnstake(id){
   var ma = $("myAssets");
   if (ma) ma.addEventListener("click", function(ev){
     var cp = ev.target.closest("[data-copy]");
-    if (cp) { var ck = cp.getAttribute("data-copy"); var ca = { tapex: ADDRS.tapex, xchip: ADDRS.token }[ck]; if (ca) { try { navigator.clipboard.writeText(ca).then(function(){ toast(t("d.copied")); }); } catch(e){ toast(t("d.copied")); } } return; }
+    if (cp) { var ck = cp.getAttribute("data-copy"); var ca = { tapex: ADDRS.token, xchip: ADDRS.token }[ck]; if (ca) { try { navigator.clipboard.writeText(ca).then(function(){ toast(t("d.copied")); }); } catch(e){ toast(t("d.copied")); } } return; }
     var row = ev.target.closest("[data-rig]"); if (row) openRigModal(Number(row.getAttribute("data-rig")));
   });
   var rm = $("rigModal");
@@ -8517,7 +8515,7 @@ function doAssetList(id, priceOkb){
       setMsg("rigModalMsg","info","未授权市场合约，先发送授权交易（请确认签名）…");
       chain = chain.then(function(){ return circ.approve(ADDRS.market, id, { gasLimit: 150000 }); }).then(function(tx){ return tx.wait(); });
     }
-    return chain.then(function(){ return mk.list(id, price, { gasLimit: 300000 }); });
+    return chain.then(function(){ return mk.listPC(id, price, { gasLimit: 300000 }); });
   }).then(function(tx){
     setMsg("rigModalMsg","info","挂单交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
@@ -8627,7 +8625,11 @@ function doClaim(){
   setMsg("rigMsg","info", t("o.sendClaim"));
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   startSigWatch("rigMsg", btn);
-  mine.claim({ gasLimit: 200000 }).then(function(tx){
+  readRetry(function(){ return mine.stakedPCsOf(account); }, 2).then(function(ids){
+    if (!ids || !ids.length) { stopSigWatch(); setMsg("rigMsg","err","当前没有质押中的矿机，无需领取。"); if (btn && btn.isConnected) busy(btn, false); throw new Error("no staked"); }
+    setMsg("rigMsg","info","领取 " + ids.length + " 台质押矿机的累计奖励…");
+    return mine.claim(ids, { gasLimit: 200000 });
+  }).then(function(tx){
     setMsg("rigMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
   }).then(function(receipt){
@@ -8638,6 +8640,7 @@ function doClaim(){
     refresh();
     if (btn && btn.isConnected) busy(btn, false);
   }).catch(function(e){
+    if (e.message === "no staked") return;
     stopSigWatch();
     var m = humanErr(e);
     setMsg("rigMsg","err","失败：" + m.slice(0,220));
@@ -8735,12 +8738,17 @@ function doMarketRelist(id, priceOkb, btn){
   var price = BigInt(Math.round(priceOkb * 1e18));
   setMsg("mkMsg", "info", t("mkt.repriceConfirm") + id + t("mkt.repriceOkMid") + priceOkb + t("mkt.repriceConfirmTail"));
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
-  mk.list(id, price, { gasLimit: 200000 }).then(function(tx){ return tx.wait(); }).then(function(receipt){
+  readRetry(function(){ return mk.pcOrders(id); }, 2).then(function(o){
+    if (!o.active) { setMsg("mkMsg","err","该挂单已失效，请刷新后重试。"); if (btn) busy(btn,false); throw new Error("inactive order"); }
+    // V6 改价 = 撤旧单 + 以原 tokenId 挂新价
+    return mk.delistPC([id], { gasLimit: 150000 }).then(function(tx){ return tx.wait(); })
+      .then(function(){ return mk.listPC(Number(o.tokenId), price, { gasLimit: 200000 }); });
+  }).then(function(tx){ return tx.wait(); }).then(function(receipt){
     logTx(t("mkt.repriceLog"), receipt.hash);
     setMsg("mkMsg", "ok", t("mkt.repriceOk") + id + t("mkt.repriceOkMid") + priceOkb + t("mkt.repriceOkTail"));
     refresh();
     if (btn) busy(btn, false);
-  }).catch(function(e){ var m = humanErr(e); setMsg("mkMsg", "err", "改价失败：" + m.slice(0, 80)); if (btn) busy(btn, false); });
+  }).catch(function(e){ if (e.message === "inactive order") return; var m = humanErr(e); setMsg("mkMsg", "err", "改价失败：" + m.slice(0, 80)); if (btn) busy(btn, false); });
 }
 /* ---------- iframe 检测：新窗口引导 ---------- */
 if (window.self !== window.top) {
@@ -8769,7 +8777,7 @@ var el=$("assembleBtn"); if (el) el.addEventListener("click", doAssemble);
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
   var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
   var hdCopy = $("hdCopy"); if (hdCopy) hdCopy.addEventListener("click", function(){
-    try { navigator.clipboard.writeText("0xbBa154B45a5e6C606Cb41790f03c80903592Eeee").then(function(){ toast(t("d.copied")); }); }
+    try { navigator.clipboard.writeText("0x72F82ca6E91c6fC2dB750928252e0e2661143BBA").then(function(){ toast(t("d.copied")); }); }
     catch(e){ toast(t("d.copied")); }
   });
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
@@ -8890,7 +8898,7 @@ function toggleWalletPanel(){
 function closeWalletPanel(){ closePop($("walletPanel")); }
 function renderWalletPanel(){
   var s = __mineSum;
-  $("wpXchip").textContent = s ? s.xchip : "…";
+  $("wpTape").textContent = s ? s.xchip : "…";
   $("wpPcs").textContent = s ? s.pcs : "…";
   $("wpParts").textContent = s ? s.parts : "…";
   $("wpPending").textContent = s ? s.pending : "…";
