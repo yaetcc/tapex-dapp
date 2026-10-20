@@ -514,6 +514,14 @@ nav{
 }
 
 /* ===== 09 组装台 · 铸造 ===== */
+.mint-cap{ margin:14px 0 4px; }
+.mint-cap-head{ display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--tx2); margin-bottom:6px; }
+.mint-cap-head b{ color:var(--gold); font-variant-numeric:tabular-nums; }
+.mint-cap-track{ height:8px; border-radius:999px; background:rgba(255,255,255,.07); overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,.45); }
+.mint-cap-track i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,rgba(255,217,61,.9),rgba(0,229,160,.7)); transition:width .6s cubic-bezier(0.22,1,0.36,1); }
+.mint-cap-sub{ font-size:11px; color:var(--tx3); margin-top:5px; }
+.mint-cap.full .mint-cap-track i{ background:linear-gradient(90deg,var(--red),var(--gold)); }
+.mint-cap.full .mint-cap-head b{ color:var(--red); }
 .prob-bar i{
   transform-origin:left;
   animation:barGrow .9s cubic-bezier(0.22,1,0.36,1) both;
@@ -6129,6 +6137,11 @@ body::before{ animation:none !important; }
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
       <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
       <div class="price-line sub"><span data-i18n="k.ladder">阶梯价：</span><b id="mintLadder">—</b><span data-i18n="k.nextIn"> · 距下一档 </span><b id="mintNext">—</b><span data-i18n="k.unitPcs"> 件</span></div>
+      <div class="mint-cap" id="mintCapBox">
+        <div class="mint-cap-head"><span data-i18n="c.capTitle">全网铸造进度</span><b id="mintCapTxt">— / 100,000</b></div>
+        <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
+        <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">链上强制上限 · 达上限后抽卡停止</div>
+      </div>
       <div class="prob" id="probBox">
         <div class="prob-title" data-i18n="抽卡概率（类型权重）">抽卡概率（类型权重）</div>
         <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
@@ -6770,6 +6783,11 @@ var I18N = {
   "w.busyBuy": {zh:"购买中…", en:"Buying…"},
   "mint.busy": {zh:"抽取中…", en:"Drawing…"},
   "mint.btn": {zh:"抽卡", en:"Draw"},
+  "c.capTitle": {zh:"全网铸造进度", en:"Global Mint Progress"},
+  "c.capSub": {zh:"链上强制上限 · 达上限后抽卡停止", en:"On-chain cap · mint halts at limit"},
+  "c.capLeft": {zh:"链上强制上限 · 剩余 ", en:"On-chain cap · "},
+  "c.capFull": {zh:"已达上限，链上停止抽卡", en:"Cap reached — mint halted"},
+  "c.capBlock": {zh:"已达全网铸造上限", en:"Global mint cap reached"},
   "mint.busyDefault": {zh:"处理中…", en:"Processing…"},
   "mint.validQty": {zh:"请输入有效数量。", en:"Enter a valid quantity."},
   "mint.maxQty": {zh:"单次操作最多 10,000 件。", en:"Max 10,000 per operation."},
@@ -6881,6 +6899,8 @@ var ABI_CIRCUIT = [
   "function getCircuits(uint256[]) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt)[])",
   "function isApprovedForAll(address,address) view returns (bool)",
   "function lastTokenId() view returns (uint256)",
+  "function maxMintTotal() view returns (uint256)",
+  "function mintedTotal() view returns (uint256)",
   "function mintFee() view returns (uint256)",
   "function assembleFee() view returns (uint256)",
   "function mint(uint256) payable",
@@ -7177,7 +7197,9 @@ function renderGlobal(){
     readRetry(function(){ return mk.pcOrderCount(); }),
     readRetry(function(){ return fs.totalDeposited(); }),
     readRetry(function(){ return circ.mintFee(); }),
-    readRetry(function(){ return circ.assembleFee(); })
+    readRetry(function(){ return circ.assembleFee(); }),
+    readRetry(function(){ return circ.maxMintTotal(); }),
+    readRetry(function(){ return circ.mintedTotal(); })
   ]).then(function(r){
     if (setNum("stTape", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stTape");
     if (setNum("stPool", r[1], fmtWeiUnit, fmtWei)) flashStat("stPool");
@@ -7220,6 +7242,25 @@ function renderGlobal(){
     $("mintLadder").textContent = okbP.toFixed(4) + " OKB";
     $("mintNext").textContent = fmtInt(r[4]);   // 市场挂单数
     $("mintNote").textContent = "";
+    var _capT = r[9], _capM = r[10];
+    var _capValid = typeof _capT === "bigint" && typeof _capM === "bigint";
+    if (_capValid) window.CAP = { total: _capT, minted: _capM };
+    var _capBox = $("mintCapBox");
+    if (_capBox && _capValid) {
+      var _pct = _capT > 0n ? Math.max(0, Math.min(100, Number(_capM) * 100 / Number(_capT))) : 0;
+      $("mintCapFill").style.width = _pct.toFixed(2) + "%";
+      var _left = _capT > _capM ? _capT - _capM : 0n;
+      $("mintCapTxt").textContent = fmtInt(_capM) + " / " + fmtInt(_capT);
+      var _sub = $("mintCapSub");
+      if (_sub) {
+        if (_left <= 0n) _sub.textContent = t("c.capFull") || "已达上限，链上停止抽卡";
+        else _sub.textContent = t("c.capLeft") || "链上强制上限 · 剩余 " + fmtInt(_left) + " 次";
+      }
+      _capBox.classList.toggle("full", _left <= 0n);
+      var _bb = $("bbBox"), _amt = $("mintAmt");
+      if (_left <= 0n) { if (_bb) _bb.classList.add("disabled"); if (_amt) _amt.disabled = true; }
+      else { if (_bb) _bb.classList.remove("disabled"); if (_amt) _amt.disabled = false; }
+    }
     return r;
   }).catch(function(e){
     __gr++;
@@ -8102,6 +8143,12 @@ function doMint(){
   if (!amt || Number(amt) <= 0 || !/^\d+$/.test(amt)) { setMsg("mintMsg","err", t("mint.validQty")); return; }
   var amtBN = BigInt(amt);
   if (amtBN > 10000n) { setMsg("mintMsg","err", t("mint.maxQty")); return; }
+  var _cap = window.CAP;
+  if (_cap && _cap.total > 0n && _cap.minted + amtBN > _cap.total) {
+    var _leftC = _cap.total > _cap.minted ? _cap.total - _cap.minted : 0n;
+    setMsg("mintMsg","err", (t("c.capBlock") || "已达全网铸造上限") + " · 剩余可抽 " + fmtInt(_leftC) + " 次");
+    return;
+  }
   __minting = true; setMintBusy(true);
   setMsg("mintMsg","info", t("mint.sending"));
   var mintDone = false;
