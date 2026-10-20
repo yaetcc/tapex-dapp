@@ -6145,27 +6145,26 @@ body::before{ animation:none !important; }
     <div class="card" id="mint" data-tab="mint">
       <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg><span data-i18n="k.mintH">盲盒铸造：随机抽 1 件硬件</span></h3>
-      <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。">花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。</p>
+      <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。">花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。</p>
       <label data-i18n="抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）">抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）</label>
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
       <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
-      <div class="price-line sub"><span data-i18n="k.ladder">阶梯价：</span><b id="mintLadder">—</b><span data-i18n="k.nextIn"> · 距下一档 </span><b id="mintNext">—</b><span data-i18n="k.unitPcs"> 件</span></div>
       <div class="mint-cap" id="mintCapBox">
         <div class="mint-cap-head"><span data-i18n="c.capTitle">全网铸造进度</span><b id="mintCapTxt">— / 100,000</b></div>
         <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
         <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">链上强制上限 · 达上限后抽卡停止</div>
       </div>
       <div class="prob" id="probBox">
-        <div class="prob-title" data-i18n="抽卡概率（类型权重）">抽卡概率（类型权重）</div>
-        <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="电源">电源</span><div class="prob-bar"><i style="width:20%"></i></div><b>20%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="散热器">散热器</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
-        <div class="prob-row"><span class="prob-name">RAM</span><div class="prob-bar"><i style="width:14%"></i></div><b>14%</b></div>
-        <div class="prob-row"><span class="prob-name">SSD</span><div class="prob-bar"><i style="width:12%"></i></div><b>12%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="主板">主板</span><div class="prob-bar"><i style="width:8%"></i></div><b>8%</b></div>
-        <div class="prob-row"><span class="prob-name">CPU</span><div class="prob-bar"><i style="width:6%"></i></div><b>6%</b></div>
-        <div class="prob-row"><span class="prob-name">GPU</span><div class="prob-bar"><i style="width:4%"></i></div><b>4%</b></div>
-        <div class="prob-note" data-i18n="档位：标准 70% · Pro 20% · 旗舰 10% · 算力倍率 ×1 / ×3 / ×8 · PC 算力分级 S / A / B / C">档位：标准 70% · Pro 20% · 旗舰 10% · 算力倍率 ×1 / ×3 / ×8 · PC 算力分级 S / A / B / C</div>
+        <div class="prob-title" data-i18n="抽卡概率（8 类等概率 1/8）">抽卡概率（8 类等概率 1/8）</div>
+        <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="电源">电源</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="散热器">散热器</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name">RAM</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name">SSD</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="主板">主板</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name">CPU</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-row"><span class="prob-name">GPU</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
+        <div class="prob-note" data-i18n="抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C">抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C</div>
       </div>
       <div class="forge" id="forge">
         <div class="forge-track">
@@ -6176,13 +6175,13 @@ body::before{ animation:none !important; }
         <div class="fly-parts" id="flyParts"><span class="part pn"></span><span class="part pn"></span><span class="part pl"></span><span class="part pl"></span></div>
       </div>
       <div class="msg" id="mintMsg"></div>
-      <p class="hint" data-i18n="m.hint1">主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.0001 OKB / 件；阶梯价：每累计抽满 10 万件上涨 5%（最高约 ×2.92）。随机抽，不保证稀有件。</p>
+      <p class="hint" data-i18n="m.hint1">主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.001 OKB / 件（固定价，无阶梯）。8 类部件等概率随机。</p>
     </div>
 
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
-      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。</p>
+      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
@@ -6567,7 +6566,7 @@ var I18N = {
   "q.hide": {zh:"收起", en:"Collapse"},
   "q.stopped": {zh:"已终止，剩余任务不再执行", en:"Stopped · remaining tasks cancelled"},
   "m.qtyPh": {zh:"例如 10", en:"e.g. 10"},
-  "m.hint1": {zh:"主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.0001 OKB / 件；阶梯价：每累计抽满 10 万件上涨 5%（最高约 ×2.92）。随机抽，不保证稀有件。", en:"Mainnet OKB can be withdrawn from OKX (select X Layer network). Mint price 0.0001 OKB / pc; ladder: +5% per 100,000 minted (max ~×2.92). Random draw, no rare-part guarantee."},
+  "m.hint1": {zh:"主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.001 OKB / 件（固定价，无阶梯）。8 类部件等概率随机。", en:"Mainnet OKB can be withdrawn from OKX (select X Layer network). Mint price 0.001 OKB / pc (fixed, no ladder). 8 part types draw equally."},
   "k.mintH": {zh:"盲盒铸造：随机抽 1 件硬件", en:"Blind box: draw 1 random part"},
   "k.asmH": {zh:"组装流片：8 类部件 → 整机 PC NFT", en:"Assemble: 8 parts → 1 PC NFT"},
   "k.stH": {zh:"质押 PC NFT 挖矿", en:"Stake PC NFT to mine"},
@@ -6845,7 +6844,7 @@ var I18N = {
   "在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。": {zh:"在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。", en:"Click any miner in the list or My Assets to stake / unstake / list. Batch actions live in the toolbar. First stake auto-approves the NFT."},
   "复制文案": {zh:"复制文案", en:"Copy Text"},
   "已抽": {zh:"已抽", en:"Drawn"},
-  "抽卡概率（类型权重）": {zh:"抽卡概率（类型权重）", en:"Draw Odds (by type)"},
+  "抽卡概率（8 类等概率 1/8）": {zh:"抽卡概率（8 类等概率 1/8）", en:"Draw Odds (8 types, equal 1/8)"},
   "抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）": {zh:"抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）", en:"Quantity (max 10,000 per op · auto-batched 500 per tx)"},
   "拥有": {zh:"拥有", en:"Owned"},
   "挂单卖出 NFT Token ID": {zh:"挂单卖出 NFT Token ID", en:"List NFT Token ID"},
@@ -6854,16 +6853,16 @@ var I18N = {
   "散热器": {zh:"散热器", en:"Cooler"},
   "数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。": {zh:"数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。", en:"Data from public RPC (rpc.xlayer.tech); a few seconds lag after txs — auto-updates."},
   "机箱": {zh:"机箱", en:"Case"},
-  "档位：标准 70% · Pro 20% · 旗舰 10% · 算力倍率 ×1 / ×3 / ×8 · PC 算力分级 S / A / B / C": {zh:"档位：标准 70% · Pro 20% · 旗舰 10% · 算力倍率 ×1 / ×3 / ×8 · PC 算力分级 S / A / B / C", en:"Tier: Standard 70% · Pro 20% · Flagship 10% · Hash ×1 / ×3 / ×8 · PC grade S / A / B / C"},
+  "抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C": {zh:"抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C", en:"Draw: 8 types equally. Assemble: PID 1-5 equally (20%); hash = PID × 100; PC grade S / A / B / C"},
   "此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站": {zh:"此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站", en:"Page is in an iframe — wallet can't inject → open in new window"},
   "点击抽卡": {zh:"点击抽卡", en:"Draw Now"},
   "电源": {zh:"电源", en:"PSU"},
   "算力 ↑": {zh:"算力 ↑", en:"Hash ↑"},
   "算力 ↓": {zh:"算力 ↓", en:"Hash ↓"},
   "组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。": {zh:"组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。", en:"No signature or fee — parts only. Need 1 of each type; GPU is rarest, draw more."},
-  "花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。", en:"Spend OKB for random parts (8 types × 3 tiers). Type first (GPU rarest), then tier."},
+  "花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。", en:"Spend OKB for random parts (8 types, equal 1/8, 0.001 OKB each)."},
   "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
-  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = sum of tiers. No signature needed."},
+  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = assembly PID × 100. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
 };
@@ -7264,10 +7263,8 @@ function renderGlobal(){
     UNIT_PRICE = r[6];                       // V6 固定抽卡费 0.001 OKB/件
     var okbP = Number(UNIT_PRICE)/1e18;
     $("mintPrice").textContent = okbP.toFixed(4) + (LANG === "en" ? " OKB / pc" : " OKB / 件");
-    $("mintLadder").textContent = okbP.toFixed(4) + " OKB";
-    $("mintNext").textContent = fmtInt(r[4]);   // 市场挂单数
     $("mintNote").textContent = "";
-    var _capT = r[9], _capM = r[10];
+    var _capT = r[8], _capM = r[9];
     var _capValid = typeof _capT === "bigint" && typeof _capM === "bigint";
     if (_capValid) window.CAP = { total: _capT, minted: _capM };
     var _capBox = $("mintCapBox");
@@ -8209,7 +8206,7 @@ function doMint(){
     return readRetry(function(){ return part.balanceOf(account, id); }, 2).then(function(b){ shot[id] = Number(b); });
   });
   return Promise.all(shotP).then(function(){
-    var cfg = { price: 1000000000000000n };   // V6 固定抽卡费 0.001 OKB/件
+    var cfg = { price: window.UNIT_PRICE || 1000000000000000n };   // V6 固定抽卡费 0.001 OKB/件（优先读链上）
     return Promise.resolve(cfg).then(function(cfg){
     var perTx = 500n;   // 前端分批上限（gas 安全；链上 mint 单次最多 10000）
     var batches = [];
