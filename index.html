@@ -7236,6 +7236,9 @@ function readRetry(fn, tries){
     throw err;
   });
 }
+function scanTimeout(p){   // 质押列表扫描兜底：RPC 挂起时 30s 超时抛错，避免资产页无限 loading
+  return Promise.race([p, new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("scan timeout")); }, 30000); })]);
+}
 function clearRigCache(){
   window.__rigCache = null;
   try { localStorage.removeItem("rigCache"); } catch(e){}
@@ -7438,8 +7441,8 @@ function renderMine(){
       '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
       '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
-    $("forgePicked").textContent = "—";
-    $("forgeTotal").textContent = "—";
+    var fp = $("forgePicked"); if (fp) fp.textContent = "—";
+    var ft = $("forgeTotal"); if (ft) ft.textContent = "—";
     renderPartsGrid([0,0,0,0,0,0,0,0]);
     $("myAssets").dataset.ok = ""; $("myAssets").dataset.ready = "";
     var msN = $("msState"); if (msN) msN.textContent = t("f.idle");
@@ -7558,7 +7561,7 @@ function renderMine(){
         });
       });
     }
-    return scan.then(function(staked){
+    return scanTimeout(scan).then(function(staked){
         var allIds = myNfts.slice();
         staked.forEach(function(t){ if (allIds.indexOf(t) === -1) allIds.push(t); });
         var pcQ = allIds.map(function(tid){
@@ -7617,12 +7620,13 @@ function renderMine(){
         setTimeout(refresh, 1200);
         return;
       }
-      __mineFailCount = 0;
-      if (!$("myAssets").dataset.ok) {
-        $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e).slice(0,50) + '' + t("a.retry15") + '</span><span class="v">—</span></li>';
+      if (__mineFailCount >= 2) {           // ≥2 次失败：显示错误（不再无限自动重试），30s 后兜底刷新
+        if (!$("myAssets").dataset.ok) {
+          $("myAssets").innerHTML = '<li><span class="nm">' + t("a.readFail") + '' + String(e.message||e).slice(0,50) + '' + t("a.retry15") + '</span><span class="v">—</span></li>';
+        } else {
+          toast(t("a.refreshFail"));   // 已有数据不清空，避免卡片闪没
+        }
         setTimeout(refresh, 30000);
-      } else {
-        toast(t("a.refreshFail"));   // 已有数据不清空，避免卡片闪没
       }
     }
     throw e;
