@@ -3314,6 +3314,12 @@ input:focus{
 #asmBatchBtn:hover{
   filter:brightness(1.08);
 }
+.asm-can{
+  font-size:12px;
+  color:var(--tx2);
+  margin-left:8px;
+  white-space:nowrap;
+}
 
 /* ===== 09 组装台 · 铸造 ===== */
 .bench{
@@ -6192,8 +6198,8 @@ body::before{ animation:none !important; }
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button></span>
-      <p class="hint" data-i18n="组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。">组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。</p>
+      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="50" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button><span id="asmCanTip" class="asm-can"></span></span>
+      <p class="hint" data-i18n="组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。">组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。</p>
     </div>
 
     <div class="card" data-tab="stake">
@@ -6859,7 +6865,7 @@ var I18N = {
   "电源": {zh:"电源", en:"PSU"},
   "算力 ↑": {zh:"算力 ↑", en:"Hash ↑"},
   "算力 ↓": {zh:"算力 ↓", en:"Hash ↓"},
-  "组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。": {zh:"组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。", en:"No signature or fee — parts only. Need 1 of each type; GPU is rarest, draw more."},
+  "组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。": {zh:"组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。", en:"Each build burns 1 of every part type + 100 TAPE fee; max builds = min of your part counts. Batch builds confirm per unit."},
   "花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。", en:"Spend OKB for random parts (8 types, equal 1/8, 0.001 OKB each)."},
   "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
   "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = assembly PID × 100. No signature needed."},
@@ -7577,6 +7583,14 @@ function renderPartsGrid(parts){
   }).join("");
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
+  var canAsm = Math.min.apply(null, parts.map(function(v){ return Number(v) || 0; }));
+  window.__canAsm = canAsm;
+  var asmCount = $("asmCount");
+  if (asmCount) asmCount.max = String(Math.max(canAsm, 1));
+  var canTip = $("asmCanTip");
+  if (canTip) canTip.textContent = canAsm > 0
+    ? t("b.canAsm") + " " + canAsm + " 台 · 费用 " + (canAsm * 100) + " TAPE"
+    : t("b.canAsm") + " 0 台";
   renderBench(parts);
 }
 
@@ -8369,7 +8383,13 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
 function doAssembleN(n){
   if (!signer || !account) { setMsg("toMsg","err", t("o.connectFirst")); return; }
   if (!ensureNetMsg("toMsg")) return;
+  var maxN = window.__canAsm || 0;
+  if (maxN > 0 && n > maxN) {
+    setMsg("toMsg","err", "部件库存不足：最多可组装 " + maxN + " 台（当前 " + n + " 台）");
+    return;
+  }
   var btn = $("asmBatchBtn"); busy(btn, true, "组装中…");
+  setMsg("toMsg","info", "批量组装 " + n + " 台：消耗 8 类部件各 " + n + " 件 + 组装费 " + (n * 100) + " TAPE");
   Q.start("批量组装 " + n + " 台", n, function(){ doAssembleN(n); });
   var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
