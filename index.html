@@ -3713,6 +3713,24 @@ input:focus{
 .part-cell.ok svg{
   color:var(--teal);
 }
+.part-cell .ptier{
+  display:flex;
+  gap:3px;
+  flex-wrap:wrap;
+  justify-content:center;
+  font-family:"JetBrains Mono",monospace;
+}
+.part-cell .ptier i{
+  font-style:normal;
+  font-size:9px;
+  line-height:1.4;
+  padding:1px 4px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,.16);
+}
+.part-cell .ptier .t0{ color:#7FE0D6; border-color:rgba(127,224,214,.3); }
+.part-cell .ptier .t1{ color:#00E5A0; border-color:rgba(0,229,160,.3); }
+.part-cell .ptier .t2{ color:#FFD54D; border-color:rgba(255,213,77,.4); }
 
 /* ===== 14 其他 ===== */
 #assembleBtn.ready{
@@ -6151,7 +6169,7 @@ body::before{ animation:none !important; }
     <div class="card" id="mint" data-tab="mint">
       <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg><span data-i18n="k.mintH">盲盒铸造：随机抽 1 件硬件</span></h3>
-      <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。">花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。</p>
+      <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。">花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。</p>
       <label data-i18n="抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）">抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）</label>
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
       <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
@@ -6161,16 +6179,16 @@ body::before{ animation:none !important; }
         <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">链上强制上限 · 达上限后抽卡停止</div>
       </div>
       <div class="prob" id="probBox">
-        <div class="prob-title" data-i18n="抽卡概率（8 类等概率 1/8）">抽卡概率（8 类等概率 1/8）</div>
-        <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="电源">电源</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="散热器">散热器</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name">RAM</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name">SSD</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name" data-i18n="主板">主板</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name">CPU</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-row"><span class="prob-name">GPU</span><div class="prob-bar"><i style="width:12.5%"></i></div><b>12.5%</b></div>
-        <div class="prob-note" data-i18n="抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C">抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C</div>
+        <div class="prob-title" data-i18n="抽卡概率（8 类加权 · 部件 3 档位）">抽卡概率（8 类加权 · 部件 3 档位）</div>
+        <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="电源">电源</span><div class="prob-bar"><i style="width:20%"></i></div><b>20%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="散热器">散热器</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
+        <div class="prob-row"><span class="prob-name">RAM</span><div class="prob-bar"><i style="width:14%"></i></div><b>14%</b></div>
+        <div class="prob-row"><span class="prob-name">SSD</span><div class="prob-bar"><i style="width:12%"></i></div><b>12%</b></div>
+        <div class="prob-row"><span class="prob-name" data-i18n="主板">主板</span><div class="prob-bar"><i style="width:8%"></i></div><b>8%</b></div>
+        <div class="prob-row"><span class="prob-name">CPU</span><div class="prob-bar"><i style="width:6%"></i></div><b>6%</b></div>
+        <div class="prob-row"><span class="prob-name">GPU</span><div class="prob-bar"><i style="width:4%"></i></div><b>4%</b></div>
+        <div class="prob-note" data-i18n="部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C">部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C</div>
       </div>
       <div class="forge" id="forge">
         <div class="forge-track">
@@ -6187,7 +6205,7 @@ body::before{ animation:none !important; }
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
-      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。</p>
+      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
@@ -6850,7 +6868,7 @@ var I18N = {
   "在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。": {zh:"在下方矿机列表或「我的资产」里点击任意矿机即可直接操作：质押挖矿 / 解押 / 挂单出售，批量操作请用列表右上工具条。首次质押会自动完成 NFT 授权（approve）。", en:"Click any miner in the list or My Assets to stake / unstake / list. Batch actions live in the toolbar. First stake auto-approves the NFT."},
   "复制文案": {zh:"复制文案", en:"Copy Text"},
   "已抽": {zh:"已抽", en:"Drawn"},
-  "抽卡概率（8 类等概率 1/8）": {zh:"抽卡概率（8 类等概率 1/8）", en:"Draw Odds (8 types, equal 1/8)"},
+  "抽卡概率（8 类加权 · 部件 3 档位）": {zh:"抽卡概率（8 类加权 · 部件 3 档位）", en:"Draw Odds (8 types weighted · 3 tiers)"},
   "抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）": {zh:"抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）", en:"Quantity (max 10,000 per op · auto-batched 500 per tx)"},
   "拥有": {zh:"拥有", en:"Owned"},
   "挂单卖出 NFT Token ID": {zh:"挂单卖出 NFT Token ID", en:"List NFT Token ID"},
@@ -6859,16 +6877,16 @@ var I18N = {
   "散热器": {zh:"散热器", en:"Cooler"},
   "数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。": {zh:"数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。", en:"Data from public RPC (rpc.xlayer.tech); a few seconds lag after txs — auto-updates."},
   "机箱": {zh:"机箱", en:"Case"},
-  "抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C": {zh:"抽卡 8 类等概率；组装档位 PID 1-5 等概率 20%，算力 = 档位 × 100，PC 算力分级 S / A / B / C", en:"Draw: 8 types equally. Assemble: PID 1-5 equally (20%); hash = PID × 100; PC grade S / A / B / C"},
+  "部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C": {zh:"部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C", en:"Tiers: Standard 70% x1 / Pro 20% x3 / Flagship 10% x8. Assemble hash = sum of 8 parts by tier; PC grade S / A / B / C"},
   "此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站": {zh:"此页面嵌在框架内，钱包扩展无法注入 → 在新窗口打开本站", en:"Page is in an iframe — wallet can't inject → open in new window"},
   "点击抽卡": {zh:"点击抽卡", en:"Draw Now"},
   "电源": {zh:"电源", en:"PSU"},
   "算力 ↑": {zh:"算力 ↑", en:"Hash ↑"},
   "算力 ↓": {zh:"算力 ↓", en:"Hash ↓"},
   "组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。": {zh:"组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。", en:"Each build burns 1 of every part type + 100 TAPE fee; max builds = min of your part counts. Batch builds confirm per unit."},
-  "花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类等概率 1/8，每件 0.001 OKB）。", en:"Spend OKB for random parts (8 types, equal 1/8, 0.001 OKB each)."},
+  "花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。", en:"Spend OKB for random parts (8 types weighted, 0.001 OKB each; tiers: Standard/Pro/Flagship)."},
   "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
-  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 组装档位 × 100。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = assembly PID × 100. No signature needed."},
+  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = sum of 8 parts by tier. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
 };
@@ -7410,9 +7428,17 @@ function renderMine(){
     readRetry(function(){ return circ.lastTokenId(); }),
     readRetry(function(){ return mine.totalShares(); }),
     readRetry(function(){ return token.balanceOf(account); }),
-    readRetry(function(){ return mine.rewardPerDay(); })
+    readRetry(function(){ return mine.rewardPerDay(); }),
+    readRetry(function(){ return part.balanceOfBatch(
+      [account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account],
+      [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+    ); })
   ]).then(function(r){
-    var parts = [Number(r[1]),Number(r[2]),Number(r[3]),Number(r[4]),Number(r[5]),Number(r[6]),Number(r[7]),Number(r[8])];
+    var b24 = r[16];
+    var parts = [0,0,0,0,0,0,0,0];
+    var pt = window.__partsTier = new Array(24);
+    for (var i = 0; i < 24; i++) { pt[i] = Number(b24[i]); parts[i % 8] += pt[i]; }
+    window.__parts = parts;
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
     renderPartsGrid(parts);
     __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
@@ -7574,12 +7600,22 @@ function renderMine(){
 function renderPartsGrid(parts){
   var g = $("partsGrid"); if (!g) return;
   var names = PART_NAMES, ready = parts.every(function(v){ return v >= 1; });
+  var pt = window.__partsTier || null;
   g.innerHTML = names.map(function(n, i){
     var ok = parts[i] >= 1;
+    var tierTxt = "";
+    if (pt) {
+      var s = pt[i], p = pt[i + 8], f = pt[i + 16];
+      tierTxt = '<span class="ptier">' +
+        (s > 0 ? '<i class="t0">标×' + s + '</i>' : '') +
+        (p > 0 ? '<i class="t1">Pro×' + p + '</i>' : '') +
+        (f > 0 ? '<i class="t2">旗舰×' + f + '</i>' : '') +
+        '</span>';
+    }
     return '<div class="part-cell' + (ok ? " ok" : "") + '" data-t="' + i + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
       '<b>' + n + '</b><span>' + (ok ? t("a.has") + parts[i] : t("a.missing") + parts[i]) + '</span>' +
-      '</div>';
+      tierTxt + '</div>';
   }).join("");
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
@@ -7588,8 +7624,17 @@ function renderPartsGrid(parts){
   var asmCount = $("asmCount");
   if (asmCount) asmCount.max = String(Math.max(canAsm, 1));
   var canTip = $("asmCanTip");
+  var estH = 0;
+  if (pt && canAsm > 0) {
+    var BH = window.__baseHash || [10, 5, 20, 8, 6, 5, 4, 3], TM = [1, 3, 8];
+    for (var i = 0; i < 8; i++) {
+      var tr = 0;
+      if (pt[i] < 1) { tr = 1; if (pt[i + 8] < 1) tr = 2; }
+      estH += BH[i] * TM[tr];
+    }
+  }
   if (canTip) canTip.textContent = canAsm > 0
-    ? t("b.canAsm") + " " + canAsm + " 台 · 费用 " + (canAsm * 100) + " TAPE"
+    ? t("b.canAsm") + " " + canAsm + " 台 · 费用 " + (canAsm * 100) + " TAPE" + (estH > 0 ? " · 预估算力 " + estH + " H" : "")
     : t("b.canAsm") + " 0 台";
   renderBench(parts);
 }
@@ -8148,7 +8193,7 @@ function switchNet(){
 }
 
 /* ---------- Mint ---------- */
-var SHARE_IDS = [3,5,8,9,10,11,14,17,20,23,26];   // CPU标准 + GPU三档 + 8 类旗舰件 tokenId（type*3+tier）
+var SHARE_IDS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];   // 24 id：类 1-8 + (档-1)×8（标准1-8/Pro9-16/旗舰17-24）
 
 /* ---------- 盲盒动画 ---------- */
 function bbShake(){
@@ -8167,11 +8212,12 @@ function revealCard(hits, amt){
   var total = (amt && Number(amt) > 0) ? Number(amt) : 1;
   if (hits && hits.length) {
     var h = hits[0];
-    var typeId = Math.floor(h.id / 3);                    // 1-8
+    var typeId = ((h.id - 1) % 8) + 1;                    // 类 1-8
     var name = PART_NAMES[typeId - 1] || ("#" + h.id);
-    var tier = PART_TIER[h.id % 3];
-    var mult = [1, 3, 8][h.id % 3] || 1;
-    var col = ["#7FE0D6", "#00E5A0", "#FFD54D"][h.id % 3] || "#FF9F45";
+    var tierIdx = Math.floor((h.id - 1) / 8);             // 0 标准 / 1 Pro / 2 旗舰
+    var tier = PART_TIER[tierIdx];
+    var mult = [1, 3, 8][tierIdx] || 1;
+    var col = ["#7FE0D6", "#00E5A0", "#FFD54D"][tierIdx] || "#FF9F45";
     rv.innerHTML = '<div class="bb-card"><em>NEW</em>' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:' + col + '">' + PART_ICON[typeId - 1] + '</svg>' +
       '<b>' + name + '</b><span class="tier">' + tier + '</span><span class="sub">算力倍率 ×' + mult + '</span></div>';
@@ -8277,15 +8323,15 @@ function doMint(){
 function showShare(hits){
   var lines = [];
   hits.forEach(function(h){
-    var typeId = Math.floor(h.id / 3);
+    var typeId = ((h.id - 1) % 8) + 1;
     var name = PART_NAMES[typeId - 1] || ("#" + h.id);
-    var tier = PART_TIER[h.id % 3];
+    var tier = PART_TIER[Math.floor((h.id - 1) / 8)];
     lines.push(name + " · " + tier + " ×" + h.cnt);
   });
   var top = hits[0];
-  var typeId0 = Math.floor(top.id / 3);
+  var typeId0 = ((top.id - 1) % 8) + 1;
   var name0 = PART_NAMES[typeId0 - 1] || ("#" + top.id);
-  var tier0 = PART_TIER[top.id % 3];
+  var tier0 = PART_TIER[Math.floor((top.id - 1) / 8)];
   drawShare(name0, tier0);
   $("shareTag").textContent = t("s.won") + lines.join("、") + t("s.odds");
   var sm = $("shareModal");
@@ -8338,10 +8384,17 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
   setMsg("toMsg","info", t("o.checkParts"));
   var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
-  Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return part.balanceOf(account, t); }); }))
-    .then(function(bs){
+  readRetry(function(){ return part.balanceOfBatch(
+      [account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account],
+      [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+    ); })
+    .then(function(b24){
+      var bs = [0,0,0,0,0,0,0,0];
+      var pt = window.__partsTier = new Array(24);
+      for (var i = 0; i < 24; i++) { pt[i] = Number(b24[i]); bs[i % 8] += pt[i]; }
+      window.__parts = bs;
       var missing = [];
-      bs.forEach(function(v, i){ if (Number(v) < 1) missing.push(PART_NAMES[i]); });
+      bs.forEach(function(v, i){ if (v < 1) missing.push(PART_NAMES[i]); });
       if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + t("o.missingPartsTail")); throw new Error("missing parts"); }
       setMsg("toMsg","info", t("o.sendAsm"));
       startSigWatch("toMsg", btn);
