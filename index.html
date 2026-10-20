@@ -3264,6 +3264,43 @@ input:focus{
   gap:8px;
   margin:4px 0 12px;
 }
+.tier-pick{
+  margin:0 0 10px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:9px 10px 6px;
+}
+.tp-head{
+  font-size:11px;
+  color:var(--tx2);
+  margin-bottom:7px;
+  letter-spacing:.3px;
+}
+.tp-grid{ display:flex; flex-direction:column; gap:5px; }
+.tp-row{ display:flex; align-items:center; gap:8px; }
+.tp-row b{ width:52px; font-size:11.5px; color:var(--tx); font-weight:600; flex:none; }
+.tp-btns{ display:flex; gap:5px; flex:1; }
+.tp-btn{
+  flex:1;
+  height:24px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--tx2);
+  font-size:11px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  transition:all .15s;
+}
+.tp-btn i{ font-style:normal; font-size:10px; opacity:.75; }
+.tp-btn:hover:not(.empty){ border-color:rgba(0,229,160,.5); color:var(--tx); }
+.tp-btn.on{ border-color:var(--ac); background:rgba(0,229,160,.12); color:var(--ac); }
+.tp-btn.on i{ opacity:1; }
+.tp-btn.empty{ opacity:.4; cursor:not-allowed; }
 
 /* ===== 14 其他 ===== */
 #assembleBtn{
@@ -6205,8 +6242,12 @@ body::before{ animation:none !important; }
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
-      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。</p>
+      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
+      <div class="tier-pick" id="tierPick">
+        <div class="tp-head">组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）</div>
+        <div class="tp-grid" id="tpGrid"></div>
+      </div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
       <div class="foundry" id="foundry">
@@ -6216,8 +6257,8 @@ body::before{ animation:none !important; }
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="50" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button><span id="asmCanTip" class="asm-can"></span></span>
-      <p class="hint" data-i18n="组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。">组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。</p>
+      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="10" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button><span id="asmCanTip" class="asm-can"></span></span>
+      <p class="hint" data-i18n="组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。">组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。</p>
     </div>
 
     <div class="card" data-tab="stake">
@@ -6718,7 +6759,7 @@ var I18N = {
   "o.asmBusy": {zh:"组装中…", en:"Assembling…"},
   "o.checkParts": {zh:"正在检查 8 类部件是否齐全…", en:"Checking all 8 part types…"},
   "o.missingParts": {zh:"缺少部件：", en:"Missing parts: "},
-  "o.missingPartsTail": {zh:"。请先抽卡凑齐 8 类各 1 件。", en:" — draw all 8 types first."},
+  "o.missingPartsTail": {zh:"。请检查所选档位库存或点击上方档位切换。", en:" — check the selected tier inventory."},
   "o.sendAsm": {zh:"部件齐全，发送组装交易（自动消耗 8 类各 1 件，低档优先）…", en:"Parts ready, sending assembly tx (auto-burn 1 of each, lower tier first)…"},
   "o.asmOk": {zh:"组装成功！已生成 PC 整机 NFT，可前往质押挖矿。", en:"Assembled! PC NFT minted — stake to mine."},
   "o.asmOkShort": {zh:"组装成功", en:"Assembled"},
@@ -6886,7 +6927,7 @@ var I18N = {
   "组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。": {zh:"组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。", en:"Each build burns 1 of every part type + 100 TAPE fee; max builds = min of your part counts. Batch builds confirm per unit."},
   "花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。", en:"Spend OKB for random parts (8 types weighted, 0.001 OKB each; tiers: Standard/Pro/Flagship)."},
   "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
-  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 8 部件算力按档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = sum of 8 parts by tier. No signature needed."},
+  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Pick a tier per type (Standard/Pro/Flagship); burns 1 per selected tier + 100 TAPE fee; hash = sum of 8 parts by tier. Batch assembly signs once. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
 };
@@ -6933,6 +6974,8 @@ var ABI_CIRCUIT = [
   "function listedOf(uint256) view returns (bool)",
   "function assemble() returns (uint256)",
   "function batchAssemble(uint256) returns (uint256)",
+  "function assembleWithTiers(uint8[8]) returns (uint256)",
+  "function batchAssembleWithTiers(uint256,uint8[8]) returns (uint256)",
   "function balanceOf(address) view returns (uint256)",
   "function getApproved(uint256) view returns (address)",
   "function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))",
@@ -7619,29 +7662,76 @@ function renderPartsGrid(parts){
   }).join("");
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
-  var canAsm = Math.min.apply(null, parts.map(function(v){ return Number(v) || 0; }));
-  window.__canAsm = canAsm;
-  var asmCount = $("asmCount");
-  if (asmCount) asmCount.max = String(Math.max(canAsm, 1));
-  var canTip = $("asmCanTip");
-  var estH = 0;
-  if (pt && canAsm > 0) {
-    var BH = window.__baseHash || [10, 5, 20, 8, 6, 5, 4, 3], TM = [1, 3, 8];
-    for (var i = 0; i < 8; i++) {
-      var tr = 0;
-      if (pt[i] < 1) { tr = 1; if (pt[i + 8] < 1) tr = 2; }
-      estH += BH[i] * TM[tr];
-    }
-  }
-  if (canTip) canTip.textContent = canAsm > 0
-    ? t("b.canAsm") + " " + canAsm + " 台 · 费用 " + (canAsm * 100) + " TAPE" + (estH > 0 ? " · 预估算力 " + estH + " H" : "")
-    : t("b.canAsm") + " 0 台";
+  renderTierPick();
   renderBench(parts);
 }
 
 /* ---------- 装机台（真实装机体验） ---------- */
 var asmSel = {};              // type -> 1 已选装
 var asmBusy = false;
+var __tierInit = false;
+function renderTierPick(){
+  var tp = $("tpGrid"); if (!tp) return;
+  if (!window.__asmTiers) window.__asmTiers = [0,0,0,0,0,0,0,0];
+  var pt = window.__partsTier || null;
+  var sel = window.__asmTiers;
+  tp.innerHTML = PART_NAMES.map(function(nm, i){
+    var btns = [0,1,2].map(function(tr){
+      var cnt = pt ? (pt[i + tr*8] || 0) : 0;
+      var on = sel[i] === tr;
+      return '<button class="tp-btn' + (on ? " on" : "") + (cnt < 1 ? " empty" : "") + '" data-i="' + i + '" data-tr="' + tr + '" title="' + nm + "·" + (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰") + ' 库存 ' + cnt + '">' +
+        (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰") + '<i>' + cnt + '</i></button>';
+    }).join("");
+    return '<div class="tp-row"><b>' + nm + '</b><span class="tp-btns">' + btns + '</span></div>';
+  }).join("");
+  if (!__tierInit) {
+    __tierInit = true;
+    tp.addEventListener("click", function(e){
+      var btn = e.target.closest(".tp-btn"); if (!btn) return;
+      if (btn.classList.contains("empty")) return;
+      window.__asmTiers[Number(btn.dataset.i)] = Number(btn.dataset.tr);
+      renderTierPick();
+    });
+  }
+  updateAsmPick();
+}
+function updateAsmPick(){
+  var pt = window.__partsTier || null;
+  var sel = window.__asmTiers || [0,0,0,0,0,0,0,0];
+  var BH = window.__baseHash || [10, 5, 20, 8, 6, 5, 4, 3], TM = [1, 3, 8];
+  var hr = 0, can = Infinity;
+  for (var i = 0; i < 8; i++) {
+    var tr = sel[i];
+    hr += BH[i] * TM[tr];
+    var c = pt ? (pt[i + tr*8] || 0) : 0;
+    if (c < can) can = c;
+  }
+  can = can === Infinity ? 0 : can;
+  window.__canAsm = can;
+  var asmCount = $("asmCount");
+  if (asmCount) asmCount.max = String(Math.max(can, 1));
+  var canTip = $("asmCanTip");
+  var g = hr >= 240 ? "S 级" : hr >= 160 ? "A 级" : hr >= 80 ? "B 级" : "C 级";
+  if (canTip) canTip.textContent = can > 0
+    ? t("b.canAsm") + " " + can + " 台 · 费用 " + (can * 100) + " TAPE · 算力 " + hr + " H（" + g + "）"
+    : t("b.canAsm") + " 0 台";
+  var selTip = $("asmSelTip");
+  if (selTip) selTip.textContent = sel.map(function(tr, i){ return PART_NAMES[i] + (tr === 0 ? "·标" : tr === 1 ? "·Pro" : "·旗舰"); }).join(" ");
+}
+function doQuickAssemble(btn){
+  if (!signer || !account) { toast(t("t.connectFirst")); return; }
+  if (asmBusy) return;
+  var pt = window.__partsTier || null;
+  if (!pt) { toast("部件数据未加载，请刷新"); return; }
+  window.__asmTiers = [0,0,0,0,0,0,0,0].map(function(v, i){
+    if (pt[i] > 0) return 0;
+    if (pt[i + 8] > 0) return 1;
+    if (pt[i + 16] > 0) return 2;
+    return 0;
+  });
+  renderTierPick();
+  doAssemble(btn);
+}
 function renderBench(parts){
   var b = $("bench"); if (!b) return;
   window.__parts = parts || window.__parts || [0,0,0,0,0,0,0,0];
@@ -7760,9 +7850,9 @@ function doBenchAssemble(){
     var bb = ev.target.closest("#benchBtn");
     if (bb) { doBenchAssemble(); return; }
     var qb = ev.target.closest("#benchQuick");
-    if (qb) { doAssemble(qb); return; }
+    if (qb) { doQuickAssemble(qb); return; }
     var bq = ev.target.closest("#benchBatch");
-    if (bq) { var v = Number(($("benchCnt") || { value: "2" }).value) || 1; if (v < 1) v = 1; if (v > 50 && !confirm("批量组装 " + v + " 台，需逐台签名确认，确定继续？")) return; doAssembleN(v); return; }
+    if (bq) { var v = Number(($("benchCnt") || { value: "2" }).value) || 1; if (v < 1) v = 1; doAssembleN(v); return; }
   });
 })();
 var PART_ICON = [
@@ -8394,7 +8484,10 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
       for (var i = 0; i < 24; i++) { pt[i] = Number(b24[i]); bs[i % 8] += pt[i]; }
       window.__parts = bs;
       var missing = [];
-      bs.forEach(function(v, i){ if (v < 1) missing.push(PART_NAMES[i]); });
+      var sel = window.__asmTiers || [0,0,0,0,0,0,0,0];
+      sel.forEach(function(tr, i){
+        if ((pt[i + tr*8] || 0) < 1) missing.push(PART_NAMES[i] + "·" + (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰"));
+      });
       if (missing.length) { busy(btn, false); setMsg("toMsg","err", t("o.missingParts") + missing.join("、") + t("o.missingPartsTail")); throw new Error("missing parts"); }
       setMsg("toMsg","info", t("o.sendAsm"));
       startSigWatch("toMsg", btn);
@@ -8409,7 +8502,7 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
           });
         });
       }).then(function(){
-        return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assemble({ gasLimit: 500000 });
+        return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assembleWithTiers(sel, { gasLimit: 600000 });
       });
     }).then(function(tx){
     setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
@@ -8436,58 +8529,72 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
 function doAssembleN(n){
   if (!signer || !account) { setMsg("toMsg","err", t("o.connectFirst")); return; }
   if (!ensureNetMsg("toMsg")) return;
+  if (n > 10) { setMsg("toMsg","err", "单笔最多 10 台（合约批量上限），请分多次组装"); return; }
   var maxN = window.__canAsm || 0;
   if (maxN > 0 && n > maxN) {
-    setMsg("toMsg","err", "部件库存不足：最多可组装 " + maxN + " 台（当前 " + n + " 台）");
+    setMsg("toMsg","err", "部件库存不足：所选档位最多可组装 " + maxN + " 台（当前 " + n + " 台）");
     return;
   }
+  var sel = window.__asmTiers || [0,0,0,0,0,0,0,0];
+  var selDesc = sel.map(function(tr, i){ return PART_NAMES[i] + (tr === 0 ? "·标" : tr === 1 ? "·Pro" : "·旗舰"); }).join(" ");
   var btn = $("asmBatchBtn"); busy(btn, true, "组装中…");
-  setMsg("toMsg","info", "批量组装 " + n + " 台：消耗 8 类部件各 " + n + " 件 + 组装费 " + (n * 100) + " TAPE");
-  Q.start("批量组装 " + n + " 台", n, function(){ doAssembleN(n); });
+  setMsg("toMsg","info", "批量组装 " + n + " 台（一次签名）：" + selDesc + " + 组装费 " + (n * 100) + " TAPE");
+  Q.start("批量组装 " + n + " 台（一次签名）", 1, function(){ doAssembleN(n); });
   var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
-  var approved = null;
-  (function one(i){
-    if (Q.stopped()) { stopSigWatch(); setMsg("toMsg","info","已终止"); refresh(); busy(btn, false); Q.done("已终止"); return; }
-    if (i >= n) { stopSigWatch(); setMsg("toMsg","ok", t("o.asmDone") + n + t("o.asmDoneTail")); toast(t("o.asmOkShort")); refresh(); busy(btn, false); Q.done("批量组装完成"); return; }
-    setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmProgressMid"));
-    startSigWatch("toMsg", btn);
-    Promise.all([1,2,3,4,5,6,7,8].map(function(t){ return readRetry(function(){ return part.balanceOf(account, t); }); }))
-      .then(function(bs){
-        var missing = [];
-        bs.forEach(function(v, k){ if (Number(v) < 1) missing.push(PART_NAMES[k]); });
-        if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + i + "/" + n + t("o.asmDoneTail")); busy(btn, false); Q.done("部件不足，已停止"); throw new Error("missing parts"); }
-        setMsg("toMsg","info", t("o.asmProgress") + (i + 1) + "/" + n + t("o.asmSend"));
-        return (approved === null ? part.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
-          approved = ok;
-          if (ok) return;
-          setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
-          return part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
-        }) : Promise.resolve()).then(function(){
-          return token.allowance(account, ADDRS.circuit).then(function(al){
-            return circ.assembleFee().then(function(fee){
-              if (al >= fee) return Promise.resolve();
-              var feeTxt2 = fmtInt(BigInt(fee) / 1000000000000000000n);
-              setMsg("toMsg","info","TAPE 授权确认（组装需消耗 " + feeTxt2 + " TAPE）…");
-              return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
-            });
-          });
-        }).then(function(){
-          return circ.assemble({ gasLimit: 500000 });
-        });
-      })
-      .then(function(tx){ return tx.wait(); })
-      .then(function(receipt){ logTx("批量组装", receipt.hash); Q.ok(i + 1, "组装完成 第" + (i + 1) + " 台"); one(i + 1); })
-      .catch(function(e){
-        if (e.message === "missing parts") return;
-        stopSigWatch();
-        setMsg("toMsg","err", t("o.batchFail") + (i + 1) + t("o.batchFailMid") + humanErr(e).slice(0, 110) + t("o.skip")); Q.fail(i + 1, "第" + (i + 1) + " 台：" + humanErr(e).slice(0, 80));
-        one(i + 1);
+  startSigWatch("toMsg", btn);
+  readRetry(function(){ return part.balanceOfBatch(
+      [account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account],
+      [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+    ); })
+    .then(function(b24){
+      var pt = new Array(24);
+      for (var i = 0; i < 24; i++) pt[i] = Number(b24[i]);
+      var missing = [];
+      sel.forEach(function(tr, i){
+        if ((pt[i + tr*8] || 0) < n) missing.push(PART_NAMES[i] + "·" + (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰") + "×" + n);
       });
-  })(0);
+      if (missing.length) { setMsg("toMsg","err", t("o.partsShort") + missing.join("、") + t("o.partsShortMid") + n + t("o.asmDoneTail")); busy(btn, false); Q.done("部件不足，已停止"); throw new Error("missing parts"); }
+      setMsg("toMsg","info", "授权确认（部件 + TAPE 一次性授权）…");
+      return part.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
+        if (ok) return Promise.resolve();
+        setMsg("toMsg","info","部件合约未授权，正在授权（一次性，需签名）…");
+        return part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
+      }).then(function(){
+        return token.allowance(account, ADDRS.circuit).then(function(al){
+          return circ.assembleFee().then(function(fee){
+            var need = fee * BigInt(n);
+            if (al >= need) return Promise.resolve();
+            var feeTxt2 = fmtInt(need / 1000000000000000000n);
+            setMsg("toMsg","info","TAPE 授权确认（组装需消耗 " + feeTxt2 + " TAPE）…");
+            return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+          });
+        });
+      }).then(function(){
+        setMsg("toMsg","info", "批量组装 " + n + " 台（一次签名）…");
+        return circ.batchAssembleWithTiers(n, sel, { gasLimit: 2000000 + n * 350000 });
+      });
+    })
+    .then(function(tx){
+      setMsg("toMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
+      return tx.wait();
+    })
+    .then(function(receipt){
+      stopSigWatch();
+      logTx("批量组装", receipt.hash);
+      setMsg("toMsg","ok", "批量组装 " + n + " 台完成（一次签名）");
+      toast(t("o.asmOkShort"));
+      refresh(); busy(btn, false); Q.ok(1, "批量组装完成"); Q.done("批量组装完成");
+    })
+    .catch(function(e){
+      if (e.message === "missing parts") return;
+      stopSigWatch();
+      setMsg("toMsg","err", t("o.batchFail") + humanErr(e).slice(0, 140));
+      busy(btn, false); Q.done("批量组装失败");
+    });
 }
-(function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; if (v > 50 && !confirm("批量组装 " + v + " 台，需逐台签名确认，确定继续？")) return; doAssembleN(v); }); })();
+(function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; doAssembleN(v); }); })();
 /* ---------- 质押 / 解押 ---------- */
 var rigData = { staked: [], pcs: [], totalH: 0, pending: "—" };
 var rigFilter = "all", rigSort = "hashD", rigPage = 0;
