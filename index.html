@@ -7231,7 +7231,9 @@ function logTx(label, hash){
 
 function readRetry(fn, tries){
   tries = tries || 3;
-  return fn().catch(function(err){
+  var p = Promise.resolve().then(function(){ return fn(); });
+  p = Promise.race([p, new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("RPC timeout@" + RPCS[rpcIdx % RPCS.length])); }, 10000); })]);   // 10s 超时：RPC 挂起时不再无限等待（无限 loading 根因）
+  return p.catch(function(err){
     if (tries > 1) return new Promise(function(res){ setTimeout(res, Math.min(1200 * (4 - tries), 5000)); }).then(function(){ return readRetry(fn, tries-1); });
     throw err;
   });
