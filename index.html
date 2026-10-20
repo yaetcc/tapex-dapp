@@ -6182,7 +6182,7 @@ body::before{ animation:none !important; }
     <div class="card" id="asm" data-tab="asm">
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
-      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。</p>
+      <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
@@ -6863,7 +6863,7 @@ var I18N = {
   "组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。": {zh:"组装无需签名、无需额外费用，只消耗部件。每类至少 1 件才能组装；GPU 最难抽到，可多抽几次凑齐。", en:"No signature or fee — parts only. Need 1 of each type; GPU is rarest, draw more."},
   "花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类 × 3 档）。先抽类型（GPU 最稀有）、再抽档位（标准 / Pro / 旗舰）。", en:"Spend OKB for random parts (8 types × 3 tiers). Type first (GPU rarest), then tier."},
   "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
-  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 1 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first); hash = sum of tiers. No signature needed."},
+  "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自动消耗每类 1 件（低档优先烧）+ 100 TAPE 组装费，算力 = 部件档位累加。无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Burns 1 per type (lower tier first) + 100 TAPE fee; hash = sum of tiers. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
 };
@@ -8337,9 +8337,12 @@ var el=$("shareClose"); if (el) el.addEventListener("click", function(){ closePo
       return part.isApprovedForAll(account, ADDRS.circuit).then(function(ok){
         var chain = ok ? Promise.resolve() : part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
         return chain.then(function(){ return token.allowance(account, ADDRS.circuit); }).then(function(al){
-          if (al >= 1000000000000000000n) return Promise.resolve();   // 组装费 1 TAPE
-          setMsg("toMsg","info","TAPE 授权确认（组装需消耗 1 TAPE）…");
-          return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+          return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assembleFee().then(function(fee){
+            if (al >= fee) return Promise.resolve();
+            var feeTxt = fmtInt(BigInt(fee) / 1000000000000000000n);
+            setMsg("toMsg","info", "TAPE 授权确认（组装需消耗 " + feeTxt + " TAPE）…");
+            return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+          });
         });
       }).then(function(){
         return new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer).assemble({ gasLimit: 500000 });
@@ -8393,9 +8396,12 @@ function doAssembleN(n){
           return part.setApprovalForAll(ADDRS.circuit, true, { gasLimit: 100000 }).then(function(tx){ return tx.wait(); });
         }) : Promise.resolve()).then(function(){
           return token.allowance(account, ADDRS.circuit).then(function(al){
-            if (al >= 1000000000000000000n) return Promise.resolve();   // 组装费 1 TAPE
-            setMsg("toMsg","info","TAPE 授权确认（组装需消耗 1 TAPE）…");
-            return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+            return circ.assembleFee().then(function(fee){
+              if (al >= fee) return Promise.resolve();
+              var feeTxt2 = fmtInt(BigInt(fee) / 1000000000000000000n);
+              setMsg("toMsg","info","TAPE 授权确认（组装需消耗 " + feeTxt2 + " TAPE）…");
+              return token.approve(ADDRS.circuit, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }).then(function(tx){ return tx.wait(); });
+            });
           });
         }).then(function(){
           return circ.assemble({ gasLimit: 500000 });
