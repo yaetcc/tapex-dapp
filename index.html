@@ -7450,43 +7450,38 @@ function renderMine(){
   var part  = new ethers.Contract(ADDRS.part, ABI_PART, pubProvider);
   var circ  = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
   var mine  = new ethers.Contract(ADDRS.mining, ABI_MINING, pubProvider);
+  var fs    = new ethers.Contract(ADDRS.feeSplit, ABI_FS, pubProvider);
   var mineCard = $("mine");
   if (mineCard) mineCard.classList.add("refreshing");      // 轻度加载态（保留旧数据）
   var first = !$("myAssets").dataset.ready;
   if (first) $("myAssets").innerHTML = '<li><span class="nm">' + t("a.loading") + '</span><span class="v">—</span></li>';
   $("myAssets").dataset.ready = "1";
+  // r[0]=TAPE余额 r[1]=PC数 r[2]=挖矿待领 r[3]=我的算力 r[4]=lastTokenId r[5]=全网份额 r[6]=日释放 r[7]=24部件 r[8]=分红待领 r[9]=分红stakeToken
   return Promise.all([
     readRetry(function(){ return token.balanceOf(account); }),
-    readRetry(function(){ return part.balanceOf(account, 1); }),
-    readRetry(function(){ return part.balanceOf(account, 2); }),
-    readRetry(function(){ return part.balanceOf(account, 3); }),
-    readRetry(function(){ return part.balanceOf(account, 4); }),
-    readRetry(function(){ return part.balanceOf(account, 5); }),
-    readRetry(function(){ return part.balanceOf(account, 6); }),
-    readRetry(function(){ return part.balanceOf(account, 7); }),
-    readRetry(function(){ return part.balanceOf(account, 8); }),
     readRetry(function(){ return circ.balanceOf(account); }),
     readRetry(function(){ return mine.userEarned(account); }),
     readRetry(function(){ return mine.userShares(account); }),
     readRetry(function(){ return circ.lastTokenId(); }),
     readRetry(function(){ return mine.totalShares(); }),
-    readRetry(function(){ return token.balanceOf(account); }),
     readRetry(function(){ return mine.rewardPerDay(); }),
     readRetry(function(){ return part.balanceOfBatch(
       [account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account,account],
       [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-    ); })
+    ); }),
+    readRetry(function(){ return fs.pending(account); }),
+    readRetry(function(){ return fs.stakeToken(); })
   ]).then(function(r){
-    var b24 = r[16];
+    var b24 = r[7];
     var parts = [0,0,0,0,0,0,0,0];
     var pt = window.__partsTier = new Array(24);
     for (var i = 0; i < 24; i++) { pt[i] = Number(b24[i]); parts[i % 8] += pt[i]; }
     window.__parts = parts;
     var total = parts.reduce(function(a,b){ return a+b; }, 0);
     renderPartsGrid(parts);
-    __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[9]), parts: total, pending: fmtWei(r[10]) };
+    __mineSum = { xchip: fmtWei(r[0]), pcs: Number(r[1]), parts: total, pending: fmtWei(r[2]) };
     var myNfts = [];
-    var last = Number(r[12]);
+    var last = Number(r[4]);
     var cacheKey = account.toLowerCase() + "|" + last;
     var now = Date.now();
     var rigCache = window.__rigCache;
@@ -7587,34 +7582,33 @@ function renderMine(){
         var stRow = staked.length
           ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("a.staked") + ' · <b style="color:var(--gold)">' + staked.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll st-scroll"><ul>' + staked.map(function(x){ var pg = 1, ph = 0, p = null, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { p = pcs[j]; pg = p.grade || 1; ph = p.hash || 0; break; } var dots = "", tip = []; if (p) { for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + tv + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + PART_TIER[tv]); } } return '<li class="pc-row" data-rig="' + x + '">' + miniIcon("nft") + '<span class="nm">PC #' + x + ' <span class="grade g' + pg + '">' + GRADE_NAMES[pg] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + fmtInt(ph) + ' H</span><span class="pc-act">' + t("a.staked") + ' ›</span></li>'; }).join("") + '</ul></div></li>'
           : '';
+        var noSt = !r[9] || r[9] === "0x0000000000000000000000000000000000000000";
         var mineHtml =
-          '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[15]) + '</span></li>' +
-          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + (noSt ? t("d.waiting") : fmtWei(r[8])) + '</span></li>' +
           nftRow +
           stRow +
-          '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[11]) + ' H</span></li>' +
-          (Number(r[13]) > 0n ? '<li>' + miniIcon("tapex") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[11]) / Number(r[13]) * 100).toFixed(1) + '%</span></li>' : '') +
+          '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[3]) + ' H</span></li>' +
+          (Number(r[5]) > 0n ? '<li>' + miniIcon("tapex") + '<span class="nm">' + t("a.share") + '</span><span class="v">' + (Number(r[3]) / Number(r[5]) * 100).toFixed(1) + '%</span></li>' : '') +
           '<li>' + miniIcon("mint") + '<span class="nm">' + t("a.drawnParts") + '</span><span class="v">' + fmtInt(BigInt(total)) + '' + t("a.unit") + '</span></li>';
         if ($("myAssets").innerHTML !== mineHtml) $("myAssets").innerHTML = mineHtml;
         $("myAssets").dataset.ok = "1";
         __mineFailCount = 0;
         window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
-        $("pendingAmt").textContent = fmtWei(r[10]) + " TAPE";
-        $("forgePicked").textContent = fmtInt(BigInt(r[14]));
-        $("forgeTotal").textContent = fmtInt(BigInt(total));
+        $("pendingAmt").textContent = fmtWei(r[2]) + " TAPE";
         var hint = $("stakeHint");
         if (hint) hint.textContent = myNfts.length
           ? t("a.yourIds") + myNfts.join("、") + (staked.length ? t("a.stakedIds") + staked.join("、") + t("a.clickHintStaked") : t("a.clickHintIdle"))
           : t("a.noPc");
         rigData.staked = staked.slice();
         rigData.pcs = pcs.slice();
-        rigData.totalH = Number(r[11]) || 0;
-        rigData.pending = fmtWei(r[10]) + " TAPE";
+        rigData.totalH = Number(r[3]) || 0;
+        rigData.pending = fmtWei(r[2]) + " TAPE";
         renderRigList();
-        if (Number(r[11]) > 0) rigOn(fmtInt(r[11])); else rigOff();
+        if (Number(r[3]) > 0) rigOn(fmtInt(r[3])); else rigOff();
         var emEl = $("mineEmitDay");
-        if (emEl) { try { emEl.textContent = fmtInt(BigInt(r[15]) / 1000000000000000000n); } catch(e){ emEl.textContent = "—"; } }
+        if (emEl) { try { emEl.textContent = fmtInt(BigInt(r[6]) / 1000000000000000000n); } catch(e){ emEl.textContent = "—"; } }
         return r;
       });
     });
