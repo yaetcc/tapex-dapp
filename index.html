@@ -7598,6 +7598,8 @@ function renderMine(){
         window.__mineLoadedAt = Date.now();
         if (mineCard) mineCard.classList.remove("refreshing");
         $("pendingAmt").textContent = fmtWei(r[2]) + " TAPE";
+        var fpk2 = $("forgePicked"); if (fpk2) fpk2.textContent = (window.__mintPicked && window.__mintPicked > 0n) ? fmtInt(window.__mintPicked) : "0";
+        var ft2 = $("forgeTotal"); if (ft2) ft2.textContent = fmtInt(BigInt(total));   // 拥有 = 当前部件总数
         var hint = $("stakeHint");
         if (hint) hint.textContent = myNfts.length
           ? t("a.yourIds") + myNfts.join("、") + (staked.length ? t("a.stakedIds") + staked.join("、") + t("a.clickHintStaked") : t("a.clickHintIdle"))
@@ -8389,6 +8391,8 @@ function doMint(){
     bbOpen();
     revealCard([], amtBN);                            // 立即开盒（不依赖链上 diff）
     toast(t("mint.okShort"));
+    window.__mintPicked = (window.__mintPicked || 0n) + amtBN;   // 会话累计已抽（BigInt）
+    var fpk = $("forgePicked"); if (fpk) fpk.textContent = fmtInt(window.__mintPicked);
     $("mintAmt").value = "";
     refresh();
     __minting = false; setMintBusy(false);
