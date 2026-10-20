@@ -6315,16 +6315,16 @@ body::before{ animation:none !important; }
   </div>
 
     <div class="card" id="divd" data-tab="divd">
-      <div class="kicker">TAPE · <span data-i18n="d.title">持币分红</span></div>
-      <p class="hint fold" title="持有 TAPE 自动累积 TAPE 分红，按持币份额分配。点击展开/收起" data-i18n="d.desc" data-i18n-title="d.foldTip">持有 TAPE 自动累积分红：矿机/市场手续费 5% 注入分红池，按持币份额分配，随时可领取；卖出/转走即停止累积。</p>
+      <div class="kicker">TAPEX · <span data-i18n="d.title">持 TAPEX 分 TAPE</span></div>
+      <p class="hint fold" title="持有 TAPEX 自动累积 TAPE 分红，按持仓占比每日释放。点击展开/收起" data-i18n="d.desc" data-i18n-title="d.foldTip">持有 TAPEX 自动累积分红：分红池恒定每日释放 10,000 TAPE，按 TAPEX 持仓占比分配，随时可领取；卖出/转走即停止累积。</p>
       <div class="panel-stat" id="divdStats">
-        <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPE 持仓</span></div>
+        <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
         <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 TAPE</span></div>
-        <div class="statbox"><b id="hdRate">按持仓比例</b><span data-i18n="d.rate">分红机制</span></div>
+        <div class="statbox"><b id="hdRate">等待激活</b><span data-i18n="d.rate">分红机制</span></div>
       </div>
       <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 TAPE</button>
-      <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPE 持仓与分红，持币即自动累积。</div>
-      <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">分红合约部署中，稍后开放领取。</div>
+      <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
+      <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">等待 TAPEX 分红激活后开放领取。</div>
       <div class="tapex-links">
         <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPE · 合约与购买</b></div>
         <div class="tl-addr">
@@ -6471,14 +6471,15 @@ var I18N = {
   "nav.market": {zh:"市场", en:"Market"},
   "nav.net": {zh:"全网状态", en:"Network"},
   "nav.divd": {zh:"分红", en:"Dividends"},
-  "d.title": {zh:"持币分红", en:"Hold-to-Earn"},
-  "d.desc": {zh:"持有 TAPE 自动累积分红：矿机/市场手续费 5% 注入分红池，按持币份额分配，随时可领取；卖出/转走即停止累积。", en:"Holding TAPE auto-accrues dividends: 5% of mining/market fees flow into the pool and split by holding share; claim anytime. Sell/transfer to stop accruing."},
-  "d.hold": {zh:"TAPE 持仓", en:"TAPE Held"},
+  "d.title": {zh:"持 TAPEX 分 TAPE", en:"Hold TAPEX, earn TAPE"},
+  "d.desc": {zh:"持有 TAPEX 自动累积分红：分红池恒定每日释放 10,000 TAPE，按 TAPEX 持仓占比分配，随时可领取；卖出/转走即停止累积。", en:"Holding TAPEX auto-accrues TAPE: pool emits 10,000 TAPE daily, split by TAPEX holding share; claim anytime. Sell/transfer to stop accruing."},
+  "d.hold": {zh:"TAPEX 持仓", en:"TAPEX Held"},
   "d.claim": {zh:"可领分红 TAPE", en:"Claimable TAPE"},
   "d.rate": {zh:"分红机制", en:"Payout"},
+  "d.waiting": {zh:"等待激活", en:"Awaiting activation"},
   "d.claimBtn": {zh:"领取 TAPE", en:"Claim TAPE"},
-  "d.noWallet": {zh:"连接钱包后可查看 TAPE 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPE holdings and dividends."},
-  "d.pending": {zh:"分红合约部署中，稍后开放领取。", en:"Dividend contract deploying; claiming opens soon."},
+  "d.noWallet": {zh:"连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPEX holdings and dividends."},
+  "d.pending": {zh:"等待 TAPEX 分红激活后开放领取。", en:"Dividends activate once the TAPEX token is linked."},
   "d.claimed": {zh:"TAPE 分红已领取", en:"TAPE dividends claimed"},
   "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
   "d.links": {zh:"TAPE · 合约与购买", en:"TAPE · Contract & Buy"},
@@ -6488,7 +6489,7 @@ var I18N = {
   "g.t3": {zh:"A 级", en:"Grade A"},
   "g.t4": {zh:"S 级", en:"Grade S"},
   "s.foldTip": {zh:"恒定每日释放，按质押算力占总算力份额分配，随时可领；池空后需注资。点击展开/收起", en:"Constant daily emission, distributed by hashrate share; claim anytime. Refill pool when empty. Click to expand/collapse."},
-  "d.foldTip": {zh:"持有 TAPE 自动累积分红，按持币份额分配。点击展开/收起", en:"Holding TAPE auto-accrues dividends by share. Click to expand/collapse."},
+  "d.foldTip": {zh:"持有 TAPEX 自动累积分红，按持仓占比每日释放。点击展开/收起", en:"Holding TAPEX auto-accrues dividends, emitted daily by holding share. Click to expand/collapse."},
   "m.refresh": {zh:"刷新", en:"Refresh"},
   "d.copy": {zh:"复制", en:"Copy"},
   "d.copied": {zh:"已复制合约地址", en:"Contract address copied"},
@@ -6957,7 +6958,12 @@ var ABI_FS = [
   "function claim() returns (uint256)",
   "function pending(address) view returns (uint256)",
   "function deposit(uint256)",
-  "function totalDeposited() view returns (uint256)"
+  "function totalDeposited() view returns (uint256)",
+  "function xchip() view returns (address)",
+  "function stakeToken() view returns (address)",
+  "function rewardPerDay() view returns (uint256)",
+  "function releasedTotal() view returns (uint256)",
+  "function releaseCap() view returns (uint256)"
 ];
 
 var $ = function(id){ return document.getElementById(id); };
@@ -7320,14 +7326,26 @@ function renderDividend(){
   var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, pubProvider);
   return Promise.all([
     readRetry(function(){ return token.balanceOf(account); }),
-    readRetry(function(){ return fs.pending(account); })
+    readRetry(function(){ return fs.pending(account); }),
+    readRetry(function(){ return fs.stakeToken(); }),
+    readRetry(function(){ return fs.rewardPerDay(); })
   ]).then(function(r){
-    $("hdTapex").textContent = fmtWei(r[0]);
-    $("hdClaimable").textContent = fmtWei(r[1]);
-    $("hdRate").textContent = fmtWei(0n) + " / —";   // V6 分红线性按持仓，无固定速率
-    var can = BigInt(r[1]) > 0n;
-    var btn2 = $("hdClaimBtn");
-    if (btn2) { btn2.disabled = !can; btn2.textContent = t("d.claimBtn"); btn2.dataset.ready = "1"; }
+    var st = r[2];
+    var noSt = !st || st === "0x0000000000000000000000000000000000000000";
+    $("hdRate").textContent = noSt ? t("d.waiting") : fmtInt(BigInt(r[3]) / 1000000000000000000n) + " TAPE/天";
+    var ta = Promise.resolve("—");
+    if (!noSt) {
+      var stC = new ethers.Contract(st, ABI_TOKEN, pubProvider);
+      ta = readRetry(function(){ return stC.balanceOf(account); });
+    }
+    ta.then(function(tbal){
+      $("hdTapex").textContent = noSt ? "—" : fmtWei(tbal);
+      $("hdClaimable").textContent = fmtWei(r[1]);
+      if (pending) pending.style.display = noSt ? "" : "none";
+      var can = BigInt(r[1]) > 0n && !noSt;
+      var btn2 = $("hdClaimBtn");
+      if (btn2) { btn2.disabled = !can; btn2.textContent = t("d.claimBtn"); btn2.dataset.ready = "1"; }
+    });
     return null;
   });
 }
