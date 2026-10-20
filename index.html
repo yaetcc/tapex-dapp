@@ -6873,6 +6873,7 @@ var ABI_PART = [
 ];
 var ABI_CIRCUIT = [
   "function approve(address,uint256)",
+  "function listedOf(uint256) view returns (bool)",
   "function assemble() returns (uint256)",
   "function batchAssemble(uint256) returns (uint256)",
   "function balanceOf(address) view returns (uint256)",
@@ -8421,6 +8422,9 @@ function doRigStake(id){
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
   readRetry(function(){ return circ.ownerOf(id); }).then(function(owner){
     if (owner.toLowerCase() !== account.toLowerCase()) { setMsg("rigModalMsg","err", t("o.tokenId") + id + t("o.notMine")); throw new Error("not your nft"); }
+    return circ.listedOf(id);
+  }).then(function(listed){
+    if (listed) { setMsg("rigModalMsg","err","该矿机正在挂单中，请先撤单再质押。"); if (btn) busy(btn, false); throw new Error("listed"); }
     return circ.getApproved(id);
   }).then(function(approved){
     if (approved.toLowerCase() !== ADDRS.mining.toLowerCase()) {
@@ -8443,7 +8447,7 @@ function doRigStake(id){
     closeRigModal(); toast(t("o.stakeOkShort")); clearRigCache(); refresh();
   }).catch(function(e){
     stopSigWatch();
-    if (e.message === "not your nft") return;
+    if (e.message === "not your nft" || e.message === "listed") return;
     var m = humanErr(e);
     setMsg("rigModalMsg","err","失败：" + m.slice(0,220));
     if (btn) busy(btn, false);
@@ -8540,12 +8544,22 @@ function doBatchStake(){
   var ids = [];
   for (var k in rigSel) if (rigSel[k] && rigData.staked.indexOf(Number(k)) === -1) ids.push(Number(k));
   if (!ids.length) { toast(t("o.selIdle")); return; }
-  var btn = $("rigBatchStake"); busy(btn, true, t("o.stakeBusy"));
-  Q.start("批量质押 " + ids.length + " 台", ids.length, function(){ doBatchStake(); });
-  rigLog("info", t("o.batchStake") + ids.length + t("o.batchStakeMid"));
+  var btn = $("rigBatchStake");
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
   var mine = new ethers.Contract(ADDRS.mining, ABI_MINING, signer);
-  (function one(i){
+  // V6：挂单中的矿机不可质押——先过滤挂单矿机再质押
+  readRetry(function(){ return Promise.all(ids.map(function(id){ return circ.listedOf(id); })); }, 2)
+  .catch(function(){ return ids.map(function(){ return false; }); })
+  .then(function(listeds){
+    var ok = [], skip = [];
+    for (var i = 0; i < ids.length; i++){ if (listeds[i]) skip.push(ids[i]); else ok.push(ids[i]); }
+    if (skip.length) { rigLog("warn", "已跳过挂单中的矿机 " + skip.join(", ") + "（请先撤单再质押）"); toast("有 " + skip.length + " 台挂单中的矿机已跳过，请先撤单"); }
+    if (!ok.length) { busy(btn, false); return; }
+    ids = ok;
+    busy(btn, true, t("o.stakeBusy"));
+    Q.start("批量质押 " + ids.length + " 台", ids.length, function(){ doBatchStake(); });
+    rigLog("info", t("o.batchStake") + ids.length + t("o.batchStakeMid"));
+    (function one(i){
     if (Q.stopped()) { rigLog("info","已终止"); rigSel = {}; clearRigCache(); refresh(); busy(btn, false); Q.done("已终止"); return; }
     if (i >= ids.length) {
       rigLog("ok", t("o.batchStakeDone") + ids.length + t("o.asmDoneTail")); toast(t("o.stakeOkShort"));
@@ -8564,6 +8578,7 @@ function doBatchStake(){
       one(i + 1);
     });
   })(0);
+  });
 }
 function doBatchUnstake(){
   var ids = [];
