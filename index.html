@@ -1492,6 +1492,8 @@ input:focus{
   background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:9px;
   padding:8px 10px;
 }
+.tl-addr2{margin-top:8px;background:rgba(0,0,0,.16);}
+.tl-addr2 .tl-lbl{font-size:11.5px;color:var(--tx2);flex:none;}
 .tl-addr code{
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
   font-size:11.5px;color:var(--teal);
@@ -6390,15 +6392,19 @@ body::before{ animation:none !important; }
       <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
       <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">等待 TAPEX 分红激活后开放领取。</div>
       <div class="tapex-links">
-        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPE · 合约与购买</b></div>
+        <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPEX · 合约与购买</b></div>
         <div class="tl-addr">
-          <code>0x72F82ca6E91c6fC2dB750928252e0e2661143BBA</code>
+          <code>0xbb41D437e96dAE17cdF1913E9D201c89925aeEee</code>
           <button class="tl-copy" id="hdCopy" data-i18n="d.copy">复制</button>
         </div>
         <div class="tl-links">
-          <a class="tl-buy" href="https://ignix.bot/launch?token=0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
-          <a class="tl-buy" href="https://web3.okx.com/zh-hans/token/x-layer/0xbba154b45a5e6c606cb41790f03c80903592eeee" target="_blank" rel="noopener" data-i18n="d.dex">OKX 购买</a>
-          <a href="https://www.oklink.com/xlayer/token/0x72F82ca6E91c6fC2dB750928252e0e2661143BBA" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
+          <a class="tl-buy" href="https://ignix.bot/launch?token=0xbb41D437e96dAE17cdF1913E9D201c89925aeEee" target="_blank" rel="noopener" data-i18n="d.buy">IGNIX 购买</a>
+          <a class="tl-buy" href="https://web3.okx.com/zh-hans/token/x-layer/0xbb41D437e96dAE17cdF1913E9D201c89925aeEee" target="_blank" rel="noopener" data-i18n="d.dex">OKX 购买</a>
+          <a href="https://www.oklink.com/xlayer/token/0xbb41D437e96dAE17cdF1913E9D201c89925aeEee" target="_blank" rel="noopener" data-i18n="d.explorer">OKLink 浏览器</a>
+        </div>
+        <div class="tl-addr tl-addr2">
+          <span class="tl-lbl" data-i18n="d.tapeRef">TAPE 分红代币（可领资产）</span>
+          <code>0x72F82ca6E91c6fC2dB750928252e0e2661143BBA</code>
         </div>
       </div>
     </div>
@@ -6546,7 +6552,8 @@ var I18N = {
   "d.pending": {zh:"等待 TAPEX 分红激活后开放领取。", en:"Dividends activate once the TAPEX token is linked."},
   "d.claimed": {zh:"TAPE 分红已领取", en:"TAPE dividends claimed"},
   "d.claimFail": {zh:"领取失败：", en:"Claim failed: "},
-  "d.links": {zh:"TAPE · 合约与购买", en:"TAPE · Contract & Buy"},
+  "d.links": {zh:"TAPEX · 合约与购买", en:"TAPEX · Contract & Buy"},
+  "d.tapeRef": {zh:"TAPE 分红代币（可领资产）", en:"TAPE dividend token (claimable)"},
   "a.ownTip": {zh:"点击查看全部部件", en:"View all owned parts"},
   "g.t1": {zh:"C 级", en:"Grade C"},
   "g.t2": {zh:"B 级", en:"Grade B"},
@@ -9065,7 +9072,7 @@ var el=$("assembleBtn"); if (el) el.addEventListener("click", doAssemble);
   var os = $("forgeOwnSlot"); if (os) os.addEventListener("click", openPartsOwn);
   var hdBtn = $("hdClaimBtn"); if (hdBtn) hdBtn.addEventListener("click", claimDividend);
   var hdCopy = $("hdCopy"); if (hdCopy) hdCopy.addEventListener("click", function(){
-    try { navigator.clipboard.writeText("0x72F82ca6E91c6fC2dB750928252e0e2661143BBA").then(function(){ toast(t("d.copied")); }); }
+    try { navigator.clipboard.writeText("0xbb41D437e96dAE17cdF1913E9D201c89925aeEee").then(function(){ toast(t("d.copied")); }); }
     catch(e){ toast(t("d.copied")); }
   });
   var oc = $("partsOwnClose"); if (oc) oc.addEventListener("click", function(){ closePop($("partsOwnModal")); });
