@@ -6211,9 +6211,9 @@ body::before{ animation:none !important; }
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
       <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
       <div class="mint-cap" id="mintCapBox">
-        <div class="mint-cap-head"><span data-i18n="c.capTitle">全网铸造进度</span><b id="mintCapTxt">— / 100,000</b></div>
+        <div class="mint-cap-head"><span data-i18n="c.capTitle">全网抽卡进度</span><b id="mintCapTxt">— / 100,000</b></div>
         <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
-        <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">链上强制上限 · 达上限后抽卡停止</div>
+        <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">正式抽卡铸造计数 · 测试直造部件不计入 · 链上限 100,000</div>
       </div>
       <div class="prob" id="probBox">
         <div class="prob-title" data-i18n="抽卡概率（8 类加权 · 部件 3 档位）">抽卡概率（8 类加权 · 部件 3 档位）</div>
@@ -6863,8 +6863,8 @@ var I18N = {
   "w.busyBuy": {zh:"购买中…", en:"Buying…"},
   "mint.busy": {zh:"抽取中…", en:"Drawing…"},
   "mint.btn": {zh:"抽卡", en:"Draw"},
-  "c.capTitle": {zh:"全网铸造进度", en:"Global Mint Progress"},
-  "c.capSub": {zh:"链上强制上限 · 达上限后抽卡停止", en:"On-chain cap · mint halts at limit"},
+  "c.capTitle": {zh:"全网抽卡进度", en:"Global Draw Progress"},
+  "c.capSub": {zh:"正式抽卡铸造计数 · 测试直造部件不计入 · 链上限 100,000", en:"Counts official draws only · manual test mints excluded · cap 100,000"},
   "c.capLeft": {zh:"链上强制上限 · 剩余 ", en:"On-chain cap · "},
   "c.capFull": {zh:"已达上限，链上停止抽卡", en:"Cap reached — mint halted"},
   "c.capBlock": {zh:"已达全网铸造上限", en:"Global mint cap reached"},
