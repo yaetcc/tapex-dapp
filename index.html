@@ -6386,7 +6386,7 @@ body::before{ animation:none !important; }
       <div class="panel-stat" id="divdStats">
         <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
         <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 TAPE</span></div>
-        <div class="statbox"><b id="hdRate">等待激活</b><span data-i18n="d.rate">分红机制</span></div>
+        <div class="statbox"><b id="hdRate" data-i18n="d.connectShow">连接钱包后显示</b><span data-i18n="d.rate">分红机制</span></div>
       </div>
       <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 TAPE</button>
       <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
@@ -6547,6 +6547,8 @@ var I18N = {
   "d.claim": {zh:"可领分红 TAPE", en:"Claimable TAPE"},
   "d.rate": {zh:"分红机制", en:"Payout"},
   "d.waiting": {zh:"等待激活", en:"Awaiting activation"},
+  "d.rate": {zh:"分红机制", en:"Dividend rate"},
+  "d.connectShow": {zh:"连接钱包后显示", en:"Connect to see rate"},
   "d.claimBtn": {zh:"领取 TAPE", en:"Claim TAPE"},
   "d.noWallet": {zh:"连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。", en:"Connect a wallet to see your TAPEX holdings and dividends."},
   "d.pending": {zh:"等待 TAPEX 分红激活后开放领取。", en:"Dividends activate once the TAPEX token is linked."},
@@ -6872,7 +6874,7 @@ var I18N = {
   "mint.btn": {zh:"抽卡", en:"Draw"},
   "c.capTitle": {zh:"全网抽卡进度", en:"Global Draw Progress"},
   "c.capSub": {zh:"正式抽卡铸造计数 · 测试直造部件不计入 · 链上限 100,000", en:"Counts official draws only · manual test mints excluded · cap 100,000"},
-  "c.capLeft": {zh:"链上强制上限 · 剩余 ", en:"On-chain cap · "},
+  "c.capLeft": {zh:"正式抽卡铸造计数（测试直造不计入）· 剩余 ", en:"Official draws counted · "},
   "c.capFull": {zh:"已达上限，链上停止抽卡", en:"Cap reached — mint halted"},
   "c.capBlock": {zh:"已达全网铸造上限", en:"Global mint cap reached"},
   "mint.busyDefault": {zh:"处理中…", en:"Processing…"},
