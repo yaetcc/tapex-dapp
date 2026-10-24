@@ -8924,8 +8924,10 @@ function doClaim(){
   startSigWatch("rigMsg", btn);
   readRetry(function(){ return mine.stakedPCsOf(account); }, 2).then(function(ids){
     if (!ids || !ids.length) { stopSigWatch(); setMsg("rigMsg","err","当前没有质押中的矿机，无需领取。"); if (btn && btn.isConnected) busy(btn, false); throw new Error("no staked"); }
-    setMsg("rigMsg","info","领取 " + ids.length + " 台质押矿机的累计奖励…");
-    return mine.claim(ids, { gasLimit: 200000 + ids.length * 60000 });
+    var idArr = [];   // stakedPCsOf 返回 ethers Result（只读），转普通数组再传 claim，避免只读属性赋值错误
+    for (var _i = 0; _i < ids.length; _i++) idArr.push(BigInt(ids[_i]));
+    setMsg("rigMsg","info","领取 " + idArr.length + " 台质押矿机的累计奖励…");
+    return mine.claim(idArr, { gasLimit: 200000 + idArr.length * 60000 });
   }).then(function(tx){
     setMsg("rigMsg","info","交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
