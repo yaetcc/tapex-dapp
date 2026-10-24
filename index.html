@@ -7310,7 +7310,7 @@ function renderGlobal(){
     if (setNum("stTape", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stTape");
     if (setNum("stPool", r[1], fmtWeiUnit, fmtWei)) flashStat("stPool");
     if (setNum("stMinted", r[3], fmtNumUnit, fmtInt)) flashStat("stMinted");
-    if (setNum("stCap", 21000000000000000000000000n, fmtNumUnit, fmtInt)) flashStat("stCap");
+    if (setNum("stCap", r[8], fmtNumUnit, fmtInt)) flashStat("stCap");
     if (setNum("stShares", r[2], fmtNumUnit, fmtInt)) flashStat("stShares");
     if (typeof HIST==="undefined"){window.HIST={hash:[],price:[],mint:[]};}
     var _hv=Number(r[2]), _pv=Number(r[6])/1e18, _mv=Number(r[3]);
