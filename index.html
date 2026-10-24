@@ -6383,6 +6383,7 @@ body::before{ animation:none !important; }
     <div class="card" id="divd" data-tab="divd">
       <div class="kicker">TAPEX · <span data-i18n="d.title">持 TAPEX 分 TAPE</span></div>
       <p class="hint fold" title="持有 TAPEX 自动累积 TAPE 分红，按持仓占比每日释放。点击展开/收起" data-i18n="d.desc" data-i18n-title="d.foldTip">持有 TAPEX 自动累积分红：分红池恒定每日释放 10,000 TAPE，按 TAPEX 持仓占比分配，随时可领取；卖出/转走即停止累积。</p>
+      <p class="hint" data-i18n="d.excluded">分红池已排除流动性池/项目方地址（IGNIX 池），有效供应约 2,116 万 TAPEX——真实持仓自动按有效供应提升分红占比。</p>
       <div class="panel-stat" id="divdStats">
         <div class="statbox"><b id="hdTapex">—</b><span data-i18n="d.hold">TAPEX 持仓</span></div>
         <div class="statbox"><b id="hdClaimable">—</b><span data-i18n="d.claim">可领分红 TAPE</span></div>
@@ -6543,6 +6544,7 @@ var I18N = {
   "nav.divd": {zh:"分红", en:"Dividends"},
   "d.title": {zh:"持 TAPEX 分 TAPE", en:"Hold TAPEX, earn TAPE"},
   "d.desc": {zh:"持有 TAPEX 自动累积分红：分红池恒定每日释放 10,000 TAPE，按 TAPEX 持仓占比分配，随时可领取；卖出/转走即停止累积。", en:"Holding TAPEX auto-accrues TAPE: pool emits 10,000 TAPE daily, split by TAPEX holding share; claim anytime. Sell/transfer to stop accruing."},
+  "d.excluded": {zh:"分红池已排除流动性池/项目方地址（IGNIX 池），有效供应约 2,116 万 TAPEX——真实持仓自动按有效供应提升分红占比。", en:"Dividend pool excludes liquidity/project addresses (IGNIX pool). Effective supply ≈ 21.16M TAPEX — real holdings get a higher share automatically."},
   "d.hold": {zh:"TAPEX 持仓", en:"TAPEX Held"},
   "d.claim": {zh:"可领分红 TAPE", en:"Claimable TAPE"},
   "d.rate": {zh:"分红机制", en:"Payout"},
