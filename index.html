@@ -5871,7 +5871,7 @@ input[type=number]:focus,input[type=text]:focus,textarea:focus{
 }
 /* 数据面板 hover 数值放大 */
 .statbox:hover b{ transform:scale(1.12); }
-.statbox b{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); display:inline-block; transform-origin:left bottom; }
+.statbox b{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); display:block; transform-origin:left bottom; margin-bottom:2px; }
 /* 按钮流光改黄闪 */
 .btn.primary::after,.action-btn::after{
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.65),transparent) !important;
@@ -5962,6 +5962,10 @@ body::before{ animation:none !important; }
 /* ===== 市场页布局美化优化（2026-10-20） ===== */
 /* A1 双栏整卡化：渐变金描边+暖底+外发光 */
 .mk-cols{
+  display:grid;
+  grid-template-columns:1.25fr 1fr;
+  gap:0 18px;
+  align-items:start;
   background:linear-gradient(180deg,rgba(42,30,27,.55),rgba(23,18,16,.42));
   border:2px solid rgba(255,217,61,.22);
   border-radius:18px;
@@ -5970,6 +5974,12 @@ body::before{ animation:none !important; }
   box-shadow:0 8px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,217,61,.08);
 }
 /* A2 列表头：emoji 图标+金色标题+分隔线 */
+.mk-col{ min-width:0; }
+#divdStats{ grid-template-columns:repeat(3,1fr); }
+@media(max-width:820px){ #divdStats{ grid-template-columns:1fr; } }
+.mk-range{ display:flex; align-items:center; gap:6px; flex:0 1 260px; min-width:0; margin-left:auto; }
+.mk-range .mk-price-min,.mk-range .mk-price-max{ flex:1 1 0; min-width:0; }
+.mk-toolbar .mk-cancel-all,.mk-head .mk-cancel-all{ flex:0 0 auto; width:auto; white-space:nowrap; }
 .mk-head{
   font-size:12.5px;
   font-weight:700;
@@ -6361,9 +6371,9 @@ body::before{ animation:none !important; }
           <button type="button" class="mk-fch" data-g="3" title="A 级" data-i18n-title="g.t3">A</button>
           <button type="button" class="mk-fch" data-g="4" title="S 级" data-i18n-title="g.t4">S</button>
         </div>
-        <input class="mk-price-min" id="mkPmin" type="number" min="0" step="0.000001" placeholder="最低价" aria-label="最低价">
+        <div class="mk-range"><input class="mk-price-min" id="mkPmin" type="number" min="0" step="0.000001" placeholder="最低价" aria-label="最低价">
         <span class="mk-range-sep">–</span>
-        <input class="mk-price-max" id="mkPmax" type="number" min="0" step="0.000001" placeholder="最高价" aria-label="最高价">
+        <input class="mk-price-max" id="mkPmax" type="number" min="0" step="0.000001" placeholder="最高价" aria-label="最高价"></div>
         <button type="button" class="mk-refresh" id="mkRefresh" title="刷新" data-i18n-title="m.refresh">⟳</button>
         <span class="mk-updated" id="mkUpdated"></span>
         <span class="mk-page" id="mkPage">—</span>
@@ -6371,10 +6381,14 @@ body::before{ animation:none !important; }
         <button class="mk-pg" id="mkNext">›</button>
       </div>
       <div class="mk-cols">
+      <div class="mk-col">
       <div class="mk-head"><span data-i18n="mk.onSaleH">在售挂单</span><span class="mk-floor" id="mkFloor"></span></div>
       <ul class="mk-list" id="mkList"><li class="mk-head-row"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPc">PC</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colSeller">卖家</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
+      </div>
+      <div class="mk-col">
       <div class="mk-head"><span data-i18n="mk.mineH">我的挂单</span><button class="action-btn auto mk-cancel-all" id="mkCancelAll" data-i18n="全部撤下">全部撤下</button></div>
       <ul class="mk-list" id="mkMineList"><li class="mk-head-row mk-head-mine"><span data-i18n="mk.colId">#</span><span data-i18n="mk.colPrice">价格</span><span data-i18n="mk.colAct">操作</span></li><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
+      </div>
       </div>
       <p class="hint">合约 <code>0xd9A3…722</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
     </div>
@@ -6639,6 +6653,7 @@ var I18N = {
   "w.connectPre": {zh:"连接钱包后可抽硬件、组装电脑、质押与领取。", en:"Connect to mint, assemble, stake & claim. "},
   "tr.price": {zh:"PC 价格 OKB", en:"PC Price OKB"},
   "k.divdTag": {zh:"分红代币", en:"Dividend"},
+  "mine.pendingDiv": {zh:"待领分红", en:"Pending reward"},
   "app.title": {zh:"TapeX DApp — 矿机版 Pump · 主网控制台", en:"TapeX DApp — Miner Pump · Mainnet Console"},
   "q.stop": {zh:"终止", en:"Stop"},
   "q.retry": {zh:"重试失败项", en:"Retry failed"},
@@ -7456,7 +7471,7 @@ function renderMine(){
   if (!signer || !account) {
     $("myAssets").innerHTML =
       '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">—</span></li>' +
-      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">—</span></li>' +
+      '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">' + t("mine.pendingDiv") + ' <b class="tk-tag">TAPE</b></span><span class="v">—</span></li>' +
       '<li><span class="nm">' + t("ph.noWallet") + '</span><span class="v">—</span></li>';
     $("pendingAmt").textContent = "—";
     var fp = $("forgePicked"); if (fp) fp.textContent = "—";
@@ -7601,7 +7616,7 @@ function renderMine(){
         var noSt = !r[9] || r[9] === "0x0000000000000000000000000000000000000000";
         var mineHtml =
           '<li class="tk-li" data-copy="tape" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">X Layer</b></span><span class="v">' + fmtWei(r[0]) + '</span></li>' +
-          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">TAPE <b class="tk-tag">' + t("k.divdTag") + '</b></span><span class="v">' + (noSt ? t("d.waiting") : fmtWei(r[8])) + '</span></li>' +
+          '<li class="tk-li" data-copy="xchip" title="' + t("mine.copyTip") + '">' + miniIcon("tapex") + '<span class="nm">' + t("mine.pendingDiv") + ' <b class="tk-tag">TAPE</b></span><span class="v">' + (noSt ? t("d.waiting") : fmtWei(r[8])) + '</span></li>' +
           nftRow +
           stRow +
           '<li>' + miniIcon("rig") + '<span class="nm">' + t("a.stakeHash") + '</span><span class="v">' + fmtInt(r[3]) + ' H</span></li>' +
@@ -7973,6 +7988,14 @@ function renderMarket(){
       window.__mkLoadedAt = Date.now();
       var upEl0 = $("mkUpdated"); if (upEl0) upEl0.textContent = mkUpdText();
       list.innerHTML = mkHeadOf(list) + '<li class="mk-empty" data-i18n="m.empty">' + t("m.empty") + '</li>' + mkEmptyCta();
+      // 0 挂单时也要把统计与「我的挂单」收尾，否则会一直停在 "—" / 加载骨架
+      var stC0 = $("mkStatCount"), stF0 = $("mkStatFloor"), stM0 = $("mkStatMine");
+      if (stC0) stC0.textContent = "0";
+      if (stF0) { stF0.textContent = "—"; stF0.title = t("m.floorTip") + "0" + t("m.floorTipTail"); }
+      if (stM0) stM0.textContent = "0";
+      var fl0 = $("mkFloor"); if (fl0) fl0.textContent = "";
+      var ml0 = $("mkMineList");
+      if (ml0) ml0.innerHTML = mkHeadOf(ml0) + '<li class="mk-empty">' + t("m.mineEmpty") + '</li>';
       return;
     }
     var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, pubProvider);
