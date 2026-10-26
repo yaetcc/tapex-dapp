@@ -2902,7 +2902,7 @@ input:focus{
   transform:translateY(0);
   animation-play-state:paused;
 }
-#rigModal{
+#rigModal,#buyModal{
   position:fixed;
   inset:0;
   z-index:99;
@@ -2911,10 +2911,10 @@ input:focus{
   justify-content:center;
   background:rgba(6,10,20,.74);
 }
-#rigModal.open,#rigModal.closing{
+#rigModal.open,#rigModal.closing,#buyModal.open,#buyModal.closing{
   display:flex;
 }
-#rigModal.open{
+#rigModal.open,#buyModal.open{
   animation:maskIn .18s ease;
 }
 #rigModal.closing{
@@ -4769,6 +4769,16 @@ main .card:nth-child(3){
 }
 .mint-cta{ width:100%; margin:10px 0 4px; font-size:15px; letter-spacing:.5px; }
 .asm-bench{ background:linear-gradient(180deg,rgba(42,30,27,.5),rgba(23,18,16,.4)); border:2px solid rgba(255,217,61,.22); border-radius:16px; padding:12px 14px 10px; margin:6px 0 12px; }
+.bm-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.08); }
+.bm-row span{ color:var(--tx2); }
+.bm-row b{ color:var(--tx); font-variant-numeric:tabular-nums; }
+.bm-row.total b{ color:var(--gold); font-size:15px; }
+.bm-acts{ display:flex; gap:8px; margin-top:14px; }
+.bm-acts .action-btn{ flex:1; height:34px; }
+.bm-title{ font-size:14px; font-weight:800; color:var(--gold); margin-bottom:10px; }
+.mini-cta{ display:inline-block; margin-left:8px; padding:3px 10px; border-radius:999px; border:1px solid rgba(0,229,160,.45); color:var(--ac); font-size:11.5px; text-decoration:none; }
+.mini-cta:hover{ background:rgba(0,229,160,.12); }
+.empty-cta{ opacity:.95; }
 .ab-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 10px; margin-bottom:10px; }
 .ab-head b{ white-space:nowrap; }
 .ab-head b{ font-size:13px; color:var(--gold); letter-spacing:1px; }
@@ -6453,6 +6463,7 @@ body::before{ animation:none !important; }
       <button class="btn primary" id="hdClaimBtn" disabled data-i18n="d.claimBtn">领取 TAPE</button>
       <div class="wallet-hint" id="hdNoWallet" data-i18n="d.noWallet">连接钱包后可查看 TAPEX 持仓与分红，持币即自动累积。</div>
       <div class="wallet-hint" id="hdPending" style="display:none" data-i18n="d.pending">等待 TAPEX 分红激活后开放领取。</div>
+      <div class="wallet-hint" id="hdZeroTip" style="display:none" data-i18n="d.zeroTip">你现在没有 TAPEX，所以分不到 TAPE —— 可在下方「IGNIX 购买 / OKX 购买」直接买入。</div>
       <div class="tapex-links">
         <div class="tl-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;color:var(--gold)"><path d="M9 12h6M10 9h4M10 15h4"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg><b data-i18n="d.links">TAPEX · 合约与购买</b></div>
         <div class="tl-addr">
@@ -6500,6 +6511,12 @@ body::before{ animation:none !important; }
       <button class="action-btn sec" id="shareCopy" data-i18n="复制文案">复制文案</button>
       <button class="action-btn sec" id="shareClose" data-i18n="关闭">关闭</button>
     </div>
+  </div>
+</div>
+<div id="buyModal">
+  <div class="rm-box">
+    <button class="rm-close" id="buyModalClose">×</button>
+    <div id="buyModalBody"></div>
   </div>
 </div>
 <div id="rigModal">
@@ -6686,6 +6703,9 @@ var I18N = {
   "g.a": {zh:"A 级", en:"A Grade"},
   "g.s": {zh:"S 级", en:"S Grade"},
   "a.pcnft": {zh:"我的 PC NFT", en:"My PC NFT"},
+  "cta.goMint": {zh:"去铸造", en:"Go mint"},
+  "rig.emptyNone": {zh:"你还没有矿机 —— 抽部件、组装一台就能开始挖矿。", en:"You have no PC yet — mint parts and assemble one."},
+  "d.zeroTip": {zh:"你现在没有 TAPEX，所以分不到 TAPE —— 可在下方「IGNIX 购买 / OKX 购买」直接买入。", en:"You hold no TAPEX, so no TAPE dividend accrues — buy TAPEX below."},
   "a.none": {zh:"无（先组装）", en:"None (assemble first)"},
   "a.staked": {zh:"质押中", en:"Staked"},
   "a.stakeHash": {zh:"质押算力", en:"Staked Hash"},
@@ -6814,6 +6834,27 @@ var I18N = {
   "e.cancelled": {zh:"已取消签名", en:"Signature cancelled"},
   "e.funds": {zh:"钱包余额不足（OKB 或 gas）", en:"Insufficient balance (OKB or gas)"},
   "e.gas": {zh:"gas 超出预估，请稍后再试", en:"Gas exceeds estimate, retry later"},
+  "bm.title": {zh:"确认购买 PC", en:"Confirm purchase — PC"},
+  "bm.price": {zh:"挂单价格", en:"List price"},
+  "bm.fee": {zh:"平台手续费 10%（5% 销毁 + 5% 分红）", en:"Fee 10% (5% burn + 5% dividend)"},
+  "bm.seller": {zh:"卖家到手", en:"Seller receives"},
+  "bm.pay": {zh:"你需支付", en:"You pay"},
+  "bm.cancel": {zh:"再想想", en:"Cancel"},
+  "bm.confirm": {zh:"确认购买", en:"Confirm"},
+  "e.r.notOwner": {zh:"这台 NFT 不在你名下", en:"This NFT is not yours"},
+  "e.r.staked": {zh:"该 PC 质押中，请先解押", en:"PC is staked — unstake first"},
+  "e.r.listed": {zh:"该 PC 挂单中，请先撤单", en:"PC is listed — cancel the order first"},
+  "e.r.noPart": {zh:"部件不足，凑齐 8 类各 1 件再组装", en:"Not enough parts — need 1 of each of the 8 types"},
+  "e.r.fee": {zh:"支付金额不符（价格已变动？）", en:"Payment mismatch (price changed?)"},
+  "e.r.cap": {zh:"已达抽卡上限", en:"Draw cap reached"},
+  "e.r.batch": {zh:"单笔数量超限（上限 10）", en:"Batch size over limit (max 10)"},
+  "e.r.notStake": {zh:"这台 PC 没有在质押中", en:"This PC is not staked"},
+  "e.r.inactive": {zh:"该挂单已失效（已售出或已撤下）", en:"Order is no longer active"},
+  "e.r.sold": {zh:"这个盲盒已售罄", en:"Box sold out"},
+  "e.r.badType": {zh:"部件类型无效", en:"Invalid part type"},
+  "e.r.locked": {zh:"该 PC 被锁定（质押或挂单中）", en:"PC is locked (staked or listed)"},
+  "e.r.reentrant": {zh:"合约重入保护触发，请重试", en:"Reentrancy guard tripped — retry"},
+  "e.r.allowance": {zh:"TAPE 授权额度不足", en:"TAPE allowance too low"},
   "e.revert": {zh:"链上拒绝执行（请检查 NFT 归属 / 授权 / 是否已挂单）", en:"Rejected on-chain (check NFT ownership / approval / listing)"},
   "e.timeout": {zh:"RPC 响应超时，请稍后重试", en:"RPC timeout, retry later"},
   "ms.hash": {zh:"全网算力 ", en:"Network Hash "},
@@ -7348,13 +7389,44 @@ function busy(btn, on, text){
   btn.textContent = on ? (text || t("mint.busyDefault")) : btn.dataset.idle;
 }
 
+// 合约 revert 原因 → 人话（合约里的 require 字符串/自定义错误）
+var REVERT_MAP = [
+  [/user rejected|user denied|rejected by user|4001/i, "e.cancelled"],
+  [/insufficient funds|insufficient balance/i, "e.funds"],
+  [/not owner/i, "e.r.notOwner"],
+  [/staked/i, "e.r.staked"],
+  [/listed/i, "e.r.listed"],
+  [/no part|parts? short/i, "e.r.noPart"],
+  [/\bfee\b|msg\.value|incorrect payment/i, "e.r.fee"],
+  [/\bcap\b|max mint/i, "e.r.cap"],
+  [/\bbatch\b/i, "e.r.batch"],
+  [/not stake/i, "e.r.notStake"],
+  [/inactive/i, "e.r.inactive"],
+  [/sold/i, "e.r.sold"],
+  [/bad type/i, "e.r.badType"],
+  [/locked/i, "e.r.locked"],
+  [/reentr/i, "e.r.reentrant"],
+  [/allowance/i, "e.r.allowance"],
+  [/gas required exceeds/i, "e.gas"],
+  [/timeout/i, "e.timeout"]
+];
+function ercRevertText(e){
+  // ethers v6: reason / shortMessage 里带 "execution reverted: not owner"
+  var bits = [];
+  if (e && e.reason) bits.push(String(e.reason));
+  if (e && e.shortMessage) bits.push(String(e.shortMessage));
+  if (e && e.message) bits.push(String(e.message));
+  if (e && e.info && e.info.error && e.info.error.message) bits.push(String(e.info.error.message));
+  if (e && e.data) bits.push(String(e.data));
+  return bits.join(" | ");
+}
 function humanErr(e){
-  var m = e && e.message ? String(e.message) : String(e);
-  if (e && (e.code === 4001 || /rejected|user denied|denied|cancelled/i.test(m))) return t("e.cancelled");
-  if (/insufficient funds/i.test(m)) return t("e.funds");
-  if (/gas required exceeds/i.test(m)) return t("e.gas");
+  var m = (e && e.message) ? String(e.message) : String(e);
+  var all = ercRevertText(e) || m;
+  for (var i = 0; i < REVERT_MAP.length; i++) {
+    if (REVERT_MAP[i][0].test(all)) return t(REVERT_MAP[i][1]);
+  }
   if (/execution reverted|revert/i.test(m)) return t("e.revert");
-  if (/timeout|timeout exceeded/i.test(m)) return t("e.timeout");
   return m.slice(0, 220);
 }
 
@@ -7498,6 +7570,8 @@ function renderDividend(){
     }
     ta.then(function(tbal){
       $("hdTapex").textContent = noSt ? "—" : fmtWei(tbal);
+      var zeroTip = $("hdZeroTip");
+      if (zeroTip) zeroTip.style.display = (!noSt && Number(tbal) === 0) ? "" : "none";
       $("hdClaimable").textContent = fmtWei(r[1]);
       if (pending) pending.style.display = noSt ? "" : "none";
       var can = BigInt(r[1]) > 0n && !noSt;
@@ -7667,7 +7741,7 @@ function renderMine(){
             });
         var nftRow = freePcs.length
           ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("f.idle") + ' · <b style="color:var(--gold)">' + freePcs.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll"><ul>' + pcRowsHtml.join("") + '</ul></div></li>'
-          : (pcs.length ? '' : '<li>' + miniIcon("nft") + '<span class="nm">' + t("a.pcnft") + '</span><span class="v">' + t("a.none") + '</span></li>');
+          : (pcs.length ? '' : '<li class="empty-cta"><span class="nm">' + t("a.pcnft") + ' · ' + t("a.none") + '</span><span class="v"><a class="mini-cta" href="#mint">' + t("cta.goMint") + ' →</a></span></li>');
         var stRow = staked.length
           ? '<li class="pc-wrap"><div class="pc-wrap-hd"><span class="nm">' + t("a.staked") + ' · <b style="color:var(--gold)">' + staked.length + '</b> ' + t("b.units") + '</span></div><div class="pc-scroll st-scroll"><ul>' + staked.map(function(x){ var pg = 1, ph = 0, p = null, j; for (j = 0; j < pcs.length; j++) if (pcs[j].tid === x) { p = pcs[j]; pg = p.grade || 1; ph = p.hash || 0; break; } var dots = "", tip = []; if (p) { for (var k = 0; k < 8; k++){ var tv = Number(p.tiers[k]); dots += '<i class="mk-dot t' + (tv < 3 ? tv : 0) + '" title=""></i>'; tip.push(PART_NAMES[k] + ":" + (PART_TIER[tv] || "?")); } } return '<li class="pc-row" data-rig="' + x + '">' + miniIcon("nft") + '<span class="nm">PC #' + x + ' <span class="grade g' + pg + '">' + GRADE_NAMES[pg] + '</span></span><span class="v"><span class="mk-dots" title="' + tip.join(" · ") + '">' + dots + '</span>' + fmtInt(ph) + ' H</span><span class="pc-act">' + t("a.staked") + ' ›</span></li>'; }).join("") + '</ul></div></li>'
           : '';
@@ -8173,6 +8247,31 @@ function doMarketList(){
   });
 }
 
+/* 购买前二次确认：价格 / 手续费 10%（5% 销毁 + 5% 分红）/ 卖家到手 */
+function confirmBuy(orderId, priceWei){
+  if (!signer || !account) { toast(t("t.connectFirst")); return; }
+  if (!ensureNetMsg("mkMsg")) return;
+  var body = $("buyModalBody"); if (!body) { doMarketBuy(orderId, priceWei); return; }
+  var price = Number(ethers.formatEther(priceWei));
+  var fee = price * 0.1;
+  var fmt = function(n){ return n.toLocaleString("en-US", { maximumFractionDigits: 4 }); };
+  body.innerHTML =
+    '<div class="bm-title">' + t("bm.title") + ' #' + orderId + '</div>' +
+    '<div class="bm-row"><span>' + t("bm.price") + '</span><b>' + fmt(price) + ' TAPE</b></div>' +
+    '<div class="bm-row"><span>' + t("bm.fee") + '</span><b>' + fmt(fee) + ' TAPE</b></div>' +
+    '<div class="bm-row"><span>' + t("bm.seller") + '</span><b>' + fmt(price - fee) + ' TAPE</b></div>' +
+    '<div class="bm-row total"><span>' + t("bm.pay") + '</span><b>' + fmt(price) + ' TAPE</b></div>' +
+    '<div class="bm-acts"><button class="action-btn sec" id="bmCancel">' + t("bm.cancel") + '</button>' +
+    '<button class="action-btn" id="bmOk">' + t("bm.confirm") + '</button></div>';
+  openPop($("buyModal"));
+  $("bmCancel").onclick = function(){ closePop($("buyModal")); };
+  $("bmOk").onclick = function(){
+    closePop($("buyModal"));
+    var btn = document.querySelector('.mk-buy[data-id="' + orderId + '"]');
+    if (btn) busy(btn, true, t("w.busyBuy"));
+    doMarketBuy(orderId, priceWei, btn);
+  };
+}
 function doMarketBuy(id, priceWei, btn){
   if (!signer || !account) { toast(t("t.connectFirst")); return; }
   if (!ensureNetMsg("mkMsg")) return;
@@ -8722,7 +8821,9 @@ function renderRigList(){
       '</div>' +
       '<div class="rc-foot"><span class="rg-st ' + (o.st ? "on" : "idle") + '">' + (o.st ? t("f.mining") : t("f.idle")) + '</span><span class="rc-go">' + t("rig.manage") + '</span></div>' +
       '</div>';
-  }).join("") : '<div class="rig-empty">' + (rigFilter === "all" ? t("rig.emptyAll") : rigFilter === "mine" ? t("rig.emptyMine") : t("rig.emptyIdle")) + '</div>';
+  }).join("") : '<div class="rig-empty">' + (rigData.pcs.length === 0
+      ? t("rig.emptyNone") + '<a class="mini-cta" href="#mint">' + t("cta.goMint") + ' →</a>'
+      : (rigFilter === "all" ? t("rig.emptyAll") : rigFilter === "mine" ? t("rig.emptyMine") : t("rig.emptyIdle"))) + '</div>';
   var pg = pages > 1 ? '<div class="rig-pg"><button class="action-btn auto mini" data-pg="-1"' + (rigPage === 0 ? " disabled" : "") + '>‹</button><span>' + (rigPage + 1) + ' / ' + pages + '</span><button class="action-btn auto mini" data-pg="1"' + (rigPage >= pages - 1 ? " disabled" : "") + '>›</button></div>' : '';
   var ops = '<div class="rig-ops">' +
     '<label class="rg-all"><input type="checkbox" id="rigSelAll"' + (selN === rows.length && rows.length ? " checked" : "") + '>' + t("rig.selAll") + '</label>' +
@@ -9022,11 +9123,13 @@ function stopSigWatch(){ if (__sigW) { clearTimeout(__sigW); __sigW = null; } }
 
 /* ---------- 钱包环境自检 ---------- */
 var el=$("mkListBtn"); if (el) el.addEventListener("click", doMarketList);
+var __bmClose = $("buyModalClose"); if (__bmClose) __bmClose.addEventListener("click", function(){ closePop($("buyModal")); });
+var __bm = $("buyModal"); if (__bm) __bm.addEventListener("click", function(e){ if (e.target === __bm) closePop(__bm); });
 var el=$("mkList"); if (el) el.addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("button") : null;
   if (!b) return;
   var id = Number(b.getAttribute("data-id"));
-  if (b.classList.contains("mk-buy")) { busy(b, true, t("w.busyBuy")); doMarketBuy(id, BigInt(b.getAttribute("data-price")), b); }
+  if (b.classList.contains("mk-buy")) { confirmBuy(id, BigInt(b.getAttribute("data-price"))); }
   else if (b.classList.contains("mk-cancel")) { busy(b, true, t("mkt.busyCancel")); doMarketCancel(id, b); }
   else if (b.classList.contains("mk-go")) { switchTab(b.getAttribute("data-go"), {push:true}); }
 });
