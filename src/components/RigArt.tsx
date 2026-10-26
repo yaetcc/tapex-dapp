@@ -137,46 +137,53 @@ export function RigArt({
           {/* 内部（真实 ATX 侧视：主板横置 / 显卡加厚 / 内存变细 / 三层 z-order） */}
           <g clipPath="url(#caseclip)">
             {/* 主板 PCB（横置 150×120） */}
-            <rect x="36" y="22" width="154" height="148" rx="6" fill="url(#pcb)" stroke="#2c5c4c" strokeWidth="1.2" />
-            <rect x="36" y="22" width="154" height="148" rx="6" fill="url(#pcbgrid)" />
+            <rect x="38" y="20" width="144" height="160" rx="6" fill="url(#pcb)" stroke="#2c5c4c" strokeWidth="1.2" />
+            <rect x="38" y="20" width="144" height="160" rx="6" fill="url(#pcbgrid)" />
             {/* 丝印（仅大图） */}
             {lvl >= 2 && (
               <g stroke="#356b58" strokeWidth="0.8" opacity=".55">
-                <path d="M42 150h52M42 156h34M42 162h44" />
+                <path d="M44 166h60M44 172h38M44 178h48" />
                 <path d="M150 34h28M150 40h20" />
               </g>
             )}
             {/* CPU 插槽 */}
-            <rect x="58" y="44" width="34" height="30" rx="3" fill="#0f1a17" stroke="#356b58" strokeWidth="0.8" />
+            <rect x="58" y="42" width="34" height="30" rx="3" fill="#0f1a17" stroke="#356b58" strokeWidth="0.8" />
             {/* 内存 ×2（细条 5×42） */}
-            <rect x="104" y="44" width="5" height="48" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />
-            {lvl >= 1 && <rect x="113" y="44" width="5" height="48" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />}
+            <rect x="104" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />
+            {lvl >= 1 && <rect x="114" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />}
             {/* 金手指（仅大图） */}
             {lvl >= 2 && (
               <g fill="#C9A227" opacity=".65">
-                <rect x="104" y="86" width="5" height="4" />
-                <rect x="113" y="86" width="5" height="4" />
+                <rect x="104" y="90" width="6" height="4" />
+                <rect x="114" y="90" width="6" height="4" />
               </g>
             )}
             {/* M.2 NVMe：直插主板（显卡下方） */}
             <g>
-              <rect x="124" y="100" width="58" height="10" rx="2" fill="#1a1512" stroke="#3d7a63" strokeWidth="0.9" />
-              <rect x="126" y="102" width="46" height="6" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.6" />
-              {lvl >= 2 && <circle cx="176" cy="105" r="1.3" fill="#6b5344" />}
+              <rect x="124" y="104" width="52" height="10" rx="2" fill="#1a1512" stroke="#3d7a63" strokeWidth="0.9" />
+              <rect x="126" y="106" width="40" height="6" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.6" />
+              {lvl >= 2 && <circle cx="171" cy="109" r="1.3" fill="#6b5344" />}
             </g>
 
+            {/* 24pin 主板供电（压在显卡后面走线） */}
+            {lvl >= 1 && (
+              <g fill="none" stroke="#2f2620" strokeWidth="4" strokeLinecap="round" opacity=".85">
+                <path d="M182 58 C 192 90, 192 140, 172 190" />
+              </g>
+            )}
+
             {/* 显卡投影 */}
-            <rect x="46" y="160" width="156" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
+            <rect x="46" y="170" width="150" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
             {/* 显卡（加厚 140×34） */}
-            <rect x="44" y="122" width="158" height="38" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
-            <rect x="44" y="122" width="158" height="38" rx="5" fill="url(#brushed)" />
-            <rect x="48" y="127" width="26" height="28" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
-            {(lvl >= 1 ? [96, 128, 160] : [108, 144]).map((cx) => (
+            <rect x="44" y="122" width="152" height="46" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
+            <rect x="44" y="122" width="152" height="46" rx="5" fill="url(#brushed)" />
+            <rect x="48" y="128" width="26" height="34" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
+            {(lvl >= 1 ? [94, 126, 158] : [108, 140]).map((cx) => (
               <g key={cx}>
-                <circle cx={cx} cy="141" r="12" fill="#120e0c" stroke="#8a6d59" strokeWidth="1.2" />
-                <g className="fan-blades" style={{ transformOrigin: `${cx}px 141px` }}>
+                <circle cx={cx} cy="145" r="14.5" fill="#120e0c" stroke="#8a6d59" strokeWidth="1.2" />
+                <g className="fan-blades" style={{ transformOrigin: `${cx}px 145px` }}>
                   {[0, 120, 240].map((a) => (
-                    <ellipse key={a} cx={cx} cy="133" rx="2.8" ry="7.6" fill="#8a6d59" transform={`rotate(${a} ${cx} 141)`} />
+                    <ellipse key={a} cx={cx} cy="136.5" rx="3.4" ry="9" fill="#8a6d59" transform={`rotate(${a} ${cx} 145)`} />
                   ))}
                 </g>
               </g>
@@ -184,23 +191,23 @@ export function RigArt({
             {/* 背板螺丝（仅大图） */}
             {lvl >= 2 && (
               <g fill="#6b5344">
-                {[[52, 126], [186, 126], [52, 156], [186, 156]].map(([x, y], i) => (
+                {[[52, 126], [186, 126], [52, 162], [186, 162]].map(([x, y], i) => (
                   <circle key={i} cx={x} cy={y} r="1.6" />
                 ))}
               </g>
             )}
 
             {/* CPU 塔式散热 */}
-            <circle cx="75" cy="59" r="23" fill="#181210" stroke="#4a382f" strokeWidth="1.2" />
-            <g className="fan-blades" style={{ transformOrigin: "75px 59px" }}>
+            <circle cx="75" cy="57" r="24" fill="#181210" stroke="#4a382f" strokeWidth="1.2" />
+            <g className="fan-blades" style={{ transformOrigin: "75px 57px" }}>
               {[0, 120, 240].map((a) => (
-                <ellipse key={a} cx="75" cy="50" rx="4.4" ry="9" fill="#5e4a3d" transform={`rotate(${a} 75 59)`} />
+                <ellipse key={a} cx="75" cy="48" rx="4.6" ry="9.4" fill="#5e4a3d" transform={`rotate(${a} 75 59)`} />
               ))}
             </g>
 
             {/* PCH 芯片组（显卡下方右侧） */}
-            <rect x="150" y="168" width="32" height="20" rx="3" fill="#152320" stroke="#3f7f68" strokeWidth="0.8" />
-            {lvl >= 2 && <path d="M154 174h24M154 179h16" stroke="#2c5548" strokeWidth="0.8" opacity=".7" />}
+            <rect x="148" y="172" width="34" height="20" rx="3" fill="#152320" stroke="#3f7f68" strokeWidth="0.8" />
+            {lvl >= 2 && <path d="M152 178h26M152 183h18" stroke="#2c5548" strokeWidth="0.8" opacity=".7" />}
 
             {/* 前面板（侧视）：竖直进风格栅 */}
             {lvl >= 1 && (
@@ -215,18 +222,12 @@ export function RigArt({
               </>
             )}
 
-            {/* 24pin 主板供电（中细节起） */}
-            {lvl >= 1 && (
-              <g fill="none" stroke="#2f2620" strokeWidth="4" strokeLinecap="round" opacity=".85">
-                <path d="M190 60 C 198 90, 196 140, 176 196" />
-              </g>
-            )}
 
             {/* 显卡供电线束（高细节） */}
             {lvl >= 2 && (
               <g fill="none" stroke="#2f2620" strokeWidth="3.2" strokeLinecap="round" opacity=".9">
-                <path d="M176 160 C 182 178, 172 190, 158 198" strokeWidth="2.6" />
-                <path d="M186 160 C 192 180, 182 192, 168 198" strokeWidth="2.6" />
+                <path d="M170 168 C 178 182, 168 190, 156 192" strokeWidth="2.6" />
+                <path d="M180 168 C 188 184, 178 192, 166 192" strokeWidth="2.6" />
               </g>
             )}
 
@@ -243,12 +244,12 @@ export function RigArt({
             )}
 
             {/* 底部电源仓 */}
-            <line x1="18" y1="196" x2="202" y2="196" stroke="#3a2c26" strokeWidth="1.2" />
-            <rect x="28" y="202" width="104" height="40" rx="5" fill="#1b1512" stroke="#40302a" strokeWidth="1.2" />
-            <circle cx="46" cy="222" r="10" fill="none" stroke="#4a382f" strokeWidth="0.8" />
-            <g className="fan-blades" style={{ transformOrigin: "46px 222px" }}>
+            <line x1="18" y1="190" x2="202" y2="190" stroke="#3a2c26" strokeWidth="1.2" />
+            <rect x="28" y="196" width="112" height="46" rx="5" fill="#1b1512" stroke="#40302a" strokeWidth="1.2" />
+            <circle cx="48" cy="221" r="11" fill="none" stroke="#4a382f" strokeWidth="0.8" />
+            <g className="fan-blades" style={{ transformOrigin: "48px 221px" }}>
               {[0, 120, 240].map((a) => (
-                <ellipse key={a} cx="46" cy="216.5" rx="2.2" ry="5.6" fill="#6b5344" transform={`rotate(${a} 46 222)`} />
+                <ellipse key={a} cx="48" cy="215" rx="2.4" ry="6.2" fill="#6b5344" transform={`rotate(${a} 48 221)`} />
               ))}
             </g>
             {/* 电源模组接口（大图） */}
@@ -263,7 +264,7 @@ export function RigArt({
 
             {/* 上盖丝印 */}
             {lvl >= 2 && (
-              <text x="150" y="222" fontSize="9" fill="#4a382f" letterSpacing="2">TAPEX</text>
+              <text x="152" y="220" fontSize="9" fill="#4a382f" letterSpacing="2">TAPEX</text>
             )}
 
             {/* 机箱脚垫（大图） */}
