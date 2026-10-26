@@ -46,8 +46,8 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         <circle onMouseEnter={() => onHover?.(6)} cx="75" cy="59" r="23" {...fp(6, 0.1)} stroke={stroke(6)} strokeWidth="1.1" strokeDasharray={dash(6)} />
 
         {/* 内存 ×2（部件 4） */}
-        <rect onMouseEnter={() => onHover?.(3)} x="104" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
-        <rect x="113" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
+        <rect onMouseEnter={() => onHover?.(3)} x="108" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
+        <rect x="117" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
 
         {/* 显卡（部件 3） */}
         <rect x="44" y="122" width="146" height="38" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
@@ -63,9 +63,9 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
           <text x="140" y="34" fill={ok(1) ? stroke(1) : "#6b5a50"}>主板</text>
           <text x="46" y="96" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
           <text x="84" y="96" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
-          <text x="104" y="38" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
+          <text x="108" y="38" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
           <text x="50" y="118" fill={ok(2) ? stroke(2) : "#6b5a50"}>GPU</text>
-          <text x="128" y="92" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
+          <text x="130" y="94" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
           <text x="36" y="197" fill={ok(5) ? stroke(5) : "#6b5a50"}>电源</text>
           <text x="18" y="248" fill={ok(7) ? stroke(7) : "#6b5a50"}>机箱</text>
         </g>
