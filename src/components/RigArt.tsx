@@ -33,10 +33,28 @@ export function RigArt({
           </radialGradient>
         </defs>
 
-        {/* 机箱 */}
+        {/* 机箱外壳：S 级 = 开放式框架（无侧板） */}
         <rect x="8" y="6" width="204" height="248" rx="14" fill="url(#caseBody)" stroke="#3a2c26" strokeWidth="2" />
-        <rect x="18" y="16" width="184" height="200" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".06" />
+        {grade >= 6 ? (
+          <>
+            {/* 开放式：四角立柱 + 上下横梁 */}
+            <rect x="8" y="6" width="10" height="248" rx="4" fill="#241a16" stroke="#3a2c26" />
+            <rect x="202" y="6" width="10" height="248" rx="4" fill="#241a16" stroke="#3a2c26" />
+            <rect x="8" y="6" width="204" height="8" rx="4" fill="#241a16" stroke="#3a2c26" />
+            <rect x="8" y="246" width="204" height="8" rx="4" fill="#241a16" stroke="#3a2c26" />
+          </>
+        ) : grade >= 5 ? (
+          /* 全侧透：玻璃几乎铺满，边框很细 */
+          <rect x="14" y="12" width="192" height="236" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".10" />
+        ) : grade >= 4 ? (
+          /* 侧透：内窗，四周留金属框 */
+          <rect x="18" y="16" width="184" height="200" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".06" />
+        ) : (
+          /* 铁皮侧板：内部完全遮住 */
+          <rect x="16" y="14" width="188" height="204" rx="8" fill="#231b17" stroke="#3a2c26" />
+        )}
 
+        <g opacity={grade >= 4 ? 1 : 0}>
         {/* 主板 */}
         <rect x="30" y="26" width="112" height="118" rx="6" fill="url(#pcb)" stroke="#2c5c4c" strokeWidth="1" />
         <rect x="38" y="34" width="30" height="26" rx="3" fill="#0f1a17" stroke="#356b58" />
@@ -80,6 +98,8 @@ export function RigArt({
           </g>
         ))}
 
+        </g>
+
         {/* 电源仓 + SSD */}
         <rect x="30" y="156" width="90" height="52" rx="5" fill="#1b1512" stroke="#40302a" />
         <rect x="36" y="162" width="78" height="14" rx="3" fill="#241a16" stroke="#4a382f" />
@@ -92,9 +112,34 @@ export function RigArt({
         <rect x="128" y="156" width="52" height="24" rx="3" fill="#241a16" stroke="#4a382f" />
         <rect x="128" y="184" width="52" height="24" rx="3" fill="#241a16" stroke="#4a382f" />
 
+        {/* A 级：竖装显卡 */}
+        {grade >= 5 && (
+          <g>
+            <rect x="128" y="96" width="26" height="112" rx="4" fill="#241a16" stroke="#5a463a" />
+            {[0, 1, 2].map((k) => (
+              <circle key={k} cx="141" cy={112 + k * 30} r="9" fill="none" stroke="#6b5344" strokeWidth="1.2" />
+            ))}
+          </g>
+        )}
+
+        {/* S 级：水冷管 + 水箱 */}
+        {grade >= 6 && (
+          <g>
+            <path d="M63 40 C 63 20, 120 20, 140 34" stroke="#8fb8c8" strokeWidth="4" strokeLinecap="round" opacity=".75" />
+            <path d="M74 52 C 74 26, 132 26, 148 40" stroke="#6fa0b4" strokeWidth="3" strokeLinecap="round" opacity=".6" />
+            <circle cx="63" cy="67" r="14" fill="#16242a" stroke="#8fb8c8" strokeWidth="1.5" />
+            <rect x="150" y="60" width="26" height="52" rx="6" fill="#121a1e" stroke="#8fb8c8" strokeWidth="1.2" opacity=".9" />
+            <rect x="154" y="86" width="18" height="22" rx="3" fill="var(--glow)" opacity=".35" />
+          </g>
+        )}
+
         {/* 灯带 + 光晕 */}
-        <rect x="18" y="222" width="184" height="3" rx="1.5" className="led-strip" fill="var(--glow)" opacity=".8" />
-        <ellipse cx="110" cy="232" rx="86" ry="22" fill="url(#led)" className="led-glow" />
+        {grade >= 4 && (
+          <>
+            <rect x="18" y="222" width="184" height="3" rx="1.5" className="led-strip" fill="var(--glow)" opacity=".8" />
+            <ellipse cx="110" cy="232" rx="86" ry="22" fill="url(#led)" className="led-glow" />
+          </>
+        )}
 
         {/* 玻璃反光 */}
         <path d="M18 16h40L18 96z" fill="#ffffff" opacity=".05" />

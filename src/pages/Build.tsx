@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Contract, formatEther } from "ethers";
-import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
+import { ADDRS, ABI, PART_NAMES, TIERS, gradeNum } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
@@ -241,7 +241,7 @@ export function Build() {
         <div className="born-mask" onClick={() => setBorn(null)}>
           <div className="born-card">
             <span className="born-badge">出厂</span>
-            <div className="born-rig"><RigArt hash={born.hash} mining grade={born.hash >= 240 ? 6 : born.hash >= 160 ? 5 : born.hash >= 80 ? 4 : 3} size={180} /></div>
+            <div className="born-rig"><RigArt hash={born.hash} mining grade={gradeNum(born.hash)} size={180} /></div>
             <b>PC #{born.id}</b>
             <p>{born.hash} H · {GRADE(born.hash)} 级</p>
             <span className="born-hint">点击任意处关闭</span>

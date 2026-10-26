@@ -5,7 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { GradeBadge, GRADE_COLOR } from "./GradeBadge";
-import { gradeOf } from "../lib/contracts";
+import { gradeOf, gradeNum } from "../lib/contracts";
 import { getActions } from "../lib/history";
 import { trackTx } from "../lib/tx";
 import { RigArt } from "./RigArt";
@@ -178,7 +178,7 @@ export function DetailSheet({ detail, onClose, onChanged, origin }: {
         ) : detail.kind === "pc" ? (
           <div className="sheet-body">
             <div className="sheet-hero" ref={heroRef} style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>
-              <RigArt hash={info.hash} mining={info.staked} grade={info.grade} size={180} />
+              <RigArt hash={info.hash} mining={info.staked} grade={gradeNum(info.hash)} size={180} />
               <div className="sheet-stats">
                 <div className="sheet-stat"><span>算力</span><b>{info.hash} <em>H</em></b></div>
                 <div className="sheet-stat"><span>等级</span><b><GradeBadge hash={info.hash} size="md" /></b></div>

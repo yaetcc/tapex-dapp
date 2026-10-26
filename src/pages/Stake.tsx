@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Contract, formatEther } from "ethers";
-import { ADDRS, ABI, gradeOf } from "../lib/contracts";
+import { ADDRS, ABI, gradeOf, gradeNum } from "../lib/contracts";
 import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { readProvider } from "../lib/wallet";
 import { loadCache, putCache } from "../lib/pcCache";
@@ -274,7 +274,7 @@ export function Stake() {
                 setDetail({ kind: "pc", id: p.id });
               }}
               style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
-              <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
+              <RigArt hash={p.hash} mining={p.staked} grade={gradeNum(p.hash)} size={200} />
               <label className="farm-check" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>

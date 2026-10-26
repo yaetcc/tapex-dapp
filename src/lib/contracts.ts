@@ -76,6 +76,8 @@ export const ABI = {
 
 export const pcName = (id: number) => `PC #${id}`;
 export const gradeOf = (h: number) => (h >= 240 ? "S" : h >= 160 ? "A" : h >= 80 ? "B" : "C");
+/** 等级 → 插画用数值（S6 / A5 / B4 / C3） */
+export const gradeNum = (h: number) => (h >= 240 ? 6 : h >= 160 ? 5 : h >= 80 ? 4 : 3);
 export const tierOf = (id: number) => Math.floor((id - 1) / 8);
 export const typeOf = (id: number) => (id - 1) % 8;
 
