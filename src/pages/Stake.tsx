@@ -12,7 +12,7 @@ import { trackTx } from "../lib/tx";
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
 const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
 
-type PC = { id: number; hash: number; grade: number; staked: boolean };
+type PC = { id: number; hash: number; grade: number; staked: boolean; listed: boolean };
 
 export function Stake() {
   const { t, account, signer, toast } = useApp();
@@ -22,7 +22,7 @@ export function Stake() {
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [detail, setDetail] = useState<Detail>(null);
   const [maxBatch, setMaxBatch] = useState(10);
-  const [filter, setFilter] = useState<"all" | "staked" | "idle">("all");
+  const [filter, setFilter] = useState<"all" | "staked" | "idle" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
   const [shown, setShown] = useState(8);
   const [loading, setLoading] = useState(true);
@@ -37,8 +37,10 @@ export function Stake() {
       ]);
       const stakedSet = new Set(staked.map(Number));
       const infos = await Promise.all(ids.map((i) => circC.getCircuitInfo(i) as Promise<{ hashRate: bigint; grade: bigint }>));
+      const listedFlags = await Promise.all(ids.map((i) => circC.listedOf(i) as Promise<boolean>));
       setPcs(ids.map((i, k) => ({
-        id: Number(i), hash: Number(infos[k].hashRate), grade: Number(infos[k].grade), staked: stakedSet.has(Number(i)),
+        id: Number(i), hash: Number(infos[k].hashRate), grade: Number(infos[k].grade),
+        staked: stakedSet.has(Number(i)), listed: Boolean(listedFlags[k]),
       })));
       const e = (await mineC.userEarned(account)) as bigint;
       setEarned(e);
@@ -51,13 +53,14 @@ export function Stake() {
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
   const counts = useMemo(() => ({
     all: pcs.length,
-    idle: pcs.filter((p) => !p.staked).length,
+    idle: pcs.filter((p) => !p.staked && !p.listed).length,
     staked: pcs.filter((p) => p.staked).length,
+    listed: pcs.filter((p) => p.listed).length,
   }), [pcs]);
 
   const visible = useMemo(
     () => pcs
-      .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked))
+      .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : filter === "listed" ? p.listed : !p.staked && !p.listed))
       .sort((a, b) => (sort === "hash" ? b.hash - a.hash : a.id - b.id)),
     [pcs, filter, sort]
   );
@@ -131,7 +134,7 @@ export function Stake() {
         <span className="spacer" />
         <div className="batch-bar">
           <div className="pc-filters">
-            {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"]] as const).map(([k, label]) => (
+            {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"], ["listed", "挂单中"]] as const).map(([k, label]) => (
               <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>
                 {label}<i>{counts[k]}</i>
               </button>
@@ -177,12 +180,19 @@ export function Stake() {
                 <b>PC #{p.id}</b>
                 <GradeBadge hash={p.hash} />
                 <span>{p.hash} H</span>
+                {p.listed && <span className="pc-listed">挂单中</span>}
               </div>
               <div className="farm-actions">
-                <button className={`btn ${p.staked ? "btn-ghost" : "btn-primary"}`} disabled={busy !== 0}
-                  onClick={(e) => { e.stopPropagation(); act(p.staked ? "unstake" : "stake", p.id); }}>
-                  {busy === p.id ? "…" : p.staked ? "解押" : "质押挖矿"}
-                </button>
+                {p.listed ? (
+                  <button className="btn btn-ghost" onClick={(e) => { e.stopPropagation(); setDetail({ kind: "pc", id: p.id }); }}>
+                    挂单中 · 去撤单
+                  </button>
+                ) : (
+                  <button className={`btn ${p.staked ? "btn-ghost" : "btn-primary"}`} disabled={busy !== 0}
+                    onClick={(e) => { e.stopPropagation(); act(p.staked ? "unstake" : "stake", p.id); }}>
+                    {busy === p.id ? "…" : p.staked ? "解押" : "质押挖矿"}
+                  </button>
+                )}
               </div>
             </div>
           ))}
