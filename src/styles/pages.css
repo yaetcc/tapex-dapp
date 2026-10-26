@@ -464,3 +464,9 @@
   .ticker { gap: 8px; font-size: var(--fs-2xs); }
 }
 @media (prefers-reduced-motion: reduce) { .home2 > * { animation: none !important; } }
+
+/* 资产 KPI 一致性：金额统一 2 位小数 + 单位留白 + 待领分红高亮 */
+.tile b { font-variant-numeric: tabular-nums; }
+.tile b em { margin-left: 3px; font-size: .58em; color: var(--tx-3); font-style: normal; letter-spacing: .04em; }
+.tile.hot b { color: var(--gold); }
+.tile span .coin-ico { margin-right: 6px; }

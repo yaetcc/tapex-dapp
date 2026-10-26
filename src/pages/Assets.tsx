@@ -87,8 +87,8 @@ export function Assets({ go }: { go: (r: string) => void }) {
           <div className="as-layout">
           <div className="as-main">
           <div className="tiles" style={{ marginTop: 18 }}>
-            <div className="tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />TAPE</span><b>{loading ? "—" : <Num value={Number(formatEther(tape))} format={(n) => num(n, 2)} />}</b></div>
-            <div className="tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />待领分红</span><b>{loading ? "—" : <Num value={Number(formatEther(pending))} format={(n) => num(n, 4)} />} <em>TAPE</em></b></div>
+            <div className="tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />TAPE 余额</span><b>{loading ? "—" : <Num value={Number(formatEther(tape))} format={(n) => num(n, 2)} />} <em>TAPE</em></b></div>
+            <div className="tile hot"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />待领分红</span><b>{loading ? "—" : <Num value={Number(formatEther(pending))} format={(n) => num(n, 2)} />} <em>TAPE</em></b></div>
             <div className="tile"><span>PC 整机</span><b>{loading ? "—" : pcs} <em>台</em></b></div>
             <div className="tile"><span>硬件部件</span><b>{loading ? "—" : totalParts} <em>件</em></b></div>
           </div>
