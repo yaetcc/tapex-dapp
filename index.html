@@ -6254,6 +6254,115 @@ body::before{ animation:none !important; }
   .mk-stats .mk-stat:last-child{grid-column:1/-1;}
   #market > .hint:last-child{display:flex;border-radius:12px;}
 }
+
+/* ================= 铸造页 v4 ================= */
+#mint{ padding:20px 22px 18px; }
+.mt-hero{ display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:26px; align-items:start; }
+@media(max-width:980px){ .mt-hero{ grid-template-columns:1fr; gap:16px; } }
+#mint h3{ margin:8px 0 9px; display:flex; gap:10px; align-items:center; }
+#mint h3 svg{ width:23px; height:23px; color:var(--gold); flex:0 0 auto; }
+#mint .sub{ margin:0; max-width:60ch; color:var(--tx2); font-size:12.5px; line-height:1.75; }
+.mt-kpis{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.mt-kpi{ flex:1 1 128px; padding:11px 14px 12px; border-radius:14px; border:1px solid rgba(255,255,255,.075);
+  background:linear-gradient(165deg, rgba(255,217,61,.055), rgba(179,136,255,.035)); }
+.mt-kpi>span{ display:block; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--tx3); margin-bottom:7px; }
+.mt-kpi b{ font-family:"JetBrains Mono",monospace; font-size:19px; color:var(--tx); font-variant-numeric:tabular-nums; line-height:1; }
+.mt-kpi b em{ font-style:normal; font-family:inherit; font-size:10.5px; color:var(--tx3); }
+.mt-kpi b i{ font-style:normal; color:var(--gold); }
+.mt-prog{ margin-top:20px; }
+.mt-prog-h{ display:flex; justify-content:space-between; align-items:baseline; font-size:11px; color:var(--tx2); margin-bottom:7px; letter-spacing:.04em; }
+.mt-prog-h b{ font-family:"JetBrains Mono",monospace; color:var(--gold); font-size:12px; }
+.mt-prog-t{ height:7px; border-radius:999px; background:rgba(255,255,255,.07); overflow:hidden; }
+.mt-prog-t i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#FFD93D,#00E5A0); box-shadow:0 0 12px rgba(255,217,61,.32); transition:width .6s cubic-bezier(.22,1,.36,1); }
+.mt-prog-s{ margin-top:7px; font-size:10.5px; color:var(--tx3); }
+
+.mt-console{ position:relative; border-radius:18px; padding:16px 16px 18px; border:1px solid rgba(255,217,61,.26);
+  background:radial-gradient(130% 80% at 50% -25%, rgba(255,217,61,.15), transparent 62%), linear-gradient(180deg,#241a16,#171210);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 18px 40px rgba(0,0,0,.46); }
+.mt-console-h{ display:flex; align-items:center; gap:10px; margin-bottom:15px; }
+.mt-console-h i{ flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(255,217,61,.5),transparent); }
+.mt-console-h span{ font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); }
+.mt-console label{ display:block; font-size:10.5px; color:var(--tx2); margin-bottom:7px; letter-spacing:.06em; }
+.mt-qty{ display:flex; gap:8px; align-items:center; }
+#mint .mt-qty input{ width:100px; height:40px; border-radius:11px; border:1px solid rgba(255,255,255,.14);
+  background:rgba(0,0,0,.30); color:var(--tx); font-family:"JetBrains Mono",monospace; font-size:15px; padding:0 12px; outline:none; transition:border-color .2s, box-shadow .2s; }
+#mint .mt-qty input:focus{ border-color:rgba(255,217,61,.65); box-shadow:0 0 0 3px rgba(255,217,61,.12); }
+.mt-chips{ display:flex; gap:5px; }
+#mint .mt-chips .mq{ height:31px; min-width:34px; padding:0 9px; border-radius:9px; border:1px solid rgba(0,229,160,.26);
+  background:rgba(0,229,160,.06); color:var(--ac); font-size:11px; font-weight:700; cursor:pointer; transition:transform .15s, background .15s, color .15s; }
+#mint .mt-chips .mq:hover{ background:rgba(0,229,160,.15); transform:translateY(-1px); }
+#mint .mt-chips .mq.on{ background:var(--ac); color:#08231b; border-color:transparent; }
+.mt-note{ margin:9px 0 0; font-size:10.5px; color:var(--tx3); line-height:1.6; }
+@media(max-width:560px){
+  .mt-kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .mt-kpi{ padding:9px 10px 10px; }
+  .mt-kpi b{ font-size:15px; }
+  .mt-qty{ flex-wrap:wrap; }
+  #mint .mt-qty input{ flex:1 1 100%; width:100%; }
+  .mt-chips{ width:100%; }
+  #mint .mt-chips .mq{ flex:1; min-width:0; height:34px; }
+  .mt-legend{ gap:6px 12px; }
+}
+.mt-total{ display:flex; align-items:baseline; flex-wrap:wrap; gap:8px; margin:15px 0 13px; padding-top:13px; border-top:1px dashed rgba(255,255,255,.10); }
+.mt-total>span:first-child{ font-size:10.5px; color:var(--tx3); letter-spacing:.14em; text-transform:uppercase; }
+.mt-total b{ font-family:"JetBrains Mono",monospace; font-size:15.5px; color:var(--gold); font-variant-numeric:tabular-nums; }
+.mt-cta{ position:relative; width:100%; height:48px; border:none; border-radius:13px; cursor:pointer; overflow:hidden;
+  font-size:15px; font-weight:800; letter-spacing:.04em; color:#2a1700;
+  background:linear-gradient(118deg,#FFD93D,#FF9F45 52%,#FF6BCB);
+  box-shadow:0 6px 0 #B36A00, 0 14px 28px rgba(255,159,69,.26), inset 0 1px 0 rgba(255,255,255,.5);
+  transition:transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+.mt-cta:hover:not(:disabled){ filter:brightness(1.06); }
+.mt-cta:active:not(:disabled){ transform:translateY(3px); box-shadow:0 3px 0 #B36A00, 0 8px 18px rgba(255,159,69,.2); }
+.mt-cta:disabled{ filter:grayscale(.3) brightness(.82); cursor:not-allowed; }
+.mt-cta::after{ content:""; position:absolute; inset:0; transform:translateX(-130%);
+  background:linear-gradient(105deg,transparent 28%,rgba(255,255,255,.5) 48%,transparent 64%); transition:transform .65s ease; }
+.mt-cta:hover::after{ transform:translateX(130%); }
+
+.mt-odds{ margin-top:24px; padding-top:18px; border-top:1px solid rgba(255,255,255,.07); }
+.mt-sec-h{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.mt-sec-h b{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+.mt-sec-h>span{ font-size:10.5px; color:var(--tx3); }
+.mt-link{ margin-left:auto; font-size:10.5px; padding:4px 11px; border-radius:999px; border:1px solid rgba(0,229,160,.38);
+  background:transparent; color:var(--ac); cursor:pointer; font-family:inherit; transition:background .15s; }
+.mt-link:hover{ background:rgba(0,229,160,.12); }
+.mt-stack{ display:flex; height:9px; border-radius:999px; overflow:hidden; gap:2px; }
+.mt-stack i{ display:block; height:100%; opacity:.85; transition:opacity .2s, transform .2s; }
+.mt-stack i:hover{ opacity:1; }
+.mt-legend{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px 16px; margin-top:13px; }
+@media(max-width:700px){ .mt-legend{ grid-template-columns:repeat(2,1fr); } }
+.mt-legend span{ display:flex; align-items:center; gap:7px; font-size:11px; color:var(--tx2); }
+.mt-legend em{ font-style:normal; }
+.mt-legend b{ margin-left:auto; font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--tx); }
+.mt-legend i{ width:7px; height:7px; border-radius:2px; flex:0 0 auto; }
+.mt-legend i.d0{ background:#7FE0D6 } .mt-legend i.d1{ background:#63E6C0 } .mt-legend i.d2{ background:#00E5A0 } .mt-legend i.d3{ background:#B6F36A }
+.mt-legend i.d4{ background:#FFE066 } .mt-legend i.d5{ background:#FFC061 } .mt-legend i.d6{ background:#FF8EC4 } .mt-legend i.d7{ background:#C79BFF }
+.mt-more{ margin-top:13px; }
+.mt-more summary{ cursor:pointer; list-style:none; font-size:10.5px; color:var(--ac); }
+.mt-more summary::-webkit-details-marker{ display:none; }
+.mt-more summary::before{ content:"▸ "; }
+.mt-more[open] summary::before{ content:"▾ "; }
+.mt-more-t{ margin:9px 0 0; font-size:10.5px; color:var(--tx3); line-height:1.75; }
+
+.mt-rack-box{ margin-top:24px; padding-top:18px; border-top:1px solid rgba(255,255,255,.07); }
+#mint .mint-rack{ display:grid; grid-template-columns:repeat(8,1fr); gap:9px; }
+@media(max-width:900px){ #mint .mint-rack{ grid-template-columns:repeat(4,1fr); } }
+@media(max-width:480px){ #mint .mint-rack{ grid-template-columns:repeat(4,1fr); gap:7px; } }
+#mint .rack-cell{ position:relative; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:13px 6px 11px; border-radius:14px; border:1px solid rgba(255,255,255,.075);
+  background:linear-gradient(180deg, rgba(255,255,255,.028), rgba(255,255,255,.012));
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+#mint .rack-cell.sel-hover:hover{ transform:translateY(-2px); }
+#mint .rack-cell.has{ border-color:rgba(0,229,160,.34); box-shadow:inset 0 0 0 1px rgba(0,229,160,.10), 0 6px 18px rgba(0,229,160,.08); }
+#mint .rack-cell svg{ width:24px; height:24px; color:rgba(255,255,255,.42); }
+#mint .rack-cell.has svg{ color:var(--ac); filter:drop-shadow(0 0 6px rgba(0,229,160,.35)); }
+#mint .rack-cell b{ font-size:10.5px; color:var(--tx2); font-weight:600; letter-spacing:.02em; }
+#mint .rack-cell .rack-cnt{ font-family:"JetBrains Mono",monospace; font-size:16px; font-weight:800; color:rgba(255,255,255,.55); font-variant-numeric:tabular-nums; }
+#mint .rack-cell.has .rack-cnt{ color:var(--gold); }
+#mint .rack-tiers{ display:flex; gap:3px; min-height:13px; }
+#mint .rack-tiers i{ font-style:normal; font-size:9px; padding:0 5px; border-radius:999px; border:1px solid; line-height:13px; }
+#mint .rack-tiers .t0{ color:#7FE0D6; border-color:rgba(127,224,214,.32) }
+#mint .rack-tiers .t1{ color:#00E5A0; border-color:rgba(0,229,160,.34) }
+#mint .rack-tiers .t2{ color:#FFD54D; border-color:rgba(255,213,77,.45) }
 </style>
 </head>
 <body><div class="meme-float" aria-hidden="true"><i style="left:6%;animation-duration:22s;animation-delay:0s">🚀</i><i style="left:15%;animation-duration:30s;animation-delay:3s">💰</i><i style="left:26%;animation-duration:25s;animation-delay:6s">🌙</i><i style="left:38%;animation-duration:33s;animation-delay:1s">⛏️</i><i style="left:52%;animation-duration:27s;animation-delay:9s">🪙</i><i style="left:64%;animation-duration:31s;animation-delay:4s">✨</i><i style="left:76%;animation-duration:24s;animation-delay:7s">💎</i><i style="left:88%;animation-duration:29s;animation-delay:2s">🔥</i></div>
@@ -6324,50 +6433,75 @@ body::before{ animation:none !important; }
   <!-- 左：操作区 -->
   <div>
     <div class="card" id="mint" data-tab="mint">
-      <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg><span data-i18n="k.mintH">盲盒铸造：随机抽 1 件硬件</span></h3>
-      <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。">花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。</p>
-      <div class="mint-grid">
-        <div class="mint-stage">
-          <div class="mint-cap" id="mintCapBox">
-            <div class="mint-cap-head"><span data-i18n="c.capTitle">全网抽卡进度</span><b id="mintCapTxt">— / 100,000</b></div>
-            <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
-            <div class="mint-cap-sub" id="mintCapSub" data-i18n="c.capSub">正式抽卡铸造计数 · 测试直造部件不计入 · 链上上限 100,000</div>
+      <div class="mt-hero">
+        <div class="mt-hero-l">
+          <div class="kicker" data-i18n="Step 1 · Mint 盲盒抽硬件">Step 1 · Mint 盲盒抽硬件</div>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 13h4v4h-4zM7 17l10-10"/></svg><span data-i18n="k.mintH">盲盒铸造：随机抽 1 件硬件</span></h3>
+          <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。">花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。</p>
+          <div class="mt-kpis">
+            <div class="mt-kpi"><span data-i18n="m.unitPrice">单价</span><b><i id="mintUnitPrice">0.0010</i> <em>OKB</em></b></div>
+            <div class="mt-kpi"><span data-i18n="m.drawn">已抽</span><b id="forgePicked">0</b></div>
+            <div class="mt-kpi"><span data-i18n="m.own">拥有</span><b id="forgeTotal">0</b></div>
           </div>
-          <details class="prob" id="probBox">
-            <summary><span data-i18n="抽卡概率（8 类加权 · 部件 3 档位）">抽卡概率（8 类加权 · 部件 3 档位）</span><em class="prob-hint" data-i18n="m.probHint">点开看分布</em></summary>
-            <div class="prob-inner">
-              <div class="prob-row"><span class="prob-name" data-i18n="机箱">机箱</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
-              <div class="prob-row"><span class="prob-name" data-i18n="电源">电源</span><div class="prob-bar"><i style="width:20%"></i></div><b>20%</b></div>
-              <div class="prob-row"><span class="prob-name" data-i18n="散热器">散热器</span><div class="prob-bar"><i style="width:18%"></i></div><b>18%</b></div>
-              <div class="prob-row"><span class="prob-name">RAM</span><div class="prob-bar"><i style="width:14%"></i></div><b>14%</b></div>
-              <div class="prob-row"><span class="prob-name">SSD</span><div class="prob-bar"><i style="width:12%"></i></div><b>12%</b></div>
-              <div class="prob-row"><span class="prob-name" data-i18n="主板">主板</span><div class="prob-bar"><i style="width:8%"></i></div><b>8%</b></div>
-              <div class="prob-row"><span class="prob-name">CPU</span><div class="prob-bar"><i style="width:6%"></i></div><b>6%</b></div>
-              <div class="prob-row"><span class="prob-name">GPU</span><div class="prob-bar"><i style="width:4%"></i></div><b>4%</b></div>
-              <div class="prob-note" data-i18n="部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C">部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C</div>
-            </div>
-          </details>
-      <div class="mint-rack-box">
-        <div class="rack-head">
+          <div class="mt-prog" id="mintCapBox">
+            <div class="mt-prog-h"><span data-i18n="c.capTitle">全网抽卡进度</span><b id="mintCapTxt">— / 100,000</b></div>
+            <div class="mt-prog-t"><i id="mintCapFill" style="width:0%"></i></div>
+            <div class="mt-prog-s" id="mintCapSub" data-i18n="c.capSub">正式抽卡铸造计数 · 测试直造部件不计入 · 链上上限 100,000</div>
+          </div>
+        </div>
+
+        <div class="mt-console">
+          <div class="mt-console-h"><i></i><span data-i18n="m.drawPanel">抽卡</span><i></i></div>
+          <label data-i18n="m.qtyLabel">抽取数量</label>
+          <div class="mt-qty">
+            <input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh">
+            <span class="mt-chips"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span>
+          </div>
+          <p class="mt-note" data-i18n="m.qtyNote">单次上限 10,000 件 · 超过 500 件自动分批</p>
+          <div class="mt-total"><span data-i18n="k.pay">应付</span><b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
+          <button class="mt-cta" id="mintCta" data-i18n="m.mintCta">抽取 1 件</button>
+          <div class="msg" id="mintMsg"></div>
+        </div>
+      </div>
+
+      <div class="mt-odds">
+        <div class="mt-sec-h">
+          <b data-i18n="m.odds">抽卡概率</b>
+          <span data-i18n="m.oddsSub">8 类加权 · 部件 3 档位</span>
+        </div>
+        <div class="mt-stack">
+          <i style="width:18%;background:linear-gradient(180deg,#7FE0D6,#3FB8AC)" title="机箱 18%"></i>
+          <i style="width:20%;background:linear-gradient(180deg,#63E6C0,#2FA98C)" title="电源 20%"></i>
+          <i style="width:18%;background:linear-gradient(180deg,#00E5A0,#00A97A)" title="散热器 18%"></i>
+          <i style="width:14%;background:linear-gradient(180deg,#B6F36A,#79C13A)" title="RAM 14%"></i>
+          <i style="width:12%;background:linear-gradient(180deg,#FFE066,#E0B21F)" title="SSD 12%"></i>
+          <i style="width:8%;background:linear-gradient(180deg,#FFC061,#E08A2A)" title="主板 8%"></i>
+          <i style="width:6%;background:linear-gradient(180deg,#FF8EC4,#D95A96)" title="CPU 6%"></i>
+          <i style="width:4%;background:linear-gradient(180deg,#C79BFF,#8B5CF6)" title="GPU 4%"></i>
+        </div>
+        <div class="mt-legend">
+          <span><i class="d0"></i><em data-i18n="机箱">机箱</em><b>18%</b></span>
+          <span><i class="d1"></i><em data-i18n="电源">电源</em><b>20%</b></span>
+          <span><i class="d2"></i><em data-i18n="散热器">散热器</em><b>18%</b></span>
+          <span><i class="d3"></i><em>RAM</em><b>14%</b></span>
+          <span><i class="d4"></i><em>SSD</em><b>12%</b></span>
+          <span><i class="d5"></i><em data-i18n="主板">主板</em><b>8%</b></span>
+          <span><i class="d6"></i><em>CPU</em><b>6%</b></span>
+          <span><i class="d7"></i><em>GPU</em><b>4%</b></span>
+        </div>
+        <details class="mt-more" id="probBox">
+          <summary data-i18n="m.oddsDetail">档位与算力规则</summary>
+          <p class="mt-more-t" data-i18n="部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C">部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C</p>
+        </details>
+      </div>
+
+      <div class="mt-rack-box">
+        <div class="mt-sec-h">
           <b data-i18n="m.rack">我的部件</b>
-          <span class="rack-live"><span data-i18n="m.drawn">已抽</span> <b id="forgePicked">0</b> · <span data-i18n="m.own">拥有</span> <b id="forgeTotal">0</b></span>
-          <button class="mini-cta" id="forgeOwnSlot" data-i18n="a.ownTip">点击查看全部部件</button>
+          <button class="mt-link" id="forgeOwnSlot" data-i18n="a.ownTip">查看全部部件</button>
         </div>
         <div class="mint-rack" id="mintRack"></div>
       </div>
-        </div>
-
-        <div class="mint-side">
-          <label data-i18n="m.qtyLabel">抽取数量</label>
-          <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
-          <p class="mint-cap-sub" data-i18n="m.qtyNote">单次上限 10,000 件 · 超过 500 件自动分批</p>
-          <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
-          <button class="btn primary mint-cta" id="mintCta" data-i18n="m.mintCta">抽取 1 件</button>
-        </div>
-      </div>
-      <div class="msg" id="mintMsg"></div>
-      <p class="hint" data-i18n="m.hint1">主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.001 OKB / 件（固定价，无阶梯）。8 类部件按权重随机，每件独立分档（标准/Pro/旗舰）。</p>
     </div>
 
     <div class="card" id="asm" data-tab="asm">
@@ -6831,6 +6965,11 @@ var I18N = {
   "m.qtyPh": {zh:"例如 10", en:"e.g. 10"},
   "m.qtyLabel": {zh:"抽取数量", en:"Quantity"},
   "m.qtyNote": {zh:"单次上限 10,000 件 · 超过 500 件自动分批", en:"Max 10,000 per go · auto-batched above 500"},
+  "m.drawPanel": {zh:"抽卡", en:"Draw"},
+  "m.unitPrice": {zh:"单价", en:"Unit price"},
+  "m.odds": {zh:"抽卡概率", en:"Odds"},
+  "m.oddsSub": {zh:"8 类加权 · 部件 3 档位", en:"8 weighted types · 3 tiers"},
+  "m.oddsDetail": {zh:"档位与算力规则", en:"Tier & hashrate rules"},
   "m.drawn": {zh:"已抽", en:"Drawn"},
   "m.own": {zh:"拥有", en:"Owned"},
   "m.rack": {zh:"我的部件", en:"My parts"},
@@ -9621,6 +9760,7 @@ function updMintPay(){
   var p = Number(UNIT_PRICE) / 1e18;
   if (!isFinite(p)) p = 0.001;
   var unit = (LANG === "en") ? " OKB / pc" : " OKB / 件";
+  var up = $("mintUnitPrice"); if (up) up.textContent = p.toFixed(4);
   if (n > 0) {
     var total = n * p;
     el.textContent = n.toLocaleString("en-US") + " × " + p.toFixed(4) + " = " +
@@ -9950,6 +10090,7 @@ function renderSpark(){
   var init=(location.hash||"").slice(1)||"";
   if(TAB_OK.indexOf(init)<0){try{init=localStorage.getItem("tapex_tab")||"mint";}catch(e){init="mint";}}
   switchTab(init,{scroll:false});
+  try { renderMintRack(); } catch(e){}   // 先铺占位，避免 RPC 慢时部件架空白
 })();
 /* ===== 数字滚动 countUp（美化 v1） ===== */
 (function(){
