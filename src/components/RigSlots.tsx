@@ -1,4 +1,5 @@
-// 装配预览：把 8 类部件放进机箱的真实位置，选中的档位点亮、缺件显示虚框
+// 装配预览：与 RigArt 同一套坐标体系，8 个槽位按真实位置摆放
+// 选中的档位 → 档位色实心；缺件 → 虚线灰框
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
 type Props = { tiers: number[]; counts: number[]; size?: number };
@@ -7,73 +8,67 @@ export function RigSlots({ tiers, counts, size = 300 }: Props) {
   const stock = (i: number, tr: number) => counts[i + tr * 8] || 0;
   const ok = (i: number) => stock(i, tiers[i]) > 0;
   const col = (i: number) => TIER_COLOR[tiers[i]] ?? TIER_COLOR[0];
+  const fp = (i: number, alpha = 0.16) => ({
+    fill: ok(i) ? col(i) : "transparent",
+    fillOpacity: ok(i) ? alpha : 0,
+  });
+  const stroke = (i: number) => (ok(i) ? col(i) : "#4a382f");
+  const dash = (i: number) => (ok(i) ? "0" : "4 4");
   let total = 0;
   for (let i = 0; i < 8; i++) if (ok(i)) total++;
 
   return (
     <div className="rigslots" style={{ width: size }}>
       <svg viewBox="0 0 220 260" width="100%" fill="none">
-        {/* 机箱 */}
-        <rect x="8" y="6" width="204" height="248" rx="14" fill="url(#caseBody)" stroke="#3a2c26" strokeWidth="2" />
-        <rect x="18" y="16" width="184" height="200" rx="10" fill="#ffffff" opacity=".03" stroke="#ffffff" strokeOpacity=".06" />
+        <defs>
+          <linearGradient id="rsBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#2a211d" /><stop offset="1" stopColor="#15100e" />
+          </linearGradient>
+          <pattern id="rsGrid" width="9" height="9" patternUnits="userSpaceOnUse">
+            <path d="M0 0h9v9" stroke="#356b58" strokeWidth="0.4" opacity=".25" />
+          </pattern>
+        </defs>
 
-        {/* 主板（背景区域） */}
-        <rect x="28" y="26" width="118" height="126" rx="8"
-          fill={ok(1) ? col(1) : "#1a1512"} fillOpacity={ok(1) ? 0.12 : 0.5}
-          stroke={ok(1) ? col(1) : "#3a2c26"} strokeWidth="1.5" strokeDasharray={ok(1) ? "0" : "4 4"} />
-        <text x="34" y="42" fontSize="9" fill={ok(1) ? col(1) : "#6b5a50"}>主板</text>
+        {/* 机箱（部件 8） */}
+        <rect x="8" y="6" width="204" height="248" rx="14"
+          fill="url(#rsBody)" stroke={stroke(7)} strokeWidth="1.6" strokeDasharray={dash(7)} />
+        <rect x="18" y="16" width="184" height="228" rx="10" fill="#ffffff" opacity=".025" stroke="#ffffff" strokeOpacity=".06" />
 
-        {/* CPU 插槽 */}
-        <rect x="46" y="52" width="34" height="30" rx="4"
-          fill={ok(0) ? col(0) : "transparent"} fillOpacity={ok(0) ? 0.18 : 0}
-          stroke={ok(0) ? col(0) : "#4a382f"} strokeDasharray={ok(0) ? "0" : "3 3"} />
-        <text x="52" y="71" fontSize="7" fill={ok(0) ? col(0) : "#6b5a50"}>CPU</text>
+        {/* 主板（部件 2） */}
+        <rect x="36" y="26" width="150" height="120" rx="6" {...fp(1, 0.1)}
+          stroke={stroke(1)} strokeWidth="1.2" strokeDasharray={dash(1)} />
+        <rect x="36" y="26" width="150" height="120" rx="6" fill="url(#rsGrid)" />
 
-        {/* 散热器（CPU 上方的圆） */}
-        <circle cx="63" cy="67" r="21" stroke={ok(6) ? col(6) : "#4a382f"} strokeDasharray={ok(6) ? "0" : "3 3"}
-          strokeWidth="1.2" opacity={ok(6) ? 0.75 : 1} />
-        {ok(6) && <circle cx="63" cy="67" r="21" fill={col(6)} opacity=".08" />}
+        {/* CPU（部件 1） */}
+        <rect x="62" y="46" width="30" height="26" rx="3" {...fp(0)} stroke={stroke(0)} strokeWidth="1" strokeDasharray={dash(0)} />
 
-        {/* 内存 ×2 */}
-        {[0, 1].map((k) => (
-          <rect key={k} x={90 + k * 12} y="52" width="8" height="46" rx="2"
-            fill={ok(3) ? col(3) : "transparent"} fillOpacity={ok(3) ? 0.2 : 0}
-            stroke={ok(3) ? col(3) : "#4a382f"} strokeDasharray={ok(3) ? "0" : "3 3"} />
-        ))}
-        <text x="88" y="110" fontSize="7" fill={ok(3) ? col(3) : "#6b5a50"}>RAM</text>
+        {/* 散热器（部件 7） */}
+        <circle cx="77" cy="59" r="20" {...fp(6, 0.1)} stroke={stroke(6)} strokeWidth="1.1" strokeDasharray={dash(6)} />
 
-        {/* 芯片组 */}
-        <rect x="112" y="60" width="28" height="26" rx="4" fill="#152320" stroke="#3f7f68" opacity=".7" />
+        {/* 内存 ×2（部件 4） */}
+        <rect x="100" y="46" width="5" height="42" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
+        <rect x="109" y="46" width="5" height="42" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
 
-        {/* 显卡 */}
-        <rect x="34" y="124" width="150" height="24" rx="4"
-          fill={ok(2) ? col(2) : "transparent"} fillOpacity={ok(2) ? 0.16 : 0}
-          stroke={ok(2) ? col(2) : "#4a382f"} strokeWidth="1.4" strokeDasharray={ok(2) ? "0" : "4 4"} />
-        {[51, 93, 135].map((cx) => (
-          <circle key={cx} cx={cx} cy="136" r="7" stroke={ok(2) ? col(2) : "#4a382f"} strokeWidth="1"
-            opacity={ok(2) ? 0.9 : 0.6} />
-        ))}
-        <text x="160" y="140" fontSize="7" fill={ok(2) ? col(2) : "#6b5a50"}>GPU</text>
+        {/* 显卡（部件 3） */}
+        <rect x="46" y="116" width="140" height="32" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
 
-        {/* SSD ×2 */}
-        {[0, 1].map((k) => (
-          <rect key={k} x={128 + k * 28} y="160" width="24" height="20" rx="3"
-            fill={ok(4) ? col(4) : "transparent"} fillOpacity={ok(4) ? 0.18 : 0}
-            stroke={ok(4) ? col(4) : "#4a382f"} strokeDasharray={ok(4) ? "0" : "3 3"} />
-        ))}
-        <text x="128" y="192" fontSize="7" fill={ok(4) ? col(4) : "#6b5a50"}>SSD</text>
+        {/* SSD（部件 5） */}
+        <rect x="134" y="162" width="54" height="18" rx="3" {...fp(4)} stroke={stroke(4)} strokeWidth="0.9" strokeDasharray={dash(4)} />
 
-        {/* 电源 */}
-        <rect x="30" y="160" width="86" height="44" rx="5"
-          fill={ok(5) ? col(5) : "transparent"} fillOpacity={ok(5) ? 0.12 : 0}
-          stroke={ok(5) ? col(5) : "#4a382f"} strokeDasharray={ok(5) ? "0" : "4 4"} />
-        <circle cx="46" cy="182" r="8" stroke={ok(5) ? col(5) : "#4a382f"} strokeWidth="1" opacity=".8" />
-        <text x="60" y="186" fontSize="7" fill={ok(5) ? col(5) : "#6b5a50"}>电源</text>
+        {/* 电源（部件 6） */}
+        <rect x="30" y="204" width="94" height="38" rx="5" {...fp(5, 0.12)} stroke={stroke(5)} strokeWidth="1.1" strokeDasharray={dash(5)} />
 
-        {/* 机箱标记（底部） */}
-        <text x="18" y="244" fontSize="7" fill={ok(7) ? col(7) : "#6b5a50"}>机箱</text>
-        <rect x="18" y="222" width="184" height="3" rx="1.5"
-          fill={ok(7) ? col(7) : "#3a2c26"} opacity={ok(7) ? 0.9 : 0.5} />
+        {/* 标签 */}
+        <g fontSize="7">
+          <text x="142" y="34" fill={ok(1) ? stroke(1) : "#6b5a50"}>主板</text>
+          <text x="66" y="90" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
+          <text x="98" y="90" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
+          <text x="102" y="42" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
+          <text x="50" y="112" fill={ok(2) ? stroke(2) : "#6b5a50"}>GPU</text>
+          <text x="150" y="174" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
+          <text x="36" y="197" fill={ok(5) ? stroke(5) : "#6b5a50"}>电源</text>
+          <text x="18" y="248" fill={ok(7) ? stroke(7) : "#6b5a50"}>机箱</text>
+        </g>
       </svg>
 
       <div className="rigslots-badge">

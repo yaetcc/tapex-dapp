@@ -158,7 +158,7 @@ export function Build() {
 
         <aside className="build-side">
           <div ref={rigRef} className="rig-wrap">
-            <RigSlots tiers={tiers} counts={counts} size={260} />
+            <RigSlots tiers={tiers} counts={counts} size={300} />
             {fly && (
               <span key={fly.key} className="fly-part"
                 style={{ left: fly.x, top: fly.y, ["--tx" as string]: `${(rigRef.current?.getBoundingClientRect().left ?? 0) + (rigRef.current?.getBoundingClientRect().width ?? 0) / 2 - fly.x}px`,
