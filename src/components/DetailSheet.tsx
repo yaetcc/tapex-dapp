@@ -114,6 +114,11 @@ export function DetailSheet({ detail, onClose, onChanged }: {
 
   const partAct = (kind: "list" | "delist" | "buy") => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
+    if (kind === "list") {
+      const n = Number(amount || 1);
+      if (n < 1) return toast("数量至少 1 件", "err");
+      if (n > info.bal) return toast(`库存不足：只有 ${info.bal} 件`, "err");
+    }
     if (kind === "list") return withTx(`挂单 ${partName(effId)}`, async () => {
       const part = new Contract(ADDRS.part, ABI.part as unknown as string[], signer!);
       if (!(await part.isApprovedForAll(account, ADDRS.market))) await (await part.setApprovalForAll(ADDRS.market, true)).wait();
@@ -204,12 +209,19 @@ export function DetailSheet({ detail, onClose, onChanged }: {
             </div>
 
             <div className="sheet-foot">
-              {info.owns ? (
+              {info.bal < 1 && !info.mine.length ? (
+                <p className="hint" style={{ margin: 0 }}>这件你没有库存，无法挂单 —— 去抽卡或到市场购买。</p>
+              ) : info.owns ? (
                 <>
                   <div className="sheet-sell">
-                    <input className="field field-sm" style={{ width: 70 }} value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} />
+                    <input className="field field-sm" style={{ width: 70 }} value={amount}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setAmount(v === "" ? "" : String(Math.min(Number(v), Math.max(info.bal, 1))));
+                      }} />
                     <input className="field field-sm" placeholder="单价 TAPE" value={price} onChange={(e) => setPrice(e.target.value)} />
-                    <button className="btn btn-primary" disabled={!price} onClick={() => partAct("list")}>挂单出售</button>
+                    <button className="btn btn-primary" disabled={!price || Number(amount || 0) < 1 || Number(amount) > info.bal}
+                      onClick={() => partAct("list")}>挂单出售</button>
                   </div>
                   {info.mine.length > 0 && (
                     <button className="btn btn-ghost btn-block" onClick={() => partAct("delist")}>撤单（{info.mine.length} 条）</button>

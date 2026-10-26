@@ -1,4 +1,5 @@
 import { ensureChain } from "./wallet";
+import { humanErr } from "./errors";
 
 // 交易历史（localStorage 最近 8 条）
 export type TxRecord = { label: string; status: "ok" | "err"; ts: number; error?: string };
@@ -29,7 +30,7 @@ export async function trackTx<T>(label: string, run: () => Promise<T>): Promise<
     hideTimer = window.setTimeout(() => push(null), 2600);
     return r;
   } catch (e) {
-    const error = (e as Error).message.slice(0, 90);
+    const error = humanErr(e);
     push({ label, status: "err", error });
     pushHistory({ label, status: "err", ts: Date.now(), error });
     hideTimer = window.setTimeout(() => push(null), 5000);

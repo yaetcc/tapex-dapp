@@ -13,6 +13,9 @@ const MAP: [RegExp, string][] = [
   [/inactive/i, "该挂单已失效"],
   [/allowance/i, "TAPE 授权额度不足"],
   [/reentr/i, "合约重入保护触发，请重试"],
+  [/insufficient balance for transfer|ERC1155InsufficientBalance/i, "余额不足：没有这件部件"],
+  [/execution reverted/i, "链上校验未通过（常见原因：库存不足 / 未授权 / 该单已失效）"],
+  [/unknown custom error/i, "链上自定义错误：多半是库存或授权不满足"],
 ];
 export function humanErr(e: unknown): string {
   const msg = e instanceof Error ? e.message : String(e);
