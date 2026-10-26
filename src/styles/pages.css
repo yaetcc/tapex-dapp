@@ -100,3 +100,21 @@
 .tx-list span { color: var(--tx-3); font-family: var(--mono); font-size: 11px; }
 .tx-list em { font-style: normal; font-size: 11px; color: var(--ac); }
 .tx-list li.err em { color: var(--danger); }
+
+/* TAPEX 资料卡 */
+.tapex-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px;
+  padding: 16px; border-radius: var(--r-lg); border: 1px solid rgba(255,217,61,.22);
+  background: radial-gradient(120% 80% at 20% -20%, rgba(255,217,61,.12), transparent 60%), linear-gradient(180deg,#241a16,#171210); }
+@media (max-width: 760px) { .tapex-card { grid-template-columns: 1fr; } }
+.tapex-sym { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.tapex-badge { font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #241505;
+  background: var(--grad-gold); padding: 3px 10px; border-radius: 999px; }
+.tapex-addr { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--tx-2);
+  background: rgba(0,0,0,.35); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px;
+  word-break: break-all; }
+.tapex-acts { display: flex; gap: 8px; margin-top: 10px; }
+.tapex-buy { display: flex; gap: 8px; flex-wrap: wrap; }
+.tapex-buy .btn { height: 40px; padding: 0 16px; font-size: 12.5px; text-decoration: none; }
+.tapex-buy .btn-primary { text-decoration: none; }
+.tapex-steps { margin: 12px 0 6px; padding-left: 18px; color: var(--tx-2); font-size: 12px; line-height: 1.9; }
+.tapex-steps b { color: var(--tx); font-family: var(--mono); }
