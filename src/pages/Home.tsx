@@ -5,6 +5,7 @@ import { ADDRS, PART_NAMES } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
+import { cachedLive } from "../lib/cache";
 
 const A = {
   erc721: ["function balanceOf(address) view returns (uint256)"],
@@ -40,14 +41,14 @@ export function Home({ go }: { go: (r: string) => void }) {
         const tapeC = new Contract(ADDRS.tape, A.supply.concat(A.bal), readProvider);
         const mineC = new Contract(ADDRS.mining, A.u64.concat(A.perDay), readProvider);
         const circC = new Contract(ADDRS.circuit, A.minted.concat(A.maxMint), readProvider);
-        const [shares, pool, perDay, supply, minted, cap] = await Promise.all([
+        const [shares, pool, perDay, supply, minted, cap] = await cachedLive("net:snapshot", () => Promise.all([
           mineC.totalShares() as Promise<bigint>,
           tapeC.balanceOf(ADDRS.mining) as Promise<bigint>,
           mineC.rewardPerDay() as Promise<bigint>,
           tapeC.totalSupply() as Promise<bigint>,
           circC.mintedTotal() as Promise<bigint>,
           circC.maxMintTotal() as Promise<bigint>,
-        ]);
+        ]));
         if (!alive) return;
         setNet({ shares: Number(shares), pool: Number(formatEther(pool)), perDay: Number(formatEther(perDay)),
           supply: Number(formatEther(supply)), minted: Number(minted), cap: Number(cap) });

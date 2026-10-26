@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigSlots } from "../components/RigSlots";
+import { cachedStatic } from "../lib/cache";
 import { GradeBadge } from "../components/GradeBadge";
 import { RigArt } from "../components/RigArt";
 import { PartIcon } from "../components/PartIcon";
@@ -49,7 +50,7 @@ export function Build() {
   }, [account]);
 
   useEffect(() => {
-    circC.assembleFee().then((v: bigint) => setFee(v)).catch(() => {});
+    cachedStatic("assembleFee", () => circC.assembleFee() as Promise<bigint>).then((v) => setFee(v)).catch(() => {});
     Promise.all(Array.from({ length: 8 }, (_, i) => circC.baseHash(i) as Promise<bigint>))
       .then((arr) => setBase(arr.map(Number))).catch(() => {});
     Promise.all(Array.from({ length: 3 }, (_, i) => circC.tierMult(i) as Promise<bigint>))
