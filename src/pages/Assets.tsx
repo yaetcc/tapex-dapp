@@ -6,6 +6,7 @@ import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { PartIcon } from "../components/PartIcon";
+import { getHistory } from "../lib/tx";
 
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -77,6 +78,20 @@ export function Assets({ go }: { go: (r: string) => void }) {
             <button className="btn btn-ghost" onClick={() => go("stake")}>去质押</button>
             <button className="btn btn-ghost" onClick={() => go("divd")}>去领取分红</button>
           </div>
+          <div className="sec-head"><b>最近交易</b><span>本机记录</span></div>
+          {getHistory().length === 0 ? (
+            <div className="empty">还没有交易记录</div>
+          ) : (
+            <ul className="tx-list">
+              {getHistory().map((h, i) => (
+                <li key={i} className={h.status}>
+                  <b>{h.label}</b>
+                  <span>{new Date(h.ts).toLocaleString("zh-CN", { hour12: false }).slice(5, 16)}</span>
+                  <em>{h.status === "ok" ? "已完成" : h.error || "失败"}</em>
+                </li>
+              ))}
+            </ul>
+          )}
           <p className="hint" style={{ marginTop: 12 }}>已连接 {shortAddr(account ?? "")}</p>
         </>
       )}

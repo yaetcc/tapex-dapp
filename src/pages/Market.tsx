@@ -92,6 +92,13 @@ export function Market() {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
     const valid = rows.filter((r) => r[0] && r[2]);
     if (!valid.length) throw new Error("请至少填一行完整数据");
+    if (valid.length > 10) throw new Error("单笔最多 10 条，请分批提交");
+    valid.forEach((r) => {
+      const amt = Number(r[1] || "1");
+      if (Number(r[2]) <= 0) throw new Error("单价必须大于 0");
+      if (!(amt >= 1)) throw new Error("数量必须 ≥ 1");
+      if (mode === "part" && (Number(r[0]) < 1 || Number(r[0]) > 24)) throw new Error("部件 ID 需在 1–24");
+    });
     if (mode === "pc") {
       const ids = valid.map((r) => BigInt(r[0]));
       const prices = valid.map((r) => parseEther(r[2]));

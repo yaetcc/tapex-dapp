@@ -92,3 +92,11 @@
   @keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
   .sheet-hero { flex-direction: column; align-items: center; }
 }
+
+.tx-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.tx-list li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,.06); font-size: 12px; }
+.tx-list b { font-weight: 600; color: var(--tx); }
+.tx-list span { color: var(--tx-3); font-family: var(--mono); font-size: 11px; }
+.tx-list em { font-style: normal; font-size: 11px; color: var(--ac); }
+.tx-list li.err em { color: var(--danger); }

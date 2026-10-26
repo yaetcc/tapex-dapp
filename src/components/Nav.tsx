@@ -31,3 +31,16 @@ export function Nav({ route, go }: { route: string; go: (r: string) => void }) {
     </header>
   );
 }
+
+export function MobileTabs({ route, go }: { route: string; go: (r: string) => void }) {
+  const { t } = useApp();
+  return (
+    <nav className="mtabs">
+      {ITEMS.map(([id, key]) => (
+        <button key={id} aria-current={route === id ? "page" : undefined} onClick={() => go(id)}>
+          {t(key)}
+        </button>
+      ))}
+    </nav>
+  );
+}

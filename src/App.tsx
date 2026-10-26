@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Nav } from "./components/Nav";
+import { Nav, MobileTabs } from "./components/Nav";
 import { Atmosphere, Stickers } from "./components/Atmosphere";
 import { Mascot } from "./components/Mascot";
 import { TxBar } from "./components/TxBar";
@@ -48,6 +48,7 @@ export default function App() {
           : current === "net" ? <Network />
           : <Placeholder name={current} />}
       </main>
+      <MobileTabs route={current} go={go} />
       <Toasts />
       <TxBar />
     </>

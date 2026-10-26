@@ -1,4 +1,4 @@
-import { BrowserProvider, JsonRpcProvider } from "ethers";
+import { BrowserProvider, FallbackProvider, JsonRpcProvider } from "ethers";
 import { CHAIN } from "./contracts";
 
 export type Eth = {
@@ -7,7 +7,27 @@ export type Eth = {
   removeListener?(ev: string, fn: (...a: unknown[]) => void): void;
 };
 
-export const readProvider = new JsonRpcProvider(CHAIN.rpc, CHAIN.id, { batchMaxCount: 1, staticNetwork: true });
+const RPC_LIST = [CHAIN.rpc, "https://xlayerrpc.okx.com"];
+export const readProvider = new FallbackProvider(
+  RPC_LIST.map((url, i) => ({
+    provider: new JsonRpcProvider(url, CHAIN.id, { batchMaxCount: 1, staticNetwork: true }),
+    priority: i + 1, stallTimeout: 1500, weight: 1,
+  })),
+  CHAIN.id,
+  { quorum: 1 }
+);
+
+/** 读操作重试：3 次指数退避，失败抛最后一次错误 */
+export async function withRetry<T>(fn: () => Promise<T>, tries = 3): Promise<T> {
+  let last: unknown;
+  for (let i = 0; i < tries; i++) {
+    try { return await fn(); } catch (e) {
+      last = e;
+      if (i < tries - 1) await new Promise((r) => setTimeout(r, 400 * 2 ** i));
+    }
+  }
+  throw last;
+}
 
 export function getEth(): Eth | null {
   const w = window as unknown as { ethereum?: Eth };

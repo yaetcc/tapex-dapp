@@ -61,6 +61,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("tx_lang", lang);
   }, [lang]);
 
+  // 钱包里切账户 / 切链 → 重新绑定 signer 或清空
+  useEffect(() => {
+    const eth = getEth();
+    if (!eth?.on) return;
+    const onAccounts = (accs: unknown) => {
+      const list = accs as string[];
+      if (!list?.length) { setAccount(null); setSigner(null); setProvider(null); return; }
+      const p = new BrowserProvider(eth as never);
+      setProvider(p);
+      setAccount(list[0]);
+      p.getSigner().then(setSigner).catch(() => {});
+    };
+    const onChain = () => {
+      const p = new BrowserProvider(eth as never);
+      setProvider(p);
+      p.getSigner().then(setSigner).catch(() => {});
+    };
+    eth.on("accountsChanged", onAccounts);
+    eth.on("chainChanged", onChain);
+    return () => {
+      eth.removeListener?.("accountsChanged", onAccounts);
+      eth.removeListener?.("chainChanged", onChain);
+    };
+  }, []);
+
   useEffect(() => {
     const eth = getEth();
     if (!eth) return;

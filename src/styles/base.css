@@ -165,3 +165,29 @@ body::after {
   background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55));
 }
 #root { position: relative; z-index: 1; }
+
+/* ===== 移动端：底部 Tab 栏 ===== */
+@media (max-width: 760px) {
+  .topbar { padding: 10px 14px; gap: 10px; }
+  .brand .chip { display: none; }
+  .nav { display: none; }
+  .mtabs {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    display: flex; justify-content: space-between; gap: 2px; margin: 0;
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+    background: rgba(18, 14, 12, .97);
+    border-top: 1px solid var(--line-gold);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, .45);
+    overflow-x: auto;
+  }
+  .mtabs button {
+    flex: 1 0 auto; border: none; background: transparent; color: var(--tx-3);
+    padding: 7px 6px; font-size: 11px; white-space: nowrap; border-radius: 10px; min-width: 50px;
+  }
+  .mtabs button[aria-current="page"] { background: var(--grad-gold); color: #241505; font-weight: 800; }
+  body { padding-bottom: 62px; }
+  .stickers, .mascot-wrap { bottom: 70px; }
+  .txbar { bottom: 74px; }
+}
+
+@media (min-width: 761px) { .mtabs { display: none; } }
