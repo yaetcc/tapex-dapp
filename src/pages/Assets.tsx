@@ -183,12 +183,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
           </div>
 
           <aside className="as-side">
-            <div className="sec-head" style={{ marginTop: 0 }}><b>快捷入口</b></div>
-            <div className="as-links"><button className="btn btn-ghost" onClick={() => go("mint")}>去铸造</button>
-            <button className="btn btn-ghost" onClick={() => go("asm")}>去组装</button>
-            <button className="btn btn-ghost" onClick={() => go("stake")}>去质押</button>
-            <button className="btn btn-ghost" onClick={() => go("divd")}>去领取分红</button></div>
-<div className="sec-head"><b>最近交易</b><span>本机记录</span></div>
+            <div className="sec-head" style={{ marginTop: 0 }}><b>最近交易</b><span>本机记录</span></div>
           {getHistory().length === 0 ? (
             <div className="empty empty-act">
               <span>还没有交易记录</span>
