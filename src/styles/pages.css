@@ -109,8 +109,8 @@
   background: linear-gradient(135deg,#FFD93D,#FF9F45 60%,#FF6BCB);
   box-shadow: 0 0 0 3px rgba(255,217,61,.12), 0 8px 22px rgba(255,159,69,.35); }
 .dv-label { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--tx-3); }
-.dv-amount { display: flex; align-items: baseline; gap: 8px; margin-top: 4px;
-  font-family: var(--mono); font-size: 56px; line-height: 1; color: var(--gold);
+.dv-amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 4px; min-width: 0;
+  font-family: var(--mono); font-size: clamp(30px, 8.5vw, 56px); line-height: 1; color: var(--gold);
   font-variant-numeric: tabular-nums; text-shadow: 0 0 30px rgba(255,217,61,.3); }
 .dv-amount em { font-style: normal; font-size: 12px; color: var(--tx-3); letter-spacing: .1em; }
 .dv-claim .hint { margin: 12px 0 14px; }
@@ -236,3 +236,36 @@
   box-shadow: 0 0 0 3px rgba(255,217,61,.12), 0 8px 22px rgba(255,159,69,.32); }
 .buy-coin-img { width: 40px; height: 40px; border-radius: 50%; flex: 0 0 auto;
   box-shadow: 0 6px 16px rgba(255,159,69,.28); }
+
+@media (max-width: 640px) {
+  .dv-amount { font-size: clamp(28px, 9vw, 40px); }
+  .dv-claim { padding: 16px; }
+  .dv-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .dv-tile b { font-size: 14px; }
+  .sheet-foot .btn { height: 40px; }
+  /* 市场：搜索与排序占满整行 */
+  .sell-row > * { flex: 1 1 100%; width: 100% !important; }
+  .sell-row .btn, .sell-row select.field, .sell-row .field { width: 100% !important; }
+  /* 订单行：两列布局，避免地址把行撑断 */
+  .order-row { grid-template-columns: 1fr auto; row-gap: 4px; }
+  .order-row .muted { grid-column: 1 / -1; font-size: 10.5px; }
+  .order-row .price { justify-self: start; }
+  .order-row .btn { justify-self: end; }
+  .batch-line .field { width: 100% !important; }
+  .batch-line > * { flex: 1 1 100%; }
+}
+
+/* 移动端：资产页筛选与 PC 网格 */
+@media (max-width: 640px) {
+  .sec-head { flex-wrap: wrap; row-gap: 6px; }
+  .sec-head b { white-space: nowrap; }
+  .pc-filters { flex-wrap: nowrap; overflow-x: auto; width: 100%; padding-bottom: 2px; }
+  .pc-filters::-webkit-scrollbar { display: none; }
+  .pc-chip { white-space: nowrap; flex: 0 0 auto; }
+  .pc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .pc-mini { padding: 8px 6px 6px; }
+  .pc-mini svg { width: 100% !important; height: auto !important; }
+  .pc-mini-meta { font-size: 10.5px; gap: 4px; }
+  .pc-mini-meta em { font-size: 10px; }
+  .tile b em { margin-left: 3px; }
+}
