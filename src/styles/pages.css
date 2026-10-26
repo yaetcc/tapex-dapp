@@ -477,3 +477,14 @@
   padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
 .rack-tiers i.zero { opacity: .28; }
 .rack-tiers .t0 { color: #7FE0D6; } .rack-tiers .t1 { color: #00E5A0; } .rack-tiers .t2 { color: #FFD54D; }
+
+/* 资产 KPI：四格数字完全统一（同字体、同色、同字距） */
+.tile b, .tile b *, .tile.hot b {
+  color: var(--gold) !important;
+  font-family: var(--sans) !important;
+  letter-spacing: 0 !important;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+}
+.tile b em { color: var(--tx-3) !important; font-size: .52em !important; font-weight: 600; letter-spacing: .04em; }
