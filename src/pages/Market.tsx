@@ -79,8 +79,9 @@ export function Market() {
   const myParts = parts.filter((o) => account && o.seller.toLowerCase() === account.toLowerCase());
   const bySort = <T extends { price: bigint }>(arr: T[]) =>
     sort === "price" ? [...arr].sort((a, b) => (a.price < b.price ? -1 : 1)) : arr;
-  const pcView = bySort(pc.filter((o) => !q || String(o.tokenId).includes(q)));
-  const partView = bySort(parts.filter((o) => !q || partName(o.partType).toLowerCase().includes(q.toLowerCase())));
+  const myAddr = account?.toLowerCase();
+  const pcView = bySort(pc.filter((o) => (!q || String(o.tokenId).includes(q)) && o.seller.toLowerCase() !== myAddr));
+  const partView = bySort(parts.filter((o) => (!q || partName(o.partType).toLowerCase().includes(q.toLowerCase())) && o.seller.toLowerCase() !== myAddr));
 
   const delistPc = (ids: number[]) => withSigner(async () => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
@@ -160,6 +161,8 @@ export function Market() {
         </select>
       </div>
 
+      <div className="mk-layout">
+      <div className="mk-main">
       {mode === "mine" ? (
         <>
           <div className="sec-head"><b>我的整机挂单</b><span>{myPc.length} 条</span><span className="spacer" />
@@ -224,27 +227,6 @@ export function Market() {
             <input className="field field-sm" placeholder="价格 TAPE" value={sellPrice} onChange={(e) => setSellPrice(e.target.value)} />
             <button className="btn btn-ghost" disabled={busy || !sellId || !sellPrice} onClick={listPc}>挂单</button>
           </div>
-          <div className="sec-head">
-            <b>我的挂单</b><span>{myPc.length} 条</span><span className="spacer" />
-            {myPc.length > 0 && (
-              <button className="btn btn-ghost" disabled={busy} onClick={() => delistPc(myPc.map((o) => o.id))}>
-                全部撤下
-              </button>
-            )}
-          </div>
-          {myPc.length > 0 && (
-            <div className="order-list" style={{ marginBottom: 8 }}>
-              {myPc.map((o) => (
-                <div className="order-row" key={"m" + o.id}>
-                  <b>PC #{o.tokenId}</b>
-                  <span className="muted">#{o.id}</span>
-                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
-                  <button className="btn btn-ghost" style={{ height: 30, padding: "0 12px", fontSize: 11.5 }}
-                    disabled={busy} onClick={() => delistPc([o.id])}>撤单</button>
-                </div>
-              ))}
-            </div>
-          )}
           <div className="sec-head"><b>在售整机</b><span>{pcView.length - myPc.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : pc.length === 0 ? (
             <div className="empty">暂无在售整机</div>
@@ -298,30 +280,6 @@ export function Market() {
             <input className="field field-sm" placeholder="单价 TAPE" value={ptPrice} onChange={(e) => setPtPrice(e.target.value)} />
             <button className="btn btn-ghost" disabled={busy || !ptAmount || !ptPrice} onClick={listPart}>挂单</button>
           </div>
-          <div className="sec-head">
-            <b>我的部件挂单</b><span>{myParts.length} 条</span><span className="spacer" />
-            {myParts.length > 0 && (
-              <button className="btn btn-ghost" disabled={busy} onClick={() => delistPart(myParts.map((o) => o.id))}>
-                全部撤下
-              </button>
-            )}
-          </div>
-          {myParts.length > 0 && (
-            <div className="order-list" style={{ marginBottom: 8 }}>
-              {myParts.map((o) => (
-                <div className="order-row" key={"mp" + o.id}>
-                  <b style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <PartIcon type={(o.partType - 1) % 8} tier={Math.floor((o.partType - 1) / 8)} size={17} />
-                    {partName(o.partType)}
-                  </b>
-                  <span className="muted">剩 {o.amount}</span>
-                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
-                  <button className="btn btn-ghost" style={{ height: 30, padding: "0 12px", fontSize: 11.5 }}
-                    disabled={busy} onClick={() => delistPart([o.id])}>撤单</button>
-                </div>
-              ))}
-            </div>
-          )}
           <div className="sec-head"><b>在售部件</b><span>{partView.length - myParts.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : parts.length === 0 ? (
             <div className="empty">暂无在售部件</div>
@@ -348,6 +306,32 @@ export function Market() {
           )}
         </>
       )}
+      </div>
+
+      <aside className="mk-side">
+        <div className="sec-head" style={{ marginTop: 0 }}><b>我的挂单</b><span>{myPc.length + myParts.length} 条</span></div>
+        {myPc.length + myParts.length === 0 ? (
+          <div className="empty">暂无挂单</div>
+        ) : (
+          <div className="mk-side-list">
+            {[...myPc.map((o) => ({ kind: "pc" as const, id: o.id, label: `PC #${o.tokenId}`, price: o.price })),
+              ...myParts.map((o) => ({ kind: "part" as const, id: o.id, label: partName(o.partType), price: o.price }))].map((o, i) => (
+              <div className="mk-side-row" key={i}>
+                <b>{o.label}</b>
+                <span>{num(Number(formatEther(o.price)), 2)}</span>
+                <button className="btn btn-ghost" disabled={busy}
+                  onClick={() => o.kind === "pc" ? delistPc([o.id]) : delistPart([o.id])}>撤</button>
+              </div>
+            ))}
+            <button className="btn btn-ghost btn-block" disabled={busy}
+              onClick={() => { if (myPc.length) delistPc(myPc.map((o) => o.id)); if (myParts.length) delistPart(myParts.map((o) => o.id)); }}>
+              全部撤下
+            </button>
+          </div>
+        )}
+      </aside>
+      </div>
+
       {msg && <p className="msg err">{msg}</p>}
       <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />
     </div>

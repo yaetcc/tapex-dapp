@@ -154,36 +154,10 @@ export function Build() {
           </div>
 
       <div className="build-grid">
-        <div className="build-col">
-          <div className="build-rows">
-            {PART_NAMES.map((name, i) => (
-              <div className="build-row" key={name}>
-                <span className="build-name" style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <PartIcon type={i} tier={tiers[i]} size={18} />{name}
-                </span>
-                <div className="build-chips">
-                  {[0, 1, 2].map((tr) => {
-                    const c = stock(i, tr);
-                    const on = tiers[i] === tr;
-                    return (
-                      <button key={tr} disabled={c < 1}
-                        className={`tier-chip${on ? " on" : ""}${c < 1 ? " empty" : ""}`}
-                        style={on ? { borderColor: TIER_COLOR[tr], color: TIER_COLOR[tr] } : undefined}
-                        onClick={(e) => pick(i, tr, e)}>
-                        {tr === 0 ? TIERS[0] : tr === 1 ? "Pro" : TIERS[2]}
-                        <i>{c}</i>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <aside className="build-side">
           <div ref={rigRef} className="rig-wrap">
-            <RigSlots tiers={tiers} counts={counts} size={220} />
+            <RigSlots tiers={tiers} counts={counts} size={260} />
             {fly && (
               <span key={fly.key} className="fly-part"
                 style={{ left: fly.x, top: fly.y, ["--tx" as string]: `${(rigRef.current?.getBoundingClientRect().left ?? 0) + (rigRef.current?.getBoundingClientRect().width ?? 0) / 2 - fly.x}px`,
@@ -222,6 +196,34 @@ export function Build() {
             {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : shortTape ? "TAPE 不足" : `组装 ${units} 台`}
           </button>
         </aside>
+
+
+        <div className="build-col">
+          <div className="build-rows">
+            {PART_NAMES.map((name, i) => (
+              <div className="build-row" key={name}>
+                <span className="build-name" style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <PartIcon type={i} tier={tiers[i]} size={18} />{name}
+                </span>
+                <div className="build-chips">
+                  {[0, 1, 2].map((tr) => {
+                    const c = stock(i, tr);
+                    const on = tiers[i] === tr;
+                    return (
+                      <button key={tr} disabled={c < 1}
+                        className={`tier-chip${on ? " on" : ""}${c < 1 ? " empty" : ""}`}
+                        style={on ? { borderColor: TIER_COLOR[tr], color: TIER_COLOR[tr] } : undefined}
+                        onClick={(e) => pick(i, tr, e)}>
+                        {tr === 0 ? TIERS[0] : tr === 1 ? "Pro" : TIERS[2]}
+                        <i>{c}</i>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="build-foot">

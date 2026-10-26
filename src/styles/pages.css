@@ -319,3 +319,28 @@
   75% { opacity: 1; transform: translate(-50%, -34px) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -64px) scale(.96); }
 }
+
+/* 资产页双栏 */
+.as-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; margin-top: 4px; }
+@media (max-width: 1080px) { .as-layout { grid-template-columns: 1fr; } }
+.as-side { position: sticky; top: 92px; border-left: 1px solid rgba(255,255,255,.07); padding-left: 18px; }
+@media (max-width: 1080px) { .as-side { position: static; border-left: none; padding-left: 0; border-top: 1px solid rgba(255,255,255,.07); padding-top: 14px; } }
+.as-links { display: grid; gap: 6px; }
+.as-links .btn { height: 34px; font-size: 12px; justify-content: flex-start; }
+.as-side .tx-list { margin-top: 6px; }
+.as-side .tx-list li { grid-template-columns: 1fr auto; }
+.as-side .tx-list em { grid-column: 1 / -1; font-size: 10px; }
+
+/* 市场双栏 */
+.mk-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; margin-top: 6px; }
+@media (max-width: 1080px) { .mk-layout { grid-template-columns: 1fr; } }
+.mk-side { position: sticky; top: 92px; border-left: 1px solid rgba(255,255,255,.07); padding-left: 16px; }
+@media (max-width: 1080px) { .mk-side { position: static; border-left: none; padding-left: 0; border-top: 1px solid rgba(255,255,255,.07); padding-top: 14px; } }
+.mk-side-list { display: grid; gap: 6px; }
+.mk-side-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center;
+  font-size: 11.5px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+.mk-side-row span { font-family: var(--mono); color: var(--gold); font-size: 11px; }
+.mk-side-row .btn { height: 26px; padding: 0 9px; font-size: 10.5px; }
+
+/* 数据砖里的等级徽章去掉外框，避免像输入框 */
+.tile .grade { border-color: transparent !important; background: transparent !important; padding: 0 !important; }

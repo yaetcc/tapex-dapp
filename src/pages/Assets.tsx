@@ -83,6 +83,8 @@ export function Assets({ go }: { go: (r: string) => void }) {
         <div className="empty" style={{ marginTop: 18 }}>连接钱包后查看资产</div>
       ) : (
         <>
+          <div className="as-layout">
+          <div className="as-main">
           <div className="tiles" style={{ marginTop: 18 }}>
             <div className="tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />TAPE</span><b>{loading ? "—" : <Num value={Number(formatEther(tape))} format={(n) => num(n, 2)} />}</b></div>
             <div className="tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />待领分红</span><b>{loading ? "—" : <Num value={Number(formatEther(pending))} format={(n) => num(n, 4)} />} <em>TAPE</em></b></div>
@@ -174,13 +176,15 @@ export function Assets({ go }: { go: (r: string) => void }) {
             })}
           </div>
 
-          <div className="row-links">
-            <button className="btn btn-ghost" onClick={() => go("mint")}>去铸造</button>
+          </div>
+
+          <aside className="as-side">
+            <div className="sec-head" style={{ marginTop: 0 }}><b>快捷入口</b></div>
+            <div className="as-links"><button className="btn btn-ghost" onClick={() => go("mint")}>去铸造</button>
             <button className="btn btn-ghost" onClick={() => go("asm")}>去组装</button>
             <button className="btn btn-ghost" onClick={() => go("stake")}>去质押</button>
-            <button className="btn btn-ghost" onClick={() => go("divd")}>去领取分红</button>
-          </div>
-          <div className="sec-head"><b>最近交易</b><span>本机记录</span></div>
+            <button className="btn btn-ghost" onClick={() => go("divd")}>去领取分红</button></div>
+<div className="sec-head"><b>最近交易</b><span>本机记录</span></div>
           {getHistory().length === 0 ? (
             <div className="empty">还没有交易记录</div>
           ) : (
@@ -194,7 +198,9 @@ export function Assets({ go }: { go: (r: string) => void }) {
               ))}
             </ul>
           )}
-          <p className="hint" style={{ marginTop: 12 }}>已连接 {shortAddr(account ?? "")}</p>
+            <p className="hint" style={{ marginTop: 12 }}>已连接 {shortAddr(account ?? "")}</p>
+          </aside>
+          </div>
         </>
       )}
       <DetailSheet detail={detail} onClose={() => setDetail(null)} />
