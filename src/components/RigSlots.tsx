@@ -2,6 +2,31 @@
 // 选中的档位 → 档位色实心；缺件 → 虚线灰框
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
+// ---- 标签自动摆位：先试首选位置，撞到别的槽位就顺次换 ----
+type Rect = { x: number; y: number; w: number; h: number };
+const overlaps = (a: Rect, b: Rect) =>
+  a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+function placeLabel(text: string, slot: Rect, occupied: Rect[], prefer: "above" | "below" | "left" | "right"): Rect {
+  const w = text.length * 6.6 + 2, h = 9;
+  const cands: Rect[] = [];
+  const cx = slot.x + slot.w / 2, cy = slot.y + slot.h / 2;
+  const push = (r: Rect) => cands.push(r);
+  const order = prefer === "above"
+    ? [["above"], ["below"], ["left"], ["right"]]
+    : prefer === "below"
+      ? [["below"], ["above"], ["right"], ["left"]]
+      : prefer === "left" ? [["left"], ["right"], ["above"], ["below"]] : [["right"], ["left"], ["above"], ["below"]];
+  for (const [dir] of order) {
+    if (dir === "above") push({ x: cx - w / 2, y: slot.y - h - 2, w, h });
+    if (dir === "below") push({ x: cx - w / 2, y: slot.y + slot.h + h - 1, w, h });
+    if (dir === "left") push({ x: slot.x - w - 3, y: cy + h / 3, w, h });
+    if (dir === "right") push({ x: slot.x + slot.w + 3, y: cy + h / 3, w, h });
+  }
+  for (const c of cands) if (!occupied.some((o) => overlaps(c, o))) return c;
+  return cands[0];
+}
+
 type Props = { tiers: number[]; counts: number[]; size?: number; onHover?: (i: number | null) => void };
 
 export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
@@ -58,17 +83,39 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         {/* 电源（部件 6） */}
         <rect onMouseEnter={() => onHover?.(5)} x="28" y="202" width="104" height="40" rx="5" {...fp(5, 0.12)} stroke={stroke(5)} strokeWidth="1.1" strokeDasharray={dash(5)} />
 
-        {/* 标签 */}
-        <g fontSize="10">
-          <text x="140" y="34" fill={ok(1) ? stroke(1) : "#6b5a50"}>主板</text>
-          <text x="46" y="96" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
-          <text x="84" y="96" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
-          <text x="108" y="38" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
-          <text x="50" y="118" fill={ok(2) ? stroke(2) : "#6b5a50"}>GPU</text>
-          <text x="130" y="94" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
-          <text x="36" y="197" fill={ok(5) ? stroke(5) : "#6b5a50"}>电源</text>
-          <text x="18" y="248" fill={ok(7) ? stroke(7) : "#6b5a50"}>机箱</text>
-        </g>
+        {/* 标签：自动避让 */}
+        {(() => {
+          const SLOTS: { i: number; name: string; box: Rect; prefer: "above" | "below" | "left" | "right" }[] = [
+            { i: 1, name: "主板", box: { x: 36, y: 22, w: 154, h: 148 }, prefer: "above" },
+            { i: 0, name: "CPU", box: { x: 58, y: 44, w: 34, h: 30 }, prefer: "below" },
+            { i: 6, name: "散热", box: { x: 52, y: 36, w: 46, h: 46 }, prefer: "left" },
+            { i: 3, name: "RAM", box: { x: 106, y: 44, w: 18, h: 48 }, prefer: "above" },
+            { i: 2, name: "GPU", box: { x: 44, y: 122, w: 146, h: 38 }, prefer: "above" },
+            { i: 4, name: "SSD", box: { x: 124, y: 100, w: 58, h: 10 }, prefer: "above" },
+            { i: 5, name: "电源", box: { x: 28, y: 202, w: 104, h: 40 }, prefer: "above" },
+            { i: 7, name: "机箱", box: { x: 8, y: 6, w: 204, h: 248 }, prefer: "below" },
+          ];
+          const boxes = SLOTS.map((x) => x.box);
+          // 已放好的标签占位，防止标签之间互撞
+          const placed: Rect[] = [];
+          return (
+            <g fontSize="10">
+              {SLOTS.map((sl) => {
+                const containers = [SLOTS[0].box, SLOTS[7].box];
+          const others = boxes.filter((b) => b !== sl.box && !containers.includes(b)).concat(placed);
+                const r = placeLabel(sl.name, sl.box, others, sl.prefer);
+                // 机箱标签固定在左下角外侧，避免和「电源」打架
+                const pos = sl.i === 7 ? { x: 14, y: 248 } : { x: r.x, y: r.y + 8 };
+                placed.push({ x: pos.x, y: pos.y - 8, w: sl.name.length * 6.6 + 2, h: 9 });
+                return (
+                  <text key={sl.i} x={pos.x} y={pos.y} fill={ok(sl.i) ? stroke(sl.i) : "#6b5a50"}>
+                    {sl.name}
+                  </text>
+                );
+              })}
+            </g>
+          );
+        })()}
       </svg>
 
       <div className="rigslots-badge">
