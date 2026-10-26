@@ -22,14 +22,14 @@ export function Dividend() {
   const [copied, setCopied] = useState(false);
 
   const load = async () => {
-    const [p, st, pd, dep, poolBal] = await Promise.all([
+    const [p, st, pd, dep, bal] = await Promise.all([
       account ? fsC.pending(account) as Promise<bigint> : Promise.resolve(0n),
       fsC.stakeToken() as Promise<string>,
       fsC.rewardPerDay() as Promise<bigint>,
       fsC.totalDeposited() as Promise<bigint>,
       tapeC.balanceOf(ADDRS.feeSplit) as Promise<bigint>,
     ]);
-    setPending(p); setPerDay(pd); setPool(dep); setBalance(poolBal);
+    setPending(p); setPerDay(pd); setPool(dep); setBalance(bal);
     if (account && st) {
       const erc = new Contract(st, ABI.tape as unknown as string[], readProvider);
       setTapex(await erc.balanceOf(account) as bigint);
@@ -40,6 +40,10 @@ export function Dividend() {
   const claimable = Number(formatEther(pending));
   const daysLeft = perDay > 0n ? Math.floor(Number(balance) / Number(perDay)) : 0;
   const runOut = daysLeft > 0 && daysLeft < 7;
+  // 有效供应 ≈ 21.16M（已排除流动性池与项目地址），用于估算"每天大概分到多少"
+  const EFFECTIVE_SUPPLY = 21_160_000;
+  const dailyEst = (Number(formatEther(tapex)) / EFFECTIVE_SUPPLY) * Number(formatEther(perDay));
+  const rate = tapex > 0n ? "按持仓占比实时累积" : "持有 TAPEX 后开始累积";
 
   const claim = async () => {
     if (!signer) return toast(t("err.noWallet"), "err");
@@ -57,36 +61,64 @@ export function Dividend() {
     <>
       <div className="card">
         <span className="kicker">TAPEX · DIVIDEND</span>
+        <h2 style={{ marginTop: 12 }}>分红</h2>
 
-        <div className="dv-hero">
-          <div className="dv-main">
-            <h2>可领分红</h2>
-            <div className="dv-amount">
-              {loading ? "—" : <Num value={claimable} format={(n) => num(n, 4)} />}
-              <em>TAPE</em>
+        <div className="dv-top">
+          {/* 主面板：可领 + 领取 */}
+          <section className="dv-claim">
+            <div className="dv-claim-head">
+              <span className="dv-coin" aria-hidden>TX</span>
+              <div>
+                <span className="dv-label">可领分红</span>
+                <div className="dv-amount">
+                  {loading ? "—" : <Num value={claimable} format={(n) => num(n, 4)} />}
+                  <em>TAPE</em>
+                </div>
+              </div>
             </div>
-            <p className="hint">持有 TAPEX 即按持仓占比自动累积，随时可领，不领不消失。</p>
-            <button className="btn btn-primary dv-cta" disabled={busy || pending === 0n} onClick={claim}>
-              {busy ? "等待钱包确认…" : pending === 0n ? "暂无可领分红" : `领取 ${num(claimable, 4)} TAPE`}
-            </button>
-          </div>
+            <div className="dv-est">
+              <span>预计每天</span>
+              <b>≈ {num(dailyEst, 4)} <em>TAPE</em></b>
+            </div>
+            <p className="hint">{rate}，随时可领，不领不清零。</p>
+            {pending === 0n ? (
+              <a className="btn btn-primary btn-block dv-cta" href={TAPEX.ignix} target="_blank" rel="noreferrer"
+                style={{ textDecoration: "none" }}>去购买 TAPEX 开始分红</a>
+            ) : (
+              <button className="btn btn-primary btn-block dv-cta" disabled={busy} onClick={claim}>
+                {busy ? "等待钱包确认…" : `领取 ${num(claimable, 4)} TAPE`}
+              </button>
+            )}
+          </section>
 
-          <div className="dv-side">
-            <div className="dv-row"><span>TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
-            <div className="dv-row"><span>每日释放</span><b>{loading ? "—" : num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
-            <div className="dv-row"><span>池累计注入</span><b>{loading ? "—" : num(Number(formatEther(pool)), 0)}</b></div>
-            <div className="dv-row"><span>分红池余额</span><b className={runOut ? "warn" : ""}>{loading ? "—" : num(Number(formatEther(balance)), 0)}</b></div>
-
+          {/* 指标面板 */}
+          <section className="dv-stats">
+            <div className="dv-tile"><span>TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
+            <div className="dv-tile"><span>每日释放</span><b>{loading ? "—" : num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
+            <div className="dv-tile"><span>池累计注入</span><b>{loading ? "—" : num(Number(formatEther(pool)), 0)}</b></div>
+            <div className="dv-tile"><span>分红池余额</span><b className={runOut ? "warn" : ""}>{loading ? "—" : num(Number(formatEther(balance)), 0)}</b></div>
             <div className="dv-runway">
               <div className="dv-runway-top">
-                <span>还能发 {daysLeft > 0 ? `≈ ${daysLeft} 天` : "—"}</span>
-                {runOut && <em>余额偏低</em>}
+                <span>按当前释放速度可发</span>
+                <b className={runOut ? "warn" : ""}>{daysLeft > 0 ? `≈ ${daysLeft} 天` : "—"}</b>
               </div>
               <div className="dv-bar"><i style={{ width: `${Math.min(100, (daysLeft / 60) * 100)}%` }} className={runOut ? "warn" : ""} /></div>
             </div>
-          </div>
+          </section>
         </div>
 
+        {/* 规则说明 */}
+        <div className="dv-mech">
+          {[
+            ["5%", "每笔市场成交抽 5% 进分红池"],
+            ["按占比", "TAPEX 持仓越多，分得越多"],
+            ["随时领", "不领取不会清零，也不锁仓"],
+          ].map(([k, v]) => (
+            <div key={k} className="dv-mech-cell"><b>{k}</b><span>{v}</span></div>
+          ))}
+        </div>
+
+        {/* TAPEX 购买 */}
         <div className="tapex-card">
           <div className="tapex-left">
             <div className="tapex-sym">
@@ -101,18 +133,12 @@ export function Dividend() {
               <a className="btn btn-ghost" href={TAPEX.explorer} target="_blank" rel="noreferrer">浏览器</a>
             </div>
           </div>
-
           <div className="tapex-right">
             <div className="tapex-buy">
               <a className="btn btn-primary" href={TAPEX.ignix} target="_blank" rel="noreferrer">IGNIX 购买 / K 线</a>
               <a className="btn btn-ghost" href={TAPEX.okx} target="_blank" rel="noreferrer">OKX 行情购买</a>
             </div>
-            <ol className="tapex-steps">
-              <li>钱包切到 <b>X Layer</b>，备好 OKB 作 gas</li>
-              <li>在 IGNIX 粘贴合约 <b>{TAPEX.address.slice(0, 6)}…{TAPEX.address.slice(-4)}</b></li>
-              <li>买完回本页，持仓与分红自动更新</li>
-            </ol>
-            <p className="hint">IGNIX / OKX 均禁止被嵌入，图表与交易需在新窗口打开。</p>
+            <p className="hint">在 IGNIX / OKX 粘贴上面的合约地址即可买入；两者均禁止被嵌入，图表需新窗口打开。</p>
           </div>
         </div>
       </div>
