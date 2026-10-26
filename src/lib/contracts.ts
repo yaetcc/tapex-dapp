@@ -31,6 +31,9 @@ export const ABI = {
     "function maxMintTotal() view returns (uint256)",
     "function mintedTotal() view returns (uint256)",
     "function pcsOfOwner(address) view returns (uint256[])",
+    "function ownerOf(uint256) view returns (address)",
+    "function stakedOf(uint256) view returns (bool)",
+    "function listedOf(uint256) view returns (bool)",
     "function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))",
   ],
   mining: [

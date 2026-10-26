@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
+import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { trackTx } from "../lib/tx";
 
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
@@ -18,6 +19,7 @@ export function Stake() {
   const [earned, setEarned] = useState<bigint>(0n);
   const [busy, setBusy] = useState<number | 0>(0);
   const [sel, setSel] = useState<Set<number>>(new Set());
+  const [detail, setDetail] = useState<Detail>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -122,9 +124,10 @@ export function Stake() {
       ) : (
         <div className="farm">
           {pcs.map((p) => (
-            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`}>
+            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`}
+              onClick={() => setDetail({ kind: "pc", id: p.id })} style={{ cursor: "pointer" }}>
               <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
-              <label className="farm-check">
+              <label className="farm-check" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>
               <div className="farm-meta">
@@ -134,7 +137,7 @@ export function Stake() {
               </div>
               <div className="farm-actions">
                 <button className={`btn ${p.staked ? "btn-ghost" : "btn-primary"}`} disabled={busy !== 0}
-                  onClick={() => act(p.staked ? "unstake" : "stake", p.id)}>
+                  onClick={(e) => { e.stopPropagation(); act(p.staked ? "unstake" : "stake", p.id); }}>
                   {busy === p.id ? "…" : p.staked ? "解押" : "质押挖矿"}
                 </button>
               </div>
@@ -142,6 +145,7 @@ export function Stake() {
           ))}
         </div>
       )}
+      <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />
     </div>
   );
 }

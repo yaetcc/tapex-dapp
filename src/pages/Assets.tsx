@@ -4,6 +4,7 @@ import { ADDRS, ABI, PART_NAMES } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
+import { DetailSheet, type Detail } from "../components/DetailSheet";
 
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -16,6 +17,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
   const [counts, setCounts] = useState<number[]>([]);
   const [pending, setPending] = useState<bigint>(0n);
   const [pcs, setPcs] = useState<number>(0);
+  const [detail, setDetail] = useState<Detail>(null);
 
   useEffect(() => {
     if (!account) return;
@@ -54,7 +56,8 @@ export function Assets({ go }: { go: (r: string) => void }) {
             {PART_NAMES.map((name, i) => {
               const s = counts[i] || 0, p = counts[i + 8] || 0, f = counts[i + 16] || 0, tot = s + p + f;
               return (
-                <div key={name} className={`rack-cell${tot ? " has" : ""}`}>
+                <div key={name} className={`rack-cell${tot ? " has" : ""}`} style={{ cursor: "pointer" }}
+                onClick={() => setDetail({ kind: "part", id: i + 1 })}>
                   <em>{name}</em><b>{tot}</b>
                   <div className="rack-tiers">
                     {s > 0 && <i className="t0">标 {s}</i>}
@@ -75,6 +78,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
           <p className="hint" style={{ marginTop: 12 }}>已连接 {shortAddr(account ?? "")}</p>
         </>
       )}
+      <DetailSheet detail={detail} onClose={() => setDetail(null)} />
     </div>
   );
 }

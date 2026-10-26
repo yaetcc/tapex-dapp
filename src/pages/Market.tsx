@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { trackTx } from "../lib/tx";
+import { DetailSheet, type Detail } from "../components/DetailSheet";
 
 const mkC = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
@@ -26,6 +27,7 @@ export function Market() {
   const [rows, setRows] = useState<string[][]>([["", "", ""]]);
   const [ptType, setPtType] = useState(1); const [ptAmount, setPtAmount] = useState(""); const [ptPrice, setPtPrice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [detail, setDetail] = useState<Detail>(null);
   const [msg, setMsg] = useState("");
 
   const load = useCallback(async () => {
@@ -189,7 +191,8 @@ export function Market() {
           ) : (
             <div className="order-list">
               {pc.map((o) => (
-                <div className="order-row" key={o.id}>
+                <div className="order-row" key={o.id} style={{ cursor: "pointer" }}
+                  onClick={(e) => { if (!(e.target as HTMLElement).closest("button")) setDetail({ kind: "pc", id: o.tokenId }); }}>
                   <b>PC #{o.tokenId}</b>
                   <span className="muted">{shortAddr(o.seller)}</span>
                   <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
@@ -277,6 +280,7 @@ export function Market() {
         </>
       )}
       {msg && <p className="msg err">{msg}</p>}
+      <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />
     </div>
   );
 }
