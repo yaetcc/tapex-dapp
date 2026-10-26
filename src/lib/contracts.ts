@@ -38,6 +38,8 @@ export const ABI = {
     "function rewardPerDay() view returns (uint256)",
     "function stake(uint256)",
     "function unstake(uint256)",
+    "function batchStake(uint256[])",
+    "function batchUnstake(uint256[])",
     "function claim(uint256[]) returns (uint256)",
     "function stakedPCsOf(address) view returns (uint256[])",
     "function userEarned(address) view returns (uint256)",

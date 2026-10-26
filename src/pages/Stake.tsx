@@ -16,6 +16,7 @@ export function Stake() {
   const [pcs, setPcs] = useState<PC[]>([]);
   const [earned, setEarned] = useState<bigint>(0n);
   const [busy, setBusy] = useState<number | 0>(0);
+  const [sel, setSel] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -40,6 +41,25 @@ export function Stake() {
 
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
   const totalHash = useMemo(() => pcs.reduce((a, p) => a + (p.staked ? p.hash : 0), 0), [pcs]);
+
+  const batchAct = async (kind: "stake" | "unstake" | "claim") => {
+    if (!signer || !account) return toast(t("err.noWallet"), "err");
+    const ids = [...sel];
+    if (!ids.length) return toast("先勾选矿机", "err");
+    setBusy(-1);
+    try {
+      const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
+      const tx = kind === "claim" ? await c.claim(ids)
+        : kind === "stake" ? await c.batchStake(ids) : await c.batchUnstake(ids);
+      await tx.wait();
+      toast(`批量${kind === "claim" ? "领取" : kind === "stake" ? "质押" : "解押"} ${ids.length} 台完成`, "ok");
+      setSel(new Set());
+      await load();
+    } catch (e) { toast((e as Error).message.slice(0, 90), "err"); }
+    finally { setBusy(0); }
+  };
+
+  const toggle = (id: number) => setSel((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
   const act = async (kind: "stake" | "unstake" | "claim", id?: number) => {
     if (!signer || !account) return toast(t("err.noWallet"), "err");
@@ -74,9 +94,17 @@ export function Stake() {
         <b>我的矿机</b>
         <span>实时链上状态</span>
         <span className="spacer" />
-        <button className="btn btn-ghost" disabled={!earned || busy !== 0} onClick={() => act("claim")}>
-          {busy === -1 ? "…" : "全部领取"}
-        </button>
+        <div className="batch-bar">
+          <label className="chk">
+            <input type="checkbox" checked={sel.size > 0 && sel.size === pcs.length}
+              onChange={(e) => setSel(e.target.checked ? new Set(pcs.map((p) => p.id)) : new Set())} />
+            全选
+          </label>
+          <span className="sel-count">{sel.size} 台</span>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("stake")}>批量质押</button>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("unstake")}>批量解押</button>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size || earned === 0n} onClick={() => batchAct("claim")}>批量领取</button>
+        </div>
       </div>
 
       {loading ? (
@@ -90,6 +118,9 @@ export function Stake() {
           {pcs.map((p) => (
             <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`}>
               <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
+              <label className="farm-check">
+                <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
+              </label>
               <div className="farm-meta">
                 <b>PC #{p.id}</b>
                 <span className={`grade g${p.grade}`}>{gradeOf(p.hash)}</span>

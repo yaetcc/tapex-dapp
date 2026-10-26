@@ -65,6 +65,20 @@ export function Market() {
     toast("购买成功", "ok");
   });
 
+  const myPc = pc.filter((o) => account && o.seller.toLowerCase() === account.toLowerCase());
+  const myParts = parts.filter((o) => account && o.seller.toLowerCase() === account.toLowerCase());
+
+  const delistPc = (ids: number[]) => withSigner(async () => {
+    const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
+    await (await mk.delistPC(ids)).wait();
+    toast(`撤单 ${ids.length} 条`, "ok");
+  });
+  const delistPart = (ids: number[]) => withSigner(async () => {
+    const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
+    await (await mk.delistPart(ids)).wait();
+    toast(`撤单 ${ids.length} 条`, "ok");
+  });
+
   const listPc = () => withSigner(async () => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
     await (await mk.listPC(Number(sellId), parseEther(sellPrice || "0"))).wait();
@@ -98,7 +112,28 @@ export function Market() {
             <input className="field field-sm" placeholder="价格 TAPE" value={sellPrice} onChange={(e) => setSellPrice(e.target.value)} />
             <button className="btn btn-ghost" disabled={busy || !sellId || !sellPrice} onClick={listPc}>挂单</button>
           </div>
-          <div className="sec-head"><b>在售整机</b><span>{pc.length} 条</span></div>
+          <div className="sec-head">
+            <b>我的挂单</b><span>{myPc.length} 条</span><span className="spacer" />
+            {myPc.length > 0 && (
+              <button className="btn btn-ghost" disabled={busy} onClick={() => delistPc(myPc.map((o) => o.id))}>
+                全部撤下
+              </button>
+            )}
+          </div>
+          {myPc.length > 0 && (
+            <div className="order-list" style={{ marginBottom: 8 }}>
+              {myPc.map((o) => (
+                <div className="order-row" key={"m" + o.id}>
+                  <b>PC #{o.tokenId}</b>
+                  <span className="muted">#{o.id}</span>
+                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
+                  <button className="btn btn-ghost" style={{ height: 30, padding: "0 12px", fontSize: 11.5 }}
+                    disabled={busy} onClick={() => delistPc([o.id])}>撤单</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="sec-head"><b>在售整机</b><span>{pc.length - myPc.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : pc.length === 0 ? (
             <div className="empty">暂无在售整机</div>
           ) : (
@@ -127,7 +162,28 @@ export function Market() {
             <input className="field field-sm" placeholder="单价 TAPE" value={ptPrice} onChange={(e) => setPtPrice(e.target.value)} />
             <button className="btn btn-ghost" disabled={busy || !ptAmount || !ptPrice} onClick={listPart}>挂单</button>
           </div>
-          <div className="sec-head"><b>在售部件</b><span>{parts.length} 条</span></div>
+          <div className="sec-head">
+            <b>我的部件挂单</b><span>{myParts.length} 条</span><span className="spacer" />
+            {myParts.length > 0 && (
+              <button className="btn btn-ghost" disabled={busy} onClick={() => delistPart(myParts.map((o) => o.id))}>
+                全部撤下
+              </button>
+            )}
+          </div>
+          {myParts.length > 0 && (
+            <div className="order-list" style={{ marginBottom: 8 }}>
+              {myParts.map((o) => (
+                <div className="order-row" key={"mp" + o.id}>
+                  <b>{partName(o.partType)}</b>
+                  <span className="muted">剩 {o.amount}</span>
+                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
+                  <button className="btn btn-ghost" style={{ height: 30, padding: "0 12px", fontSize: 11.5 }}
+                    disabled={busy} onClick={() => delistPart([o.id])}>撤单</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="sec-head"><b>在售部件</b><span>{parts.length - myParts.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : parts.length === 0 ? (
             <div className="empty">暂无在售部件</div>
           ) : (
