@@ -10,6 +10,31 @@ import { gradeNum } from "../lib/contracts";
 export function Home({ go }: { go: (r: string) => void }) {
   const { account, connect } = useApp();
   const [d, setD] = useState<{ pcs: number; staked: number; hash: number; pending: number; ids: number[] } | null>(null);
+  const [net, setNet] = useState<{ shares: number; pool: number; perDay: number; supply: number; minted: number; cap: number } | null>(null);
+
+  // 全网状态（不依赖钱包）
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
+        const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
+        const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
+        const [shares, pool, perDay, supply, minted, cap] = await Promise.all([
+          mineC.totalShares() as Promise<bigint>,
+          tapeC.balanceOf(ADDRS.mining) as Promise<bigint>,
+          mineC.rewardPerDay() as Promise<bigint>,
+          tapeC.totalSupply() as Promise<bigint>,
+          circC.mintedTotal() as Promise<bigint>,
+          circC.maxMintTotal() as Promise<bigint>,
+        ]);
+        if (!alive) return;
+        setNet({ shares: Number(shares), pool: Number(formatEther(pool)), perDay: Number(formatEther(perDay)),
+          supply: Number(formatEther(supply)), minted: Number(minted), cap: Number(cap) });
+      } catch { /* 静默 */ }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     if (!account) { setD(null); return; }
@@ -101,6 +126,17 @@ export function Home({ go }: { go: (r: string) => void }) {
             <button onClick={() => go("asm")}><i>2</i>组装矿机<span>100 TAPE / 台</span></button>
             <button onClick={() => go("stake")}><i>3</i>上架挖矿<span>按算力分配</span></button>
           </div>
+        </div>
+
+        <div className="card home-panel home-net">
+          <div className="sec-head"><b>全网状态</b><span>链上实时</span></div>
+          <div className="home-net-grid">
+            <div><span>全网算力</span><b>{net ? net.shares.toLocaleString() : "—"}</b><em>H</em></div>
+            <div><span>日释放</span><b>{net ? num(net.perDay, 0) : "—"}</b><em>TAPE</em></div>
+            <div><span>矿池余额</span><b>{net ? num(net.pool, 0) : "—"}</b><em>TAPE</em></div>
+            <div><span>已铸造</span><b>{net ? `${net.minted}/${net.cap}` : "—"}</b><em>台</em></div>
+          </div>
+          <button className="btn btn-ghost btn-block" style={{ marginTop: 12 }} onClick={() => go("net")}>查看全部数据 →</button>
         </div>
       </div>
     </div>

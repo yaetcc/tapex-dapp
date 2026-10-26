@@ -399,3 +399,11 @@
   .home-kpi { grid-template-columns: repeat(2, 1fr); }
   .home-grid { grid-template-columns: 1fr; }
 }
+
+.home-net { grid-column: span 2; }
+.home-net-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
+.home-net-grid div { display: flex; flex-direction: column; gap: 2px; }
+.home-net-grid span { font-size: var(--fs-2xs); color: var(--tx-3); }
+.home-net-grid b { font-size: var(--fs-xl); font-weight: 700; color: var(--tx-1); font-variant-numeric: tabular-nums; }
+.home-net-grid em { font-style: normal; font-size: var(--fs-2xs); color: var(--tx-3); }
+@media (max-width: 760px) { .home-net { grid-column: auto; } .home-net-grid { grid-template-columns: repeat(2,1fr); } }
