@@ -472,9 +472,9 @@
 .tile span .coin-ico { margin-right: 6px; }
 
 /* 部件档位 chip：三档恒定显示，不换行、不因 0 而塌陷 */
-.rack-tiers { display: flex; gap: 5px; justify-content: center; flex-wrap: nowrap; margin-top: 4px; }
-.rack-tiers i { white-space: nowrap; font-style: normal; font-size: var(--fs-2xs);
-  padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
+.rack-tiers { display: flex; gap: 3px; justify-content: center; flex-wrap: nowrap; margin-top: 4px; }
+.rack-tiers i { white-space: nowrap; font-style: normal; font-size: 10px; letter-spacing: 0;
+  padding: 1px 3px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.45; }
 .rack-tiers i.zero { opacity: .28; }
 .rack-tiers .t0 { color: #7FE0D6; } .rack-tiers .t1 { color: #00E5A0; } .rack-tiers .t2 { color: #FFD54D; }
 
@@ -488,3 +488,6 @@
   font-weight: 800;
 }
 .tile b em { color: var(--tx-3) !important; font-size: .52em !important; font-weight: 600; letter-spacing: .04em; }
+
+.rack-cell { min-width: 0; padding-bottom: 10px; }
+.rack-tiers { max-width: 100%; }
