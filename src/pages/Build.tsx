@@ -27,6 +27,7 @@ export function Build() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ k: "ok" | "err" | "info"; s: string } | null>(null);
   const [bal, setBal] = useState<bigint>(0n);
+  const [oneByOne, setOneByOne] = useState(false);   // 逐台发送：钱包预览能算准
 
   const loadCounts = useCallback(async () => {
     if (!account) return setCounts([]);
@@ -94,8 +95,9 @@ export function Build() {
       }
       // 单笔上限 10 台，超过则分批（与抽卡一致）
       let left = units;
+      const perTx = oneByOne ? 1 : MAX_PER_TX;
       while (left > 0) {
-        const b = Math.min(left, MAX_PER_TX);
+        const b = Math.min(left, perTx);
         setMsg({ k: "info", s: units > MAX_PER_TX ? `组装中… 剩余 ${left} 台` : "等待钱包确认…" });
         await trackTx(`组装 ${b} 台`, async () => {
           const tx = b === 1 ? await circ.assembleWithTiers(tiers) : await circ.batchAssembleWithTiers(b, tiers);
@@ -177,6 +179,14 @@ export function Build() {
           <div className="build-bal">
             <span>我的 TAPE</span><b className={shortTape ? "warn" : ""}>{num(Number(formatEther(bal)), 2)}</b>
           </div>
+          <label className="build-mode">
+            <input type="checkbox" checked={oneByOne} onChange={(e) => setOneByOne(e.target.checked)} />
+            <span>逐台发送（每台一笔，钱包预览准确；gas 更高）</span>
+          </label>
+          <p className="build-note">
+            钱包预览遇到批量调用可能只显示 1 台（实际扣 {num(Number(formatEther(fee || 0n)), 0)} × 台数），
+            勾选逐台可避免误解。
+          </p>
           <button className="btn btn-primary btn-block" disabled={busy || can < 1 || shortTape}
             onClick={() => doAssemble(units)}>
             {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : shortTape ? "TAPE 不足" : `组装 ${units} 台`}
