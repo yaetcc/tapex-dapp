@@ -101,9 +101,17 @@ export function Build() {
         每类选一个档位，消耗该档位 1 件 + {fee ? formatEther(fee) : "100"} TAPE 组装费；算力 = 8 类基础算力 × 档位倍率累加。
       </p>
 
+      <div className="sec-head"><b>档位选择</b><span>点档位切换 · 库存为 0 不可选</span></div>
+
+      <div className="tiles build-kpis">
+            <div className="tile"><span>可组装</span><b>{can} <em>台</em></b></div>
+            <div className="tile"><span>预计算力</span><b>{hash} <em>H</em></b></div>
+            <div className="tile"><span>预估等级</span><b>{GRADE(hash)}</b></div>
+            <div className="tile"><span>组装费</span><b>{formatEther(fee || 0n)} <em>TAPE</em></b></div>
+          </div>
+
       <div className="build-grid">
-        <div>
-          <div className="sec-head"><b>档位选择</b><span>点档位切换 · 库存为 0 不可选</span></div>
+        <div className="build-col">
           <div className="build-rows">
             {PART_NAMES.map((name, i) => (
               <div className="build-row" key={name}>
@@ -131,13 +139,7 @@ export function Build() {
         </div>
 
         <aside className="build-side">
-          <RigSlots tiers={tiers} counts={counts} size={280} />
-          <div className="tiles" style={{ gridTemplateColumns: "1fr 1fr" }}>
-            <div className="tile"><span>可组装</span><b>{can} <em>台</em></b></div>
-            <div className="tile"><span>预计算力</span><b>{hash} <em>H</em></b></div>
-            <div className="tile"><span>预估等级</span><b>{GRADE(hash)}</b></div>
-            <div className="tile"><span>组装费</span><b>{formatEther(fee || 0n)} <em>TAPE</em></b></div>
-          </div>
+          <RigSlots tiers={tiers} counts={counts} size={220} />
 
           <div className="build-qty">
             <span className="hint">组装台数</span>
@@ -155,14 +157,19 @@ export function Build() {
           <button className="btn btn-primary btn-block" disabled={busy || can < 1} onClick={() => doAssemble(Math.min(n, Math.max(can, 1)))}>
             {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : `组装 ${Math.min(n, can)} 台`}
           </button>
-          {missing.length > 0 && (
-            <p className="build-missing">缺：{missing.join("、")}</p>
-          )}
-          {msg && <p className={`msg ${msg.k}`}>{msg.s}</p>}
-          <p className="hint" style={{ marginTop: 10 }}>
-            组装消耗所选档位每类 1 件；批量需一次签名（单笔上限 10 台）。
-          </p>
         </aside>
+      </div>
+
+      <div className="build-foot">
+        {missing.length > 0 && (
+          <p className="build-missing">缺：{missing.join("、")}</p>
+        )}
+
+        {msg && <p className={`msg ${msg.k}`}>{msg.s}</p>}
+
+        <p className="hint" style={{ marginTop: 10 }}>
+          组装消耗所选档位每类 1 件；批量需一次签名（单笔上限 10 台）。
+        </p>
       </div>
     </div>
   );
