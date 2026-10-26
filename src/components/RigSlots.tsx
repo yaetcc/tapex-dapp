@@ -61,9 +61,9 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         {/* 标签 */}
         <g fontSize="10">
           <text x="140" y="34" fill={ok(1) ? stroke(1) : "#6b5a50"}>主板</text>
-          <text x="58" y="92" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
-          <text x="96" y="92" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
-          <text x="102" y="42" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
+          <text x="46" y="96" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
+          <text x="84" y="96" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
+          <text x="104" y="38" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
           <text x="50" y="118" fill={ok(2) ? stroke(2) : "#6b5a50"}>GPU</text>
           <text x="184" y="108" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
           <text x="36" y="197" fill={ok(5) ? stroke(5) : "#6b5a50"}>电源</text>
