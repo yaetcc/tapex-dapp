@@ -85,13 +85,13 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
 
         {/* 标签：优先放在部件内部，放不下的（机箱边框）放外侧 */}
         {(() => {
-          const L: { i: number; name: string; x: number; y: number; rot?: number; size?: number; anchor?: "start" | "middle" }[] = [
+          const L: { i: number; name: string; x: number; y: number; rot?: number; size?: number; anchor?: "start" | "middle" | "end" }[] = [
             { i: 1, name: "主板", x: 42, y: 36, size: 9, anchor: "start" },
             { i: 0, name: "CPU", x: 75, y: 78, size: 9 },
-            { i: 6, name: "散热", x: 75, y: 46, size: 9 },
-            { i: 3, name: "RAM", x: 117, y: 68, rot: -90, size: 9 },
+            { i: 6, name: "散热", x: 48, y: 58, size: 9, anchor: "end" },
+            { i: 3, name: "RAM", x: 117, y: 34, size: 9 },
             { i: 2, name: "GPU", x: 117, y: 145, size: 10 },
-            { i: 4, name: "SSD", x: 150, y: 108, size: 8 },
+            { i: 4, name: "SSD", x: 150, y: 94, size: 9 },
             { i: 5, name: "电源", x: 80, y: 226, size: 10 },
             { i: 7, name: "机箱", x: 14, y: 248, size: 10, anchor: "start" },
           ];
