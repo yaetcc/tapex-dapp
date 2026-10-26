@@ -29,8 +29,8 @@
   --r-sm: 8px; --r-md: 16px; --r-lg: 20px; --r-pill: 999px;
   /* 字号：统一使用上方 --fs-2xs ~ --fs-hero 字阶 */
 
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --sans: "Inter", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Source Han Sans SC", system-ui, sans-serif;
 
   /* 动效 token：全站只用这三种曲线与三档时长 */
   --dur-fast: 120ms; --dur-base: 220ms; --dur-slow: 420ms;

@@ -314,3 +314,10 @@ body::after {
   .trail-step span { display: none; }
   .trail-step.cur span { display: inline; }
 }
+
+/* 字体：数字统一成等宽数字，避免跳动；中文与西文共用一套系统字体栈 */
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+b, strong, .tile b, .home-tile b, .stats2 b, .rack-cell b, .farm-meta b, .kpi b {
+  font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+}
+.rack-tiers i, .tier-chip i { font-family: var(--sans); font-variant-numeric: tabular-nums; }
