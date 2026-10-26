@@ -23,7 +23,7 @@
 .odds-legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px 16px; margin-top: 13px; }
 @media (max-width: 700px) { .odds-legend { grid-template-columns: repeat(2, 1fr); } }
 .odds-legend span { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--tx-2); }
-.odds-legend i { width: 7px; height: 7px; border-radius: 2px; flex: 0 0 auto; }
+.odds-legend i { width: 8px; height: 8px; border-radius: 2px; flex: 0 0 auto; box-shadow: 0 0 0 1px rgba(255,255,255,.14); }
 .odds-legend b { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--tx); }
 
 .rack { display: grid; grid-template-columns: repeat(8, 1fr); gap: 9px; }

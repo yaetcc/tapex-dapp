@@ -10,8 +10,8 @@ import { trackTx } from "../lib/tx";
 
 // 链上实测权重（CircuitV6.typeWeight）：CPU 18 / 主板 20 / GPU 18 / RAM 14 / SSD 12 / 电源 8 / 散热器 6 / 机箱 4
 const ODD = [18, 20, 18, 14, 12, 8, 6, 4];
-// 方向 A：概率条改用「金 → 中性」单色阶，不再引入粉/紫
-const ODD_COLOR = ["#FFD54D", "#FFCB4A", "#F5B84A", "#E8A44E", "#D29250", "#B9835A", "#9C7A64", "#8A7870"];
+// 方向 A：单色阶，但明度必须拉开，否则 8 段分不清
+const ODD_COLOR = ["#FFE066", "#FFC93F", "#F0A62F", "#D4853A", "#B36B33", "#8F5530", "#6E442E", "#503A32"];
 
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
