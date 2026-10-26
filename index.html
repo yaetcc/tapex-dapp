@@ -3262,10 +3262,15 @@ input:focus{
 /* ===== 09 组装台 · 铸造 ===== */
 .parts-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin:4px 0 12px;
+  grid-template-columns:repeat(8,1fr);
+  gap:6px;
+  margin:4px 0 10px;
 }
+@media(max-width:1100px){ .parts-grid{ grid-template-columns:repeat(4,1fr); } }
+@media(max-width:560px){ .parts-grid{ grid-template-columns:repeat(2,1fr); } }
+.parts-grid .part-cell{ padding:8px 6px; }
+.parts-grid .part-cell b{ font-size:11.5px; }
+.parts-grid .part-cell span{ font-size:10.5px; }
 .tier-pick{
   margin:0 0 10px;
   background:rgba(255,255,255,.025);
@@ -5911,6 +5916,11 @@ input[type=number]:focus,input[type=text]:focus,textarea:focus{
   box-shadow:3px 3px 0 rgba(0,229,160,.35);
   animation:stickerWig 6s ease-in-out infinite reverse;
 }
+@media(max-width:640px){
+  .meme-sticker{ opacity:.55; transform:scale(.72); }
+  .meme-sticker.s1{ top:auto; bottom:78px; }
+  .meme-mascot{ opacity:.6; transform:scale(.8); }
+}
 .meme-sticker.s1::before{ content:"WEN MOON? 🚀"; }
 .meme-sticker.s2::before{ content:"2 THE MOON 🌙"; }
 @keyframes stickerWig{ 0%,100%{transform:rotate(4deg) translateY(0);} 50%{transform:rotate(-3deg) translateY(-5px);} }
@@ -5976,6 +5986,12 @@ body::before{ animation:none !important; }
 /* A2 列表头：emoji 图标+金色标题+分隔线 */
 .mk-col{ min-width:0; }
 #divdStats{ grid-template-columns:repeat(3,1fr); }
+.param-fold{ margin-top:10px; border:1px solid var(--line); border-radius:12px; padding:8px 12px; background:rgba(255,255,255,.02); }
+.param-fold summary{ cursor:pointer; font-size:12px; color:var(--tx2); letter-spacing:.4px; list-style:none; }
+.param-fold summary::-webkit-details-marker{ display:none; }
+.param-fold summary::before{ content:"▸ "; color:var(--gold); }
+.param-fold[open] summary::before{ content:"▾ "; }
+.param-fold[open] summary{ margin-bottom:8px; }
 @media(max-width:820px){ #divdStats{ grid-template-columns:1fr; } }
 .mk-range{ display:flex; align-items:center; gap:6px; flex:0 1 260px; min-width:0; margin-left:auto; }
 .mk-range .mk-price-min,.mk-range .mk-price-max{ flex:1 1 0; min-width:0; }
@@ -6315,17 +6331,22 @@ body::before{ animation:none !important; }
         <div class="ms-txt"><b id="msState" data-i18n="f.idle">待机</b><span id="msSub" data-i18n="ms.sub">全网算力 0 H，质押后开始产出</span></div>
       </div>
       <div class="panel-stat">
-        <div class="statbox"><b id="stTape">—</b><span data-i18n="st.supply">TAPE 总供应</span></div>
-        <div class="statbox"><b id="stPool">—</b><span data-i18n="st.pool">奖励池 TAPE</span></div>
-        <div class="statbox"><b id="stMinted">—</b><span data-i18n="st.minted">已铸部件（件）</span></div>
-        <div class="statbox"><b id="stCap">—</b><span data-i18n="st.cap">总可铸上限</span></div>
         <div class="statbox"><b id="stShares">—</b><span data-i18n="st.hash">全网算力 H</span></div>
-        <div class="statbox"><b id="stEpoch">—</b><span data-i18n="st.epoch">当前 epoch</span></div>
+        <div class="statbox"><b id="stPool">—</b><span data-i18n="st.pool">奖励池余额 TAPE</span></div>
+        <div class="statbox"><b id="stMinted">—</b><span data-i18n="st.minted">已抽部件（件）</span></div>
+        <div class="statbox"><b id="stCap">—</b><span data-i18n="st.cap">抽卡上限（件）</span></div>
       </div>
+      <details class="param-fold">
+        <summary data-i18n="st.params">合约参数 · 经济模型</summary>
+        <div class="panel-stat">
+          <div class="statbox"><b id="stTape">—</b><span data-i18n="st.supply">TAPE 总供应</span></div>
+          <div class="statbox"><b id="stEpoch">—</b><span data-i18n="st.epoch">分红池累计</span></div>
+        </div>
+      </details>
       <div class="trend-panel">
         <div class="trend"><svg id="spHash" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spHashV">—</b><span data-i18n="st.hash">全网算力 H</span><em id="spHashD" class="d-flat">—</em></div></div>
         <div class="trend"><svg id="spPrice" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spPriceV">—</b><span data-i18n="tr.price">PC 价格 OKB</span><em id="spPriceD" class="d-flat">—</em></div></div>
-        <div class="trend"><svg id="spMint" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spMintV">—</b><span data-i18n="st.minted">已铸部件（件）</span><em id="spMintD" class="d-flat">—</em></div></div>
+        <div class="trend"><svg id="spMint" viewBox="0 0 120 36" preserveAspectRatio="none"></svg><div class="trend-lb"><b id="spMintV">—</b><span data-i18n="st.minted">已抽部件（件）</span><em id="spMintD" class="d-flat">—</em></div></div>
       </div>
       <p class="hint" data-i18n="数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。">数据来自公共 RPC（rpc.xlayer.tech），交易确认后可能有数秒读取滞后，稍后会自动更新。</p>
     </div>
@@ -6588,11 +6609,12 @@ var I18N = {
   "nav.connect": {zh:"连接钱包", en:"Connect Wallet"},
   "nav.mainnet": {zh:"X Layer", en:"X Layer"},
   "st.supply": {zh:"TAPE 总供应", en:"TAPE Supply"},
-  "st.pool": {zh:"奖励池 TAPE", en:"Reward Pool TAPE"},
-  "st.minted": {zh:"已铸部件（件）", en:"Parts Minted"},
-  "st.cap": {zh:"总可铸上限", en:"Mint Cap"},
-  "st.hash": {zh:"全网算力 H", en:"Network Hash H"},
-  "st.epoch": {zh:"当前 epoch", en:"Current Epoch"},
+  "st.pool": {zh:"奖励池余额 TAPE", en:"Reward pool"},
+  "st.minted": {zh:"已抽部件（件）", en:"Parts drawn"},
+  "st.cap": {zh:"抽卡上限（件）", en:"Draw cap"},
+  "st.hash": {zh:"全网算力 H", en:"Network hashrate"},
+  "st.epoch": {zh:"分红池累计", en:"Dividend pool"},
+  "st.params": {zh:"合约参数 · 经济模型", en:"Contract params"},
   "net.pool": {zh:"池:", en:"Pool: "},
   "ph.noWallet": {zh:"未连接钱包", en:"No wallet connected"},
   "ph.rigEmpty": {zh:"连接钱包后显示质押中的矿机", en:"Staked miners appear after connecting"},
@@ -7330,11 +7352,11 @@ function renderGlobal(){
   ]).then(function(r){
     if (setNum("stTape", 21000000000000000000000000n, fmtWeiUnit, fmtWei)) flashStat("stTape");
     if (setNum("stPool", r[1], fmtWeiUnit, fmtWei)) flashStat("stPool");
-    if (setNum("stMinted", r[3], fmtNumUnit, fmtInt)) flashStat("stMinted");
+    if (setNum("stMinted", r[9], fmtNumUnit, fmtInt)) flashStat("stMinted");
     if (setNum("stCap", r[8], fmtNumUnit, fmtInt)) flashStat("stCap");
     if (setNum("stShares", r[2], fmtNumUnit, fmtInt)) flashStat("stShares");
     if (typeof HIST==="undefined"){window.HIST={hash:[],price:[],mint:[]};}
-    var _hv=Number(r[2]), _pv=Number(r[6])/1e18, _mv=Number(r[3]);
+    var _hv=Number(r[2]), _pv=Number(r[6])/1e18, _mv=Number(r[9]);
     if(isFinite(_hv))HIST.hash.push(_hv);
     if(isFinite(_pv))HIST.price.push(_pv);
     if(isFinite(_mv))HIST.mint.push(_mv);
@@ -7900,7 +7922,7 @@ function miniIcon(k){
     rig:'<svg class="mini t" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/><rect x="5.5" y="6.5" width="5" height="3.5" rx="1"/><circle cx="8" cy="8.2" r="0.9" fill="currentColor" stroke="none"/><rect x="5.5" y="11.5" width="5" height="3.5" rx="1"/><circle cx="16.5" cy="12.5" r="3.8"/><path d="M16.5 8.7v1.1M16.5 14.9v1.1M12.7 9.7l.8.8M19.5 14.5l.8.8M12.7 15.3l.8-.8M19.5 10.5l.8-.8"/><path d="M16.5 12.5l2.6-1.2"/><rect x="5.5" y="16.8" width="9" height="1.6" rx="0.8"/><circle cx="11.5" cy="17.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
     mint:'<svg class="mini g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 7v10M7 12h10"/></svg>',
     wallet:'<svg class="mini t" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12.5h.01"/><path d="M3 9h18"/></svg>',
-    tapex:'<svg class="mini gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6h12M6 6v12M6 6l6 6 6-6"/></svg>'
+    tapex:'<svg class="mini gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.4 10.2h4a1.7 1.7 0 010 3.4h-4M9.4 13.6h4.4"/></svg>'
   };
   return svg[k] || "";
 }
