@@ -13,6 +13,7 @@ const A = {
   batch: ["function balanceOfBatch(address[],uint256[]) view returns (uint256[])"],
   info: ["function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))"],
   many: ["function hashOfMany(uint256[]) view returns (uint256)"],
+  parts: ["function partsOf(address) view returns (uint256[24])"],
   u64: ["function totalShares() view returns (uint256)"],
   bal: ["function balanceOf(address) view returns (uint256)"],
   perDay: ["function rewardPerDay() view returns (uint256)"],
@@ -62,7 +63,7 @@ export function Home({ go }: { go: (r: string) => void }) {
     let alive = true;
     (async () => {
       try {
-        const ct = new Contract(ADDRS.circuit, A.erc721.concat(A.info).concat(A.many), readProvider);
+        const ct = new Contract(ADDRS.circuit, A.erc721.concat(A.info).concat(A.many).concat(A.parts), readProvider);
         const mt = new Contract(ADDRS.mining, A.staked, readProvider);
         const fs = new Contract(ADDRS.feeSplit, A.pending, readProvider);
         const [pcBal, stakedIds, pending] = await Promise.all([
@@ -79,9 +80,7 @@ export function Home({ go }: { go: (r: string) => void }) {
         const [partsRes, hashRaw] = await Promise.all([
           (async () => {
             try {
-              const pt = new Contract(ADDRS.part, A.batch, readProvider);
-              const ids24 = Array.from({ length: 24 }, (_, i) => i + 1);
-              const bals: bigint[] = await pt.balanceOfBatch(ids24.map(() => account), ids24);
+              const bals: bigint[] = Array.from(await ct.partsOf(account)) as bigint[];
               const byType = Array.from({ length: 8 }, (_, i) => [0, 1, 2].reduce((a, tr) => a + Number(bals[tr * 8 + i]), 0));
               return { can: Math.min(...byType), missing: byType.map((v, i) => (v < 1 ? i : -1)).filter((i) => i >= 0) };
             } catch { return { can: 0, missing: [] as number[] }; }

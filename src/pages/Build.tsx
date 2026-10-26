@@ -37,6 +37,12 @@ export function Build() {
 
   const loadCounts = useCallback(async () => {
     if (!account) return setCounts([]);
+    // 一次聚合调用；新实现不可用时回退到 balanceOfBatch
+    try {
+      const res = (await circC.partsOf(account)) as bigint[];
+      setCounts(Array.from(res).map(Number));
+      return;
+    } catch { /* fallback */ }
     const ids = Array.from({ length: 24 }, (_, i) => i + 1);
     const res = (await partC.balanceOfBatch(ids.map(() => account), ids)) as bigint[];
     setCounts(res.map(Number));
