@@ -40,8 +40,10 @@ export function Market() {
         mkC.activePCOrders() as Promise<{ seller: string; price: bigint; tokenId: bigint; active: boolean }[]>,
         mkC.activePartOrders() as Promise<{ seller: string; price: bigint; amount: bigint; partType: bigint; active: boolean }[]>,
       ]);
-      setPc(pcs.map((o, i) => ({ id: i + 1, seller: o.seller, price: o.price, tokenId: Number(o.tokenId) })));
-      setParts(pts.map((o, i) => ({ id: i + 1, seller: o.seller, price: o.price, amount: Number(o.amount), partType: Number(o.partType) })));
+      setPc(pcs.map((o, i) => ({ id: i + 1, seller: o.seller, price: o.price, tokenId: Number(o.tokenId), active: o.active }))
+        .filter((o) => o.active));
+      setParts(pts.map((o, i) => ({ id: i + 1, seller: o.seller, price: o.price, amount: Number(o.amount), partType: Number(o.partType), active: o.active }))
+        .filter((o) => o.active && o.amount > 0));
     } finally { setLoading(false); }
   }, []);
   useEffect(() => { load().catch(() => setLoading(false)); }, [load]);
@@ -332,7 +334,10 @@ export function Market() {
                     {partName(o.partType)}
                   </b>
                   <span className="muted">剩 {o.amount} · {shortAddr(o.seller)}</span>
-                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
+                  <span className="price">
+                    {num(Number(formatEther(o.price)), 2)}
+                    <em style={{ fontStyle: "normal", fontSize: 10, color: "var(--tx-3)" }}> /件</em>
+                  </span>
                   <button className="btn btn-primary" style={{ height: 32, padding: "0 14px", fontSize: 12 }}
                     disabled={busy || o.seller.toLowerCase() === account?.toLowerCase()} onClick={() => buyPart(o)}>
                     {o.seller.toLowerCase() === account?.toLowerCase() ? "我的" : "买 1 件"}

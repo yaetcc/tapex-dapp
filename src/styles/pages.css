@@ -196,6 +196,7 @@
 .sheet-x:hover { color: var(--tx); background: rgba(255,255,255,.1); }
 
 .sheet-body { padding: 16px 18px 18px; }
+.sheet-tiers { display: inline-flex; gap: 5px; margin-bottom: 12px; }
 .sheet-hero { display: flex; gap: 18px; align-items: center; padding: 14px;
   border-radius: 16px; border: 1px solid rgba(255,255,255,.07);
   background: radial-gradient(90% 120% at 15% 0%, color-mix(in srgb, var(--gc, #7FE0D6) 14%, transparent), transparent 62%),

@@ -25,10 +25,15 @@ export function DetailSheet({ detail, onClose, onChanged }: {
   const [info, setInfo] = useState<any>(null);
   const [price, setPrice] = useState("");
   const [amount, setAmount] = useState("1");
+  const [tierSel, setTierSel] = useState<number | null>(null);
+
+  const partTypeIdx = detail?.kind === "part" ? (detail.id - 1) % 8 : 0;
+  const partTier = tierSel ?? (detail?.kind === "part" ? Math.floor((detail.id - 1) / 8) : 0);
+  const effId = detail?.kind === "part" ? partTypeIdx + 1 + partTier * 8 : detail?.id ?? 0;
 
   useEffect(() => {
     if (!detail) return;
-    setLoading(true); setError(""); setInfo(null); setPrice(""); setAmount("1");
+    setLoading(true); setError(""); setInfo(null); setPrice(""); setAmount("1"); setTierSel(null);
     let alive = true;
     const run = async () => {
       if (detail.kind === "pc") {
@@ -37,23 +42,27 @@ export function DetailSheet({ detail, onClose, onChanged }: {
         const [g, owner, staked, listed, orders] = await Promise.all([
           circ.getCircuitInfo(detail.id), circ.ownerOf(detail.id), circ.stakedOf(detail.id), circ.listedOf(detail.id), mk.activePCOrders(),
         ]);
-        const mine = orders.find((o: any) => Number(o.tokenId) === detail.id && o.active);
+        const pcIdx = orders.findIndex((o: any) => Number(o.tokenId) === detail.id && o.active);
+        const mine = pcIdx >= 0 ? { ...orders[pcIdx], orderId: pcIdx + 1 } : null;
         if (!alive) return;
         setInfo({
           kind: "pc",
           hash: Number(g.hashRate), grade: Number(g.grade), tiers: Array.from(g.tiers as bigint[]).map(Number),
-          owner, staked, listed, price: mine ? mine.price : null,
+          owner, staked, listed, price: mine ? mine.price : null, orderId: mine ? mine.orderId : 0,
           owns: account?.toLowerCase() === String(owner).toLowerCase(),
         });
       } else {
         const part = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
         const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
         const [bal, orders] = await Promise.all([
-          account ? part.balanceOf(account, detail.id) as Promise<bigint> : Promise.resolve(0n),
+          account ? part.balanceOf(account, effId) as Promise<bigint> : Promise.resolve(0n),
           mk.activePartOrders(),
         ]);
-        const mine = orders.filter((o: any) => Number(o.partType) === detail.id && o.active);
-        const others = mine.filter((o: any) => o.seller.toLowerCase() !== account?.toLowerCase());
+        // 合约返回全量数组（含已撤/已售完），这里按原始下标补 orderId 并只留 active
+        const withId = orders.map((o: any, i: number) => ({ ...o, orderId: i + 1 }))
+          .filter((o: any) => Number(o.partType) === effId && o.active && Number(o.amount) > 0);
+        const mine = withId.filter((o: any) => o.seller.toLowerCase() === account?.toLowerCase());
+        const others = withId.filter((o: any) => o.seller.toLowerCase() !== account?.toLowerCase());
         const floor = others.length ? others.reduce((m: bigint, o: any) => (o.price < m ? o.price : m), others[0].price) : null;
         if (!alive) return;
         setInfo({ kind: "part", bal: Number(bal), mine, floor, count: mine.length, owns: Number(bal) > 0 });
@@ -63,7 +72,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
       .catch((e) => { if (alive) setError((e as Error).message.slice(0, 80)); })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
-  }, [detail, account]);
+  }, [detail, account, effId]);
 
   // Esc 关闭 + 锁滚动 + 焦点
   useEffect(() => {
@@ -100,17 +109,17 @@ export function DetailSheet({ detail, onClose, onChanged }: {
     if (kind === "stake") return withTx(`质押 PC #${detail.id}`, () => mine.stake(detail.id));
     if (kind === "unstake") return withTx(`解押 PC #${detail.id}`, () => mine.unstake(detail.id));
     if (kind === "list") return withTx(`挂单 PC #${detail.id}`, () => mk.listPC(detail.id, parseEther(price || "0")));
-    return withTx(`撤单 PC #${detail.id}`, () => mk.delistPC([info?.orderId ?? 0]));
+    return withTx(`撤单 PC #${detail.id}`, () => mk.delistPC([info.orderId]));
   };
 
   const partAct = (kind: "list" | "delist" | "buy") => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
-    if (kind === "list") return withTx(`挂单 ${partName(detail.id)}`, async () => {
+    if (kind === "list") return withTx(`挂单 ${partName(effId)}`, async () => {
       const part = new Contract(ADDRS.part, ABI.part as unknown as string[], signer!);
       if (!(await part.isApprovedForAll(account, ADDRS.market))) await (await part.setApprovalForAll(ADDRS.market, true)).wait();
-      return mk.listPart(detail.id, Number(amount || 1), parseEther(price || "0"));
+      return mk.listPart(effId, Number(amount || 1), parseEther(price || "0"));
     });
-    if (kind === "delist") return withTx("撤单", () => mk.delistPart(info.mine.map((o: any, i: number) => i + 1)));
+    if (kind === "delist") return withTx("撤单", () => mk.delistPart(info.mine.map((o: any) => o.orderId)));
     return withTx("购买", () => mk.buyPart(1, 1));
   };
 
@@ -121,7 +130,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
       <div className="sheet" ref={boxRef} tabIndex={-1} role="dialog" aria-modal="true">
         <header className="sheet-hd">
           <div className="sheet-title">
-            <b>{detail.kind === "pc" ? `PC #${detail.id}` : partName(detail.id)}</b>
+            <b>{detail.kind === "pc" ? `PC #${detail.id}` : partName(effId)}</b>
             {info && detail.kind === "pc" && (
               <span className="sheet-tags">
                 <GradeBadge hash={info.hash} />
@@ -173,15 +182,24 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           </div>
         ) : (
           <div className="sheet-body">
-            <div className="sheet-hero" style={{ ["--gc" as string]: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>
+            {detail.kind === "part" && (
+              <div className="sheet-tiers">
+                {TIERS.map((tn, ti) => (
+                  <button key={tn} className={`pc-chip${partTier === ti ? " on" : ""}`} onClick={() => setTierSel(ti)}>
+                    {tn}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="sheet-hero" style={{ ["--gc" as string]: TIER_COLOR[partTier] }}>
               <div className="part-big">
-                <PartIcon type={(detail.id - 1) % 8} tier={Math.floor((detail.id - 1) / 8)} size={52} />
+                <PartIcon type={partTypeIdx} tier={partTier} size={52} />
               </div>
               <div className="sheet-stats">
                 <div className="sheet-stat"><span>持有</span><b>{info.bal} <em>件</em></b></div>
                 <div className="sheet-stat"><span>市场最低</span><b>{info.floor ? num(Number(formatEther(info.floor)), 2) : "—"}</b></div>
                 <div className="sheet-stat"><span>在售</span><b>{info.count} <em>条</em></b></div>
-                <div className="sheet-stat"><span>档位</span><b>{TIERS[Math.floor((detail.id - 1) / 8)]}</b></div>
+                <div className="sheet-stat"><span>档位</span><b>{TIERS[partTier]}</b></div>
               </div>
             </div>
 

@@ -137,7 +137,10 @@ export function Assets({ go }: { go: (r: string) => void }) {
               const s = counts[i] || 0, p = counts[i + 8] || 0, f = counts[i + 16] || 0, tot = s + p + f;
               return (
                 <div key={name} className={`rack-cell${tot ? " has" : ""}`} style={{ cursor: "pointer" }}
-                onClick={() => setDetail({ kind: "part", id: i + 1 })}>
+                onClick={() => {
+                  const tier = f > 0 ? 2 : p > 0 ? 1 : 0;      // 旗舰 > Pro > 标准
+                  setDetail({ kind: "part", id: i + 1 + tier * 8 });
+                }}>
                   <span style={{ marginBottom: 1 }}><PartIcon type={i} muted={!tot} size={22} /></span>
                   <em>{name}</em><b>{tot}</b>
                   <div className="rack-tiers">
