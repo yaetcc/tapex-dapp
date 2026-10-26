@@ -16,7 +16,7 @@
 
   --tx: #efe7df;
   --tx-2: #b6a89f;
-  --tx-3: #8d817a;   /* 对比度 ≈4.0:1，AA 边缘 */
+  --tx-3: #A2938A;   /* 对比度 ≈4.0:1，AA 边缘 */
   --line: rgba(255, 255, 255, 0.08);
   --line-gold: rgba(255, 217, 61, 0.22);
 
@@ -27,8 +27,7 @@
   --fs-xl: 16px; --fs-2xl: 20px; --fs-3xl: 28px; --fs-hero: 40px;
   --gap-1: 8px; --gap-2: 16px; --gap-3: 24px; --h-btn: 46px;
   --r-sm: 8px; --r-md: 16px; --r-lg: 20px; --r-pill: 999px;
-  /* 字号 */
-  --fs-xs: 11px; --fs-sm: 12.5px; --fs-md: 14px; --fs-lg: 18px; --fs-xl: 22px; --fs-2xl: 28px;
+  /* 字号：统一使用上方 --fs-2xs ~ --fs-hero 字阶 */
 
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --sans: "Inter", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;

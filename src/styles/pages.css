@@ -471,3 +471,13 @@
 @keyframes actBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(1.01); } }
 @media (prefers-reduced-motion: reduce) { .home > *, .act-card { animation: none !important; } }
 @media (max-width: 760px) { .home-kpi { grid-template-columns: repeat(2, 1fr); } .home-tile.main { grid-column: span 2; } }
+
+/* 主页自检修复 */
+.home-hero p { font-size: var(--fs-lg); color: #A2938A; line-height: 1.7; max-width: 46ch; }
+.home-hero-art .rig { width: 240px; }
+@media (max-width: 760px) {
+  .home-hero-art { display: grid; }
+  .home-hero-art .rig { width: 104px !important; }
+  .home-hero-art svg { max-height: 118px; }
+  .home-hero { min-height: 96px; }
+}
