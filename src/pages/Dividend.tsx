@@ -119,28 +119,30 @@ export function Dividend() {
         </div>
 
         {/* TAPEX 购买 */}
-        <div className="tapex-card">
-          <div className="tapex-left">
-            <div className="tapex-sym">
-              <span className="tapex-badge">TAPEX</span>
-              <span className="hint">{tapex === 0n ? "还没有 TAPEX，买入即可开始分红" : "持有中，分红持续累积"}</span>
-            </div>
-            <code className="tapex-addr">{TAPEX.address}</code>
-            <div className="tapex-acts">
-              <button className="btn btn-ghost" onClick={async () => {
+        <div className="buy-card">
+          <div className="buy-id">
+            <span className="buy-coin" aria-hidden>TX</span>
+            <div className="buy-meta">
+              <b>TAPEX</b>
+              <button className="buy-addr" title={TAPEX.address} onClick={async () => {
                 try { await navigator.clipboard.writeText(TAPEX.address); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch {}
-              }}>{copied ? "已复制" : "复制合约"}</button>
-              <a className="btn btn-ghost" href={TAPEX.explorer} target="_blank" rel="noreferrer">浏览器</a>
+              }}>
+                {TAPEX.address.slice(0, 6)}…{TAPEX.address.slice(-4)}
+                <em>{copied ? "已复制" : "复制"}</em>
+              </button>
             </div>
+            <span className="buy-state">{tapex === 0n ? "未持有" : "持有中"}</span>
           </div>
-          <div className="tapex-right">
-            <div className="tapex-buy">
-              <a className="btn btn-primary" href={TAPEX.ignix} target="_blank" rel="noreferrer">IGNIX 购买 / K 线</a>
-              <a className="btn btn-ghost" href={TAPEX.okx} target="_blank" rel="noreferrer">OKX 行情购买</a>
-            </div>
-            <p className="hint">在 IGNIX / OKX 粘贴上面的合约地址即可买入；两者均禁止被嵌入，图表需新窗口打开。</p>
+
+          <div className="buy-actions">
+            <a className="btn btn-primary" href={TAPEX.ignix} target="_blank" rel="noreferrer">IGNIX 购买</a>
+            <a className="btn btn-ghost" href={TAPEX.okx} target="_blank" rel="noreferrer">OKX</a>
+            <a className="btn btn-ghost" href={TAPEX.explorer} target="_blank" rel="noreferrer">浏览器</a>
           </div>
         </div>
+        <p className="hint" style={{ marginTop: 8 }}>
+          在 IGNIX / OKX 粘贴上面的合约地址即可买入；两者禁止被嵌入，K 线需新窗口打开。
+        </p>
       </div>
     </>
   );

@@ -102,22 +102,7 @@
 .tx-list li.err em { color: var(--danger); }
 
 /* TAPEX 资料卡 */
-.tapex-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px;
-  padding: 16px; border-radius: var(--r-lg); border: 1px solid rgba(255,217,61,.22);
-  background: radial-gradient(120% 80% at 20% -20%, rgba(255,217,61,.12), transparent 60%), linear-gradient(180deg,#241a16,#171210); }
-@media (max-width: 760px) { .tapex-card { grid-template-columns: 1fr; } }
-.tapex-sym { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.tapex-badge { font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #241505;
-  background: var(--grad-gold); padding: 3px 10px; border-radius: 999px; }
-.tapex-addr { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--tx-2);
-  background: rgba(0,0,0,.35); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px;
-  word-break: break-all; }
-.tapex-acts { display: flex; gap: 8px; margin-top: 10px; }
-.tapex-buy { display: flex; gap: 8px; flex-wrap: wrap; }
-.tapex-buy .btn { height: 40px; padding: 0 16px; font-size: 12.5px; text-decoration: none; }
-.tapex-buy .btn-primary { text-decoration: none; }
-.tapex-steps { margin: 12px 0 6px; padding-left: 18px; color: var(--tx-2); font-size: 12px; line-height: 1.9; }
-.tapex-steps b { color: var(--tx); font-family: var(--mono); }
+@media (max-width: 760px) {  }
 
 /* 资产页 PC 缩略卡 */
 .pc-filters { display: inline-flex; gap: 5px; }
@@ -182,3 +167,23 @@
   background: rgba(255,255,255,.015); }
 .dv-mech-cell b { display: block; font-size: 13px; color: var(--gold); margin-bottom: 4px; }
 .dv-mech-cell span { font-size: 11.5px; color: var(--tx-3); line-height: 1.6; }
+
+/* TAPEX 购买条 */
+.buy-card { display: flex; align-items: center; gap: 16px; margin-top: 18px; padding: 14px 16px;
+  border-radius: var(--r-lg); border: 1px solid var(--line-gold);
+  background: linear-gradient(100deg, rgba(255,217,61,.07), rgba(255,107,203,.05) 60%, transparent); }
+@media (max-width: 720px) { .buy-card { flex-wrap: wrap; gap: 12px; } .buy-actions { width: 100%; } }
+.buy-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.buy-coin { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto;
+  font-size: 12px; font-weight: 900; color: #2a1700;
+  background: linear-gradient(135deg,#FFD93D,#FF9F45 60%,#FF6BCB); box-shadow: 0 6px 16px rgba(255,159,69,.3); }
+.buy-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.buy-meta b { font-size: 13.5px; letter-spacing: .02em; }
+.buy-addr { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; padding: 0;
+  font-family: var(--mono); font-size: 11px; color: var(--tx-3); cursor: pointer; }
+.buy-addr:hover { color: var(--tx-2); }
+.buy-addr em { font-style: normal; font-size: 10px; color: var(--ac); border-bottom: 1px dashed rgba(0,229,160,.5); }
+.buy-state { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-3);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.buy-actions { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.buy-actions .btn { height: 38px; padding: 0 16px; font-size: 12.5px; text-decoration: none; }
