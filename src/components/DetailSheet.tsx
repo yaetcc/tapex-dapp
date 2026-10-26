@@ -179,7 +179,7 @@ export function DetailSheet({ detail, onClose, onChanged, origin }: {
         ) : detail.kind === "pc" ? (
           <div className="sheet-body">
             <div className="sheet-hero" ref={heroRef} style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>
-              <RigArt hash={info.hash} grade={gradeNum(info.hash)} size={180}
+              <RigArt hash={info.hash} grade={gradeNum(info.hash)} size={230}
                 variant={getVariant(detail.id)} lightHue={getHue(detail.id)}
                 state={info.staked ? "mining" : info.listed ? "listed" : "idle"} />
               <div className="sheet-stats">
