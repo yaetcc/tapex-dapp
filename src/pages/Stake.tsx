@@ -49,12 +49,21 @@ export function Stake() {
   useEffect(() => { (mineC.maxBatch() as Promise<bigint>).then((v) => setMaxBatch(Number(v))).catch(() => {}); }, []);
 
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
+  const counts = useMemo(() => ({
+    all: pcs.length,
+    idle: pcs.filter((p) => !p.staked).length,
+    staked: pcs.filter((p) => p.staked).length,
+  }), [pcs]);
+
   const visible = useMemo(
     () => pcs
       .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked))
       .sort((a, b) => (sort === "hash" ? b.hash - a.hash : a.id - b.id)),
     [pcs, filter, sort]
   );
+  const allSelected = visible.length > 0 && visible.every((p) => sel.has(p.id));
+  const hiddenSelected = [...sel].filter((id) => !visible.some((p) => p.id === id)).length;
+  const txCount = Math.max(1, Math.ceil(sel.size / Math.max(1, maxBatch)));
   const totalHash = useMemo(() => pcs.reduce((a, p) => a + (p.staked ? p.hash : 0), 0), [pcs]);
 
   const batchAct = async (kind: "stake" | "unstake" | "claim") => {
@@ -123,21 +132,28 @@ export function Stake() {
         <div className="batch-bar">
           <div className="pc-filters">
             {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"]] as const).map(([k, label]) => (
-              <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>{label}</button>
+              <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>
+                {label}<i>{counts[k]}</i>
+              </button>
             ))}
             <button className="pc-chip" onClick={() => setSort(sort === "hash" ? "id" : "hash")}>
               {sort === "hash" ? "算力↓" : "编号↑"}
             </button>
           </div>
           <label className="chk">
-            <input type="checkbox" checked={sel.size > 0 && sel.size === pcs.length}
-              onChange={(e) => setSel(e.target.checked ? new Set(pcs.map((p) => p.id)) : new Set())} />
-            全选
+            <input type="checkbox" checked={allSelected} onChange={(e) => {
+              if (e.target.checked) { setSel((prev) => new Set([...prev, ...visible.map((p) => p.id)])); setShown(999); }
+              else setSel((prev) => { const n = new Set(prev); visible.forEach((p) => n.delete(p.id)); return n; });
+            }} />
+            全选{visible.length !== counts.all ? "当前筛选" : ""}（{visible.length}）
           </label>
-          <span className="sel-count">{sel.size} 台</span>
-          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("stake")}>批量质押</button>
-          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("unstake")}>批量解押</button>
-          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size || earned === 0n} onClick={() => batchAct("claim")}>批量领取</button>
+          {sel.size > 0 && <button className="chk-btn" onClick={() => setSel(new Set())}>清空</button>}
+          <span className="sel-count">
+            已选 {sel.size} 台{hiddenSelected > 0 ? `（另有 ${hiddenSelected} 台已选未显示）` : ""}
+          </span>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("stake")}>批量质押{sel.size ? ` ${sel.size}` : ""}{txCount > 1 ? `（${txCount} 笔）` : ""}</button>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size} onClick={() => batchAct("unstake")}>批量解押{sel.size ? ` ${sel.size}` : ""}</button>
+          <button className="btn btn-ghost" disabled={busy !== 0 || !sel.size || earned === 0n} onClick={() => batchAct("claim")}>批量领取{sel.size ? ` ${sel.size}` : ""}</button>
         </div>
       </div>
 

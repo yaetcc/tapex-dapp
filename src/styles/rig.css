@@ -79,3 +79,9 @@
 
 .farm-more { grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 4px; }
 .farm-more .btn { height: 32px; font-size: 11.5px; }
+
+.pc-chip i { font-style: normal; font-family: var(--mono); font-size: 10px; opacity: .6; margin-left: 4px; }
+.pc-chip.on i { opacity: .85; }
+.chk-btn { border: none; background: none; color: var(--tx-3); font-size: 11px; cursor: pointer; text-decoration: underline; }
+.chk-btn:hover { color: var(--tx); }
+.batch-bar { gap: 8px 10px; }
