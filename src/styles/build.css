@@ -17,12 +17,12 @@
   border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
   transition: border-color .18s, background .18s;
 }
-.build-row:hover { border-color: rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .035); }
+.build-row:hover { border-color: var(--line); background: rgba(255, 255, 255, .035); }
 .build-name { font-size: var(--fs-sm); color: var(--tx-2); font-weight: 600; }
 .build-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .tier-chip {
-  height: 28px; border-radius: 9px; cursor: pointer; font-size: 11.5px; font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.02);
+  height: 28px; border-radius: 16px; cursor: pointer; font-size: 11.5px; font-weight: 700;
+  border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
   color: var(--tx-2); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   transition: border-color .15s, color .15s, background .15s, transform .15s;
 }
@@ -32,7 +32,7 @@
 .tier-chip.empty, .tier-chip:disabled { opacity: .38; cursor: not-allowed; }
 .build-side {
   border-radius: var(--r-lg); padding: 14px;
-  border: 1px solid rgba(255, 217, 61, 0.22);
+  border: 1px solid var(--line-gold);
   background: radial-gradient(120% 80% at 50% -20%, rgba(255, 217, 61, 0.12), transparent 60%), linear-gradient(180deg, #241a16, #171210);
   box-shadow: var(--hi), var(--shadow-1);
 }
@@ -40,9 +40,9 @@
 .build-qty { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
 /* 步进器 */
-.stepper { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.stepper { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
 .stepper button { width: 30px; height: 30px; border: none; background: rgba(255,255,255,.04); color: var(--tx-2); cursor: pointer; font-size: 14px; }
-.stepper button:hover:not(:disabled) { background: rgba(255,255,255,.09); color: var(--tx); }
+.stepper button:hover:not(:disabled) { background: var(--line); color: var(--tx); }
 .stepper button:disabled { opacity: .3; cursor: not-allowed; }
 .stepper b { min-width: 40px; text-align: center; font-family: var(--mono); font-size: 13px; color: var(--gold); }
 .stepper button.max { width: 42px; font-size: 10px; letter-spacing: .08em; color: var(--ac); }
@@ -54,7 +54,7 @@
 .build-missing { margin: 8px 0 0; font-size: 11.5px; color: var(--danger); }
 
 .build-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 14px;
-  padding-top: 12px; border-top: 1px dashed rgba(255,255,255,.08); }
+  padding-top: 12px; border-top: 1px dashed var(--line); }
 .build-foot .hint { margin: 0; }
 .build-foot .build-missing { margin: 0; }
 
@@ -78,13 +78,13 @@
 /* 出厂开机 */
 .born-mask { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; cursor: pointer;
   background: radial-gradient(60% 50% at 50% 45%, rgba(5,8,15,.7), rgba(5,8,15,.92)); animation: maskIn .2s ease; }
-.born-card { display: grid; justify-items: center; gap: 6px; padding: 22px 26px; border-radius: 18px;
+.born-card { display: grid; justify-items: center; gap: 6px; padding: 22px 26px; border-radius: 20px;
   border: 1px solid rgba(255,217,61,.4); background: linear-gradient(180deg,#241a16,#15100e);
   box-shadow: 0 24px 60px rgba(0,0,0,.6), inset 0 0 40px rgba(255,217,61,.06);
   animation: bornIn .5s cubic-bezier(.22,1,.36,1); }
 @keyframes bornIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
 .born-badge { font-size: 9.5px; letter-spacing: .24em; color: #241505; background: var(--grad-gold);
-  padding: 2px 10px; border-radius: 999px; }
+  padding: 2px 10px; border-radius: 20px; }
 .born-card b { font-family: var(--mono); font-size: 18px; }
 .born-card p { margin: 0; font-size: 12px; color: var(--tx-3); }
 .born-hint { font-size: 10.5px; color: var(--tx-3); opacity: .7; }

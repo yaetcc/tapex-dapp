@@ -4,7 +4,7 @@
 
 .mint-console {
   border-radius: var(--r-lg); padding: 16px 16px 18px;
-  border: 1px solid rgba(255, 217, 61, 0.26);
+  border: 1px solid var(--line-gold);
   background:
     radial-gradient(130% 80% at 50% -25%, rgba(255, 217, 61, 0.15), transparent 62%),
     linear-gradient(180deg, #241a16, #171210);
@@ -42,7 +42,7 @@
 .rack-cell > b { font-family: var(--mono); font-size: 16px; font-weight: 800; color: rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
 .rack-cell.has > b { color: var(--gold); }
 .rack-tiers { display: flex; gap: 3px; min-height: 13px; }
-.rack-tiers i { font-style: normal; font-size: 9px; padding: 0 5px; border-radius: 999px; border: 1px solid; line-height: 13px; }
+.rack-tiers i { font-style: normal; font-size: 9px; padding: 0 5px; border-radius: 20px; border: 1px solid; line-height: 13px; }
 .rack-tiers .t0 { color: #7fe0d6; border-color: rgba(127, 224, 214, 0.32); }
 .rack-tiers .t1 { color: #00e5a0; border-color: rgba(0, 229, 160, 0.34); }
 .rack-tiers .t2 { color: #ffd54d; border-color: rgba(255, 213, 77, 0.45); }
@@ -63,14 +63,14 @@
 }
 .reveal-card em {
   font-style: normal; font-size: 9px; letter-spacing: 0.2em; color: #241505;
-  background: var(--grad-gold); padding: 2px 8px; border-radius: 999px;
+  background: var(--grad-gold); padding: 2px 8px; border-radius: 20px;
 }
 .reveal-card b { display: block; margin: 10px 0 4px; font-size: 16px; }
 .reveal-card span { font-size: 11.5px; }
 .reveal-sum {
   font-size: 12.5px; color: var(--tx-2);
   background: rgba(23, 18, 16, 0.9); border: 1px solid var(--line-gold);
-  border-radius: 999px; padding: 7px 16px;
+  border-radius: 20px; padding: 7px 16px;
 }
 @keyframes pop { to { opacity: 1; transform: scale(1); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

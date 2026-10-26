@@ -122,14 +122,11 @@ export function RigArt({
           </g>
         )}
 
-        {/* S 级：水冷管 + 水箱 */}
+        {/* S 级：顶部冷排 + 双灯带（开放式框架已在外壳分支处理） */}
         {grade >= 6 && (
           <g>
-            <path d="M63 40 C 63 20, 120 20, 140 34" stroke="#8fb8c8" strokeWidth="4" strokeLinecap="round" opacity=".75" />
-            <path d="M74 52 C 74 26, 132 26, 148 40" stroke="#6fa0b4" strokeWidth="3" strokeLinecap="round" opacity=".6" />
-            <circle cx="63" cy="67" r="14" fill="#16242a" stroke="#8fb8c8" strokeWidth="1.5" />
-            <rect x="150" y="60" width="26" height="52" rx="6" fill="#121a1e" stroke="#8fb8c8" strokeWidth="1.2" opacity=".9" />
-            <rect x="154" y="86" width="18" height="22" rx="3" fill="var(--glow)" opacity=".35" />
+            <rect x="52" y="10" width="116" height="4" rx="2" fill="var(--glow)" opacity=".55" />
+            <rect x="52" y="16" width="116" height="4" rx="2" fill="var(--glow)" opacity=".3" />
           </g>
         )}
 

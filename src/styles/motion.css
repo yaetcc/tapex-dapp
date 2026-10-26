@@ -41,7 +41,7 @@
 .stickers { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
 .sticker {
   position: absolute; font-size: 12px; font-weight: 800; letter-spacing: .04em;
-  padding: 6px 13px; border-radius: 999px; color: #241505;
+  padding: 6px 13px; border-radius: 20px; color: #241505;
   animation: stickerWig 5s ease-in-out infinite;
 }
 .sticker.s1 { top: 84px; right: 26px; background: linear-gradient(135deg, #ffd93d, #ff9f45); transform: rotate(4deg); box-shadow: 3px 3px 0 rgba(255,107,203,.4); }

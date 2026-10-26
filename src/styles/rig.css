@@ -14,7 +14,7 @@
   position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 10.5px; color: var(--tx-2); background: rgba(18, 14, 12, .82);
-  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+  border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; white-space: nowrap;
 }
 .rig-badge b { font-family: var(--mono); color: var(--gold); }
 .rig-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tx-3); }
@@ -40,7 +40,7 @@
   border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.01));
   transition: border-color .2s, transform .2s;
 }
-.farm-cell.on { border-color: rgba(255, 217, 61, .35); box-shadow: inset 0 0 0 1px rgba(255,217,61,.1); }
+.farm-cell.on { border-color: var(--line-gold); box-shadow: inset 0 0 0 1px rgba(255,217,61,.1); }
 .farm-cell:hover { transform: translateY(-2px); }
 .farm-meta { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--tx-2); }
 .farm-meta b { color: var(--tx); }
@@ -56,7 +56,7 @@
 .rigslots-badge {
   position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
   font-size: 10.5px; color: var(--tx-3); background: rgba(18, 14, 12, .85);
-  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+  border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; white-space: nowrap;
 }
 .rigslots-badge b { color: var(--gold); font-family: var(--mono); }
 
@@ -87,7 +87,7 @@
 .batch-bar { gap: 8px 10px; }
 
 .pc-listed { font-size: 9.5px; color: var(--gold); border: 1px solid rgba(255,217,61,.4);
-  background: rgba(255,217,61,.1); border-radius: 999px; padding: 1px 7px; }
+  background: rgba(255,217,61,.1); border-radius: 20px; padding: 1px 7px; }
 
 
 
@@ -104,7 +104,7 @@
 .tile-claim-btn:hover:not(:disabled) { filter: brightness(1.06); }
 .tile-claim-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #b36a00; }
 .tile-claim-btn:disabled {
-  background: rgba(255,255,255,.06); color: var(--tx-3); box-shadow: none;
+  background: var(--line); color: var(--tx-3); box-shadow: none;
   border: 1px dashed rgba(255,255,255,.16);
 }
 .tile-claim-hint { font-style: normal; font-size: 9.5px; color: var(--tx-3); margin-top: 2px; }
@@ -113,7 +113,7 @@
 }
 
 .pc-daily { font-size: 9.5px; color: var(--ac); border: 1px solid rgba(0,229,160,.35);
-  background: rgba(0,229,160,.08); border-radius: 999px; padding: 1px 7px; font-family: var(--mono); }
+  background: rgba(0,229,160,.08); border-radius: 20px; padding: 1px 7px; font-family: var(--mono); }
 .scan-link { font-size: 10px; color: var(--tx-3); text-decoration: none; margin-left: 4px; }
 .scan-link:hover { color: var(--gold); }
 /* S 级流光边框 */

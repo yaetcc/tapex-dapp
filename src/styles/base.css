@@ -17,7 +17,7 @@ body {
 }
 button { font-family: inherit; }
 a { color: inherit; }
-::selection { background: rgba(255, 217, 61, 0.28); }
+::selection { background: var(--line-gold); }
 
 /* ===== 布局 ===== */
 .shell { max-width: 1360px; margin: 0 auto; padding: 0 var(--s5) 64px; }
@@ -32,10 +32,10 @@ a { color: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.02em; }
 .brand .logomark {
   width: 28px; height: 28px; display: block;
-  filter: drop-shadow(0 0 10px rgba(255, 217, 61, 0.35));
+  filter: drop-shadow(0 0 10px var(--line-gold));
   animation: logoPulse 4.5s ease-in-out infinite;
 }
-@keyframes logoPulse { 0%, 100% { filter: drop-shadow(0 0 6px rgba(255,217,61,.25)); } 50% { filter: drop-shadow(0 0 14px rgba(255,217,61,.55)); } }
+@keyframes logoPulse { 0%, 100% { filter: drop-shadow(0 0 6px var(--line-gold)); } 50% { filter: drop-shadow(0 0 14px rgba(255,217,61,.55)); } }
 .chip {
   font-size: 10px; letter-spacing: 0.08em; padding: 3px 9px; border-radius: var(--r-pill);
   border: 1px solid var(--line-gold); color: var(--gold);
@@ -96,13 +96,13 @@ a { color: inherit; }
   display: block; margin-top: 6px;
   font-family: var(--mono); font-size: var(--fs-lg); color: var(--gold);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 18px rgba(255, 217, 61, 0.22);
+  text-shadow: 0 0 18px var(--line-gold);
 }
 .tile b em { font-style: normal; font-size: 10.5px; color: var(--tx-3); }
 
 /* ===== 按钮 ===== */
 .btn {
-  height: 44px; border-radius: 13px; border: none; cursor: pointer;
+  height: 44px; border-radius: 16px; border: none; cursor: pointer;
   font-size: var(--fs-md); font-weight: 800; letter-spacing: 0.04em;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   transition: transform var(--dur-fast) var(--ease-std), box-shadow var(--dur-fast) var(--ease-std), filter var(--dur-base) var(--ease-std);
@@ -126,12 +126,12 @@ a { color: inherit; }
 
 /* ===== 输入 ===== */
 .field {
-  height: 40px; border-radius: 11px; border: 1px solid rgba(255, 255, 255, 0.14);
+  height: 40px; border-radius: 16px; border: 1px solid var(--line);
   background: rgba(0, 0, 0, 0.3); color: var(--tx);
   font-family: var(--mono); font-size: 15px; padding: 0 12px; outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.field:focus { border-color: rgba(255, 217, 61, 0.65); box-shadow: 0 0 0 3px rgba(255, 217, 61, 0.12); }
+.field:focus { border-color: rgba(255, 217, 61, 0.65); box-shadow: 0 0 0 3px var(--line-gold); }
 .field-sm { height: 34px; font-size: var(--fs-sm); }
 
 /* ===== 提示 ===== */
@@ -182,7 +182,7 @@ body::after {
   }
   .mtabs button {
     flex: 1 0 auto; border: none; background: transparent; color: var(--tx-3);
-    padding: 7px 6px; font-size: 11px; white-space: nowrap; border-radius: 10px; min-width: 50px;
+    padding: 7px 6px; font-size: 11px; white-space: nowrap; border-radius: 16px; min-width: 50px;
   }
   .mtabs button[aria-current="page"] { background: var(--grad-gold); color: #241505; font-weight: 800; }
   body { padding-bottom: 62px; }
@@ -214,7 +214,7 @@ body::after {
 
 /* 引导条 */
 .guide { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 14px;
-  border-radius: 12px; border: 1px dashed rgba(255,217,61,.35); background: rgba(255,217,61,.06); font-size: 12px; color: var(--tx-2); }
+  border-radius: 16px; border: 1px dashed var(--line-gold); background: rgba(255,217,61,.06); font-size: 12px; color: var(--tx-2); }
 .guide b { color: var(--gold); }
 .guide button { margin-left: auto; }
 
