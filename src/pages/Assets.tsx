@@ -120,7 +120,10 @@ export function Assets({ go }: { go: (r: string) => void }) {
           {pcLoading ? (
             <div className="pc-grid"><div className="skeleton" style={{ height: 150 }} /><div className="skeleton" style={{ height: 150 }} /></div>
           ) : pcs === 0 ? (
-            <div className="empty">还没有 PC —— 去组装一台</div>
+            <div className="empty empty-act">
+              <span>还没有 PC —— 先去组装一台</span>
+              <button className="btn-ghost" onClick={() => go("asm")}>去组装 →</button>
+            </div>
           ) : (
             <>
               <div className="pc-grid">
@@ -187,7 +190,10 @@ export function Assets({ go }: { go: (r: string) => void }) {
             <button className="btn btn-ghost" onClick={() => go("divd")}>去领取分红</button></div>
 <div className="sec-head"><b>最近交易</b><span>本机记录</span></div>
           {getHistory().length === 0 ? (
-            <div className="empty">还没有交易记录</div>
+            <div className="empty empty-act">
+              <span>还没有交易记录</span>
+              <button className="btn-ghost" onClick={() => go("mint")}>去抽部件 →</button>
+            </div>
           ) : (
             <ul className="tx-list">
               {getHistory().map((h, i) => (

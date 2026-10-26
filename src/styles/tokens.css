@@ -23,6 +23,7 @@
   /* 间距 8 基准 */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
   /* 圆角 */
+  --gap-1: 8px; --gap-2: 16px; --gap-3: 24px; --h-btn: 46px;
   --r-sm: 8px; --r-md: 16px; --r-lg: 20px; --r-pill: 999px;
   /* 字号 */
   --fs-xs: 11px; --fs-sm: 12.5px; --fs-md: 14px; --fs-lg: 18px; --fs-xl: 22px; --fs-2xl: 28px;

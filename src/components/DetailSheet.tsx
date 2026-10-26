@@ -175,7 +175,13 @@ export function DetailSheet({ detail, onClose, onChanged, origin }: {
         {error ? (
           <div className="sheet-body"><p className="msg err">{error}</p></div>
         ) : loading || !info || info.kind !== detail.kind ? (
-          <div className="sheet-body"><div className="skeleton" style={{ height: 160 }} /></div>
+          <div className="sheet-body">
+            <div className="sk-wrap">
+              <div className="sk-img" />
+              <div className="sk-lines"><i style={{ width: "62%" }} /><i style={{ width: "40%" }} /><i style={{ width: "78%" }} /></div>
+              <div className="sk-tiles"><i /><i /><i /><i /></div>
+            </div>
+          </div>
         ) : detail.kind === "pc" ? (
           <div className="sheet-body">
             <div className="sheet-hero" ref={heroRef} style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>

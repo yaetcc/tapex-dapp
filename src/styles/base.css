@@ -102,7 +102,7 @@ a { color: inherit; }
 
 /* ===== 按钮 ===== */
 .btn {
-  height: 44px; border-radius: 16px; border: none; cursor: pointer;
+  height: var(--h-btn); border-radius: 16px; border: none; cursor: pointer;
   font-size: var(--fs-md); font-weight: 800; letter-spacing: 0.04em;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   transition: transform var(--dur-fast) var(--ease-std), box-shadow var(--dur-fast) var(--ease-std), filter var(--dur-base) var(--ease-std);
@@ -286,3 +286,11 @@ body::after {
 /* 顶部留白加大到 48px */
 .shell { padding-top: 48px; }
 @media (max-width: 760px) { .shell { padding-top: 20px; } }
+
+/* ===== 可访问性：焦点可见 + 触摸目标 ===== */
+:where(button, a, [role="button"], input, select):focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px;
+}
+@media (hover: none) {
+  .pc-chip, .view-switch button, .sheet-close, .tier, .tab { min-width: 44px; min-height: 44px; }
+}

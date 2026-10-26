@@ -1,5 +1,5 @@
 /* ===== 铸造页 ===== */
-.mint-hero { display: grid; grid-template-columns: minmax(0, 1fr) 344px; gap: 26px; align-items: start; }
+.mint-hero { display: grid; grid-template-columns: minmax(0, 1fr) 344px; gap: var(--gap-3); align-items: start; }
 @media (max-width: 980px) { .mint-hero { grid-template-columns: 1fr; gap: 16px; } }
 
 .mint-console {

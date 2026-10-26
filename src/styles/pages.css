@@ -321,7 +321,7 @@
 }
 
 /* 资产页双栏 */
-.as-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; margin-top: 4px; }
+.as-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--gap-2); align-items: start; margin-top: 4px; }
 @media (max-width: 1080px) { .as-layout { grid-template-columns: 1fr; } }
 .as-side { position: sticky; top: 92px; border-left: 1px solid var(--line); padding-left: 18px; }
 @media (max-width: 1080px) { .as-side { position: static; border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 14px; } }
@@ -332,7 +332,7 @@
 .as-side .tx-list em { grid-column: 1 / -1; font-size: 10px; }
 
 /* 市场双栏 */
-.mk-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; margin-top: 6px; }
+.mk-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--gap-2); align-items: start; margin-top: 6px; }
 @media (max-width: 1080px) { .mk-layout { grid-template-columns: 1fr; } }
 .mk-side { position: sticky; top: 92px; border-left: 1px solid var(--line); padding-left: 16px; }
 @media (max-width: 1080px) { .mk-side { position: static; border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 14px; } }
@@ -351,3 +351,18 @@
   .pc-filters { overflow-x: auto; padding: 2px; }
 }
 .tile-claim-hint, .pc-daily, .pc-listed, .t0, .t1, .t2 { font-size: 10px !important; }
+
+/* 骨架屏：真形状 */
+.sk-wrap { display: flex; flex-direction: column; gap: var(--gap-2); }
+.sk-img { height: 150px; border-radius: 16px; background: rgba(255,255,255,.04);
+  animation: skPulse 1.4s ease-in-out infinite; }
+.sk-lines { display: flex; flex-direction: column; gap: 8px; }
+.sk-lines i { height: 10px; border-radius: 5px; background: rgba(255,255,255,.05);
+  animation: skPulse 1.4s ease-in-out infinite; }
+.sk-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.sk-tiles i { height: 64px; border-radius: 12px; background: rgba(255,255,255,.04);
+  animation: skPulse 1.4s ease-in-out infinite; }
+@keyframes skPulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sk-img, .sk-lines i, .sk-tiles i { animation: none; } }
+/* 空态带动作 */
+.empty-act { display: flex; flex-direction: column; align-items: center; gap: 10px; }
