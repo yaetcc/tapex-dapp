@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
+import { PartIcon } from "../components/PartIcon";
 
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -58,6 +59,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
               return (
                 <div key={name} className={`rack-cell${tot ? " has" : ""}`} style={{ cursor: "pointer" }}
                 onClick={() => setDetail({ kind: "part", id: i + 1 })}>
+                  <span style={{ marginBottom: 1 }}><PartIcon type={i} muted={!tot} size={22} /></span>
                   <em>{name}</em><b>{tot}</b>
                   <div className="rack-tiers">
                     {s > 0 && <i className="t0">标 {s}</i>}

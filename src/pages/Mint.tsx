@@ -4,21 +4,13 @@ import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { compact, num } from "../lib/format";
+import { PartIcon } from "../components/PartIcon";
 import { trackTx } from "../lib/tx";
 
 // 权重按部件名对齐（PART_NAMES 顺序：CPU/主板/GPU/RAM/SSD/电源/散热器/机箱）
 const ODD = [6, 8, 4, 14, 12, 20, 18, 18];
 const ODD_COLOR = ["#FF8EC4", "#FFC061", "#C79BFF", "#B6F36A", "#FFE066", "#63E6C0", "#00E5A0", "#7FE0D6"];
-const PART_ICON = [
-  '<rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2"/>',
-  '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4v6H7z"/><path d="M13 9h4M13 13h4"/>',
-  '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="3.4"/><path d="M12 8.6V6M12 18v-2.6"/>',
-  '<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h6"/>',
-  '<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M8 10h8M8 14h5"/>',
-  '<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 11h5v2H7z"/><path d="M15 11h3"/>',
-  '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 5v3M12 16v3M5 12h3M16 12h3"/>',
-  '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8"/><circle cx="12" cy="16" r="1.6"/>',
-];
+
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
 type Counts = number[]; // 24
@@ -180,9 +172,9 @@ export function Mint() {
             const tot = s + p + f;
             return (
               <div key={name} className={`rack-cell${tot ? " has" : ""}`}>
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.6"
-                  style={{ color: tot ? "var(--ac)" : "rgba(255,255,255,.35)", marginBottom: 4 }}
-                  dangerouslySetInnerHTML={{ __html: PART_ICON[i] }} />
+                <span style={{ marginBottom: 4, display: "inline-flex" }}>
+                  <PartIcon type={i} muted={!tot} size={24} />
+                </span>
                 <em>{name}</em>
                 <b>{tot}</b>
                 <div className="rack-tiers">

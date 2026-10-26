@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigSlots } from "../components/RigSlots";
+import { PartIcon } from "../components/PartIcon";
 import { trackTx } from "../lib/tx";
 
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -100,7 +101,9 @@ export function Build() {
           <div className="build-rows">
             {PART_NAMES.map((name, i) => (
               <div className="build-row" key={name}>
-                <span className="build-name">{name}</span>
+                <span className="build-name" style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <PartIcon type={i} tier={tiers[i]} size={18} />{name}
+                </span>
                 <div className="build-chips">
                   {[0, 1, 2].map((tr) => {
                     const c = stock(i, tr);

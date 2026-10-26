@@ -6,6 +6,7 @@ import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { trackTx } from "../lib/tx";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
+import { PartIcon } from "../components/PartIcon";
 
 const mkC = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
@@ -250,7 +251,10 @@ export function Market() {
             <div className="order-list" style={{ marginBottom: 8 }}>
               {myParts.map((o) => (
                 <div className="order-row" key={"mp" + o.id}>
-                  <b>{partName(o.partType)}</b>
+                  <b style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <PartIcon type={(o.partType - 1) % 8} tier={Math.floor((o.partType - 1) / 8)} size={17} />
+                    {partName(o.partType)}
+                  </b>
                   <span className="muted">剩 {o.amount}</span>
                   <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
                   <button className="btn btn-ghost" style={{ height: 30, padding: "0 12px", fontSize: 11.5 }}
@@ -266,7 +270,10 @@ export function Market() {
             <div className="order-list">
               {parts.map((o) => (
                 <div className="order-row" key={o.id}>
-                  <b>{partName(o.partType)}</b>
+                  <b style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <PartIcon type={(o.partType - 1) % 8} tier={Math.floor((o.partType - 1) / 8)} size={17} />
+                    {partName(o.partType)}
+                  </b>
                   <span className="muted">剩 {o.amount} · {shortAddr(o.seller)}</span>
                   <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
                   <button className="btn btn-primary" style={{ height: 32, padding: "0 14px", fontSize: 12 }}

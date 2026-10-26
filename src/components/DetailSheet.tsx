@@ -7,6 +7,7 @@ import { num } from "../lib/format";
 import { gradeOf } from "../lib/contracts";
 import { trackTx } from "../lib/tx";
 import { RigArt } from "./RigArt";
+import { PartIcon } from "./PartIcon";
 
 export type Detail = { kind: "pc" | "part"; id: number } | null;
 
@@ -144,6 +145,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           <div className="sheet-body">
             <div className="sheet-hero">
               <div className="part-big" style={{ borderColor: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>
+                <PartIcon type={(detail.id - 1) % 8} tier={Math.floor((detail.id - 1) / 8)} size={46} />
                 <b>{PART_NAMES[(detail.id - 1) % 8]}</b>
                 <span style={{ color: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>{TIERS[Math.floor((detail.id - 1) / 8)]}</span>
               </div>
