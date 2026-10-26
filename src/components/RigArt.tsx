@@ -37,12 +37,21 @@ export function RigArt({
   // 风扇转速：随算力变化，并有 ±8% 负载抖动
   const base = st === "mining" ? Math.max(0.45, 1.4 - Math.min(hash, 300) / 300) : 0;
   const [jit, setJit] = useState(1);
+  const [booting, setBooting] = useState(false);
   useEffect(() => {
     if (st !== "mining") return;
     const t = setInterval(() => setJit(0.92 + Math.random() * 0.16), 4000);
     return () => clearInterval(t);
   }, [st]);
   const speed = base * jit;
+
+  // 启动加速：第一次进入挖矿态时，用 1.2s 从慢速升到目标转速
+  useEffect(() => {
+    if (st !== "mining") return;
+    setBooting(true);
+    const t = setTimeout(() => setBooting(false), 1200);
+    return () => clearTimeout(t);
+  }, [st]);
 
   const glow = st === "listed" ? "#FFD54D" : st === "idle" ? GRADE_COLOR[grade] ?? "#7FE0D6" : HUES[lightHue % 3];
   const dim = st === "idle";
@@ -56,7 +65,7 @@ export function RigArt({
   }, [v]);
 
   return (
-    <div className={`rig${st === "mining" ? " on" : ""}`}
+    <div className={`rig${st === "mining" ? " on" : ""}${booting ? " booting" : ""}`}
       style={{ width: size, ["--spin" as string]: `${speed}s`, ["--glow" as string]: glow, ["--dim" as string]: dim ? "0.55" : "1" }}>
       <svg viewBox="0 0 220 260" width="100%" height="100%" fill="none">
         <defs>
@@ -70,6 +79,18 @@ export function RigArt({
             <stop offset="0" stopColor="#1d3b32" /><stop offset="1" stopColor="#12241f" />
           </linearGradient>
           <clipPath id="caseclip"><rect x="18" y="16" width="184" height="228" rx="10" /></clipPath>
+          <pattern id="pcbgrid" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M0 0h8v8" stroke="#356b58" strokeWidth="0.4" opacity=".35" />
+          </pattern>
+          <pattern id="brushed" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+            <path d="M0 0v6" stroke="#ffffff" strokeWidth="0.5" opacity=".05" />
+          </pattern>
+          <linearGradient id="ledflow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="var(--glow)" stopOpacity="0" />
+            <stop offset=".45" stopColor="#ffffff" stopOpacity=".55" />
+            <stop offset=".55" stopColor="#ffffff" stopOpacity=".55" />
+            <stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
+          </linearGradient>
           <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2" /></filter>
           <radialGradient id="led" cx="50%" cy="50%">
             <stop offset="0" stopColor="var(--glow)" stopOpacity=".9" /><stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
@@ -117,6 +138,7 @@ export function RigArt({
           <g clipPath="url(#caseclip)">
             {/* 主板 PCB（横置 150×120） */}
             <rect x="36" y="26" width="150" height="120" rx="6" fill="url(#pcb)" stroke="#2c5c4c" strokeWidth="1.2" />
+            <rect x="36" y="26" width="150" height="120" rx="6" fill="url(#pcbgrid)" />
             {/* 丝印（仅大图） */}
             {lvl >= 2 && (
               <g stroke="#356b58" strokeWidth="0.8" opacity=".55">
@@ -143,6 +165,7 @@ export function RigArt({
             <rect x="46" y="152" width="146" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
             {/* 显卡（加厚 140×34） */}
             <rect x="44" y="116" width="144" height="34" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
+            <rect x="44" y="116" width="144" height="34" rx="5" fill="url(#brushed)" />
             <rect x="48" y="121" width="24" height="24" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
             {(lvl >= 1 ? [92, 122, 152] : [104, 138]).map((cx) => (
               <g key={cx}>
@@ -173,6 +196,27 @@ export function RigArt({
 
             {/* PCH 芯片组（显卡下方右侧） */}
             <rect x="150" y="152" width="26" height="18" rx="3" fill="#152320" stroke="#3f7f68" strokeWidth="0.8" />
+
+            {/* 前面板进风（贴左壁） */}
+            {lvl >= 1 && (
+              <>
+                <rect x="18" y="30" width="12" height="150" rx="4" fill="#191310" stroke="#3a2c26" strokeWidth="0.8" />
+                <g fill="#3a2c26">
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <rect key={i} x="21" y={38 + i * 16} width="6" height="8" rx="1.5" />
+                  ))}
+                </g>
+                {st === "mining" && <rect x="20" y="30" width="2" height="150" rx="1" fill="var(--glow)" opacity=".5" />}
+              </>
+            )}
+
+            {/* 显卡供电线束（高细节） */}
+            {lvl >= 2 && (
+              <g fill="none" stroke="#2f2620" strokeWidth="3.2" strokeLinecap="round" opacity=".9">
+                <path d="M150 148 C 158 166, 140 176, 128 190" />
+                <path d="M160 148 C 170 168, 150 180, 140 192" />
+              </g>
+            )}
 
             {/* 顶部风扇 ×2（高细节） */}
             {lvl >= 2 && [88, 124].map((cx) => (
@@ -219,7 +263,8 @@ export function RigArt({
           {/* 灯带 */}
           <rect x="18" y="246" width="184" height="3" rx="1.5"
             className="led-strip" fill="var(--glow)" opacity={st === "idle" ? ".25" : ".9"} />
-          {st !== "idle" && <ellipse cx="110" cy="232" rx="86" ry="22" fill="url(#led)" className="led-glow" />}
+          {st !== "idle" && <ellipse cx="110" cy="234" rx="86" ry="20" fill="url(#led)" className="led-glow" />}
+          {st === "mining" && <rect className="led-flow" x="18" y="245" width="70" height="5" rx="2.5" fill="url(#ledflow)" opacity=".8" />}
 
           {/* 玻璃反光（仅高细节） */}
           {lvl === 2 && <path d="M18 16h40L18 96z" fill="#ffffff" opacity=".05" />}

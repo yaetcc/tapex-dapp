@@ -177,3 +177,22 @@
 .rack-unit .rig svg { max-height: 132px; }
 .rack-unit .rig-badge { display: none; }
 .rack-unit .rig-heat { display: none; }
+
+/* 灯带流光 */
+.led-flow { animation: ledFlow 2.6s linear infinite; }
+@keyframes ledFlow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120px); }
+}
+/* 风扇启动加速：从慢到快，用 steps 近似 */
+.rig.booting .fan-blades { animation-duration: 2.6s !important; }
+.rig.booting .fan-blades { transition: none; }
+/* 开机三步时序（组装的出厂卡） */
+.born-card .led-strip { animation: stripGrow .7s .7s both; transform-origin: center; }
+@keyframes stripGrow { from { transform: scaleX(.05); opacity: .2; } to { transform: scaleX(1); opacity: .95; } }
+.born-card .fan-blades { animation-delay: .3s; }
+.born-card .rig-badge { animation: fadeUp .4s .9s both; }
+@keyframes fadeUp { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .led-flow, .born-card .led-strip, .born-card .rig-badge { animation: none !important; }
+}
