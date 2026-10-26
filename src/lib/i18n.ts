@@ -1,5 +1,6 @@
 export type Lang = "zh" | "en";
 export const dict = {
+  "nav.home": { zh: "总览", en: "Home" },
   "nav.mint": { zh: "铸造", en: "Mint" },
   "nav.asm": { zh: "组装", en: "Build" },
   "nav.stake": { zh: "质押", en: "Stake" },

@@ -366,3 +366,36 @@
 @media (prefers-reduced-motion: reduce) { .sk-img, .sk-lines i, .sk-tiles i { animation: none; } }
 /* 空态带动作 */
 .empty-act { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+/* ===== 矿场总览（home） ===== */
+.home { display: grid; gap: 18px; }
+.home-hero { display: grid; grid-template-columns: minmax(0,1fr) 240px; gap: 20px; align-items: center;
+  padding: 26px 28px; }
+.home-kicker { font-size: var(--fs-2xs); letter-spacing: .16em; color: var(--gold); text-transform: uppercase; }
+.home-hero h1 { margin: 8px 0 6px; font-size: var(--fs-3xl); font-weight: 800; letter-spacing: -.02em; }
+.home-hero p { color: var(--tx-2); font-size: var(--fs-lg); }
+.home-cta { display: flex; gap: 10px; margin-top: 16px; }
+.home-hero-art { display: grid; place-items: center; }
+.home-kpi { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.home-tile { padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
+.home-tile span { font-size: var(--fs-xs); color: var(--tx-3); }
+.home-tile b { font-size: var(--fs-2xl); font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+.home-tile em { font-style: normal; font-size: var(--fs-2xs); color: var(--tx-3); }
+.home-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap: 16px; }
+.home-panel { padding: 20px 22px; }
+.home-list { list-style: none; display: grid; gap: 10px; margin-top: 12px; }
+.home-list li { display: flex; gap: 10px; font-size: var(--fs-sm); color: var(--tx-2); }
+.home-list b { color: var(--gold); font-weight: 600; min-width: 62px; }
+.home-steps { display: grid; gap: 8px; margin-top: 12px; }
+.home-steps button { display: flex; align-items: center; gap: 10px; padding: 12px 14px; text-align: left;
+  border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--tx-1); cursor: pointer; }
+.home-steps button:hover { border-color: var(--line-gold); background: rgba(255,217,61,.05); }
+.home-steps i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  font-size: var(--fs-2xs); font-style: normal; background: rgba(255,217,61,.14); color: var(--gold); }
+.home-steps span { margin-left: auto; font-size: var(--fs-2xs); color: var(--tx-3); }
+@media (max-width: 760px) {
+  .home-hero { grid-template-columns: 1fr; }
+  .home-hero-art { display: none; }
+  .home-kpi { grid-template-columns: repeat(2, 1fr); }
+  .home-grid { grid-template-columns: 1fr; }
+}

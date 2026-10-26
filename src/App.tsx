@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Trail } from "./components/Trail";
+import { Home } from "./pages/Home";
 import { Nav, MobileTabs } from "./components/Nav";
 import { Atmosphere, Stickers } from "./components/Atmosphere";
 import { Mascot } from "./components/Mascot";
@@ -15,14 +16,14 @@ import { Dividend } from "./pages/Dividend";
 import { Market } from "./pages/Market";
 import { Network } from "./pages/Network";
 
-const ROUTES = ["mint", "asm", "stake", "assets", "divd", "market", "net"] as const;
+const ROUTES = ["home", "mint", "asm", "stake", "assets", "divd", "market", "net"] as const;
 
 if (typeof document !== "undefined") {
   document.documentElement.dataset.density = localStorage.getItem("density") || "cozy";
 }
 
 export default function App() {
-  const [route, setRoute] = useState<string>(() => location.hash.replace("#", "") || "mint");
+  const [route, setRoute] = useState<string>(() => location.hash.replace("#", "") || "home");
   const [dir, setDir] = useState<"next" | "prev">("next");
   const prevIdxRef = useRef<number>(-1);
 
@@ -32,14 +33,14 @@ export default function App() {
       const el = document.activeElement as HTMLElement | null;
       if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
       const n = Number(e.key);
-      if (n >= 1 && n <= 7) { e.preventDefault(); go(ROUTES[n - 1]); }
+      if (n >= 1 && n <= 8) { e.preventDefault(); go(ROUTES[n - 1]); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   useEffect(() => {
-    const onHash = () => setRoute(location.hash.replace("#", "") || "mint");
+    const onHash = () => setRoute(location.hash.replace("#", "") || "home");
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
@@ -50,7 +51,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const current = ROUTES.includes(route as (typeof ROUTES)[number]) ? route : "mint";
+  const current = ROUTES.includes(route as (typeof ROUTES)[number]) ? route : "home";
 
   // Tab 顺序决定转场方向：渲染时同步计算，避免首帧用旧方向
   const curIdx = ROUTES.indexOf(current as (typeof ROUTES)[number]);
@@ -65,10 +66,11 @@ export default function App() {
       <Stickers />
       <Mascot />
       <Nav route={current} go={go} />
-      <Trail route={current} go={go} />
+      {current !== "home" && <Trail route={current} go={go} />}
       <RunwayBanner />
       <main className={`shell page-enter-${dir}`} key={current} style={{ paddingTop: 26 }}>
-        {current === "mint" ? <Mint />
+        {current === "home" ? <Home go={go} />
+          : current === "mint" ? <Mint />
           : current === "asm" ? <Build />
           : current === "stake" ? <Stake />
           : current === "assets" ? <Assets go={go} />

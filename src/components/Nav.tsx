@@ -2,7 +2,7 @@ import { useApp } from "../state/App";
 import { shortAddr } from "../lib/format";
 
 const ITEMS = [
-  ["mint", "nav.mint"], ["asm", "nav.asm"], ["stake", "nav.stake"], ["assets", "nav.assets"],
+  ["home", "nav.home"], ["mint", "nav.mint"], ["asm", "nav.asm"], ["stake", "nav.stake"], ["assets", "nav.assets"],
   ["divd", "nav.divd"], ["market", "nav.market"], ["net", "nav.net"],
 ] as const;
 
@@ -10,7 +10,8 @@ export function Nav({ route, go }: { route: string; go: (r: string) => void }) {
   const { t, lang, setLang, account, connect, connecting } = useApp();
   return (
     <header className="topbar">
-      <div className="brand">
+      <div className="brand" onClick={() => go("home")} role="button" tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter") go("home"); }} style={{ cursor: "pointer" }}>
         <img src="/logo.svg" alt="TAPEX" className="logomark" />
         TAPEX
         <span className="chip">X Layer</span>
