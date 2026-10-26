@@ -67,7 +67,7 @@ export function Dividend() {
           {/* 主面板：可领 + 领取 */}
           <section className="dv-claim">
             <div className="dv-claim-head">
-              <span className="dv-coin" aria-hidden>TX</span>
+              <img className="dv-coin-img" src="/tapex-logo.svg" alt="TAPEX" aria-hidden />
               <div>
                 <span className="dv-label">可领分红</span>
                 <div className="dv-amount">
@@ -93,8 +93,8 @@ export function Dividend() {
 
           {/* 指标面板 */}
           <section className="dv-stats">
-            <div className="dv-tile"><span>TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
-            <div className="dv-tile"><span>每日释放</span><b>{loading ? "—" : num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
+            <div className="dv-tile"><span><img className="coin-ico" src="/tapex-logo.svg" alt="" />TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
+            <div className="dv-tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />每日释放</span><b>{loading ? "—" : num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
             <div className="dv-tile"><span>池累计注入</span><b>{loading ? "—" : num(Number(formatEther(pool)), 0)}</b></div>
             <div className="dv-tile"><span>分红池余额</span><b className={runOut ? "warn" : ""}>{loading ? "—" : num(Number(formatEther(balance)), 0)}</b></div>
             <div className="dv-runway">
@@ -121,7 +121,7 @@ export function Dividend() {
         {/* TAPEX 购买 */}
         <div className="buy-card">
           <div className="buy-id">
-            <span className="buy-coin" aria-hidden>TX</span>
+            <img className="buy-coin-img" src="/tapex-logo.svg" alt="TAPEX" aria-hidden />
             <div className="buy-meta">
               <b>TAPEX</b>
               <button className="buy-addr" title={TAPEX.address} onClick={async () => {
