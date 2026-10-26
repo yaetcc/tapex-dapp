@@ -69,7 +69,7 @@ export function RigArt({
           <linearGradient id="pcb" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#1d3b32" /><stop offset="1" stopColor="#12241f" />
           </linearGradient>
-          <clipPath id="caseclip"><rect x="18" y="16" width="184" height="200" rx="10" /></clipPath>
+          <clipPath id="caseclip"><rect x="18" y="16" width="184" height="228" rx="10" /></clipPath>
           <radialGradient id="led" cx="50%" cy="50%">
             <stop offset="0" stopColor="var(--glow)" stopOpacity=".9" /><stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
           </radialGradient>
@@ -92,7 +92,7 @@ export function RigArt({
           {shell.kind === "sea" && (
             <>
               {/* 海景房：整面玻璃 + 底部电源仓隔板 + 顶部提手 */}
-              <rect x="10" y="10" width="200" height="240" rx="12" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".12" />
+              <rect x="12" y="12" width="196" height="234" rx="12" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".12" />
               <line x1="12" y1="196" x2="208" y2="196" stroke="#3a2c26" strokeWidth="2" />
               <rect x="14" y="200" width="192" height="46" rx="8" fill="#1b1512" opacity=".92" />
               <path d="M84 4 h52" stroke="#6b5344" strokeWidth="4" strokeLinecap="round" />
@@ -101,58 +101,81 @@ export function RigArt({
           {shell.kind === "itx" && (
             <>
               {/* ITX：小方箱 + 顶部提手 + 前部网孔 */}
-              <rect x="18" y="16" width="184" height="200" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".08" />
+              <rect x="18" y="16" width="184" height="222" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".08" />
               <path d="M88 2 h44" stroke="#6b5344" strokeWidth="4" strokeLinecap="round" />
               <path d="M88 2 v4 M132 2 v4" stroke="#6b5344" strokeWidth="4" strokeLinecap="round" />
               <rect x="14" y="16" width="10" height="200" rx="5" fill="#171110" stroke="#3a2c26" />
             </>
           )}
           {shell.kind === "tower" && (
-            grade >= 4 ? <rect x="18" y="16" width="184" height="200" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".14" />
-              : <rect x="16" y="14" width="188" height="204" rx="8" fill="#231b17" stroke="#3a2c26" />
+            grade >= 4 ? <rect x="18" y="16" width="184" height="228" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".14" />
+              : <rect x="16" y="14" width="188" height="230" rx="8" fill="#231b17" stroke="#3a2c26" />
           )}
 
-          {/* 内部：low 只画主板块 + 显卡条；mid/high 画完整 */}
+          {/* 内部（真实布局：主板贴背板 / 显卡横插 / 电源仓在底 / 顶部与前端风扇） */}
           <g clipPath="url(#caseclip)">
-            <rect x="30" y="26" width="112" height="118" rx="6" fill="url(#pcb)" stroke="#2c5c4c" />
-            <rect x="46" y="52" width="34" height="30" rx="4" fill="#0f1a17" stroke="#356b58" />
-            <rect x="90" y="52" width="8" height="46" rx="2" fill="#22302c" stroke="#3d7a63" />
-            {lvl >= 1 && <rect x="102" y="52" width="8" height="46" rx="2" fill="#22302c" stroke="#3d7a63" />}
-            {lvl >= 1 && <rect x="70" y="76" width="34" height="30" rx="4" fill="#152320" stroke="#3f7f68" />}
+            {/* 主板 PCB */}
+            <rect x="40" y="26" width="136" height="144" rx="6" fill="url(#pcb)" stroke="#2c5c4c" />
+            {/* CPU 插槽 */}
+            <rect x="64" y="48" width="32" height="30" rx="4" fill="#0f1a17" stroke="#356b58" />
+            {/* 内存 ×2（竖向，CPU 右侧） */}
+            <rect x="104" y="48" width="7" height="46" rx="2" fill="#22302c" stroke="#3d7a63" />
+            {lvl >= 1 && <rect x="115" y="48" width="7" height="46" rx="2" fill="#22302c" stroke="#3d7a63" />}
+            {/* M.2 固态 */}
+            {lvl >= 1 && <rect x="126" y="96" width="40" height="6" rx="3" fill="#1a1512" stroke="#3d7a63" />}
+            {/* 芯片组（显卡下方的 PCH） */}
+            <rect x="138" y="146" width="30" height="22" rx="4" fill="#152320" stroke="#3f7f68" />
 
-            {/* 显卡 */}
-            <rect x="34" y="124" width="150" height="24" rx="4" fill="#241a16" stroke="#5a463a" />
-            {(lvl >= 1 ? [51, 93, 135] : [63, 105]).map((cx) => (
+            {/* 显卡：横插在 PCIe 槽，向右延伸到机箱尾部 */}
+            <rect x="46" y="116" width="142" height="24" rx="4" fill="#241a16" stroke="#5a463a" />
+            <rect x="50" y="120" width="26" height="15" rx="2" fill="#1a1310" stroke="#6b5344" />
+            {(lvl >= 1 ? [92, 124, 156] : [104, 140]).map((cx) => (
               <g key={cx}>
-                <circle cx={cx} cy="136" r="8" fill="#120e0c" stroke="#6b5344" strokeWidth="1.2" />
-                <g className="fan-blades" style={{ transformOrigin: `${cx}px 136px` }}>
+                <circle cx={cx} cy="128" r="8.5" fill="#120e0c" stroke="#6b5344" strokeWidth="1.2" />
+                <g className="fan-blades" style={{ transformOrigin: `${cx}px 128px` }}>
                   {[0, 120, 240].map((a) => (
-                    <ellipse key={a} cx={cx} cy="131" rx="2" ry="5.5" fill="#8a6d59" transform={`rotate(${a} ${cx} 136)`} />
+                    <ellipse key={a} cx={cx} cy="123" rx="2" ry="5.5" fill="#8a6d59" transform={`rotate(${a} ${cx} 128)`} />
                   ))}
                 </g>
               </g>
             ))}
 
-            {/* 顶部风扇（仅高细节） */}
-            {lvl >= 2 && (
-              <g>
-                <circle cx="150" cy="52" r="18" fill="#120e0c" stroke="#3a2c26" />
-                <g className="fan-blades" style={{ transformOrigin: "150px 52px" }}>
+            {/* CPU 散热器（塔式风冷，压在 CPU 上） */}
+            <circle cx="80" cy="63" r="21" fill="#181210" stroke="#4a382f" strokeWidth="1.5" />
+            <g className="fan-blades" style={{ transformOrigin: "80px 63px" }}>
+              {[0, 120, 240].map((a) => (
+                <ellipse key={a} cx="80" cy="55" rx="4" ry="8" fill="#5e4a3d" transform={`rotate(${a} 80 63)`} />
+              ))}
+            </g>
+
+            {/* 顶部风扇 ×2 */}
+            {(lvl >= 2 ? [88, 124] : []).map((cx) => (
+              <g key={`top${cx}`}>
+                <circle cx={cx} cy="26" r="14" fill="#120e0c" stroke="#3a2c26" />
+                <g className="fan-blades" style={{ transformOrigin: `${cx}px 26px` }}>
                   {[0, 120, 240].map((a) => (
-                    <ellipse key={a} cx="150" cy="44" rx="4.5" ry="10" fill="#5e4a3d" transform={`rotate(${a} 150 52)`} />
+                    <ellipse key={a} cx={cx} cy="20" rx="3.5" ry="7" fill="#4a3a32" transform={`rotate(${a} ${cx} 26)`} />
                   ))}
                 </g>
               </g>
-            )}
+            ))}
 
-            {/* 电源 / SSD */}
-            <rect x="30" y="160" width="86" height="44" rx="5" fill="#1b1512" stroke="#40302a" />
-            <rect x="128" y="160" width="52" height="22" rx="3" fill="#241a16" stroke="#4a382f" />
-            {lvl >= 1 && <rect x="128" y="188" width="52" height="22" rx="3" fill="#241a16" stroke="#4a382f" />}
+            {/* 底部电源仓 */}
+            <line x1="18" y1="196" x2="202" y2="196" stroke="#3a2c26" strokeWidth="1.5" />
+            <rect x="30" y="204" width="94" height="38" rx="5" fill="#1b1512" stroke="#40302a" />
+            <circle cx="46" cy="223" r="9" fill="none" stroke="#4a382f" />
+            <g className="fan-blades" style={{ transformOrigin: "46px 223px" }}>
+              {[0, 120, 240].map((a) => (
+                <ellipse key={a} cx="46" cy="218" rx="2" ry="5" fill="#6b5344" transform={`rotate(${a} 46 223)`} />
+              ))}
+            </g>
+            {/* 2.5" SSD ×1 */}
+            <rect x="134" y="204" width="54" height="22" rx="3" fill="#241a16" stroke="#4a382f" />
+            {lvl >= 1 && <rect x="134" y="230" width="54" height="12" rx="3" fill="#241a16" stroke="#4a382f" />}
           </g>
 
           {/* 灯带 */}
-          <rect x="18" y={v === 2 ? 216 : 222} width={v === 2 ? 170 : 184} height="3" rx="1.5"
+          <rect x="18" y="246" width="184" height="3" rx="1.5"
             className="led-strip" fill="var(--glow)" opacity={st === "idle" ? ".25" : ".9"} />
           {st !== "idle" && <ellipse cx="110" cy="232" rx="86" ry="22" fill="url(#led)" className="led-glow" />}
 
