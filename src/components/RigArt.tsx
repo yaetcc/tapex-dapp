@@ -162,10 +162,10 @@ export function RigArt({
             {lvl >= 1 && <rect x="122" y="96" width="44" height="5" rx="2.5" fill="#1a1512" stroke="#3d7a63" strokeWidth="0.8" />}
 
             {/* 显卡投影 */}
-            <rect x="46" y="152" width="146" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
+            <rect x="46" y="152" width="150" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
             {/* 显卡（加厚 140×34） */}
-            <rect x="44" y="116" width="144" height="34" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
-            <rect x="44" y="116" width="144" height="34" rx="5" fill="url(#brushed)" />
+            <rect x="44" y="116" width="152" height="34" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
+            <rect x="44" y="116" width="152" height="34" rx="5" fill="url(#brushed)" />
             <rect x="48" y="121" width="24" height="24" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
             {(lvl >= 1 ? [92, 122, 152] : [104, 138]).map((cx) => (
               <g key={cx}>
@@ -197,38 +197,38 @@ export function RigArt({
             {/* PCH 芯片组（显卡下方右侧） */}
             <rect x="150" y="152" width="26" height="18" rx="3" fill="#152320" stroke="#3f7f68" strokeWidth="0.8" />
 
-            {/* 前面板进风（贴左壁） */}
+            {/* 前面板（侧视）：竖直进风格栅 */}
             {lvl >= 1 && (
               <>
-                <rect x="18" y="30" width="12" height="150" rx="4" fill="#191310" stroke="#3a2c26" strokeWidth="0.8" />
+                <rect x="18" y="30" width="8" height="156" rx="3" fill="#191310" stroke="#3a2c26" strokeWidth="0.8" />
                 <g fill="#3a2c26">
-                  {Array.from({ length: 9 }, (_, i) => (
-                    <rect key={i} x="21" y={38 + i * 16} width="6" height="8" rx="1.5" />
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <rect key={i} x="20" y={38 + i * 15} width="4" height="7" rx="1" />
                   ))}
                 </g>
-                {st === "mining" && <rect x="20" y="30" width="2" height="150" rx="1" fill="var(--glow)" opacity=".5" />}
+                {st === "mining" && <rect x="17" y="34" width="1.6" height="148" rx="0.8" fill="var(--glow)" opacity=".55" />}
               </>
             )}
 
             {/* 显卡供电线束（高细节） */}
             {lvl >= 2 && (
               <g fill="none" stroke="#2f2620" strokeWidth="3.2" strokeLinecap="round" opacity=".9">
-                <path d="M150 148 C 158 166, 140 176, 128 190" />
-                <path d="M160 148 C 170 168, 150 180, 140 192" />
+                <path d="M170 150 C 176 168, 168 182, 158 196" strokeWidth="2.6" />
+                <path d="M178 150 C 184 170, 176 184, 166 196" strokeWidth="2.6" />
               </g>
             )}
 
-            {/* 顶部风扇 ×2（高细节） */}
-            {lvl >= 2 && [88, 124].map((cx) => (
-              <g key={`top${cx}`}>
-                <circle cx={cx} cy="24" r="13" fill="#120e0c" stroke="#3a2c26" strokeWidth="1.2" />
-                <g className="fan-blades" style={{ transformOrigin: `${cx}px 24px` }}>
-                  {[0, 120, 240].map((a) => (
-                    <ellipse key={a} cx={cx} cy="18" rx="3.2" ry="6.5" fill="#4a3a32" transform={`rotate(${a} ${cx} 24)`} />
+            {/* 顶部散热格栅（侧视） */}
+            {lvl >= 2 && (
+              <>
+                <rect x="58" y="16" width="112" height="7" rx="3.5" fill="#191310" stroke="#3a2c26" strokeWidth="0.8" />
+                <g fill="#3a2c26">
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <rect key={i} x={62 + i * 12} y="18" width="7" height="3" rx="1.5" />
                   ))}
                 </g>
-              </g>
-            ))}
+              </>
+            )}
 
             {/* 底部电源仓 */}
             <line x1="18" y1="196" x2="202" y2="196" stroke="#3a2c26" strokeWidth="1.2" />
