@@ -4,9 +4,12 @@ import { ADDRS, ABI, gradeOf } from "../lib/contracts";
 import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { readProvider } from "../lib/wallet";
 import { loadCache, putCache } from "../lib/pcCache";
+import { ScanLink } from "../components/ScanLink";
+import { getNames, setName } from "../lib/names";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
+import { RigSlots } from "../components/RigSlots";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { trackTx } from "../lib/tx";
 
@@ -24,6 +27,8 @@ export function Stake() {
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [detail, setDetail] = useState<Detail>(null);
   const [maxBatch, setMaxBatch] = useState(10);
+  const [net, setNet] = useState<{ shares: number; perDay: number }>({ shares: 0, perDay: 0 });
+  const [names, setNamesState] = useState<Record<string, string>>(getNames());
   const [filter, setFilter] = useState<"all" | "staked" | "idle" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
   const [shown, setShown] = useState(8);
@@ -68,6 +73,11 @@ export function Stake() {
 
   useEffect(() => { load().catch(() => setLoading(false)); }, [load]);
   useEffect(() => { (mineC.maxBatch() as Promise<bigint>).then((v) => setMaxBatch(Number(v))).catch(() => {}); }, []);
+  useEffect(() => {
+    Promise.all([mineC.totalShares(), mineC.rewardPerDay()])
+      .then(([sh, pd]) => setNet({ shares: Number(sh), perDay: Number(formatEther(pd as bigint)) }))
+      .catch(() => {});
+  }, []);
 
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
   const counts = useMemo(() => ({
@@ -86,6 +96,7 @@ export function Stake() {
   const allSelected = visible.length > 0 && visible.every((p) => sel.has(p.id));
   const hiddenSelected = [...sel].filter((id) => !visible.some((p) => p.id === id)).length;
   const txCount = Math.max(1, Math.ceil(sel.size / Math.max(1, maxBatch)));
+  const dailyOf = (hash: number) => (net.shares > 0 ? (hash / net.shares) * net.perDay : 0);
   const totalHash = useMemo(() => pcs.reduce((a, p) => a + (p.staked ? p.hash : 0), 0), [pcs]);
 
   const batchAct = async (kind: "stake" | "unstake" | "claim") => {
@@ -174,9 +185,9 @@ export function Stake() {
           <button className="tile-claim-btn" disabled={busy !== 0 || earned === 0n || stakedList.length === 0} onClick={claimAll}>
             {busy === -1 ? "领取中" : earned === 0n ? "无可领" : "领取"}
           </button>
-          {stakedList.length > 0 && (
-            <i className="tile-claim-hint">{stakedList.length} 台 · 1 笔</i>
-          )}
+          <i className="tile-claim-hint">
+            {stakedList.length} 台 · 1 笔 <ScanLink path={`address/${ADDRS.mining}`} title="挖矿合约" />
+          </i>
         </div>
       </div>
 
@@ -218,7 +229,14 @@ export function Stake() {
       ) : !account ? (
         <div className="empty">连接钱包后查看矿机</div>
       ) : pcs.length === 0 ? (
-        <div className="empty">你还没有矿机 —— 去「铸造」抽部件，再到「组装」做一台</div>
+        <div className="empty-empty">
+          <div className="empty-rig"><RigSlots tiers={[0,0,0,0,0,0,0,0]} counts={[]} size={200} /></div>
+          <p>你还没有矿机 —— 先抽部件，再组装一台</p>
+          <div className="row-links" style={{ justifyContent: "center" }}>
+            <button className="btn btn-ghost" onClick={() => (location.hash = "mint")}>去铸造</button>
+            <button className="btn btn-ghost" onClick={() => (location.hash = "asm")}>去组装</button>
+          </div>
+        </div>
       ) : (
         <div className="farm">
           {visible.slice(0, shown).map((p) => (
@@ -230,9 +248,18 @@ export function Stake() {
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>
               <div className="farm-meta">
-                <b>PC #{p.id}</b>
+                <b
+                  title="点击重命名"
+                  style={{ cursor: "text" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const next = window.prompt("给这台矿机起个名字（留空清除）", names[String(p.id)] ?? "");
+                    if (next !== null) { setName(p.id, next); setNamesState(getNames()); }
+                  }}
+                >{names[String(p.id)] || `PC #${p.id}`}</b>
                 <GradeBadge hash={p.hash} />
                 <span>{p.hash} H</span>
+                {p.staked && <span className="pc-daily">+{num(dailyOf(p.hash), 2)}/天</span>}
                 {p.listed && <span className="pc-listed">挂单中</span>}
               </div>
               <div className="farm-actions">

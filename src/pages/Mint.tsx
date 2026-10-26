@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { compact, num } from "../lib/format";
 import { PartIcon } from "../components/PartIcon";
+import { RoiCalc } from "../components/RoiCalc";
 import { trackTx } from "../lib/tx";
 
 // 链上实测权重（CircuitV6.typeWeight）：CPU 18 / 主板 20 / GPU 18 / RAM 14 / SSD 12 / 电源 8 / 散热器 6 / 机箱 4
@@ -152,6 +153,8 @@ export function Mint() {
             </button>
           </div>
         </div>
+
+        <RoiCalc mintFee={unit} assembleFee={100} />
 
         <div className="sec-head"><b>{t("mint.odds")}</b><span>{t("mint.oddsSub")}</span></div>
         <div style={{ display: "flex", height: 9, borderRadius: 999, overflow: "hidden", gap: 2 }}>

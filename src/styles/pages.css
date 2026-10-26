@@ -273,3 +273,24 @@
 .pc-mini-state { font-size: 9.5px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--tx-3); white-space: nowrap; }
 .pc-mini-state.live { color: var(--ac); border-color: rgba(0,229,160,.42); background: rgba(0,229,160,.08); }
 .pc-mini-state.list { color: var(--gold); border-color: rgba(255,217,61,.42); background: rgba(255,217,61,.08); }
+
+/* 跑道预警横幅 */
+.runway-banner { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 12px;
+  background: linear-gradient(90deg, rgba(255,90,90,.16), rgba(255,159,69,.12)); border-bottom: 1px solid rgba(255,90,90,.35); }
+.runway-banner b { color: var(--danger); }
+.runway-banner span { color: var(--tx-2); }
+.runway-banner button { margin-left: auto; border: none; background: transparent; color: var(--tx-3); cursor: pointer; font-size: 11px; }
+/* ROI 估算 */
+.roi { margin-top: 16px; padding: 12px 14px; border-radius: var(--r-md);
+  border: 1px dashed rgba(255,255,255,.12); background: rgba(255,255,255,.015); max-width: 420px; }
+.roi-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.roi-head b { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.roi-head span { font-size: 10px; color: var(--tx-3); }
+.roi-row { display: flex; align-items: center; gap: 10px; }
+.roi-row span { font-size: 11.5px; color: var(--tx-3); }
+.roi-row .field { width: 110px; }
+.roi-out { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap; }
+.roi-out div { display: flex; flex-direction: column; gap: 2px; }
+.roi-out span { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-3); }
+.roi-out b { font-family: var(--mono); font-size: 15px; color: var(--tx); }
+.roi-out b em { font-style: normal; font-size: 9.5px; color: var(--tx-3); }

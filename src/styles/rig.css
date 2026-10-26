@@ -111,3 +111,24 @@
 @media (max-width: 640px) {
   .tile-claim-btn { position: static; margin-top: 8px; width: 100%; height: 30px; }
 }
+
+.pc-daily { font-size: 9.5px; color: var(--ac); border: 1px solid rgba(0,229,160,.35);
+  background: rgba(0,229,160,.08); border-radius: 999px; padding: 1px 7px; font-family: var(--mono); }
+.scan-link { font-size: 10px; color: var(--tx-3); text-decoration: none; margin-left: 4px; }
+.scan-link:hover { color: var(--gold); }
+/* S 级流光边框 */
+@property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.farm-cell[data-g="s"], .pc-mini[data-g="s"] { position: relative; }
+.farm-cell[data-g="s"]::after, .pc-mini[data-g="s"]::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
+  padding: 1px; background: conic-gradient(from var(--ang), transparent 0 62%, rgba(255,213,77,.85) 72%, transparent 82%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: gradeSpin 5.5s linear infinite;
+}
+@keyframes gradeSpin { to { --ang: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .farm-cell[data-g="s"]::after, .pc-mini[data-g="s"]::after { animation: none; } }
+/* 空态骨架机箱 */
+.empty-empty { display: grid; justify-items: center; gap: 12px; padding: 18px 0 22px; }
+.empty-rig { opacity: .45; filter: grayscale(.35); }
+.empty-empty p { margin: 0; font-size: 12.5px; color: var(--tx-3); }
