@@ -12,6 +12,7 @@ const A = {
   pending: ["function pending(address) view returns (uint256)"],
   batch: ["function balanceOfBatch(address[],uint256[]) view returns (uint256[])"],
   info: ["function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))"],
+  many: ["function hashOfMany(uint256[]) view returns (uint256)"],
   u64: ["function totalShares() view returns (uint256)"],
   bal: ["function balanceOf(address) view returns (uint256)"],
   perDay: ["function rewardPerDay() view returns (uint256)"],
@@ -61,7 +62,7 @@ export function Home({ go }: { go: (r: string) => void }) {
     let alive = true;
     (async () => {
       try {
-        const ct = new Contract(ADDRS.circuit, A.erc721.concat(A.info), readProvider);
+        const ct = new Contract(ADDRS.circuit, A.erc721.concat(A.info).concat(A.many), readProvider);
         const mt = new Contract(ADDRS.mining, A.staked, readProvider);
         const fs = new Contract(ADDRS.feeSplit, A.pending, readProvider);
         const [pcBal, stakedIds, pending] = await Promise.all([
@@ -73,9 +74,9 @@ export function Home({ go }: { go: (r: string) => void }) {
         if (alive) setD({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash: 0,
           pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8), can: 0, missing: [] });
 
-        // 部件 + 算力并行
-        const ids = (stakedIds as bigint[]).slice(0, 40);
-        const [partsRes, ...infos] = await Promise.all([
+        // 部件 + 算力并行（算力一次调用）
+        const ids: bigint[] = Array.from(stakedIds as bigint[]).slice(0, 200);
+        const [partsRes, hashRaw] = await Promise.all([
           (async () => {
             try {
               const pt = new Contract(ADDRS.part, A.batch, readProvider);
@@ -85,10 +86,17 @@ export function Home({ go }: { go: (r: string) => void }) {
               return { can: Math.min(...byType), missing: byType.map((v, i) => (v < 1 ? i : -1)).filter((i) => i >= 0) };
             } catch { return { can: 0, missing: [] as number[] }; }
           })(),
-          ...ids.map((id) => ct.getCircuitInfo(id).catch(() => null)),
+          (async () => {
+            if (!ids.length) return 0n;
+            try { return (await ct.hashOfMany(ids)) as bigint; }
+            catch {
+              let sum = 0n;
+              for (const id of ids) { try { sum += BigInt((await ct.getCircuitInfo(id)).hashRate); } catch { /* skip */ } }
+              return sum;
+            }
+          })(),
         ]);
-        let hash = 0;
-        for (const info of infos as any[]) if (info) hash += Number(info.hashRate);
+        const hash = Number(hashRaw);
         if (!alive) return;
         setD({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash,
           pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8),
