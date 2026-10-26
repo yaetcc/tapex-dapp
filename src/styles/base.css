@@ -109,10 +109,10 @@ a { color: inherit; }
 }
 .btn-primary {
   color: #2a1700; background: var(--grad-gold);
-  box-shadow: 0 5px 0 #b36a00, 0 12px 24px rgba(255, 159, 69, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 20px rgba(255, 159, 69, 0.26), 0 1px 0 rgba(255,255,255,.35) inset, 0 -2px 0 rgba(150,80,0,.22) inset;
 }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.06); }
-.btn-primary:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #b36a00; }
+.btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 4px 12px rgba(255,159,69,.2) inset; }
 .btn-primary:disabled {
   background: rgba(255, 255, 255, 0.04); color: var(--tx-3);
   border: 1px dashed rgba(255, 255, 255, 0.16); box-shadow: none;
@@ -194,7 +194,7 @@ body::after {
 
 /* 统一点击反馈 */
 .btn:active:not(:disabled) { transform: translateY(1px); }
-.btn-primary:active:not(:disabled) { transform: translateY(3px); }
+.btn-primary:active:not(:disabled) { transform: translateY(1px); }
 
 /* 卡片内数据砖依次入场 */
 .tile { animation: tileIn var(--dur-base) var(--ease-out) both; }

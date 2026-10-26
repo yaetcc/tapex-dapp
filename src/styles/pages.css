@@ -387,6 +387,9 @@
 .hero2 h1 { margin: 14px 0 10px; font-size: clamp(34px, 3.6vw, 50px); line-height: 1.03; font-weight: 800; letter-spacing: -.03em; }
 .hero2 p { color: #A2938A; font-size: var(--fs-lg); max-width: 34ch; }
 .hero2-cta { display: flex; gap: 10px; margin-top: 22px; }
+.hero2-cta .btn { height: 46px; min-width: 132px; border-radius: 12px;
+  font-size: var(--fs-lg); font-weight: 700; letter-spacing: .02em; }
+.hero2-cta .btn-ghost { border-width: 1px; padding: 0 20px; }
 .hero2-rig { display: grid; place-items: center; gap: 10px; position: relative; z-index: 1; }
 .nameplate { font-size: var(--fs-2xs); letter-spacing: .12em; color: var(--tx-3);
   padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: rgba(0,0,0,.25); }
