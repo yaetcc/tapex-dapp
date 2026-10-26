@@ -55,6 +55,7 @@ export function Build() {
     (tapeC.balanceOf(account) as Promise<bigint>).then(setBal).catch(() => {});
   }, [account]);
 
+  const [hl, setHl] = useState<number | null>(null);
   const stock = (i: number, tr: number) => counts[i + tr * 8] || 0;
   const can = useMemo(() => {
     let m = Infinity;
@@ -158,7 +159,7 @@ export function Build() {
 
         <aside className="build-side">
           <div ref={rigRef} className="rig-wrap">
-            <RigSlots tiers={tiers} counts={counts} size={300} />
+            <RigSlots tiers={tiers} counts={counts} size={300} onHover={setHl} />
             {fly && (
               <span key={fly.key} className="fly-part"
                 style={{ left: fly.x, top: fly.y, ["--tx" as string]: `${(rigRef.current?.getBoundingClientRect().left ?? 0) + (rigRef.current?.getBoundingClientRect().width ?? 0) / 2 - fly.x}px`,
@@ -202,7 +203,7 @@ export function Build() {
         <div className="build-col">
           <div className="build-rows">
             {PART_NAMES.map((name, i) => (
-              <div className="build-row" key={name}>
+              <div className={`build-row${hl === i ? " hl" : ""}`} key={name}>
                 <span className="build-name" style={{ display: "flex", alignItems: "center", gap: 7 }}>
                   <PartIcon type={i} tier={tiers[i]} size={18} />{name}
                 </span>
@@ -216,6 +217,9 @@ export function Build() {
                         style={on ? { borderColor: TIER_COLOR[tr], color: TIER_COLOR[tr] } : undefined}
                         onClick={(e) => pick(i, tr, e)}>
                         {tr === 0 ? TIERS[0] : tr === 1 ? "Pro" : TIERS[2]}
+                        <i className="stock-bar" aria-hidden>
+                          <b style={{ width: `${Math.min(100, c * 2.5)}%`, background: TIER_COLOR[tr] }} />
+                        </i>
                         <i>{c}</i>
                       </button>
                     );

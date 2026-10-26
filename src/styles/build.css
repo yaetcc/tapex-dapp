@@ -88,3 +88,10 @@
 .born-card b { font-family: var(--mono); font-size: var(--fs-2xl); }
 .born-card p { margin: 0; font-size: var(--fs-sm); color: var(--tx-3); }
 .born-hint { font-size: var(--fs-2xs); color: var(--tx-3); opacity: .7; }
+
+/* 档位 chip 内的库存条 */
+.tier-chip .stock-bar { display: inline-block; width: 16px; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,.1); overflow: hidden; vertical-align: middle; margin: 0 2px; }
+.tier-chip .stock-bar b { display: block; height: 100%; border-radius: 2px; }
+/* 装配预览 hover 联动（第 4 批） */
+.build-row.hl { background: rgba(255,217,61,.06); border-radius: 8px; }
