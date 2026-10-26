@@ -1,0 +1,28 @@
+.build-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; margin-top: 20px; }
+@media (max-width: 980px) { .build-grid { grid-template-columns: 1fr; gap: 16px; } }
+.build-rows { display: flex; flex-direction: column; gap: 7px; }
+.build-row {
+  display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center;
+  padding: 8px 12px; border-radius: var(--r-md);
+  border: 1px solid var(--line); background: rgba(255, 255, 255, 0.02);
+}
+.build-name { font-size: var(--fs-sm); color: var(--tx-2); font-weight: 600; }
+.build-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.tier-chip {
+  height: 32px; border-radius: 9px; cursor: pointer; font-size: 11.5px; font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.02);
+  color: var(--tx-2); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: border-color .15s, color .15s, background .15s, transform .15s;
+}
+.tier-chip i { font-style: normal; font-family: var(--mono); font-size: 10px; opacity: .8; }
+.tier-chip:hover:not(:disabled) { transform: translateY(-1px); background: rgba(255, 255, 255, 0.05); }
+.tier-chip.on { background: rgba(0, 229, 160, 0.10); }
+.tier-chip.empty, .tier-chip:disabled { opacity: .38; cursor: not-allowed; }
+.build-side {
+  border-radius: var(--r-lg); padding: 14px;
+  border: 1px solid rgba(255, 217, 61, 0.22);
+  background: radial-gradient(120% 80% at 50% -20%, rgba(255, 217, 61, 0.12), transparent 60%), linear-gradient(180deg, #241a16, #171210);
+  box-shadow: var(--hi), var(--shadow-1);
+}
+.build-actions { display: grid; gap: 8px; margin-top: 12px; }
+.build-qty { display: flex; align-items: center; justify-content: space-between; gap: 8px; }

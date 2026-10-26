@@ -1,0 +1,41 @@
+/* 通用小组件 */
+.empty {
+  border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.015);
+  border-radius: var(--r-md); padding: 22px 14px; text-align: center; color: var(--tx-3); font-size: var(--fs-sm);
+}
+.row-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.fold-box { margin-top: 18px; border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px 14px; background: rgba(255, 255, 255, 0.02); }
+.fold-box summary { cursor: pointer; list-style: none; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.fold-box summary::-webkit-details-marker { display: none; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; margin-top: 12px; font-size: var(--fs-sm); }
+.kv span { color: var(--tx-2); }
+.kv b { font-family: var(--mono); color: var(--tx); font-weight: 600; }
+
+/* 矿机卡 */
+.pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.pc-card { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px; background: rgba(255, 255, 255, 0.02); display: grid; gap: 8px; }
+.pc-card.on { border-color: rgba(255, 217, 61, .45); box-shadow: inset 0 0 0 1px rgba(255, 217, 61, .12); }
+.pc-top { display: flex; align-items: center; gap: 8px; }
+.pc-top b { font-size: var(--fs-sm); }
+.grade { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; }
+.g3 { color: #7fe0d6 } .g4 { color: #00e5a0 } .g5 { color: #ffd54d }
+.pc-state { margin-left: auto; font-size: 10.5px; color: var(--tx-3); }
+.pc-hash { font-family: var(--mono); font-size: 18px; color: var(--gold); }
+.pc-hash b { font-size: 20px; }
+.pc-card .btn { height: 34px; font-size: 12px; }
+
+/* 市场 */
+.mk-tabs { display: inline-flex; gap: 2px; padding: 3px; margin: 16px 0 4px; border-radius: 999px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line); }
+.mk-tabs button { border: none; background: transparent; color: var(--tx-3); padding: 7px 16px; border-radius: 999px; font-size: 11.5px; cursor: pointer; }
+.mk-tabs button.on { background: linear-gradient(118deg, #ffd93d, #ff9f45); color: #241505; font-weight: 700; }
+.sell-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.sell-row .field { width: 140px; }
+.sell-row select.field { width: 160px; }
+.order-list { display: grid; gap: 6px; }
+.order-row {
+  display: grid; grid-template-columns: 1.2fr 1fr auto auto; gap: 10px; align-items: center;
+  padding: 9px 12px; border-bottom: 1px solid rgba(255, 255, 255, .06); font-size: var(--fs-sm);
+}
+.order-row:hover { background: rgba(255, 255, 255, .03); }
+.order-row .muted { color: var(--tx-3); font-size: 11px; }
+.order-row .price { font-family: var(--mono); color: var(--gold); }

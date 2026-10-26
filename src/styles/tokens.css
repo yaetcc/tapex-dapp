@@ -1,0 +1,35 @@
+/* ===== TapeX 设计系统 · tokens ===== */
+:root {
+  /* 色板：暖夜底 + 金/青/粉三色语义 */
+  --bg-0: #120e0c;
+  --bg-1: #171210;
+  --surface: linear-gradient(180deg, #1f1815, #171210);
+  --surface-2: linear-gradient(165deg, rgba(255, 217, 61, 0.055), rgba(179, 136, 255, 0.032));
+
+  --gold: #ffd93d;
+  --gold-2: #ff9f45;
+  --ac: #00e5a0;
+  --pink: #ff6bcb;
+  --violet: #b388ff;
+  --danger: #ff5a5a;
+
+  --tx: #efe7df;
+  --tx-2: #b6a89f;
+  --tx-3: #7d716a;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-gold: rgba(255, 217, 61, 0.22);
+
+  /* 间距 8 基准 */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  /* 圆角 */
+  --r-sm: 9px; --r-md: 14px; --r-lg: 18px; --r-pill: 999px;
+  /* 字号 */
+  --fs-xs: 11px; --fs-sm: 12.5px; --fs-md: 14px; --fs-lg: 18px; --fs-xl: 22px; --fs-2xl: 28px;
+
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Inter", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+
+  --shadow-1: 0 16px 38px rgba(0, 0, 0, 0.42);
+  --hi: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --grad-gold: linear-gradient(118deg, #ffd93d, #ff9f45 52%, #ff6bcb);
+}

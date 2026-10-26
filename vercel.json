@@ -1,0 +1,6 @@
+{
+  "buildCommand": "node scripts/build.mjs",
+  "outputDirectory": "dist",
+  "framework": null,
+  "cleanUrls": true
+}

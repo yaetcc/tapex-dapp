@@ -1,0 +1,61 @@
+.rig { position: relative; display: inline-block; }
+.fan-blades { animation: spin var(--spin, 0s) linear infinite; animation-play-state: paused; }
+.rig.on .fan-blades { animation-play-state: running; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.rig .led-strip { opacity: .35; transition: opacity .3s; }
+.rig.on .led-strip { opacity: .95; animation: ledPulse 2.4s ease-in-out infinite; }
+.rig .led-glow { opacity: 0; transition: opacity .4s; }
+.rig.on .led-glow { opacity: .55; animation: glowPulse 3s ease-in-out infinite; }
+@keyframes ledPulse { 0%,100% { opacity: .7; } 50% { opacity: 1; } }
+@keyframes glowPulse { 0%,100% { opacity: .38; } 50% { opacity: .7; } }
+
+.rig-badge {
+  position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; color: var(--tx-2); background: rgba(18, 14, 12, .82);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+}
+.rig-badge b { font-family: var(--mono); color: var(--gold); }
+.rig-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tx-3); }
+.rig-badge .dot.live { background: var(--ac); box-shadow: 0 0 8px var(--ac); animation: dotBreath 1.6s ease-in-out infinite; }
+@keyframes dotBreath { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+
+.rig-heat { position: absolute; inset: 0; pointer-events: none; }
+.rig-heat span {
+  position: absolute; left: 50%; bottom: 58px; width: 2px; height: 26px; border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgba(255, 159, 69, .5), transparent);
+  animation: heatRise 2.8s ease-in-out infinite;
+}
+.rig-heat span:nth-child(1) { margin-left: -18px; }
+.rig-heat span:nth-child(2) { margin-left: 0; }
+.rig-heat span:nth-child(3) { margin-left: 18px; }
+@keyframes heatRise { 0% { opacity: 0; transform: translateY(6px) scaleY(.6); } 40% { opacity: .8; } 100% { opacity: 0; transform: translateY(-26px) scaleY(1.1); } }
+
+/* 矿场布局 */
+.farm { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 14px; }
+.farm-cell {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 12px 12px 40px; border-radius: var(--r-lg);
+  border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.01));
+  transition: border-color .2s, transform .2s;
+}
+.farm-cell.on { border-color: rgba(255, 217, 61, .35); box-shadow: inset 0 0 0 1px rgba(255,217,61,.1); }
+.farm-cell:hover { transform: translateY(-2px); }
+.farm-meta { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--tx-2); }
+.farm-meta b { color: var(--tx); }
+.farm-actions { position: absolute; left: 10px; right: 10px; bottom: 9px; }
+.farm-actions .btn { width: 100%; height: 30px; font-size: 11.5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fan-blades, .led-strip, .led-glow, .rig-heat span, .rig-badge .dot { animation: none !important; }
+}
+
+/* 装配预览 */
+.rigslots { position: relative; display: block; margin: 0 auto; }
+.rigslots-badge {
+  position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
+  font-size: 10.5px; color: var(--tx-3); background: rgba(18, 14, 12, .85);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+}
+.rigslots-badge b { color: var(--gold); font-family: var(--mono); }
