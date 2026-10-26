@@ -25,7 +25,9 @@ type Net = { shares: number; pool: number; perDay: number; supply: number; minte
 
 export function Home({ go }: { go: (r: string) => void }) {
   const { account, connect } = useApp();
-  const [d, setD] = useState<Mine | null>(null);
+  const [d, setD] = useState<Mine | null>(() => {
+    try { const raw = localStorage.getItem("home_cache"); return raw ? JSON.parse(raw) as Mine : null; } catch { return null; }
+  });
   const [net, setNet] = useState<Net | null>(null);
 
   // 全网（不依赖钱包）
@@ -55,6 +57,7 @@ export function Home({ go }: { go: (r: string) => void }) {
   // 我的矿场
   useEffect(() => {
     if (!account) { setD(null); return; }
+    try { const c = JSON.parse(localStorage.getItem("home_cache") || "null"); if (c && !c.__ok) { /* 旧缓存结构 */ } } catch { /* ignore */ }
     let alive = true;
     (async () => {
       try {
@@ -66,22 +69,31 @@ export function Home({ go }: { go: (r: string) => void }) {
           mt.stakedPCsOf(account).catch(() => [] as bigint[]),
           fs.pending(account).catch(() => 0n),
         ]);
-        let can = 0; let missing: number[] = [];
-        try {
-          const pt = new Contract(ADDRS.part, A.batch, readProvider);
-          const ids24 = Array.from({ length: 24 }, (_, i) => i + 1);
-          const bals: bigint[] = await pt.balanceOfBatch(ids24.map(() => account), ids24);
-          const byType = Array.from({ length: 8 }, (_, i) => [0, 1, 2].reduce((a, tr) => a + Number(bals[tr * 8 + i]), 0));
-          can = Math.min(...byType);
-          missing = byType.map((v, i) => (v < 1 ? i : -1)).filter((i) => i >= 0);
-        } catch { /* ignore */ }
+        // 先出快数据（3 个调用），算力随后补
+        if (alive) setD({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash: 0,
+          pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8), can: 0, missing: [] });
+
+        // 部件 + 算力并行
+        const ids = (stakedIds as bigint[]).slice(0, 40);
+        const [partsRes, ...infos] = await Promise.all([
+          (async () => {
+            try {
+              const pt = new Contract(ADDRS.part, A.batch, readProvider);
+              const ids24 = Array.from({ length: 24 }, (_, i) => i + 1);
+              const bals: bigint[] = await pt.balanceOfBatch(ids24.map(() => account), ids24);
+              const byType = Array.from({ length: 8 }, (_, i) => [0, 1, 2].reduce((a, tr) => a + Number(bals[tr * 8 + i]), 0));
+              return { can: Math.min(...byType), missing: byType.map((v, i) => (v < 1 ? i : -1)).filter((i) => i >= 0) };
+            } catch { return { can: 0, missing: [] as number[] }; }
+          })(),
+          ...ids.map((id) => ct.getCircuitInfo(id).catch(() => null)),
+        ]);
         let hash = 0;
-        for (const id of (stakedIds as bigint[]).slice(0, 30)) {
-          try { const info = await ct.getCircuitInfo(id); hash += Number(info.hashRate); } catch { /* skip */ }
-        }
+        for (const info of infos as any[]) if (info) hash += Number(info.hashRate);
         if (!alive) return;
         setD({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash,
-          pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8), can, missing });
+          pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8),
+          can: partsRes.can, missing: partsRes.missing });
+        try { localStorage.setItem("home_cache", JSON.stringify({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash, pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8), can: partsRes.can, missing: partsRes.missing })); } catch { /* ignore */ }
       } catch (e) { console.warn("[home] 读取矿场数据失败", e); }
     })();
     return () => { alive = false; };
