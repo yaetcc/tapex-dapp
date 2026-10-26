@@ -32,6 +32,8 @@ export function Stake() {
   const [net, setNet] = useState<{ shares: number; perDay: number }>({ shares: 0, perDay: 0 });
   const [names, setNamesState] = useState<Record<string, string>>(getNames());
   const [gain, setGain] = useState<string | null>(null);
+  const [sweepId, setSweepId] = useState<number | null>(null);
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
   const touchRef = useRef<{ id: number; x: number } | null>(null);
   const [filter, setFilter] = useState<"all" | "staked" | "idle" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
@@ -176,6 +178,7 @@ export function Stake() {
       toast(kind === "claim" ? "领取成功" : kind === "stake" ? "质押成功" : "已解押", "ok");
       if (kind === "claim") setGain(`${num(Number(formatEther(earned)), 4)} TAPE`);
       if (id) logAction(id, kind === "claim" ? "领取收益" : kind === "stake" ? "质押" : "解押");
+      if (kind !== "claim" && id) { setSweepId(id); window.setTimeout(() => setSweepId(null), 460); }
       await load();
     } catch (e) {
       toast((e as Error).message.slice(0, 90), "err");
@@ -254,7 +257,7 @@ export function Stake() {
       ) : (
         <div className="farm">
           {visible.slice(0, shown).map((p) => (
-            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
+            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}${sweepId === p.id ? " sweep" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
               onTouchStart={(e) => { touchRef.current = { id: p.id, x: e.touches[0].clientX }; }}
               onTouchEnd={(e) => {
                 const t = touchRef.current;
@@ -265,7 +268,11 @@ export function Stake() {
                 if (dx > 0 && !p.staked) act("stake", p.id);
                 if (dx < 0 && p.staked) act("unstake", p.id);
               }}
-              onClick={() => setDetail({ kind: "pc", id: p.id })}
+              onClick={(e) => {
+                const svg = (e.currentTarget as HTMLElement).querySelector("svg");
+                setOriginRect(svg ? svg.getBoundingClientRect() : null);
+                setDetail({ kind: "pc", id: p.id });
+              }}
               style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
               <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
               <label className="farm-check" onClick={(e) => e.stopPropagation()}>
@@ -310,7 +317,7 @@ export function Stake() {
         </div>
       )}
       {gain && <FloatGain text={gain} onDone={() => setGain(null)} />}
-      <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />
+      <DetailSheet detail={detail} origin={originRect} onClose={() => { setDetail(null); setOriginRect(null); }} onChanged={load} />
     </div>
   );
 }

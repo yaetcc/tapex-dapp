@@ -105,7 +105,7 @@ a { color: inherit; }
   height: 44px; border-radius: 13px; border: none; cursor: pointer;
   font-size: var(--fs-md); font-weight: 800; letter-spacing: 0.04em;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.2s ease;
+  transition: transform var(--dur-fast) var(--ease-std), box-shadow var(--dur-fast) var(--ease-std), filter var(--dur-base) var(--ease-std);
 }
 .btn-primary {
   color: #2a1700; background: var(--grad-gold);
@@ -197,7 +197,7 @@ body::after {
 .btn-primary:active:not(:disabled) { transform: translateY(3px); }
 
 /* 卡片内数据砖依次入场 */
-.tile { animation: tileIn .34s cubic-bezier(.22,1,.36,1) both; }
+.tile { animation: tileIn var(--dur-base) var(--ease-out) both; }
 .tiles .tile:nth-child(1) { animation-delay: 0ms; }
 .tiles .tile:nth-child(2) { animation-delay: 40ms; }
 .tiles .tile:nth-child(3) { animation-delay: 80ms; }
@@ -206,7 +206,7 @@ body::after {
 @keyframes tileIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* 页面切换 */
-.page-enter { animation: pageIn .26s cubic-bezier(.22,1,.36,1) both; }
+.page-enter { animation: pageIn var(--dur-base) var(--ease-out) both; }
 @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* 引导条 */
@@ -230,3 +230,31 @@ body::after {
   .txbar { bottom: calc(64px + env(safe-area-inset-bottom)); left: 12px; right: 12px; transform: none; font-size: 11px; }
   @keyframes txIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 }
+
+/* 数字变化闪色 */
+.num-flash { animation: numFlash 420ms var(--ease-std); }
+@keyframes numFlash {
+  0% { color: #fff; text-shadow: 0 0 18px rgba(255,255,255,.5); }
+  100% { color: inherit; }
+}
+/* 状态切换扫光 */
+.sweep { position: relative; overflow: hidden; }
+.sweep::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(0,229,160,.28) 50%, transparent 70%);
+  transform: translateX(-100%); animation: sweep 420ms var(--ease-out);
+}
+@keyframes sweep { to { transform: translateX(100%); } }
+/* 列表 stagger 上限：第 9 项起不再延迟 */
+.farm-cell:nth-child(n+9), .pc-mini:nth-child(n+9), .order-row:nth-child(n+9) { animation-delay: 0ms !important; }
+.farm-cell { animation: tileIn var(--dur-base) var(--ease-out) both; }
+.farm-cell:nth-child(1) { animation-delay: 0ms; }
+.farm-cell:nth-child(2) { animation-delay: 35ms; }
+.farm-cell:nth-child(3) { animation-delay: 70ms; }
+.farm-cell:nth-child(4) { animation-delay: 105ms; }
+.farm-cell:nth-child(5) { animation-delay: 140ms; }
+.farm-cell:nth-child(6) { animation-delay: 175ms; }
+.farm-cell:nth-child(7) { animation-delay: 210ms; }
+.farm-cell:nth-child(8) { animation-delay: 245ms; }
+/* 滚动锚定，避免刷新跳动 */
+.farm, .pc-grid, .order-list, .rack { overflow-anchor: auto; }

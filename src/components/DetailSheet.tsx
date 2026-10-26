@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Contract, formatEther, parseEther } from "ethers";
 import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
@@ -16,9 +16,10 @@ export type Detail = { kind: "pc" | "part"; id: number } | null;
 const partName = (id: number) => `${PART_NAMES[(id - 1) % 8]} · ${TIERS[Math.floor((id - 1) / 8)]}`;
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
-export function DetailSheet({ detail, onClose, onChanged }: {
-  detail: Detail; onClose: () => void; onChanged?: () => void;
+export function DetailSheet({ detail, onClose, onChanged, origin }: {
+  detail: Detail; onClose: () => void; onChanged?: () => void; origin?: DOMRect | null;
 }) {
+  const heroRef = useRef<HTMLDivElement>(null);
   const { account, signer, toast } = useApp();
   const boxRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -97,6 +98,26 @@ export function DetailSheet({ detail, onClose, onChanged }: {
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [detail, onClose]);
 
+  // 共享元素：从卡片位置放大到弹窗位置（FLIP）
+  useLayoutEffect(() => {
+    const el = heroRef.current;
+    if (!el || !origin || !detail) return;
+    const to = el.getBoundingClientRect();
+    if (!to.width || !origin.width) return;
+    const dx = origin.left - to.left;
+    const dy = origin.top - to.top;
+    const scale = origin.width / to.width;
+    el.style.transformOrigin = "top left";
+    el.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+    el.style.opacity = "0.6";
+    const raf = requestAnimationFrame(() => {
+      el.style.transition = "transform 420ms cubic-bezier(.22,1,.36,1), opacity 220ms ease";
+      el.style.transform = "none";
+      el.style.opacity = "1";
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [detail, origin, loading]);
+
   if (!detail) return null;
 
   const withTx = async (label: string, fn: () => Promise<unknown>) => {
@@ -156,7 +177,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           <div className="sheet-body"><div className="skeleton" style={{ height: 160 }} /></div>
         ) : detail.kind === "pc" ? (
           <div className="sheet-body">
-            <div className="sheet-hero" style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>
+            <div className="sheet-hero" ref={heroRef} style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>
               <RigArt hash={info.hash} mining={info.staked} grade={info.grade} size={180} />
               <div className="sheet-stats">
                 <div className="sheet-stat"><span>算力</span><b>{info.hash} <em>H</em></b></div>

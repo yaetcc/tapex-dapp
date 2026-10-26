@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 /** 数值滚动：400ms ease-out + 轻微回弹（超调 3%） */
 export function Num({ value, format }: { value: number; format?: (n: number) => string }) {
+  const [flash, setFlash] = useState(false);
   const [shown, setShown] = useState(value);
   const fromRef = useRef(value);
   const rafRef = useRef(0);
@@ -24,10 +25,13 @@ export function Num({ value, format }: { value: number; format?: (n: number) => 
       if (k < 1) rafRef.current = requestAnimationFrame(step);
       else { setShown(value); fromRef.current = value; }
     };
+    setFlash(true);
+    const ft = window.setTimeout(() => setFlash(false), 430);
     cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(step);
+    void ft;
     return () => cancelAnimationFrame(rafRef.current);
   }, [value]);
 
-  return <>{fmt(shown)}</>;
+  return <span className={flash ? "num-flash" : undefined}>{fmt(shown)}</span>;
 }
