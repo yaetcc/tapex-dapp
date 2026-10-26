@@ -62,3 +62,16 @@
 @media (prefers-reduced-motion: reduce) {
   .orb, .dust, .arc, .mascot-wrap, .sticker, .card { animation: none !important; }
 }
+
+/* 背景随滚动视差（0.04 系数，几乎察觉不到但增加纵深） */
+.atmo { transform: translate3d(0, calc(var(--par, 0px) * -1), 0); transition: transform .12s linear; }
+
+/* ===== 密度模式 ===== */
+[data-density="compact"] .card { padding: 16px; }
+[data-density="compact"] .shell { padding-left: 18px; padding-right: 18px; }
+[data-density="compact"] .tile { padding: 8px 10px 9px; }
+[data-density="compact"] .tile b { font-size: 16px; }
+[data-density="compact"] .farm { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+[data-density="compact"] .pc-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+[data-density="compact"] .rack { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+[data-density="compact"] .build-row { padding: 6px 9px; }

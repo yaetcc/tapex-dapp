@@ -206,7 +206,10 @@ body::after {
 @keyframes tileIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* 页面切换 */
-.page-enter { animation: pageIn var(--dur-base) var(--ease-out) both; }
+.page-enter-next { animation: pageInNext var(--dur-base) var(--ease-out) both; }
+.page-enter-prev { animation: pageInPrev var(--dur-base) var(--ease-out) both; }
+@keyframes pageInNext { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+@keyframes pageInPrev { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* 引导条 */
