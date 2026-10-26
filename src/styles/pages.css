@@ -344,3 +344,10 @@
 
 /* 数据砖里的等级徽章去掉外框，避免像输入框 */
 .tile .grade { border-color: transparent !important; background: transparent !important; padding: 0 !important; }
+
+/* ===== 移动端工具栏不溢出 + 最小字号 10px ===== */
+@media (max-width: 760px) {
+  .pc-filters, .batch-bar { flex-wrap: wrap; row-gap: 6px; }
+  .pc-filters { overflow-x: auto; padding: 2px; }
+}
+.tile-claim-hint, .pc-daily, .pc-listed, .t0, .t1, .t2 { font-size: 10px !important; }
