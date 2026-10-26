@@ -407,3 +407,17 @@
 .home-net-grid b { font-size: var(--fs-xl); font-weight: 700; color: var(--tx-1); font-variant-numeric: tabular-nums; }
 .home-net-grid em { font-style: normal; font-size: var(--fs-2xs); color: var(--tx-3); }
 @media (max-width: 760px) { .home-net { grid-column: auto; } .home-net-grid { grid-template-columns: repeat(2,1fr); } }
+
+/* 今日行动主卡 */
+.act-card { display: flex; align-items: center; gap: 16px; padding: 18px 22px;
+  border-color: var(--line-gold); background: linear-gradient(100deg, rgba(255,217,61,.10), rgba(255,217,61,.02) 60%); }
+.act-ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: 0 0 auto;
+  background: rgba(255,217,61,.16); color: var(--gold); font-size: var(--fs-xl); font-weight: 800; }
+.act-body { flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.act-body b { font-size: var(--fs-xl); font-weight: 800; letter-spacing: -.01em; }
+.act-body span { font-size: var(--fs-sm); color: var(--tx-3); }
+.act-card .btn { flex: 0 0 auto; }
+@media (max-width: 760px) {
+  .act-card { flex-wrap: wrap; }
+  .act-card .btn { width: 100%; }
+}

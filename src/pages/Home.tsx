@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { useApp } from "../state/App";
-import { ADDRS, ABI } from "../lib/contracts";
+import { ADDRS, ABI, PART_NAMES } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
@@ -9,7 +9,7 @@ import { gradeNum } from "../lib/contracts";
 
 export function Home({ go }: { go: (r: string) => void }) {
   const { account, connect } = useApp();
-  const [d, setD] = useState<{ pcs: number; staked: number; hash: number; pending: number; ids: number[] } | null>(null);
+  const [d, setD] = useState<{ pcs: number; staked: number; hash: number; pending: number; ids: number[]; can: number; missing: number[] } | null>(null);
   const [net, setNet] = useState<{ shares: number; pool: number; perDay: number; supply: number; minted: number; cap: number } | null>(null);
 
   // 全网状态（不依赖钱包）
@@ -45,26 +45,46 @@ export function Home({ go }: { go: (r: string) => void }) {
         const mt = new Contract(ADDRS.mining, ABI.mining, readProvider);
         const fs = new Contract(ADDRS.feeSplit, ABI.feeSplit, readProvider);
         const [pcBal, stakedIds, pending] = await Promise.all([
-          ct.balanceOf(account),
-          mt.stakedPCsOf(account),
+          ct.balanceOf(account).catch(() => 0n),
+          mt.stakedPCsOf(account).catch(() => [] as bigint[]),
           fs.pending(account).catch(() => 0n),
         ]);
+        let can = 0;
+        let missing: number[] = [];
+        try {
+          const pt = new Contract(ADDRS.part, ABI.part, readProvider);
+          const ids24 = Array.from({ length: 24 }, (_, i) => i + 1);
+          const bals: bigint[] = await pt.balanceOfBatch(ids24.map(() => account), ids24);
+          const byType = Array.from({ length: 8 }, (_, i) => [0, 1, 2].reduce((a, tr) => a + Number(bals[tr * 8 + i]), 0));
+          can = Math.min(...byType);
+          missing = byType.map((v, i) => (v < 1 ? i : -1)).filter((i) => i >= 0);
+        } catch { /* 部件读取失败不影响其它指标 */ }
         let hash = 0;
-        for (const id of stakedIds as bigint[]) {
-          const info = await ct.getCircuitInfo(id);
-          hash += Number(info.hashRate);
+        for (const id of (stakedIds as bigint[]).slice(0, 30)) {
+          try { const info = await ct.getCircuitInfo(id); hash += Number(info.hashRate); } catch { /* skip */ }
         }
         if (!alive) return;
         setD({
           pcs: Number(pcBal), staked: stakedIds.length, hash,
           pending: Number(formatEther(pending)),
           ids: (stakedIds as bigint[]).map((x) => Number(x)).slice(0, 6),
+          can, missing,
         });
-      } catch { /* 静默 */ }
+      } catch (err) { console.warn("home data", err); }
     })();
     return () => { alive = false; };
   }, [account]);
 
+
+  const act = (() => {
+    if (!d) return { icon: "✦", title: "先抽第一件部件", sub: "0.001 OKB 一抽，8 类集齐可组装", cta: "去铸造", route: "mint" };
+    if (d.pending > 0) return { icon: "↓", title: `可领取 ${num(d.pending, 2)} TAPE`, sub: `${d.staked} 台机器在挖，越早领越早复投`, cta: "去领取", route: "stake" };
+    if (d.can >= 1) return { icon: "⚙", title: `够装 ${d.can} 台`, sub: "8 类部件已齐，去组装矿机", cta: "去组装", route: "asm" };
+    if (d.missing.length > 0 && d.missing.length <= 3)
+      return { icon: "＋", title: `还差 ${d.missing.map((i) => PART_NAMES[i]).join("、")}`, sub: `再抽 ${d.missing.length} 件就能装一台`, cta: "去抽部件", route: "mint" };
+    if (d.pcs > 0 && d.staked === 0) return { icon: "⚡", title: `${d.pcs} 台待上架`, sub: "上架后按算力开始挖矿", cta: "去质押", route: "stake" };
+    return { icon: "✦", title: "开始抽第一件部件", sub: "0.001 OKB 一抽，8 类集齐可组装", cta: "去铸造", route: "mint" };
+  })();
 
   return (
     <div className="home">
@@ -86,6 +106,17 @@ export function Home({ go }: { go: (r: string) => void }) {
         </div>
         <div className="home-hero-art"><RigArt hash={d?.hash ?? 0} grade={6} size={210} state={d && d.staked > 0 ? "mining" : "idle"} /></div>
       </div>
+
+      {account && (
+        <div className="card act-card">
+          <div className="act-ico">{act.icon}</div>
+          <div className="act-body">
+            <b>{act.title}</b>
+            <span>{act.sub}</span>
+          </div>
+          <button className="btn btn-primary" onClick={() => go(act.route)}>{act.cta}</button>
+        </div>
+      )}
 
       <div className="home-kpi">
         {[
