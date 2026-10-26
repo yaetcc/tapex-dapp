@@ -1,12 +1,15 @@
 .build-kpis { margin-top: 12px; }
-.build-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 360px); gap: 22px; align-items: start; margin-top: 16px; }
-.build-col { min-width: 0; }
+.build-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 360px); gap: 22px; align-items: stretch; margin-top: 16px; }
+.build-col { min-width: 0; display: flex; flex-direction: column; }
 @media (max-width: 1080px) { .build-grid { grid-template-columns: 1fr; gap: 16px; } }
 .build-side { position: sticky; top: 92px; }
 /* 移动端：两栏堆叠时不要拉伸出怪高度 */
-@media (max-width: 1080px) { .build-grid { align-items: start; } }
+@media (max-width: 1080px) {
+  .build-grid { align-items: start; }
+  .build-rows { flex: none; grid-auto-rows: auto; }
+}
 @media (max-width: 1080px) { .build-side { position: static; } }
-.build-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.build-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; flex: 1; grid-auto-rows: 1fr; }
 @media (max-width: 760px) { .build-rows { grid-template-columns: 1fr; } }
 .build-row {
   display: grid; grid-template-columns: 1fr; gap: 7px; align-items: center;
