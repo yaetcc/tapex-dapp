@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigSlots } from "../components/RigSlots";
+import { GradeBadge } from "../components/GradeBadge";
 import { PartIcon } from "../components/PartIcon";
 import { trackTx } from "../lib/tx";
 
@@ -106,7 +107,7 @@ export function Build() {
       <div className="tiles build-kpis">
             <div className="tile"><span>可组装</span><b>{can} <em>台</em></b></div>
             <div className="tile"><span>预计算力</span><b>{hash} <em>H</em></b></div>
-            <div className="tile"><span>预估等级</span><b>{GRADE(hash)}</b></div>
+            <div className="tile"><span>预估等级</span><b><GradeBadge hash={hash} size="md" /></b></div>
             <div className="tile"><span>组装费</span><b>{formatEther(fee || 0n)} <em>TAPE</em></b></div>
           </div>
 

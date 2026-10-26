@@ -17,7 +17,11 @@
 .pc-card.on { border-color: rgba(255, 217, 61, .45); box-shadow: inset 0 0 0 1px rgba(255, 217, 61, .12); }
 .pc-top { display: flex; align-items: center; gap: 8px; }
 .pc-top b { font-size: var(--fs-sm); }
-.grade { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; }
+.grade { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor;
+  line-height: 1.4; display: inline-flex; align-items: center; }
+.grade.md { font-size: 12px; padding: 3px 10px; }
+.grade-s { box-shadow: 0 0 12px rgba(255,213,77,.35); }
+.grade-c { opacity: .8; }
 .g3 { color: #7fe0d6 } .g4 { color: #00e5a0 } .g5 { color: #ffd54d }
 .pc-state { margin-left: auto; font-size: 10.5px; color: var(--tx-3); }
 .pc-hash { font-family: var(--mono); font-size: 18px; color: var(--gold); }
@@ -187,3 +191,12 @@
   border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
 .buy-actions { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .buy-actions .btn { height: 38px; padding: 0 16px; font-size: 12.5px; text-decoration: none; }
+
+/* 等级着色：卡片顶部一道色带 + 边框微染 */
+.pc-mini { position: relative; }
+.pc-mini::before { content: ""; position: absolute; left: 10px; right: 10px; top: 0; height: 2px;
+  border-radius: 0 0 2px 2px; background: var(--gc, transparent); opacity: .75; }
+.pc-mini[data-g="s"] { border-color: rgba(255,213,77,.45); box-shadow: inset 0 0 22px rgba(255,213,77,.07); }
+.pc-mini[data-g="a"] { border-color: rgba(0,229,160,.32); }
+.pc-mini[data-g="b"] { border-color: rgba(127,224,214,.26); }
+.pc-mini[data-g="c"] { border-color: rgba(255,255,255,.10); }

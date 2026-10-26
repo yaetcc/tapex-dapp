@@ -7,6 +7,7 @@ import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { PartIcon } from "../components/PartIcon";
 import { RigArt } from "../components/RigArt";
+import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { gradeOf } from "../lib/contracts";
 import { getHistory } from "../lib/tx";
 import { Num } from "../components/Num";
@@ -108,11 +109,13 @@ export function Assets({ go }: { go: (r: string) => void }) {
                   .slice(0, shown)
                   .map((p) => (
                     <div key={p.id} className={`pc-mini${p.staked ? " on" : ""}`}
+                      data-g={gradeOf(p.hash).toLowerCase()}
+                      style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}
                       onClick={() => setDetail({ kind: "pc", id: p.id })}>
                       <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={120} />
                       <div className="pc-mini-meta">
                         <b>#{p.id}</b>
-                        <span className={`grade g${p.grade}`}>{gradeOf(p.hash)}</span>
+                        <GradeBadge hash={p.hash} />
                         <em>{p.hash} H</em>
                       </div>
                     </div>

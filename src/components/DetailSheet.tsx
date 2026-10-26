@@ -4,7 +4,7 @@ import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
-import { gradeOf } from "../lib/contracts";
+import { GradeBadge } from "./GradeBadge";
 import { trackTx } from "../lib/tx";
 import { RigArt } from "./RigArt";
 import { PartIcon } from "./PartIcon";
@@ -126,7 +126,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
               <RigArt hash={info.hash} mining={info.staked} grade={info.grade} size={190} />
               <div className="sheet-kv">
                 <div><span>算力</span><b>{info.hash} H</b></div>
-                <div><span>等级</span><b>{gradeOf(info.hash)}</b></div>
+                <div><span>等级</span><b><GradeBadge hash={info.hash} size="md" /></b></div>
                 <div><span>档位</span><b>旗舰×{info.tiers.filter((x: number) => x >= 2).length} · Pro×{info.tiers.filter((x: number) => x === 1).length}</b></div>
                 <div><span>状态</span><b>{info.staked ? "质押中" : info.listed ? "挂单中" : "待机"}</b></div>
               </div>

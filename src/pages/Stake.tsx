@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, gradeOf } from "../lib/contracts";
+import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
@@ -124,15 +125,16 @@ export function Stake() {
       ) : (
         <div className="farm">
           {pcs.map((p) => (
-            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`}
-              onClick={() => setDetail({ kind: "pc", id: p.id })} style={{ cursor: "pointer" }}>
+            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
+              onClick={() => setDetail({ kind: "pc", id: p.id })}
+              style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
               <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
               <label className="farm-check" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>
               <div className="farm-meta">
                 <b>PC #{p.id}</b>
-                <span className={`grade g${p.grade}`}>{gradeOf(p.hash)}</span>
+                <GradeBadge hash={p.hash} />
                 <span>{p.hash} H</span>
               </div>
               <div className="farm-actions">

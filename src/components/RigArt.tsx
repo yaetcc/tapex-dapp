@@ -13,7 +13,8 @@ export function RigArt({
     return () => clearInterval(t);
   }, [mining]);
   const speed = base * jit;
-  const glow = ["#7FE0D6", "#00E5A0", "#FFD54D"][Math.max(0, Math.min(2, grade - 3))] ?? "#FFD54D";
+  const GCOLOR: Record<number, string> = { 3: "#9A8E86", 4: "#7FE0D6", 5: "#00E5A0", 6: "#FFD54D" };
+  const glow = GCOLOR[grade] ?? "#7FE0D6";
   return (
     <div className={`rig${mining ? " on" : ""}`} style={{ width: size, ["--spin" as string]: `${speed}s`, ["--glow" as string]: glow }}>
       <svg viewBox="0 0 220 260" width="100%" height="100%" fill="none">
