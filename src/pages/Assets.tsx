@@ -171,9 +171,9 @@ export function Assets({ go }: { go: (r: string) => void }) {
                   <span style={{ marginBottom: 1 }}><PartIcon type={i} muted={!tot} size={22} /></span>
                   <em>{name}</em><b>{tot}</b>
                   <div className="rack-tiers">
-                    {s > 0 && <i className="t0">标 {s}</i>}
-                    {p > 0 && <i className="t1">Pro {p}</i>}
-                    {f > 0 && <i className="t2">旗 {f}</i>}
+                    <i className={`t0${s ? "" : " zero"}`}>标 {s}</i>
+                    <i className={`t1${p ? "" : " zero"}`}>Pro {p}</i>
+                    <i className={`t2${f ? "" : " zero"}`}>旗 {f}</i>
                   </div>
                 </div>
               );
