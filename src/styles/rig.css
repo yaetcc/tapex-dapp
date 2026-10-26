@@ -140,3 +140,40 @@
 
 .rig-badge.mini { padding: 3px 6px; border-radius: 999px; }
 .rig-badge.mini .dot { width: 5px; height: 5px; }
+
+/* ===== 矿场视图（机架） ===== */
+.view-switch { display: inline-flex; gap: 2px; padding: 2px; border-radius: 8px; border: 1px solid var(--line); }
+.view-switch button { width: 26px; height: 22px; border: none; background: transparent; color: var(--tx-3);
+  font-size: 11px; border-radius: 6px; cursor: pointer; }
+.view-switch button.on { background: rgba(255,217,61,.16); color: var(--gold); }
+
+.rack-view { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 14px 6px; margin-top: 14px; padding: 20px 28px 22px;
+  border-radius: 16px; border: 1px solid rgba(255,255,255,.07);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 148px, rgba(255,255,255,.035) 148px 149px),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.005));
+}
+.rack-rail { position: absolute; top: 8px; bottom: 8px; width: 8px; border-radius: 4px;
+  background: repeating-linear-gradient(180deg, #2a211d 0 6px, transparent 6px 14px), #1a1411;
+  border: 1px solid #33261f; }
+.rack-rail.left { left: 6px; }
+.rack-rail.right { right: 6px; }
+.rack-unit { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+  padding: 4px 2px 2px; border-radius: 10px; transition: background .18s, transform .18s; }
+.rack-unit:hover { background: rgba(255,255,255,.04); transform: translateY(-1px); }
+.rack-unit svg { width: 100%; height: auto; }
+.rack-label { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--tx-3); }
+.rack-label b { color: var(--tx-2); font-weight: 600; }
+.rack-label i { width: 5px; height: 5px; border-radius: 50%; background: #6b5a50; }
+.rack-label i.live { background: var(--ac); box-shadow: 0 0 6px var(--ac); }
+.rack-label i.list { background: var(--gold); }
+@media (max-width: 640px) {
+  .rack-view { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 14px 18px 18px; }
+}
+
+/* 矿场单元：限制机箱高度，隐藏徽章 */
+.rack-unit .rig { width: 100%; }
+.rack-unit .rig svg { max-height: 132px; }
+.rack-unit .rig-badge { display: none; }
+.rack-unit .rig-heat { display: none; }

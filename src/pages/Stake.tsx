@@ -34,6 +34,8 @@ export function Stake() {
   const [gain, setGain] = useState<string | null>(null);
   const [sweepId, setSweepId] = useState<number | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
+  const [view, setView] = useState<"card" | "farm">(() => (localStorage.getItem("stake_view") as "card" | "farm") || "card");
+  const switchView = (v: "card" | "farm") => { setView(v); localStorage.setItem("stake_view", v); };
   const touchRef = useRef<{ id: number; x: number } | null>(null);
   const [filter, setFilter] = useState<"all" | "staked" | "idle" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
@@ -223,6 +225,10 @@ export function Stake() {
             <button className="pc-chip" onClick={() => setSort(sort === "hash" ? "id" : "hash")}>
               {sort === "hash" ? "算力↓" : "编号↑"}
             </button>
+            <span className="view-switch">
+              <button className={view === "card" ? "on" : ""} onClick={() => switchView("card")} title="卡片视图">▦</button>
+              <button className={view === "farm" ? "on" : ""} onClick={() => switchView("farm")} title="矿场视图">▤</button>
+            </span>
           </div>
           <label className="chk">
             <input type="checkbox" checked={allSelected} onChange={(e) => {
@@ -255,9 +261,11 @@ export function Stake() {
           </div>
         </div>
       ) : (
-        <div className="farm">
+        <div className={view === "farm" ? "rack-view" : "farm"}>
+          {view === "farm" && <div className="rack-rail left" aria-hidden />}
+          {view === "farm" && <div className="rack-rail right" aria-hidden />}
           {visible.slice(0, shown).map((p) => (
-            <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}${sweepId === p.id ? " sweep" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
+            <div key={p.id} className={`${view === "farm" ? "rack-unit" : "farm-cell"}${p.staked ? " on" : ""}${sweepId === p.id ? " sweep" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
               onTouchStart={(e) => { touchRef.current = { id: p.id, x: e.touches[0].clientX }; }}
               onTouchEnd={(e) => {
                 const t = touchRef.current;
@@ -280,7 +288,7 @@ export function Stake() {
               <label className="farm-check" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>
-              <div className="farm-meta">
+              {view === "card" && <div className="farm-meta">
                 <b
                   title="点击重命名"
                   style={{ cursor: "text" }}
@@ -294,8 +302,15 @@ export function Stake() {
                 <span>{p.hash} H</span>
                 {p.staked && <span className="pc-daily">+{num(dailyOf(p.hash), 2)}/天</span>}
                 {p.listed && <span className="pc-listed">挂单中</span>}
-              </div>
-              <div className="farm-actions">
+              </div>}
+              {view === "farm" && (
+                <div className="rack-label">
+                  <b>#{p.id}</b>
+                  <i className={p.staked ? "live" : p.listed ? "list" : ""} />
+                  <span>{p.hash}H</span>
+                </div>
+              )}
+              {view === "card" && <div className="farm-actions">
                 {p.listed ? (
                   <button className="btn btn-ghost" onClick={(e) => { e.stopPropagation(); setDetail({ kind: "pc", id: p.id }); }}>
                     挂单中 · 去撤单
@@ -306,7 +321,7 @@ export function Stake() {
                     {busy === p.id ? "…" : p.staked ? "解押" : "质押挖矿"}
                   </button>
                 )}
-              </div>
+              </div>}
             </div>
           ))}
           {visible.length > shown && (
