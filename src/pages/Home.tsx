@@ -82,7 +82,7 @@ export function Home({ go }: { go: (r: string) => void }) {
         if (!alive) return;
         setD({ pcs: Number(pcBal), staked: (stakedIds as bigint[]).length, hash,
           pending: Number(formatEther(pending)), ids: (stakedIds as bigint[]).map(Number).slice(0, 8), can, missing });
-      } catch { /* 静默 */ }
+      } catch (e) { console.warn("[home] 读取矿场数据失败", e); }
     })();
     return () => { alive = false; };
   }, [account]);
