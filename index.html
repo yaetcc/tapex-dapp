@@ -4768,6 +4768,28 @@ main .card:nth-child(3){
   margin-top:6px;
 }
 .mint-cta{ width:100%; margin:10px 0 4px; font-size:15px; letter-spacing:.5px; }
+.asm-bench{ background:linear-gradient(180deg,rgba(42,30,27,.5),rgba(23,18,16,.4)); border:2px solid rgba(255,217,61,.22); border-radius:16px; padding:12px 14px 10px; margin:6px 0 12px; }
+.ab-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 10px; margin-bottom:10px; }
+.ab-head b{ white-space:nowrap; }
+.ab-head b{ font-size:13px; color:var(--gold); letter-spacing:1px; }
+.ab-sub{ font-size:11px; color:var(--tx3); }
+.ab-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+@media(max-width:760px){ .ab-grid{ grid-template-columns:1fr; } }
+.ab-slot{ display:grid; grid-template-columns:26px 1fr; grid-template-areas:"ic nm" "ic own" "tp tp"; gap:2px 8px; align-items:center; padding:8px 10px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.02); }
+.ab-slot.has{ border-color:rgba(0,229,160,.35); }
+.ab-slot>svg{ grid-area:ic; width:26px; height:26px; color:var(--tx2); }
+.ab-slot.has>svg{ color:var(--ac); }
+.ab-slot>b{ grid-area:nm; font-size:12.5px; color:var(--tx); font-weight:700; }
+.ab-own{ grid-area:own; font-size:10.5px; color:var(--tx3); }
+.ab-slot .tp-btns{ grid-area:tp; display:flex; gap:5px; margin-top:5px; }
+.ab-foot{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
+.ab-foot .asm-batch{ display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--tx2); }
+.ab-foot .asm-batch input{ width:54px; }
+.ab-foot #assembleBtn{ flex:0 0 auto; height:30px; padding:0 18px; font-size:12.5px; border-radius:10px; }
+.ab-foot #asmBatchBtn{ height:30px; padding:0 14px; font-size:12px; border-radius:10px; }
+.ab-foot #asmCount{ height:30px; border-radius:8px; }
+.ab-foot .asm-can{ margin-bottom:2px; }
+.ab-foot .asm-can{ font-size:11px; color:var(--tx2); flex:1 1 100%; }
 .mint-qty #mintAmt{
   flex:1;
   height:24px;
@@ -4929,9 +4951,7 @@ main .card:nth-child(3){
 #benchBatch:hover{
   filter:brightness(1.08);
 }
-#assembleBtn,.asm-batch{
-  display:none!important;
-}
+/* 旧版把这一行隐藏（bench 自带按钮）；装配台合并后恢复显示 */
 #langBtn{
   height:22px;
   padding:0 12px;
@@ -6275,12 +6295,15 @@ body::before{ animation:none !important; }
       <div class="kicker" data-i18n="Step 2 · 组装电脑">Step 2 · 组装电脑</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5l16 14V5"/></svg><span data-i18n="k.asmH">组装流片：8 类部件 → 整机 PC NFT</span></h3>
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。</p>
-      <div class="parts-grid" id="partsGrid"></div>
-      <div class="tier-pick" id="tierPick">
-        <div class="tp-head" data-i18n="asm.tierPick">组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）</div>
-        <div class="tp-grid" id="tpGrid"></div>
+      <div class="asm-bench" id="asmBench">
+        <div class="ab-head"><b data-i18n="ab.title">装配台</b><span class="ab-sub" data-i18n="ab.sub">8 类各 1 件 · 点档位切换 · 库存不足的档位不可选</span></div>
+        <div class="ab-grid" id="abGrid"></div>
+        <div class="ab-foot">
+          <span id="asmCanTip" class="asm-can"></span>
+          <span class="asm-batch"><input type="number" id="asmCount" min="1" max="10" value="1">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button></span>
+          <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button>
+        </div>
       </div>
-      <div class="bench" id="bench"></div>
       <div class="msg" id="toMsg"></div>
       <div class="foundry" id="foundry">
         <div class="f-row" id="fRow">
@@ -6289,7 +6312,6 @@ body::before{ animation:none !important; }
         <div class="f-plate" id="fPlate"><span class="fph" id="fPlateHint" data-i18n="8 类部件 → 组装台">8 类部件 → 组装台</span><b id="fPlateChip" style="display:none"></b></div>
       </div>
       <div class="burst" id="burst"><div class="bx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="25" stroke-width="2.5"/><circle cx="32" cy="32" r="9" fill="currentColor"/><path d="M32 7v10M32 47v10M7 32h10M47 32h10" stroke-width="2" opacity=".7"/></svg><span data-i18n="PC NFT 组装完成">PC NFT 组装完成</span></div></div>
-      <button class="action-btn" id="assembleBtn" data-i18n="一键组装电脑">一键组装电脑</button><span class="asm-batch"><input type="number" id="asmCount" min="1" max="10" value="10">台<button class="action-btn sec" id="asmBatchBtn" data-i18n="act.asmBatch">批量组装</button><span id="asmCanTip" class="asm-can"></span></span>
       <p class="hint" data-i18n="组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。">组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。</p>
     </div>
 
@@ -6626,6 +6648,8 @@ var I18N = {
   "mine.copyTip": {zh:"点击复制合约地址", en:"Click to copy contract address"},
   "rig.stake": {zh:"质押挖矿", en:"Stake & Mine"},
   "d.perDay": {zh:" TAPE/天", en:" TAPE/day"},
+  "ab.title": {zh:"装配台", en:"Assembly bench"},
+  "ab.sub": {zh:"8 类各 1 件 · 点档位切换 · 库存不足的档位不可选", en:"1 of each of 8 types · tap a tier · empty tiers disabled"},
   "asm.tierPick": {zh:"组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）", en:"Tier picker (1 of each of 8 types · custom combo · click to switch)"},
   "组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。": {zh:"组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。", en:"Each build burns 1 part of every type at the chosen tier + 100 TAPE fee; max builds = min stock across the 8 types. Batch builds sign once (max 10 per tx)."},
   "wp.pc": {zh:"PC 整机", en:"PC Rigs"},
@@ -7703,25 +7727,8 @@ function renderMine(){
 }
 
 function renderPartsGrid(parts){
-  var g = $("partsGrid"); if (!g) return;
-  var names = PART_NAMES, ready = parts.every(function(v){ return v >= 1; });
-  var pt = window.__partsTier || null;
-  g.innerHTML = names.map(function(n, i){
-    var ok = parts[i] >= 1;
-    var tierTxt = "";
-    if (pt) {
-      var s = pt[i], p = pt[i + 8], f = pt[i + 16];
-      tierTxt = '<span class="ptier">' +
-        (s > 0 ? '<i class="t0">标×' + s + '</i>' : '') +
-        (p > 0 ? '<i class="t1">Pro×' + p + '</i>' : '') +
-        (f > 0 ? '<i class="t2">旗舰×' + f + '</i>' : '') +
-        '</span>';
-    }
-    return '<div class="part-cell' + (ok ? " ok" : "") + '" data-t="' + i + '">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
-      '<b>' + n + '</b><span>' + (ok ? t("a.has") + parts[i] : t("a.missing") + parts[i]) + '</span>' +
-      tierTxt + '</div>';
-  }).join("");
+  // 装配台已合并原「库存卡 + 档位表 + 机箱」三块：这里只负责把库存喂给渲染器
+  var ready = parts.every(function(v){ return v >= 1; });
   var btn = $("assembleBtn");
   if (btn) btn.classList.toggle("ready", ready);
   renderTierPick();
@@ -7733,22 +7740,29 @@ var asmSel = {};              // type -> 1 已选装
 var asmBusy = false;
 var __tierInit = false;
 function renderTierPick(){
-  var tp = $("tpGrid"); if (!tp) return;
+  var host = $("abGrid") || $("tpGrid"); if (!host) return;
   if (!window.__asmTiers) window.__asmTiers = [0,0,0,0,0,0,0,0];
   var pt = window.__partsTier || null;
   var sel = window.__asmTiers;
-  tp.innerHTML = PART_NAMES.map(function(nm, i){
+  var isBench = host.id === "abGrid";
+  host.innerHTML = PART_NAMES.map(function(nm, i){
     var btns = [0,1,2].map(function(tr){
       var cnt = pt ? (pt[i + tr*8] || 0) : 0;
       var on = sel[i] === tr;
-      return '<button class="tp-btn' + (on ? " on" : "") + (cnt < 1 ? " empty" : "") + '" data-i="' + i + '" data-tr="' + tr + '" title="' + nm + "·" + (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰") + ' 库存 ' + cnt + '">' +
-        (tr === 0 ? "标准" : tr === 1 ? "Pro" : "旗舰") + '<i>' + cnt + '</i></button>';
+      var label = tr === 0 ? t("p.std") : tr === 1 ? "Pro" : t("p.flag");
+      return '<button class="tp-btn' + (on ? " on" : "") + (cnt < 1 ? " empty" : "") + '" data-i="' + i + '" data-tr="' + tr +
+        '" title="' + nm + ' · ' + label + ' 库存 ' + cnt + '">' + label + '<i>' + cnt + '</i></button>';
     }).join("");
-    return '<div class="tp-row"><b>' + nm + '</b><span class="tp-btns">' + btns + '</span></div>';
+    if (!isBench) return '<div class="tp-row"><b>' + nm + '</b><span class="tp-btns">' + btns + '</span></div>';
+    var own = pt ? ((pt[i] || 0) + (pt[i + 8] || 0) + (pt[i + 16] || 0)) : 0;
+    return '<div class="ab-slot' + (own > 0 ? " has" : "") + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' + PART_ICON[i] + '</svg>' +
+      '<b>' + nm + '</b><span class="ab-own">' + t("a.has") + own + '</span>' +
+      '<span class="tp-btns">' + btns + '</span></div>';
   }).join("");
   if (!__tierInit) {
     __tierInit = true;
-    tp.addEventListener("click", function(e){
+    host.addEventListener("click", function(e){
       var btn = e.target.closest(".tp-btn"); if (!btn) return;
       if (btn.classList.contains("empty")) return;
       window.__asmTiers[Number(btn.dataset.i)] = Number(btn.dataset.tr);
