@@ -138,13 +138,13 @@ export function Home({ go }: { go: (r: string) => void }) {
       <div className="home-kpi">
         <div className="card home-tile main">
           <span>待领取</span>
-          <b data-num>{d ? <Count to={d.pending} /> : "—"}</b>
-          <em>TAPE · {d && d.staked > 0 ? `${d.staked} 台在挖` : "未上架"}</em>
+          <b data-num>{d ? <Count to={d.pending} /> : "0.00"}</b>
+          <em>TAPE · {!account ? "连接钱包后显示" : d && d.staked > 0 ? `${d.staked} 台在挖` : "未上架"}</em>
           <i className="spark" aria-hidden><b /><b /><b /><b /><b /><b /><b /></i>
         </div>
-        <div className="card home-tile"><span>算力</span><b data-num>{d ? <Count to={d.hash} digits={0} /> : "—"}</b><em>H</em></div>
-        <div className="card home-tile"><span>机器</span><b data-num>{d ? <Count to={d.pcs} digits={0} /> : "—"}</b><em>台（{d?.staked ?? 0} 挖矿）</em></div>
-        <div className="card home-tile"><span>每台日均</span><b data-num>{d && d.staked > 0 ? <Count to={d.pending / d.staked} /> : "—"}</b><em>TAPE</em></div>
+        <div className="card home-tile"><span>算力</span><b data-num>{d ? <Count to={d.hash} digits={0} /> : "0"}</b><em>H{!account ? " · 连接后显示" : ""}</em></div>
+        <div className="card home-tile"><span>机器</span><b data-num>{d ? <Count to={d.pcs} digits={0} /> : "0"}</b><em>台（{d?.staked ?? 0} 挖矿）</em></div>
+        <div className="card home-tile"><span>每台日均</span><b data-num>{d && d.staked > 0 ? <Count to={d.pending / d.staked} /> : "0.00"}</b><em>TAPE</em></div>
       </div>
 
       <div className="home-grid">
