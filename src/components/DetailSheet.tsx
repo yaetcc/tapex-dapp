@@ -6,6 +6,7 @@ import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { GradeBadge, GRADE_COLOR } from "./GradeBadge";
 import { gradeOf } from "../lib/contracts";
+import { getActions } from "../lib/history";
 import { trackTx } from "../lib/tx";
 import { RigArt } from "./RigArt";
 import { PartIcon } from "./PartIcon";
@@ -49,6 +50,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           kind: "pc",
           hash: Number(g.hashRate), grade: Number(g.grade), tiers: Array.from(g.tiers as bigint[]).map(Number),
           owner, staked, listed, price: mine ? mine.price : null, orderId: mine ? mine.orderId : 0,
+          factoryAt: Number(g.createdAt) * 1000,
           owns: account?.toLowerCase() === String(owner).toLowerCase(),
         });
       } else {
@@ -164,6 +166,33 @@ export function DetailSheet({ detail, onClose, onChanged }: {
               </div>
             </div>
 
+            <div className="sheet-plate">
+              <span className="plate-label">出厂铭牌</span>
+              <div className="plate-body">
+                <b>#{detail.id}</b>
+                <i>{gradeOf(info.hash)} 级</i>
+                <i>{info.hash} H</i>
+                <i>{new Date(info.factoryAt).toLocaleDateString("zh-CN")} 出厂</i>
+              </div>
+            </div>
+
+            {(() => {
+              const logs = getActions(detail.id);
+              if (!logs.length) return null;
+              return (
+                <div className="sheet-timeline">
+                  <span className="plate-label">最近操作</span>
+                  {logs.map((l, i) => (
+                    <div key={i} className="tl-item">
+                      <i />
+                      <b>{l.action}</b>
+                      <span>{new Date(l.ts).toLocaleString("zh-CN", { hour12: false }).slice(5, 16)}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
             <div className="sheet-foot">
               {!info.owns ? (
                 <p className="hint" style={{ margin: 0 }}>这台矿机不在你名下，仅可查看。</p>
@@ -207,6 +236,33 @@ export function DetailSheet({ detail, onClose, onChanged }: {
                 <div className="sheet-stat"><span>档位</span><b>{TIERS[partTier]}</b></div>
               </div>
             </div>
+
+            <div className="sheet-plate">
+              <span className="plate-label">出厂铭牌</span>
+              <div className="plate-body">
+                <b>#{detail.id}</b>
+                <i>{gradeOf(info.hash)} 级</i>
+                <i>{info.hash} H</i>
+                <i>{new Date(info.factoryAt).toLocaleDateString("zh-CN")} 出厂</i>
+              </div>
+            </div>
+
+            {(() => {
+              const logs = getActions(detail.id);
+              if (!logs.length) return null;
+              return (
+                <div className="sheet-timeline">
+                  <span className="plate-label">最近操作</span>
+                  {logs.map((l, i) => (
+                    <div key={i} className="tl-item">
+                      <i />
+                      <b>{l.action}</b>
+                      <span>{new Date(l.ts).toLocaleString("zh-CN", { hour12: false }).slice(5, 16)}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
 
             <div className="sheet-foot">
               {info.bal < 1 && !info.mine.length ? (

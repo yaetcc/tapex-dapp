@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
@@ -6,7 +6,9 @@ import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigSlots } from "../components/RigSlots";
 import { GradeBadge } from "../components/GradeBadge";
+import { RigArt } from "../components/RigArt";
 import { PartIcon } from "../components/PartIcon";
+import { logAction } from "../lib/history";
 import { trackTx } from "../lib/tx";
 
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -28,6 +30,9 @@ export function Build() {
   const [msg, setMsg] = useState<{ k: "ok" | "err" | "info"; s: string } | null>(null);
   const [bal, setBal] = useState<bigint>(0n);
   const [oneByOne, setOneByOne] = useState(false);   // 逐台发送：钱包预览能算准
+  const [fly, setFly] = useState<{ type: number; tier: number; x: number; y: number; key: number } | null>(null);
+  const [born, setBorn] = useState<{ id: number; hash: number } | null>(null);
+  const rigRef = useRef<HTMLDivElement>(null);
 
   const loadCounts = useCallback(async () => {
     if (!account) return setCounts([]);
@@ -70,9 +75,17 @@ export function Build() {
   const shortTape = can > 0 && bal < needWei;
   const MAX_PER_TX = 10;
 
-  const pick = (i: number, tr: number) => {
+  const pick = (i: number, tr: number, ev?: React.MouseEvent) => {
     if (stock(i, tr) < 1) return;
     setTiers((s) => s.map((v, idx) => (idx === i ? tr : v)));
+    if (ev) {
+      const rect = rigRef.current?.getBoundingClientRect();
+      const tx = rect ? rect.left + rect.width / 2 : ev.clientX;
+      const ty = rect ? rect.top + rect.height / 2 : ev.clientY;
+      setFly({ type: i, tier: tr, x: ev.clientX, y: ev.clientY, key: Date.now() });
+      window.setTimeout(() => setFly(null), 620);
+      void tx; void ty;
+    }
   };
 
   const doAssemble = async (units: number) => {
@@ -107,6 +120,14 @@ export function Build() {
       }
       setMsg({ k: "ok", s: `组装完成 ${units} 台` });
       toast(`组装完成 ${units} 台`, "ok");
+      try {
+        const circ2 = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], signer);
+        const ids = (await circ2.pcsOfOwner(account)) as bigint[];
+        const newest = Number(ids[ids.length - 1]);
+        const info = await (circ2.getCircuitInfo(newest) as Promise<{ hashRate: bigint }>);
+        setBorn({ id: newest, hash: Number(info.hashRate) });
+        logAction(newest, "组装出厂");
+      } catch {}
       await loadCounts();
     } catch (e) {
       setMsg({ k: "err", s: (e as Error).message.slice(0, 90) });
@@ -148,7 +169,7 @@ export function Build() {
                       <button key={tr} disabled={c < 1}
                         className={`tier-chip${on ? " on" : ""}${c < 1 ? " empty" : ""}`}
                         style={on ? { borderColor: TIER_COLOR[tr], color: TIER_COLOR[tr] } : undefined}
-                        onClick={() => pick(i, tr)}>
+                        onClick={(e) => pick(i, tr, e)}>
                         {tr === 0 ? TIERS[0] : tr === 1 ? "Pro" : TIERS[2]}
                         <i>{c}</i>
                       </button>
@@ -161,7 +182,16 @@ export function Build() {
         </div>
 
         <aside className="build-side">
-          <RigSlots tiers={tiers} counts={counts} size={220} />
+          <div ref={rigRef} className="rig-wrap">
+            <RigSlots tiers={tiers} counts={counts} size={220} />
+            {fly && (
+              <span key={fly.key} className="fly-part"
+                style={{ left: fly.x, top: fly.y, ["--tx" as string]: `${(rigRef.current?.getBoundingClientRect().left ?? 0) + (rigRef.current?.getBoundingClientRect().width ?? 0) / 2 - fly.x}px`,
+                  ["--ty" as string]: `${(rigRef.current?.getBoundingClientRect().top ?? 0) + (rigRef.current?.getBoundingClientRect().height ?? 0) / 2 - fly.y}px` }}>
+                <PartIcon type={fly.type} tier={fly.tier} size={26} />
+              </span>
+            )}
+          </div>
 
           <div className="build-qty">
             <span className="hint">组装台数</span>
@@ -205,6 +235,17 @@ export function Build() {
           组装消耗所选档位每类 1 件；批量需一次签名（单笔上限 10 台）。
         </p>
       </div>
+      {born && (
+        <div className="born-mask" onClick={() => setBorn(null)}>
+          <div className="born-card">
+            <span className="born-badge">出厂</span>
+            <div className="born-rig"><RigArt hash={born.hash} mining grade={born.hash >= 240 ? 6 : born.hash >= 160 ? 5 : born.hash >= 80 ? 4 : 3} size={180} /></div>
+            <b>PC #{born.id}</b>
+            <p>{born.hash} H · {GRADE(born.hash)} 级</p>
+            <span className="born-hint">点击任意处关闭</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

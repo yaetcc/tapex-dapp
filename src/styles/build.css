@@ -66,3 +66,25 @@
 .build-mode { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--tx-2); cursor: pointer; margin-bottom: 6px; }
 .build-mode input { accent-color: #00e5a0; }
 .build-note { margin: 0 0 8px; font-size: 10.5px; line-height: 1.6; color: var(--tx-3); }
+
+/* 部件飞入 */
+.rig-wrap { position: relative; }
+.fly-part { position: fixed; z-index: 120; pointer-events: none;
+  animation: flyIn .6s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes flyIn {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(.35); opacity: 0; }
+}
+/* 出厂开机 */
+.born-mask { position: fixed; inset: 0; z-index: 130; display: grid; place-items: center; cursor: pointer;
+  background: radial-gradient(60% 50% at 50% 45%, rgba(5,8,15,.7), rgba(5,8,15,.92)); animation: maskIn .2s ease; }
+.born-card { display: grid; justify-items: center; gap: 6px; padding: 22px 26px; border-radius: 18px;
+  border: 1px solid rgba(255,217,61,.4); background: linear-gradient(180deg,#241a16,#15100e);
+  box-shadow: 0 24px 60px rgba(0,0,0,.6), inset 0 0 40px rgba(255,217,61,.06);
+  animation: bornIn .5s cubic-bezier(.22,1,.36,1); }
+@keyframes bornIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+.born-badge { font-size: 9.5px; letter-spacing: .24em; color: #241505; background: var(--grad-gold);
+  padding: 2px 10px; border-radius: 999px; }
+.born-card b { font-family: var(--mono); font-size: 18px; }
+.born-card p { margin: 0; font-size: 12px; color: var(--tx-3); }
+.born-hint { font-size: 10.5px; color: var(--tx-3); opacity: .7; }

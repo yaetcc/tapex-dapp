@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, gradeOf } from "../lib/contracts";
 import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
@@ -6,6 +6,8 @@ import { readProvider } from "../lib/wallet";
 import { loadCache, putCache } from "../lib/pcCache";
 import { ScanLink } from "../components/ScanLink";
 import { getNames, setName } from "../lib/names";
+import { logAction } from "../lib/history";
+import { FloatGain } from "../components/FloatGain";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
@@ -29,6 +31,8 @@ export function Stake() {
   const [maxBatch, setMaxBatch] = useState(10);
   const [net, setNet] = useState<{ shares: number; perDay: number }>({ shares: 0, perDay: 0 });
   const [names, setNamesState] = useState<Record<string, string>>(getNames());
+  const [gain, setGain] = useState<string | null>(null);
+  const touchRef = useRef<{ id: number; x: number } | null>(null);
   const [filter, setFilter] = useState<"all" | "staked" | "idle" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
   const [shown, setShown] = useState(8);
@@ -146,6 +150,8 @@ export function Stake() {
         });
       }
       toast(`已领取 ${num(Number(formatEther(earned)), 4)} TAPE`, "ok");
+      setGain(`${num(Number(formatEther(earned)), 4)} TAPE`);
+      ids.slice(0, 3).forEach((id) => logAction(id, "领取收益"));
       await load();
     } catch (e) { toast((e as Error).message.slice(0, 90), "err"); }
     finally { setBusy(0); }
@@ -154,6 +160,11 @@ export function Stake() {
   const act = async (kind: "stake" | "unstake" | "claim", id?: number) => {
     if (!signer || !account) return toast(t("err.noWallet"), "err");
     setBusy(id ?? -1);
+    const snapshot = pcs;
+    if (kind !== "claim" && id) {
+      const next = kind === "stake";
+      setPcs((prev) => prev.map((x) => (x.id === id ? { ...x, staked: next } : x)));  // 乐观更新
+    }
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
       await trackTx(kind === "claim" ? "领取" : kind === "stake" ? `质押 PC #${id}` : `解押 PC #${id}`, async () => {
@@ -163,9 +174,12 @@ export function Stake() {
         await tx.wait();
       });
       toast(kind === "claim" ? "领取成功" : kind === "stake" ? "质押成功" : "已解押", "ok");
+      if (kind === "claim") setGain(`${num(Number(formatEther(earned)), 4)} TAPE`);
+      if (id) logAction(id, kind === "claim" ? "领取收益" : kind === "stake" ? "质押" : "解押");
       await load();
     } catch (e) {
       toast((e as Error).message.slice(0, 90), "err");
+      setPcs(snapshot);                        // 失败回滚
     } finally { setBusy(0); }
   };
 
@@ -241,6 +255,16 @@ export function Stake() {
         <div className="farm">
           {visible.slice(0, shown).map((p) => (
             <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
+              onTouchStart={(e) => { touchRef.current = { id: p.id, x: e.touches[0].clientX }; }}
+              onTouchEnd={(e) => {
+                const t = touchRef.current;
+                if (!t || t.id !== p.id) return;
+                const dx = e.changedTouches[0].clientX - t.x;
+                touchRef.current = null;
+                if (Math.abs(dx) < 70 || busy !== 0 || p.listed) return;
+                if (dx > 0 && !p.staked) act("stake", p.id);
+                if (dx < 0 && p.staked) act("unstake", p.id);
+              }}
               onClick={() => setDetail({ kind: "pc", id: p.id })}
               style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
               <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={200} />
@@ -285,6 +309,7 @@ export function Stake() {
           )}
         </div>
       )}
+      {gain && <FloatGain text={gain} onDone={() => setGain(null)} />}
       <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />
     </div>
   );
