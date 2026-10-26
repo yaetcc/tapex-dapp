@@ -11,8 +11,8 @@ export function Nav({ route, go }: { route: string; go: (r: string) => void }) {
   return (
     <header className="topbar">
       <div className="brand">
-        <img src="/logo.svg" alt="TapeX" className="logomark" />
-        TapeX
+        <img src="/logo.svg" alt="TAPEX" className="logomark" />
+        TAPEX
         <span className="chip">X Layer</span>
       </div>
       <nav className="nav">
