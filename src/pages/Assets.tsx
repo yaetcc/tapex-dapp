@@ -6,6 +6,8 @@ import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { PartIcon } from "../components/PartIcon";
+import { RigArt } from "../components/RigArt";
+import { gradeOf } from "../lib/contracts";
 import { getHistory } from "../lib/tx";
 import { Num } from "../components/Num";
 
@@ -20,6 +22,11 @@ export function Assets({ go }: { go: (r: string) => void }) {
   const [counts, setCounts] = useState<number[]>([]);
   const [pending, setPending] = useState<bigint>(0n);
   const [pcs, setPcs] = useState<number>(0);
+  const [pcList, setPcList] = useState<{ id: number; hash: number; grade: number; staked: boolean }[]>([]);
+  const [pcLoading, setPcLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "idle" | "staked">("all");
+  const [sort, setSort] = useState<"hash" | "id">("hash");
+  const [shown, setShown] = useState(8);
   const [detail, setDetail] = useState<Detail>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +41,21 @@ export function Assets({ go }: { go: (r: string) => void }) {
         circC.pcsOfOwner(account) as Promise<bigint[]>,
       ]);
       setTape(bal); setCounts(parts.map(Number)); setPending(p); setPcs(pcList.length);
-    })().catch(() => {}).finally(() => setLoading(false));
+      if (pcList.length) {
+        const circ = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
+        const mine = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
+        const stakedIds = new Set((await mine.stakedPCsOf(account)).map(Number));
+        const out: { id: number; hash: number; grade: number; staked: boolean }[] = [];
+        for (let i = 0; i < pcList.length; i += 6) {           // 每批 6 个，降低 RPC 并发
+          const chunk = pcList.slice(i, i + 6);
+          const infos = await Promise.all(chunk.map((id) => circ.getCircuitInfo(id) as Promise<{ hashRate: bigint; grade: bigint }>));
+          chunk.forEach((id, k) => out.push({
+            id: Number(id), hash: Number(infos[k].hashRate), grade: Number(infos[k].grade), staked: stakedIds.has(Number(id)),
+          }));
+        }
+        setPcList(out);
+      }
+    })().catch(() => {}).finally(() => { setLoading(false); setPcLoading(false); });
   }, [account]);
 
   const totalParts = counts.reduce((a, b) => a + b, 0);
@@ -59,6 +80,52 @@ export function Assets({ go }: { go: (r: string) => void }) {
               <b>第一步</b> 还没有部件 —— 先去铸造抽几件，再组装成 PC。
               <button className="btn btn-ghost" onClick={() => go("mint")}>去铸造</button>
             </div>
+          )}
+
+          <div className="sec-head">
+            <b>我的 PC</b><span>{pcs} 台</span>
+            <span className="spacer" />
+            <div className="pc-filters">
+              {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"]] as const).map(([k, label]) => (
+                <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>{label}</button>
+              ))}
+              <button className="pc-chip" onClick={() => setSort(sort === "hash" ? "id" : "hash")}>
+                {sort === "hash" ? "算力↓" : "编号↑"}
+              </button>
+            </div>
+          </div>
+
+          {pcLoading ? (
+            <div className="pc-grid"><div className="skeleton" style={{ height: 150 }} /><div className="skeleton" style={{ height: 150 }} /></div>
+          ) : pcs === 0 ? (
+            <div className="empty">还没有 PC —— 去组装一台</div>
+          ) : (
+            <>
+              <div className="pc-grid">
+                {pcList
+                  .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked))
+                  .sort((a, b) => (sort === "hash" ? b.hash - a.hash : a.id - b.id))
+                  .slice(0, shown)
+                  .map((p) => (
+                    <div key={p.id} className={`pc-mini${p.staked ? " on" : ""}`}
+                      onClick={() => setDetail({ kind: "pc", id: p.id })}>
+                      <RigArt hash={p.hash} mining={p.staked} grade={p.grade} size={120} />
+                      <div className="pc-mini-meta">
+                        <b>#{p.id}</b>
+                        <span className={`grade g${p.grade}`}>{gradeOf(p.hash)}</span>
+                        <em>{p.hash} H</em>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked)).length > shown && (
+                <div className="pc-more">
+                  <button className="btn btn-ghost" onClick={() => setShown((v) => v + 16)}>
+                    显示更多（还有 {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked)).length - shown} 台）
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           <div className="sec-head"><b>硬件部件</b><span>标准 / Pro / 旗舰</span></div>
