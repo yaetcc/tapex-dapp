@@ -4,7 +4,8 @@ import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
-import { GradeBadge } from "./GradeBadge";
+import { GradeBadge, GRADE_COLOR } from "./GradeBadge";
+import { gradeOf } from "../lib/contracts";
 import { trackTx } from "../lib/tx";
 import { RigArt } from "./RigArt";
 import { PartIcon } from "./PartIcon";
@@ -28,6 +29,7 @@ export function DetailSheet({ detail, onClose, onChanged }: {
   useEffect(() => {
     if (!detail) return;
     setLoading(true); setError(""); setInfo(null); setPrice(""); setAmount("1");
+    let alive = true;
     const run = async () => {
       if (detail.kind === "pc") {
         const circ = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
@@ -36,7 +38,9 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           circ.getCircuitInfo(detail.id), circ.ownerOf(detail.id), circ.stakedOf(detail.id), circ.listedOf(detail.id), mk.activePCOrders(),
         ]);
         const mine = orders.find((o: any) => Number(o.tokenId) === detail.id && o.active);
+        if (!alive) return;
         setInfo({
+          kind: "pc",
           hash: Number(g.hashRate), grade: Number(g.grade), tiers: Array.from(g.tiers as bigint[]).map(Number),
           owner, staked, listed, price: mine ? mine.price : null,
           owns: account?.toLowerCase() === String(owner).toLowerCase(),
@@ -51,10 +55,14 @@ export function DetailSheet({ detail, onClose, onChanged }: {
         const mine = orders.filter((o: any) => Number(o.partType) === detail.id && o.active);
         const others = mine.filter((o: any) => o.seller.toLowerCase() !== account?.toLowerCase());
         const floor = others.length ? others.reduce((m: bigint, o: any) => (o.price < m ? o.price : m), others[0].price) : null;
-        setInfo({ bal: Number(bal), mine, floor, count: mine.length, owns: Number(bal) > 0 });
+        if (!alive) return;
+        setInfo({ kind: "part", bal: Number(bal), mine, floor, count: mine.length, owns: Number(bal) > 0 });
       }
     };
-    run().catch((e) => setError((e as Error).message.slice(0, 80))).finally(() => setLoading(false));
+    run()
+      .catch((e) => { if (alive) setError((e as Error).message.slice(0, 80)); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
   }, [detail, account]);
 
   // Esc 关闭 + 锁滚动 + 焦点
@@ -112,39 +120,51 @@ export function DetailSheet({ detail, onClose, onChanged }: {
     <div className="sheet-mask" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
       <div className="sheet" ref={boxRef} tabIndex={-1} role="dialog" aria-modal="true">
         <header className="sheet-hd">
-          <b>{detail.kind === "pc" ? `PC #${detail.id}` : partName(detail.id)}</b>
+          <div className="sheet-title">
+            <b>{detail.kind === "pc" ? `PC #${detail.id}` : partName(detail.id)}</b>
+            {info && detail.kind === "pc" && (
+              <span className="sheet-tags">
+                <GradeBadge hash={info.hash} />
+                <span className={`sheet-state${info.staked ? " live" : info.listed ? " list" : ""}`}>
+                  {info.staked ? "质押中" : info.listed ? "挂单中" : "待机"}
+                </span>
+              </span>
+            )}
+          </div>
           <button className="sheet-x" onClick={close} aria-label="关闭">✕</button>
         </header>
 
         {error ? (
           <div className="sheet-body"><p className="msg err">{error}</p></div>
-        ) : loading || !info ? (
+        ) : loading || !info || info.kind !== detail.kind ? (
           <div className="sheet-body"><div className="skeleton" style={{ height: 160 }} /></div>
         ) : detail.kind === "pc" ? (
           <div className="sheet-body">
-            <div className="sheet-hero">
-              <RigArt hash={info.hash} mining={info.staked} grade={info.grade} size={190} />
-              <div className="sheet-kv">
-                <div><span>算力</span><b>{info.hash} H</b></div>
-                <div><span>等级</span><b><GradeBadge hash={info.hash} size="md" /></b></div>
-                <div><span>档位</span><b>旗舰×{info.tiers.filter((x: number) => x >= 2).length} · Pro×{info.tiers.filter((x: number) => x === 1).length}</b></div>
-                <div><span>状态</span><b>{info.staked ? "质押中" : info.listed ? "挂单中" : "待机"}</b></div>
+            <div className="sheet-hero" style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(info.hash)] }}>
+              <RigArt hash={info.hash} mining={info.staked} grade={info.grade} size={180} />
+              <div className="sheet-stats">
+                <div className="sheet-stat"><span>算力</span><b>{info.hash} <em>H</em></b></div>
+                <div className="sheet-stat"><span>等级</span><b><GradeBadge hash={info.hash} size="md" /></b></div>
+                <div className="sheet-stat"><span>旗舰件</span><b>{info.tiers.filter((x: number) => x >= 2).length}</b></div>
+                <div className="sheet-stat"><span>Pro 件</span><b>{info.tiers.filter((x: number) => x === 1).length}</b></div>
               </div>
             </div>
 
-            <div className="sheet-acts">
-              {!info.owns ? <span className="hint">不是你的矿机，只读</span> : info.staked ? (
-                <button className="btn btn-primary" onClick={() => pcAct("unstake")}>解押</button>
+            <div className="sheet-foot">
+              {!info.owns ? (
+                <p className="hint" style={{ margin: 0 }}>这台矿机不在你名下，仅可查看。</p>
+              ) : info.staked ? (
+                <button className="btn btn-primary btn-block" onClick={() => pcAct("unstake")}>解押</button>
               ) : info.listed ? (
                 <>
-                  <span className="hint">在售 {info.price ? num(Number(formatEther(info.price)), 2) : "—"} TAPE</span>
-                  <button className="btn btn-primary" onClick={() => pcAct("delist")}>撤单</button>
+                  <div className="sheet-price"><span>在售</span><b>{info.price ? num(Number(formatEther(info.price)), 2) : "—"} TAPE</b></div>
+                  <button className="btn btn-primary btn-block" onClick={() => pcAct("delist")}>撤单</button>
                 </>
               ) : (
                 <>
-                  <button className="btn btn-primary" onClick={() => pcAct("stake")}>质押挖矿</button>
-                  <div className="sheet-inline">
-                    <input className="field field-sm" placeholder="价格 TAPE" value={price} onChange={(e) => setPrice(e.target.value)} />
+                  <button className="btn btn-primary btn-block" onClick={() => pcAct("stake")}>质押挖矿</button>
+                  <div className="sheet-sell">
+                    <input className="field field-sm" placeholder="挂单价格 TAPE" value={price} onChange={(e) => setPrice(e.target.value)} />
                     <button className="btn btn-ghost" disabled={!price} onClick={() => pcAct("list")}>挂单出售</button>
                   </div>
                 </>
@@ -153,31 +173,34 @@ export function DetailSheet({ detail, onClose, onChanged }: {
           </div>
         ) : (
           <div className="sheet-body">
-            <div className="sheet-hero">
-              <div className="part-big" style={{ borderColor: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>
-                <PartIcon type={(detail.id - 1) % 8} tier={Math.floor((detail.id - 1) / 8)} size={46} />
-                <b>{PART_NAMES[(detail.id - 1) % 8]}</b>
-                <span style={{ color: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>{TIERS[Math.floor((detail.id - 1) / 8)]}</span>
+            <div className="sheet-hero" style={{ ["--gc" as string]: TIER_COLOR[Math.floor((detail.id - 1) / 8)] }}>
+              <div className="part-big">
+                <PartIcon type={(detail.id - 1) % 8} tier={Math.floor((detail.id - 1) / 8)} size={52} />
               </div>
-              <div className="sheet-kv">
-                <div><span>持有</span><b>{info.bal} 件</b></div>
-                <div><span>市场最低</span><b>{info.floor ? num(Number(formatEther(info.floor)), 2) + " TAPE" : "—"}</b></div>
-                <div><span>在售</span><b>{info.count} 条</b></div>
+              <div className="sheet-stats">
+                <div className="sheet-stat"><span>持有</span><b>{info.bal} <em>件</em></b></div>
+                <div className="sheet-stat"><span>市场最低</span><b>{info.floor ? num(Number(formatEther(info.floor)), 2) : "—"}</b></div>
+                <div className="sheet-stat"><span>在售</span><b>{info.count} <em>条</em></b></div>
+                <div className="sheet-stat"><span>档位</span><b>{TIERS[Math.floor((detail.id - 1) / 8)]}</b></div>
               </div>
             </div>
 
-            <div className="sheet-acts">
+            <div className="sheet-foot">
               {info.owns ? (
                 <>
-                  <div className="sheet-inline">
-                    <input className="field field-sm" style={{ width: 68 }} value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} />
+                  <div className="sheet-sell">
+                    <input className="field field-sm" style={{ width: 70 }} value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} />
                     <input className="field field-sm" placeholder="单价 TAPE" value={price} onChange={(e) => setPrice(e.target.value)} />
                     <button className="btn btn-primary" disabled={!price} onClick={() => partAct("list")}>挂单出售</button>
                   </div>
-                  {info.mine.length > 0 && <button className="btn btn-ghost" onClick={() => partAct("delist")}>撤单（{info.mine.length} 条）</button>}
+                  {info.mine.length > 0 && (
+                    <button className="btn btn-ghost btn-block" onClick={() => partAct("delist")}>撤单（{info.mine.length} 条）</button>
+                  )}
                 </>
               ) : (
-                <span className="hint">{info.count > 0 ? "你没有这件 —— 到市场页购买" : "你没有这件，市场也没有在售"}</span>
+                <p className="hint" style={{ margin: 0 }}>
+                  {info.count > 0 ? "你没有这件 —— 到市场页购买" : "你没有这件，市场也暂无在售"}
+                </p>
               )}
             </div>
           </div>
