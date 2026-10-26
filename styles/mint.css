@@ -1,0 +1,75 @@
+/* ===== 铸造页 ===== */
+.mint-hero { display: grid; grid-template-columns: minmax(0, 1fr) 344px; gap: 26px; align-items: start; }
+@media (max-width: 980px) { .mint-hero { grid-template-columns: 1fr; gap: 16px; } }
+
+.mint-console {
+  border-radius: var(--r-lg); padding: 16px 16px 18px;
+  border: 1px solid rgba(255, 217, 61, 0.26);
+  background:
+    radial-gradient(130% 80% at 50% -25%, rgba(255, 217, 61, 0.15), transparent 62%),
+    linear-gradient(180deg, #241a16, #171210);
+  box-shadow: var(--hi), var(--shadow-1);
+}
+.console-h { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.console-h i { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 217, 61, 0.5), transparent); }
+.console-h span { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); }
+.console-total {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px;
+  margin: 15px 0 13px; padding-top: 13px; border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+.console-total span { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx-3); }
+.console-total b { font-family: var(--mono); font-size: 15.5px; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+.odds-legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px 16px; margin-top: 13px; }
+@media (max-width: 700px) { .odds-legend { grid-template-columns: repeat(2, 1fr); } }
+.odds-legend span { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--tx-2); }
+.odds-legend i { width: 7px; height: 7px; border-radius: 2px; flex: 0 0 auto; }
+.odds-legend b { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--tx); }
+
+.rack { display: grid; grid-template-columns: repeat(8, 1fr); gap: 9px; }
+@media (max-width: 900px) { .rack { grid-template-columns: repeat(4, 1fr); } }
+.rack-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 13px 6px 11px; border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.012));
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.rack-cell:hover { transform: translateY(-2px); }
+.rack-cell.has { border-color: rgba(0, 229, 160, 0.34); box-shadow: inset 0 0 0 1px rgba(0, 229, 160, 0.1), 0 6px 18px rgba(0, 229, 160, 0.08); }
+.rack-cell em { font-style: normal; font-size: 10.5px; color: var(--tx-2); }
+.rack-cell > b { font-family: var(--mono); font-size: 16px; font-weight: 800; color: rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
+.rack-cell.has > b { color: var(--gold); }
+.rack-tiers { display: flex; gap: 3px; min-height: 13px; }
+.rack-tiers i { font-style: normal; font-size: 9px; padding: 0 5px; border-radius: 999px; border: 1px solid; line-height: 13px; }
+.rack-tiers .t0 { color: #7fe0d6; border-color: rgba(127, 224, 214, 0.32); }
+.rack-tiers .t1 { color: #00e5a0; border-color: rgba(0, 229, 160, 0.34); }
+.rack-tiers .t2 { color: #ffd54d; border-color: rgba(255, 213, 77, 0.45); }
+
+/* 开卡 */
+.reveal {
+  position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; gap: 18px;
+  background: radial-gradient(60% 50% at 50% 45%, rgba(5, 8, 15, 0.72), rgba(5, 8, 15, 0.92));
+  backdrop-filter: blur(2px); cursor: pointer;
+  animation: fadeIn 0.2s ease;
+}
+.reveal-cards { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; max-width: min(900px, 92vw); }
+.reveal-card {
+  width: 150px; padding: 18px 12px; border-radius: var(--r-md); text-align: center;
+  border: 1px solid var(--gold); background: #171210;
+  opacity: 0; transform: scale(0.5);
+  animation: pop 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.reveal-card em {
+  font-style: normal; font-size: 9px; letter-spacing: 0.2em; color: #241505;
+  background: var(--grad-gold); padding: 2px 8px; border-radius: 999px;
+}
+.reveal-card b { display: block; margin: 10px 0 4px; font-size: 16px; }
+.reveal-card span { font-size: 11.5px; }
+.reveal-sum {
+  font-size: 12.5px; color: var(--tx-2);
+  background: rgba(23, 18, 16, 0.9); border: 1px solid var(--line-gold);
+  border-radius: 999px; padding: 7px 16px;
+}
+@keyframes pop { to { opacity: 1; transform: scale(1); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

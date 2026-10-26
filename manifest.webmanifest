@@ -1,0 +1,13 @@
+{
+  "name": "TapeX · 矿机版 Pump",
+  "short_name": "TapeX",
+  "description": "抽部件 → 组装 PC → 质押挖矿 → 市场交易，跑在 X Layer 主网。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120e0c",
+  "theme_color": "#120e0c",
+  "icons": [
+    { "src": "/tape-logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/tape-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
