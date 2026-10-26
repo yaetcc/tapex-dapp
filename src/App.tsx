@@ -17,10 +17,6 @@ import { Market } from "./pages/Market";
 
 const ROUTES = ["home", "mint", "asm", "stake", "assets", "divd", "market"] as const;
 
-if (typeof document !== "undefined") {
-  document.documentElement.dataset.density = localStorage.getItem("density") || "cozy";
-}
-
 export default function App() {
   const [route, setRoute] = useState<string>(() => location.hash.replace("#", "") || "home");
   const [dir, setDir] = useState<"next" | "prev">("next");

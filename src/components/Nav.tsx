@@ -23,12 +23,6 @@ export function Nav({ route, go }: { route: string; go: (r: string) => void }) {
           </button>
         ))}
       </nav>
-      <button className="btn btn-ghost" title="切换密度" style={{ width: 40 }}
-        onClick={() => {
-          const next = document.documentElement.dataset.density === "compact" ? "cozy" : "compact";
-          document.documentElement.dataset.density = next;
-          localStorage.setItem("density", next);
-        }}>≡</button>
       <button className="btn btn-ghost" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ width: 46 }}>
         {lang === "zh" ? "EN" : "中"}
       </button>
