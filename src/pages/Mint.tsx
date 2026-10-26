@@ -7,8 +7,8 @@ import { compact, num } from "../lib/format";
 import { PartIcon } from "../components/PartIcon";
 import { trackTx } from "../lib/tx";
 
-// 权重按部件名对齐（PART_NAMES 顺序：CPU/主板/GPU/RAM/SSD/电源/散热器/机箱）
-const ODD = [6, 8, 4, 14, 12, 20, 18, 18];
+// 链上实测权重（CircuitV6.typeWeight）：CPU 18 / 主板 20 / GPU 18 / RAM 14 / SSD 12 / 电源 8 / 散热器 6 / 机箱 4
+const ODD = [18, 20, 18, 14, 12, 8, 6, 4];
 const ODD_COLOR = ["#FF8EC4", "#FFC061", "#C79BFF", "#B6F36A", "#FFE066", "#63E6C0", "#00E5A0", "#7FE0D6"];
 
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
