@@ -37,5 +37,9 @@
   --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
   --shadow-1: 0 16px 38px rgba(0, 0, 0, 0.42);
   --hi: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --grad-gold: linear-gradient(118deg, #ffd93d, #ff9f45 52%, #ff6bcb);
+  --grad-gold: linear-gradient(118deg, #ffd93d, #ff9f45 62%, #e8873a);
+  /* 方向 A：三种材质 */
+  --mat-metal: linear-gradient(180deg, #241c18, #1a1411);
+  --mat-matte: linear-gradient(180deg, #1f1815, #171210);
+  --mat-glass: rgba(28, 22, 19, 0.86);
 }

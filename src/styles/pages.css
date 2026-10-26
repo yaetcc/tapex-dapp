@@ -105,8 +105,8 @@
   box-shadow: var(--hi), 0 18px 40px rgba(0,0,0,.4); }
 .dv-claim-head { display: flex; align-items: center; gap: 16px; }
 .dv-coin { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto;
-  font-size: 14px; font-weight: 900; color: #2a1700; letter-spacing: .02em;
-  background: linear-gradient(135deg,#FFD93D,#FF9F45 60%,#FF6BCB);
+  font-size: 14px; font-weight: 800; color: #2a1700; letter-spacing: .02em;
+  background: linear-gradient(135deg,#FFD93D,#FF9F45 62%,#E8873A);
   box-shadow: 0 0 0 3px rgba(255,217,61,.12), 0 8px 22px rgba(255,159,69,.35); }
 .dv-label { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--tx-3); }
 .dv-amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 4px; min-width: 0;
@@ -149,8 +149,8 @@
 @media (max-width: 720px) { .buy-card { flex-wrap: wrap; gap: 12px; } .buy-actions { width: 100%; } }
 .buy-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .buy-coin { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto;
-  font-size: 12px; font-weight: 900; color: #2a1700;
-  background: linear-gradient(135deg,#FFD93D,#FF9F45 60%,#FF6BCB); box-shadow: 0 6px 16px rgba(255,159,69,.3); }
+  font-size: 12px; font-weight: 800; color: #2a1700;
+  background: linear-gradient(135deg,#FFD93D,#FF9F45 62%,#E8873A); box-shadow: 0 6px 16px rgba(255,159,69,.3); }
 .buy-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .buy-meta b { font-size: 13.5px; letter-spacing: .02em; }
 .buy-addr { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; padding: 0;
