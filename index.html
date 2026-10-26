@@ -4780,18 +4780,22 @@ main .card:nth-child(3){
 }
 .mint-cta{ width:100%; margin:2px 0 0; font-size:15px; letter-spacing:.5px; }
 .mint-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,360px); gap:16px; align-items:start; margin-top:8px; }
-@media(max-width:980px){ .mint-grid{ grid-template-columns:1fr; } }
+@media(max-width:980px){
+  .mint-grid{ display:flex; flex-direction:column; }
+  .mint-side{ order:-1; }        /* 移动端先给操作区，再往下是进度/概率/部件架 */
+}
 .mint-stage{ display:flex; flex-direction:column; gap:12px; min-width:0; }
-.mint-stage .forge{ min-height:210px; display:flex; align-items:center; }
-.mint-stage .forge-track{ width:100%; justify-content:center; gap:18px; }
-@media(max-width:560px){ .mint-stage .forge{ min-height:auto; padding:14px 8px; } .mint-stage .forge-track{ gap:10px; } }
+/* 抽卡机已移除，「已抽 / 拥有」并入部件架头部 */
 #mint .price-line b{ font-size:clamp(13px, 3.4vw, 18px); }
 .mint-side{ display:flex; flex-direction:column; gap:10px; background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:16px; padding:14px; min-width:0; }
 .mint-side label{ font-size:11.5px; color:var(--tx2); letter-spacing:.2px; }
 .mint-side .mint-qty{ margin:0; }
 .mint-side #mintAmt{ max-width:132px; }
 .mint-rack-box{ margin-top:12px; border:1px solid var(--line); border-radius:16px; padding:12px 14px; background:rgba(255,255,255,.02); }
-.rack-head{ display:flex; align-items:baseline; gap:8px; margin-bottom:10px; }
+.rack-head{ display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin-bottom:10px; }
+.rack-live{ font-size:11.5px; color:var(--tx3); }
+.rack-live b{ color:var(--gold); font-size:13px; font-variant-numeric:tabular-nums; }
+.rack-head .mini-cta{ margin-left:auto; }
 .rack-head b{ font-size:12.5px; color:var(--gold); letter-spacing:.6px; }
 .rack-head span{ font-size:11px; color:var(--tx3); }
 .mint-rack{ display:grid; grid-template-columns:repeat(8,1fr); gap:8px; }
@@ -4831,7 +4835,8 @@ main .card:nth-child(3){
 .pt-row .pt-sub{ color:var(--tx3); font-size:11px; }
 .pt-row input{ width:64px; height:26px; }
 .pt-row .action-btn{ height:26px; padding:0 12px; font-size:11.5px; }
-.mini-cta{ display:inline-block; margin-left:8px; padding:3px 10px; border-radius:999px; border:1px solid rgba(0,229,160,.45); color:var(--ac); font-size:11.5px; text-decoration:none; }
+.mini-cta{ display:inline-block; margin-left:8px; padding:3px 10px; border-radius:999px; border:1px solid rgba(0,229,160,.45); background:transparent; color:var(--ac); font-size:11.5px; text-decoration:none; cursor:pointer; font-family:inherit; }
+.mini-cta:hover{ background:rgba(0,229,160,.12); }
 .mini-cta:hover{ background:rgba(0,229,160,.12); }
 .empty-cta{ opacity:.95; }
 .ab-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 10px; margin-bottom:10px; }
@@ -6324,14 +6329,6 @@ body::before{ animation:none !important; }
       <p class="sub" data-i18n="花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。">花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。</p>
       <div class="mint-grid">
         <div class="mint-stage">
-      <div class="forge" id="forge">
-        <div class="forge-track">
-          <div class="slot sl-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgePicked">0</b><span data-i18n="已抽">已抽</span></div>
-          <div class="core" id="forgeCore"><div class="bb" id="bbBox"><div class="bb-lid"><span>TAPE·X</span></div><div class="bb-body"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 11l3-6 2 5 3-7-1 8H9z"/><path d="M7 15h9"/></svg><span data-i18n="m.box">盲盒</span></div></div><div class="bb-beam" id="bbBeam"></div></div>
-          <div class="slot sl-box sl-own" id="forgeOwnSlot" title="点击查看全部部件" data-i18n-title="a.ownTip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><b id="forgeTotal">0</b><span data-i18n="拥有">拥有</span></div>
-        </div>
-        <div class="fly-parts" id="flyParts"><span class="part pn"></span><span class="part pn"></span><span class="part pl"></span><span class="part pl"></span></div>
-      </div>
           <div class="mint-cap" id="mintCapBox">
             <div class="mint-cap-head"><span data-i18n="c.capTitle">全网抽卡进度</span><b id="mintCapTxt">— / 100,000</b></div>
             <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
@@ -6351,6 +6348,14 @@ body::before{ animation:none !important; }
               <div class="prob-note" data-i18n="部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C">部件 3 档位：标准 70% ×1 / Pro 20% ×3 / 旗舰 10% ×8；组装算力 = 8 部件算力按档位累加，PC 分级 S / A / B / C</div>
             </div>
           </details>
+      <div class="mint-rack-box">
+        <div class="rack-head">
+          <b data-i18n="m.rack">我的部件</b>
+          <span class="rack-live"><span data-i18n="m.drawn">已抽</span> <b id="forgePicked">0</b> · <span data-i18n="m.own">拥有</span> <b id="forgeTotal">0</b></span>
+          <button class="mini-cta" id="forgeOwnSlot" data-i18n="a.ownTip">点击查看全部部件</button>
+        </div>
+        <div class="mint-rack" id="mintRack"></div>
+      </div>
         </div>
 
         <div class="mint-side">
@@ -6360,10 +6365,6 @@ body::before{ animation:none !important; }
           <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
           <button class="btn primary mint-cta" id="mintCta" data-i18n="m.mintCta">抽取 1 件</button>
         </div>
-      </div>
-      <div class="mint-rack-box">
-        <div class="rack-head"><b data-i18n="m.rack">我的部件</b><span data-i18n="m.rackSub">标准 / Pro / 旗舰 · 点格看全部</span></div>
-        <div class="mint-rack" id="mintRack"></div>
       </div>
       <div class="msg" id="mintMsg"></div>
       <p class="hint" data-i18n="m.hint1">主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.001 OKB / 件（固定价，无阶梯）。8 类部件按权重随机，每件独立分档（标准/Pro/旗舰）。</p>
@@ -6830,6 +6831,8 @@ var I18N = {
   "m.qtyPh": {zh:"例如 10", en:"e.g. 10"},
   "m.qtyLabel": {zh:"抽取数量", en:"Quantity"},
   "m.qtyNote": {zh:"单次上限 10,000 件 · 超过 500 件自动分批", en:"Max 10,000 per go · auto-batched above 500"},
+  "m.drawn": {zh:"已抽", en:"Drawn"},
+  "m.own": {zh:"拥有", en:"Owned"},
   "m.rack": {zh:"我的部件", en:"My parts"},
   "m.rackSub": {zh:"标准 / Pro / 旗舰 · 抽到的部件实时入库", en:"Std / Pro / Flagship · live inventory"},
   "m.opened": {zh:"开盒成功", en:"Box opened"},
@@ -6936,6 +6939,7 @@ var I18N = {
   "t.connectFirst": {zh:"请先连接钱包", en:"Connect a wallet first"},
   "mint.ok": {zh:"抽卡成功！共 ", en:"Mint success! Total "},
   "mint.okTail": {zh:" 件硬件已到账（见右侧资产）。", en:" parts received (see assets)."},
+  "mint.failedShort": {zh:"抽卡未完成", en:"Mint incomplete"},
   "mint.okShort": {zh:"抽卡成功", en:"Mint success"},
   "e.cancelled": {zh:"已取消签名", en:"Signature cancelled"},
   "e.funds": {zh:"钱包余额不足（OKB 或 gas）", en:"Insufficient balance (OKB or gas)"},
@@ -7508,6 +7512,13 @@ function setMsg(id, type, text){
 function clearMsg(id){ var el = $(id); if (!el) return; el.className = "msg"; el.innerHTML = ""; }
 var __minting = false;   // 抽卡防重入（准星入口）
 function setMintBusy(on){
+  var cta = $("mintCta");
+  if (cta) {
+    if (!cta.dataset.idle) cta.dataset.idle = cta.textContent;
+    cta.disabled = on;
+    cta.textContent = on ? t("mint.busy") : (cta.dataset.idle || t("m.mintCta"));
+    if (!on) { try { updMintPay(); } catch(e){} }
+  }
   var core = $("forgeCore");
   if (!core) return;
   core.classList.toggle("busy", on);
@@ -8844,6 +8855,7 @@ function doMint(){
   __minting = true; setMintBusy(true);
   setMsg("mintMsg","info", t("mint.sending"));
   var mintDone = false;
+  var failed = 0;          // 失败批次数（失败即中止后续批次，不再"跳过继续"）
   var sigTimer = null;
   var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
   var circ = new ethers.Contract(ADDRS.circuit, ABI_CIRCUIT, signer);
@@ -8882,16 +8894,23 @@ function doMint(){
         setMsg("mintMsg","info","批次 " + i + "/" + batches.length + " 已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
         return tx.wait().then(function(receipt){ logTx(t("mint.batchLog"), receipt.hash); if (batches.length > 1) bbPulse(); Q.ok(i, "批次 " + i + "/" + batches.length + " 完成"); return run(); });
       }).catch(function(e){
+        failed++;
         var m = humanErr(e);
-        setMsg("mintMsg","err","批次 " + i + "/" + batches.length + " 失败：" + m.slice(0,110) + "（已跳过，继续下一批）");
+        setMsg("mintMsg","err","批次 " + i + "/" + batches.length + " 失败：" + m.slice(0,120) + "（已中止，剩余批次不再执行）");
         Q.fail(i, "批次 " + i + "：" + m.slice(0,80));
-        return run();
+        return Promise.resolve();          // 中止后续批次
       });
     };
     return run();
     });
   }).then(function(){
     mintDone = true; clearTimeout(sigTimer);
+    if (failed > 0) {                     // 有批次失败：不报成功、不开卡、不累计已抽
+      Q.done("铸造中止");
+      __minting = false; setMintBusy(false);
+      toast(t("mint.failedShort"));
+      return;
+    }
     Q.done("铸造完成");
     setMsg("mintMsg","ok", t("mint.ok") + fmtInt(amtBN) + t("mint.okTail"));
     forgeFly(amtBN);
@@ -9614,7 +9633,8 @@ function updMintPay(){
 }
 var el=$("mintAmt"); if (el) el.addEventListener("input", updMintPay);
 var el=$("mintCta"); if (el) el.addEventListener("click", function(){
-  var core = $("forgeCore"); if (core) core.click();
+  if (__minting) return;
+  doMint();
 });
 $("claimBtn").addEventListener("click", doClaim);
 
