@@ -3,7 +3,7 @@ import { shortAddr } from "../lib/format";
 
 const ITEMS = [
   ["home", "nav.home"], ["mint", "nav.mint"], ["asm", "nav.asm"], ["stake", "nav.stake"], ["assets", "nav.assets"],
-  ["divd", "nav.divd"], ["market", "nav.market"], ["net", "nav.net"],
+  ["divd", "nav.divd"], ["market", "nav.market"],
 ] as const;
 
 export function Nav({ route, go }: { route: string; go: (r: string) => void }) {

@@ -136,7 +136,6 @@ export function Home({ go }: { go: (r: string) => void }) {
             <div><span>矿池余额</span><b>{net ? num(net.pool, 0) : "—"}</b><em>TAPE</em></div>
             <div><span>已铸造</span><b>{net ? `${net.minted}/${net.cap}` : "—"}</b><em>台</em></div>
           </div>
-          <button className="btn btn-ghost btn-block" style={{ marginTop: 12 }} onClick={() => go("net")}>查看全部数据 →</button>
         </div>
       </div>
     </div>

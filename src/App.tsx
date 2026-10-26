@@ -14,9 +14,8 @@ import { Stake } from "./pages/Stake";
 import { Assets } from "./pages/Assets";
 import { Dividend } from "./pages/Dividend";
 import { Market } from "./pages/Market";
-import { Network } from "./pages/Network";
 
-const ROUTES = ["home", "mint", "asm", "stake", "assets", "divd", "market", "net"] as const;
+const ROUTES = ["home", "mint", "asm", "stake", "assets", "divd", "market"] as const;
 
 if (typeof document !== "undefined") {
   document.documentElement.dataset.density = localStorage.getItem("density") || "cozy";
@@ -33,7 +32,7 @@ export default function App() {
       const el = document.activeElement as HTMLElement | null;
       if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
       const n = Number(e.key);
-      if (n >= 1 && n <= 8) { e.preventDefault(); go(ROUTES[n - 1]); }
+      if (n >= 1 && n <= 7) { e.preventDefault(); go(ROUTES[n - 1]); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -76,7 +75,6 @@ export default function App() {
           : current === "assets" ? <Assets go={go} />
           : current === "divd" ? <Dividend />
           : current === "market" ? <Market />
-          : current === "net" ? <Network />
           : <Placeholder name={current} />}
       </main>
       <MobileTabs route={current} go={go} />
