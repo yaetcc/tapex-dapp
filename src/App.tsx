@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Trail } from "./components/Trail";
 import { Nav, MobileTabs } from "./components/Nav";
 import { Atmosphere, Stickers } from "./components/Atmosphere";
 import { Mascot } from "./components/Mascot";
@@ -64,6 +65,7 @@ export default function App() {
       <Stickers />
       <Mascot />
       <Nav route={current} go={go} />
+      <Trail route={current} go={go} />
       <RunwayBanner />
       <main className={`shell page-enter-${dir}`} key={current} style={{ paddingTop: 26 }}>
         {current === "mint" ? <Mint />

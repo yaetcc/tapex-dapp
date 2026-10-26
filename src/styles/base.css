@@ -294,3 +294,23 @@ body::after {
 @media (hover: none) {
   .pc-chip, .view-switch button, .sheet-close, .tier, .tab { min-width: 44px; min-height: 44px; }
 }
+
+/* ===== 主线进度带 ===== */
+.trail { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  max-width: 1180px; margin: 10px auto 0; padding: 0 18px; }
+.trail-steps { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.trail-step { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: none;
+  background: transparent; color: var(--tx-3); font-size: var(--fs-xs); border-radius: 999px; cursor: pointer; }
+.trail-step:hover { background: rgba(255,255,255,.04); color: var(--tx-2); }
+.trail-dot { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center;
+  font-size: var(--fs-2xs); font-style: normal; border: 1px solid var(--line); color: var(--tx-3); }
+.trail-step.done .trail-dot { background: rgba(0,229,160,.14); border-color: rgba(0,229,160,.4); color: var(--ac); }
+.trail-step.cur { color: var(--gold); background: rgba(255,217,61,.1); }
+.trail-step.cur .trail-dot { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 0 3px rgba(255,217,61,.12); }
+.trail-hint { font-size: var(--fs-xs); color: var(--tx-3); white-space: nowrap; }
+@media (max-width: 760px) {
+  .trail { margin-top: 6px; padding: 0 12px; overflow-x: auto; }
+  .trail-hint { display: none; }
+  .trail-step span { display: none; }
+  .trail-step.cur span { display: inline; }
+}
