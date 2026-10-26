@@ -88,7 +88,7 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
           const L: { i: number; name: string; x: number; y: number; rot?: number; size?: number; anchor?: "start" | "middle" | "end" }[] = [
             { i: 1, name: "主板", x: 42, y: 36, size: 9, anchor: "start" },
             { i: 0, name: "CPU", x: 75, y: 60, size: 9 },
-            { i: 6, name: "散热", x: 46, y: 100, size: 9, anchor: "end" },
+            { i: 6, name: "散热", x: 75, y: 96, size: 9 },
             { i: 3, name: "RAM", x: 117, y: 34, size: 9 },
             { i: 2, name: "GPU", x: 117, y: 145, size: 10 },
             { i: 4, name: "SSD", x: 150, y: 94, size: 9 },
