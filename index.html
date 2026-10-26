@@ -4776,6 +4776,15 @@ main .card:nth-child(3){
 .bm-acts{ display:flex; gap:8px; margin-top:14px; }
 .bm-acts .action-btn{ flex:1; height:34px; }
 .bm-title{ font-size:14px; font-weight:800; color:var(--gold); margin-bottom:10px; }
+.mk-mode{ display:flex; gap:8px; margin:10px 0 2px; }
+.mk-mbtn{ padding:6px 16px; border-radius:999px; border:1px solid rgba(255,217,61,.35); background:transparent; color:var(--tx2); font-size:12px; font-weight:700; cursor:pointer; }
+.mk-mbtn.on{ background:linear-gradient(135deg,#FFD93D,#FF9F45); color:#241505; border-color:transparent; }
+#partPanel .mk-row{ grid-template-columns:1fr 120px 170px; }
+.pt-row{ display:grid; grid-template-columns:auto 1fr auto auto auto; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid rgba(255,255,255,.06); font-size:12.5px; }
+.pt-row .pt-name{ font-weight:700; color:var(--tx); }
+.pt-row .pt-sub{ color:var(--tx3); font-size:11px; }
+.pt-row input{ width:64px; height:26px; }
+.pt-row .action-btn{ height:26px; padding:0 12px; font-size:11.5px; }
 .mini-cta{ display:inline-block; margin-left:8px; padding:3px 10px; border-radius:999px; border:1px solid rgba(0,229,160,.45); color:var(--ac); font-size:11.5px; text-decoration:none; }
 .mini-cta:hover{ background:rgba(0,229,160,.12); }
 .empty-cta{ opacity:.95; }
@@ -6398,8 +6407,13 @@ body::before{ animation:none !important; }
 
     <div class="card" id="market" data-tab="market">
       <div class="kicker" data-i18n="Market · 交易市场">Market · 交易市场</div>
-      <p class="hint" data-i18n="PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。">PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成；买方 10% 手续费，5% 销毁 + 5% 进分红池）。卖出前需先授权市场合约。</p>
+      <p class="hint" data-i18n="整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。">整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。</p>
       <div class="wallet-hint mk-nowallet" id="mkNoWallet" data-i18n="m.noWallet">连接钱包后可浏览在售挂单并购买 / 挂单。</div>
+      <div class="mk-mode" id="mkMode">
+        <button class="mk-mbtn on" data-mode="pc" data-i18n="pm.pc">整机 PC</button>
+        <button class="mk-mbtn" data-mode="part" data-i18n="pm.part">标准部件</button>
+      </div>
+      <div id="pcPanel">
       <div class="mk-stats">
         <div class="mk-stat"><b id="mkStatCount">—</b><span data-i18n="mk.onSale">在售挂单</span></div>
         <div class="mk-stat gold"><b id="mkStatFloor">—</b><span data-i18n="mk.floorLb">地板价</span></div>
@@ -6448,6 +6462,30 @@ body::before{ animation:none !important; }
       </div>
       </div>
       <p class="hint">合约 <code>0xd9A3…722</code> · 购买即时成交并转移 NFT，卖家可改价或随时撤下。</p>
+      </div>
+
+      <div id="partPanel" style="display:none">
+        <div class="mk-stats">
+          <div class="mk-stat"><b id="ptStatCount">—</b><span data-i18n="pm.onSale">在售挂单</span></div>
+          <div class="mk-stat gold"><b id="ptStatFloor">—</b><span data-i18n="pm.floor">最低单价</span></div>
+          <div class="mk-stat"><b id="ptStatMine">—</b><span data-i18n="pm.mine">我的挂单</span></div>
+        </div>
+        <div class="mk-sell">
+          <div class="mk-form-label" data-i18n="pm.sellTitle">挂单卖出部件</div>
+          <div class="mk-row">
+            <div class="mk-field"><select id="ptType"></select></div>
+            <div class="mk-field"><input type="number" id="ptAmount" min="1" placeholder="数量"></div>
+            <div class="mk-field"><input type="number" id="ptPrice" min="0" step="0.000001" placeholder="单价"><span class="mk-suffix">TAPE</span></div>
+          </div>
+          <button class="action-btn" id="ptListBtn" data-i18n="pm.list">挂单</button>
+          <div class="msg" id="ptMsg"></div>
+          <p class="hint" data-i18n="pm.limit">合约目前只支持标准档部件（id 1–8）挂单；Pro / 旗舰部件暂不支持交易。</p>
+        </div>
+        <div class="mk-head"><span data-i18n="pm.onSaleH">在售部件</span></div>
+        <ul class="mk-list" id="ptList"><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
+        <div class="mk-head"><span data-i18n="pm.mineH">我的部件挂单</span></div>
+        <ul class="mk-list" id="ptMine"><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
+      </div>
     </div>
   </div>
 
@@ -6834,6 +6872,27 @@ var I18N = {
   "e.cancelled": {zh:"已取消签名", en:"Signature cancelled"},
   "e.funds": {zh:"钱包余额不足（OKB 或 gas）", en:"Insufficient balance (OKB or gas)"},
   "e.gas": {zh:"gas 超出预估，请稍后再试", en:"Gas exceeds estimate, retry later"},
+  "整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。": {zh:"整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。", en:"List and buy both PCs and parts here (priced in TAPE; 10% fee on sale: 5% burn + 5% dividend)."},
+  "pm.inputInvalid": {zh:"请填完整：部件类型 + 数量（≥1）+ 单价（>0）", en:"Fill in part type, amount (≥1) and unit price (>0)"},
+  "pm.pc": {zh:"整机 PC", en:"PC NFT"},
+  "pm.part": {zh:"标准部件", en:"Standard parts"},
+  "pm.onSale": {zh:"在售挂单", en:"Listings"},
+  "pm.floor": {zh:"最低单价", en:"Lowest price"},
+  "pm.mine": {zh:"我的挂单", en:"My listings"},
+  "pm.sellTitle": {zh:"挂单卖出部件", en:"List parts"},
+  "pm.list": {zh:"挂单", en:"List"},
+  "pm.limit": {zh:"合约目前只支持标准档部件（id 1–8）挂单；Pro / 旗舰部件暂不支持交易。", en:"The contract currently supports standard-tier parts only (id 1–8); Pro/Flagship cannot be traded yet."},
+  "pm.onSaleH": {zh:"在售部件", en:"Parts on sale"},
+  "pm.mineH": {zh:"我的部件挂单", en:"My part listings"},
+  "pm.empty": {zh:"暂无在售部件 · 把多余的部件挂上来换 TAPE", en:"No parts on sale — list your spare parts"},
+  "pm.mineEmpty": {zh:"你还没有部件挂单", en:"You have no part listings"},
+  "pm.checking": {zh:"检查库存与授权…", en:"Checking balance & approval…"},
+  "pm.approving": {zh:"首次挂单需授权市场合约（一次即可）…", en:"Approve the market once…"},
+  "pm.notEnough": {zh:"该档位部件数量不足", en:"Not enough parts of that type"},
+  "pm.listed": {zh:"挂单成功", en:"Listed"},
+  "pm.delisted": {zh:"已撤单", en:"Delisted"},
+  "pm.buying": {zh:"购买中，数量 ", en:"Buying "},
+  "pm.bought": {zh:"购买成功", en:"Purchased"},
   "bm.title": {zh:"确认购买 PC", en:"Confirm purchase — PC"},
   "bm.price": {zh:"挂单价格", en:"List price"},
   "bm.fee": {zh:"平台手续费 10%（5% 销毁 + 5% 分红）", en:"Fee 10% (5% burn + 5% dividend)"},
@@ -7012,7 +7071,6 @@ var I18N = {
   "Market · 交易市场": {zh:"Market · 交易市场", en:"Market · Trade"},
   "Network · 全网状态": {zh:"Network · 全网状态", en:"Network · Global Stats"},
   "PC NFT 组装完成": {zh:"PC NFT 组装完成", en:"PC NFT Assembled"},
-  "PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成，无手续费）。卖出前需先授权市场合约。": {zh:"PC 整机 NFT 可在此直接挂单买卖（TAPE 计价，网页内完成；买方 10% 手续费，5% 销毁 + 5% 进分红池）。卖出前需先授权市场合约。", en:"List & trade your PC NFT here (priced in TAPE, in-page; buyer pays 10% — 5% burned + 5% dividends). Approve the market contract first."},
   "S 级": {zh:"S 级", en:"S Grade"},
   "Step 1 · Mint 盲盒抽硬件": {zh:"Step 1 · Mint 盲盒抽硬件", en:"Step 1 · Mint Hardware Blind Box"},
   "Step 2 · 组装电脑": {zh:"Step 2 · 组装电脑", en:"Step 2 · Assemble PC"},
@@ -7073,7 +7131,11 @@ function applyLang(noRefresh){
   try { document.title = t("app.title"); } catch(e4){}
   var wl = $("walletLabel");
   if (wl && wl.textContent !== t("nav.connect")) { /* 钱包状态文本保留原逻辑 */ }
-  if (!noRefresh) { try { refresh(); } catch(e3){} }
+  if (!noRefresh) {
+    try { refresh(); } catch(e3){}
+    // 动态渲染的面板不会随 data-i18n 更新，切语言后重画一次
+    try { if (mkMode === "part" && $("partPanel") && $("partPanel").style.display !== "none") renderPartMarket(); } catch(e5){}
+  }
 }
 var ABI_TOKEN = [
   "function allowance(address,address) view returns (uint256)",
@@ -7140,8 +7202,8 @@ var ABI_MARKET = [
   "function pcOrderCount() view returns (uint256)",
   "function pcOrders(uint256) view returns (address seller,uint256 price,uint256 tokenId,bool active)",
   "function activePCOrders() view returns (tuple(address seller,uint256 price,uint256 tokenId,bool active)[])",
-  "function partOrders(uint256) view returns (address seller,uint256 price,uint256 amount,uint8 partType,bool active)",
-  "function activePartOrders() view returns (tuple(address seller,uint256 price,uint256 amount,uint8 partType,bool active)[])"
+  "function partOrders(uint256) view returns (address seller,uint256 price,uint256 amount,uint256 partType,bool active)",
+  "function activePartOrders() view returns (tuple(address seller,uint256 price,uint256 amount,uint256 partType,bool active)[])"
 ];
 var ABI_FS = [
   "function claim() returns (uint256)",
@@ -8214,6 +8276,136 @@ function renderMkPage(){
   });
 }
 
+/* ==================== 部件市场（标准档 1-8） ==================== */
+var mkMode = "pc";
+var __ptLoadedAt = 0;
+function ptName(typeId){ var i = Number(typeId) - 1; if (i < 0 || i > 7) return "#" + typeId; return (PART_NAMES[i] || ("#" + typeId)) + " · " + (PART_TIER[0] || "标准"); }
+function switchMkMode(mode){
+  mkMode = mode === "part" ? "part" : "pc";
+  var pc = $("pcPanel"), pp = $("partPanel");
+  if (pc) pc.style.display = mkMode === "pc" ? "" : "none";
+  if (pp) pp.style.display = mkMode === "part" ? "" : "none";
+  document.querySelectorAll(".mk-mbtn").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-mode") === mkMode); });
+  if (mkMode === "part") renderPartMarket();
+}
+function renderPartMarket(){
+  var list = $("ptList"); if (!list) return;
+  if (!window.__ptSelInit) {
+    window.__ptSelInit = 1;
+    var sel = $("ptType");
+    if (sel) sel.innerHTML = PART_NAMES.map(function(nm, i){ return '<option value="' + (i + 1) + '">' + nm + ' · ' + (PART_TIER[0] || "标准") + '</option>'; }).join("");
+  }
+  var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, pubProvider);
+  return readRetry(function(){ return mk.activePartOrders(); }, 2).then(function(orders){
+    var rows = [];
+    for (var i = 0; i < orders.length; i++) {
+      var o = orders[i];
+      if (!o.active) continue;
+      rows.push({ id: i + 1, o: o });
+    }
+    __ptLoadedAt = Date.now();
+    var stC = $("ptStatCount"), stF = $("ptStatFloor"), stM = $("ptStatMine");
+    if (stC) stC.textContent = rows.length;
+    var floor = rows.length ? Math.min.apply(null, rows.map(function(r){ return Number(r.o.price) / 1e18; })) : NaN;
+    if (stF) stF.textContent = rows.length ? floor.toLocaleString("en-US", { maximumFractionDigits: 4 }) + " TAPE" : "—";
+    var mineRows = rows.filter(function(r){ return account && r.o.seller.toLowerCase() === account.toLowerCase(); });
+    if (stM) stM.textContent = mineRows.length;
+    if (!rows.length) {
+      list.innerHTML = '<li class="mk-empty">' + t("pm.empty") + '</li>' +
+        '<div class="mk-empty-cta"><button type="button" class="mk-go" data-go="mint" data-i18n="m.goMint">' + t("m.goMint") + '</button></div>';
+    } else {
+      list.innerHTML = rows.map(function(r){
+        var price = Number(r.o.price) / 1e18;
+        var mine = account && r.o.seller.toLowerCase() === account.toLowerCase();
+        return '<li class="pt-row">' +
+          '<span class="pt-name">' + ptName(r.o.partType) + '</span>' +
+          '<span class="pt-sub">#' + r.id + ' · 剩 ' + r.o.amount + ' 件 · ' + shortAddr(r.o.seller) + '</span>' +
+          '<span class="pt-sub">' + price.toLocaleString("en-US", { maximumFractionDigits: 4 }) + ' TAPE</span>' +
+          (mine ? '<span></span>' : '<input class="pt-qty" type="number" min="1" max="' + r.o.amount + '" value="1">') +
+          '<button class="action-btn' + (mine ? " sec pt-delist" : " pt-buy") + '" data-id="' + r.id + '" data-price="' + r.o.price + '" data-max="' + r.o.amount + '">' + (mine ? t("act.cancel") : t("act.buy")) + '</button>' +
+          '</li>';
+      }).join("");
+    }
+    var ml = $("ptMine");
+    if (ml) {
+      ml.innerHTML = mineRows.length ? mineRows.map(function(r){
+        return '<li class="pt-row"><span class="pt-name">' + ptName(r.o.partType) + '</span>' +
+          '<span class="pt-sub">#' + r.id + ' · 剩 ' + r.o.amount + ' 件</span>' +
+          '<span class="pt-sub">' + (Number(r.o.price) / 1e18).toLocaleString("en-US", { maximumFractionDigits: 4 }) + ' TAPE</span><span></span>' +
+          '<button class="action-btn sec pt-delist" data-id="' + r.id + '">' + t("act.cancel") + '</button></li>';
+      }).join("") : '<li class="mk-empty">' + t("pm.mineEmpty") + '</li>';
+    }
+  }).catch(function(e){
+    list.innerHTML = '<li class="mk-empty">' + t("m.readFail") + String(e.message || e).slice(0, 60) + '</li>';
+  });
+}
+function doListPart(){
+  if (!signer || !account) { setMsg("ptMsg", "err", t("t.connectFirst")); return; }
+  if (!ensureNetMsg("ptMsg")) return;
+  var typeId = Number($("ptType").value), amount = Number($("ptAmount").value), priceOkb = parseFloat($("ptPrice").value);
+  if (!typeId || typeId < 1 || typeId > 8) { setMsg("ptMsg", "err", "标准档部件 id 1–8"); return; }
+  if (!(amount >= 1) || !(priceOkb > 0)) { setMsg("ptMsg", "err", t("pm.inputInvalid")); return; }
+  var price = BigInt(Math.round(priceOkb * 1e18));
+  var btn = $("ptListBtn"); busy(btn, true);
+  var part = new ethers.Contract(ADDRS.part, ABI_PART, signer);
+  var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
+  setMsg("ptMsg", "info", t("pm.checking"));
+  Promise.all([
+    readRetry(function(){ return part.balanceOf(account, typeId); }),
+    readRetry(function(){ return part.isApprovedForAll(account, ADDRS.market); })
+  ]).then(function(r){
+    if (Number(r[0]) < amount) throw new Error(t("pm.notEnough"));
+    var chain = Promise.resolve();
+    if (!r[1]) {
+      setMsg("ptMsg", "info", t("pm.approving"));
+      chain = chain.then(function(){ return part.setApprovalForAll(ADDRS.market, true, { gasLimit: 120000 }); }).then(function(tx){ return tx.wait(); });
+    }
+    return chain.then(function(){ return mk.listPart(typeId, amount, price, { gasLimit: 300000 }); });
+  }).then(function(tx){
+    setMsg("ptMsg", "info", t("mkt.txSent") + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0, 18) + "…</a>");
+    return tx.wait();
+  }).then(function(){
+    setMsg("ptMsg", "ok", t("pm.listed"));
+    $("ptAmount").value = ""; $("ptPrice").value = "";
+    busy(btn, false); renderPartMarket();
+  }).catch(function(e){
+    setMsg("ptMsg", "err", humanErr(e).slice(0, 160));
+    busy(btn, false);
+  });
+}
+function doBuyPart(orderId, priceWei, maxAmount, btn, qty){
+  if (!signer || !account) { toast(t("t.connectFirst")); return; }
+  if (!ensureNetMsg("ptMsg")) return;
+  var n = Math.max(1, Math.min(Number(qty) || 1, Number(maxAmount)));
+  var total = priceWei * BigInt(n);
+  var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
+  var token = new ethers.Contract(ADDRS.token, ABI_TOKEN, signer);
+  if (btn) busy(btn, true, t("w.busyBuy"));
+  setMsg("ptMsg", "info", t("pm.buying") + n);
+  token.allowance(account, ADDRS.market).then(function(al){
+    var chain = Promise.resolve();
+    if (al < total) chain = chain.then(function(){ return token.approve(ADDRS.market, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", { gasLimit: 120000 }); }).then(function(tx){ return tx.wait(); });
+    return chain.then(function(){ return mk.buyPart(orderId, n, { gasLimit: 300000 }); });
+  }).then(function(tx){ return tx.wait(); }).then(function(){
+    setMsg("ptMsg", "ok", t("pm.bought"));
+    if (btn) busy(btn, false);
+    renderPartMarket(); refresh();
+  }).catch(function(e){
+    setMsg("ptMsg", "err", humanErr(e).slice(0, 160));
+    if (btn) busy(btn, false);
+  });
+}
+function doDelistPart(orderId, btn){
+  if (!signer || !account) { toast(t("t.connectFirst")); return; }
+  var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
+  if (btn) busy(btn, true, t("mkt.busyCancel"));
+  mk.delistPart([orderId], { gasLimit: 200000 }).then(function(tx){ return tx.wait(); }).then(function(){
+    setMsg("ptMsg", "ok", t("pm.delisted"));
+    if (btn) busy(btn, false);
+    renderPartMarket();
+  }).catch(function(e){ setMsg("ptMsg", "err", humanErr(e).slice(0, 160)); if (btn) busy(btn, false); });
+}
+
 function doMarketList(){
   if (!signer || !account) { setMsg("mkMsg","err","请先连接钱包。"); return; }
   if (!ensureNetMsg("mkMsg")) return;
@@ -9123,6 +9315,30 @@ function stopSigWatch(){ if (__sigW) { clearTimeout(__sigW); __sigW = null; } }
 
 /* ---------- 钱包环境自检 ---------- */
 var el=$("mkListBtn"); if (el) el.addEventListener("click", doMarketList);
+var __mkMode = $("mkMode");
+if (__mkMode) __mkMode.addEventListener("click", function(e){
+  var b = e.target.closest(".mk-mbtn"); if (!b) return;
+  switchMkMode(b.getAttribute("data-mode"));
+});
+(function(){
+  var lb = $("ptListBtn"); if (lb) lb.addEventListener("click", doListPart);
+  var pl = $("ptList");
+  if (pl) pl.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    var id = Number(b.getAttribute("data-id"));
+    if (b.classList.contains("pt-buy")) {
+      var row = b.closest(".pt-row"), q = row ? row.querySelector(".pt-qty") : null;
+      doBuyPart(id, BigInt(b.getAttribute("data-price")), Number(b.getAttribute("data-max")), b, q ? q.value : 1);
+    } else if (b.classList.contains("pt-delist")) {
+      doDelistPart(id, b);
+    }
+  });
+  var pm = $("ptMine");
+  if (pm) pm.addEventListener("click", function(e){
+    var b = e.target.closest(".pt-delist"); if (!b) return;
+    doDelistPart(Number(b.getAttribute("data-id")), b);
+  });
+})();
 var __bmClose = $("buyModalClose"); if (__bmClose) __bmClose.addEventListener("click", function(){ closePop($("buyModal")); });
 var __bm = $("buyModal"); if (__bm) __bm.addEventListener("click", function(e){ if (e.target === __bm) closePop(__bm); });
 var el=$("mkList"); if (el) el.addEventListener("click", function(ev){
