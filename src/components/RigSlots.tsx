@@ -59,7 +59,7 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         <rect onMouseEnter={() => onHover?.(5)} x="28" y="202" width="104" height="40" rx="5" {...fp(5, 0.12)} stroke={stroke(5)} strokeWidth="1.1" strokeDasharray={dash(5)} />
 
         {/* 标签 */}
-        <g fontSize="8">
+        <g fontSize="10">
           <text x="140" y="34" fill={ok(1) ? stroke(1) : "#6b5a50"}>主板</text>
           <text x="58" y="92" fill={ok(0) ? stroke(0) : "#6b5a50"}>CPU</text>
           <text x="96" y="92" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
