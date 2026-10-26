@@ -2039,6 +2039,8 @@ input:focus{
   border-color:rgba(255,159,69,.35);
   background:rgba(23,18,16,.66);
 }
+.rig-ops{ position:sticky; top:58px; z-index:6; backdrop-filter:blur(8px); }
+@media(max-width:760px){ .rig-ops{ top:52px; } }
 .rig-ops>*{
   height:28px;
   box-sizing:border-box;
@@ -4765,6 +4767,7 @@ main .card:nth-child(3){
   gap:8px;
   margin-top:6px;
 }
+.mint-cta{ width:100%; margin:10px 0 4px; font-size:15px; letter-spacing:.5px; }
 .mint-qty #mintAmt{
   flex:1;
   height:24px;
@@ -6238,6 +6241,7 @@ body::before{ animation:none !important; }
       <label data-i18n="抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）">抽取数量（单次操作上限 10,000 件 · 自动按每笔 500 件分批铸造）</label>
       <div class="mint-qty"><input type="number" id="mintAmt" min="1" max="10000" placeholder="例如 10" data-i18n="m.qtyPh"><span class="mq-grp"><button class="mq" data-n="1">1</button><button class="mq" data-n="10">10</button><button class="mq" data-n="100">100</button><button class="mq" data-n="1000">1000</button></span></div>
       <div class="price-line"><span data-i18n="k.pay">应付</span> <b id="mintPrice">—</b><span class="mint-note" id="mintNote"></span></div>
+      <button class="btn primary mint-cta" id="mintCta" data-i18n="m.mintCta">抽取 1 件</button>
       <div class="mint-cap" id="mintCapBox">
         <div class="mint-cap-head"><span data-i18n="c.capTitle">全网抽卡进度</span><b id="mintCapTxt">— / 100,000</b></div>
         <div class="mint-cap-track"><i id="mintCapFill" style="width:0%"></i></div>
@@ -6683,6 +6687,7 @@ var I18N = {
   "q.hide": {zh:"收起", en:"Collapse"},
   "q.stopped": {zh:"已终止，剩余任务不再执行", en:"Stopped · remaining tasks cancelled"},
   "m.qtyPh": {zh:"例如 10", en:"e.g. 10"},
+  "m.mintCta": {zh:"抽取 1 件", en:"Draw 1 pc"},
   "m.hint1": {zh:"主网 OKB 可从 OKX 交易所提现转入（网络选 X Layer）。Mint 价 0.001 OKB / 件（固定价，无阶梯）。8 类部件按权重随机，每件独立分档（标准/Pro/旗舰）。", en:"Mainnet OKB can be withdrawn from OKX (select X Layer network). Mint price 0.001 OKB / pc (fixed, no ladder). 8 weighted part types, each tiered independently (Std/Pro/Flagship)."},
   "k.mintH": {zh:"盲盒铸造：随机抽 1 件硬件", en:"Blind box: draw 1 random part"},
   "k.asmH": {zh:"组装流片：8 类部件 → 整机 PC NFT", en:"Assemble: 8 parts → 1 PC NFT"},
@@ -7355,12 +7360,19 @@ function renderGlobal(){
     if (setNum("stMinted", r[9], fmtNumUnit, fmtInt)) flashStat("stMinted");
     if (setNum("stCap", r[8], fmtNumUnit, fmtInt)) flashStat("stCap");
     if (setNum("stShares", r[2], fmtNumUnit, fmtInt)) flashStat("stShares");
-    if (typeof HIST==="undefined"){window.HIST={hash:[],price:[],mint:[]};}
+    if (typeof HIST==="undefined"){
+      try { window.HIST = JSON.parse(localStorage.getItem("tapex_hist") || "null") || {hash:[],price:[],mint:[]}; }
+      catch(e){ window.HIST = {hash:[],price:[],mint:[]}; }
+    }
     var _hv=Number(r[2]), _pv=Number(r[6])/1e18, _mv=Number(r[9]);
-    if(isFinite(_hv))HIST.hash.push(_hv);
-    if(isFinite(_pv))HIST.price.push(_pv);
-    if(isFinite(_mv))HIST.mint.push(_mv);
-    if(HIST.hash.length>8){HIST.hash.shift();HIST.price.shift();HIST.mint.shift();}
+    var _hAt = 0; try { _hAt = +localStorage.getItem("tapex_hist_at") || 0; } catch(e){}
+    if (Date.now() - _hAt > 60000) {           // 每 60s 采一个点，避免同一会话刷出重复点
+      if(isFinite(_hv))HIST.hash.push(_hv);
+      if(isFinite(_pv))HIST.price.push(_pv);
+      if(isFinite(_mv))HIST.mint.push(_mv);
+      while(HIST.hash.length>12){HIST.hash.shift();HIST.price.shift();HIST.mint.shift();}
+      try { localStorage.setItem("tapex_hist", JSON.stringify(HIST)); localStorage.setItem("tapex_hist_at", String(Date.now())); } catch(e){}
+    }
     renderSpark();
     var poolTxt = t("net.pool") + fmtWei(r[5]);
     var se = $("stEpoch");
@@ -7387,7 +7399,7 @@ function renderGlobal(){
     fitStatNums();
     UNIT_PRICE = r[6];                       // V6 固定抽卡费 0.001 OKB/件
     var okbP = Number(UNIT_PRICE)/1e18;
-    $("mintPrice").textContent = okbP.toFixed(4) + (LANG === "en" ? " OKB / pc" : " OKB / 件");
+    updMintPay();
     $("mintNote").textContent = "";
     var _capT = r[8], _capM = r[9];
     var _capValid = typeof _capT === "bigint" && typeof _capM === "bigint";
@@ -9114,14 +9126,26 @@ var el=$("assembleBtn"); if (el) el.addEventListener("click", doAssemble);
     b.classList.add("on");
   });
 })();
-var el=$("mintAmt"); if (el) el.addEventListener("input", function(){
-  var amt = BigInt($("mintAmt").value || "0");
-  if (amt > 0n) {
-    var s = ethers.formatEther(UNIT_PRICE * amt);
-    $("mintPrice").textContent = Number(s).toLocaleString("en-US", {maximumFractionDigits:7}) + " OKB";
+function updMintPay(){
+  var inp = $("mintAmt"), el = $("mintPrice"), cta = $("mintCta");
+  if (!el) return;
+  var n = inp ? Number(inp.value || 0) : 0;
+  var p = Number(UNIT_PRICE) / 1e18;
+  if (!isFinite(p)) p = 0.001;
+  var unit = (LANG === "en") ? " OKB / pc" : " OKB / 件";
+  if (n > 0) {
+    var total = n * p;
+    el.textContent = n.toLocaleString("en-US") + " × " + p.toFixed(4) + " = " +
+      total.toLocaleString("en-US", { maximumFractionDigits: 4 }) + " OKB";
+    if (cta) cta.textContent = (LANG === "en" ? "Draw " : "抽取 ") + n.toLocaleString("en-US") + (LANG === "en" ? " pcs" : " 件");
   } else {
-    $("mintPrice").textContent = (Number(UNIT_PRICE)/1e18).toFixed(7) + " OKB / 件";
+    el.textContent = p.toFixed(4) + unit;
+    if (cta) cta.textContent = (LANG === "en" ? "Draw 1 pc" : "抽取 1 件");
   }
+}
+var el=$("mintAmt"); if (el) el.addEventListener("input", updMintPay);
+var el=$("mintCta"); if (el) el.addEventListener("click", function(){
+  var core = $("forgeCore"); if (core) core.click();
 });
 $("claimBtn").addEventListener("click", doClaim);
 
