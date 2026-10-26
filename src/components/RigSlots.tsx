@@ -83,36 +83,29 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         {/* 电源（部件 6） */}
         <rect onMouseEnter={() => onHover?.(5)} x="28" y="202" width="104" height="40" rx="5" {...fp(5, 0.12)} stroke={stroke(5)} strokeWidth="1.1" strokeDasharray={dash(5)} />
 
-        {/* 标签：自动避让 */}
+        {/* 标签：优先放在部件内部，放不下的（机箱边框）放外侧 */}
         {(() => {
-          const SLOTS: { i: number; name: string; box: Rect; prefer: "above" | "below" | "left" | "right" }[] = [
-            { i: 1, name: "主板", box: { x: 36, y: 22, w: 154, h: 148 }, prefer: "above" },
-            { i: 0, name: "CPU", box: { x: 58, y: 44, w: 34, h: 30 }, prefer: "below" },
-            { i: 6, name: "散热", box: { x: 52, y: 36, w: 46, h: 46 }, prefer: "left" },
-            { i: 3, name: "RAM", box: { x: 106, y: 44, w: 18, h: 48 }, prefer: "above" },
-            { i: 2, name: "GPU", box: { x: 44, y: 122, w: 146, h: 38 }, prefer: "above" },
-            { i: 4, name: "SSD", box: { x: 124, y: 100, w: 58, h: 10 }, prefer: "above" },
-            { i: 5, name: "电源", box: { x: 28, y: 202, w: 104, h: 40 }, prefer: "above" },
-            { i: 7, name: "机箱", box: { x: 8, y: 6, w: 204, h: 248 }, prefer: "below" },
+          const L: { i: number; name: string; x: number; y: number; rot?: number; size?: number; anchor?: "start" | "middle" }[] = [
+            { i: 1, name: "主板", x: 42, y: 36, size: 9, anchor: "start" },
+            { i: 0, name: "CPU", x: 75, y: 78, size: 9 },
+            { i: 6, name: "散热", x: 75, y: 46, size: 9 },
+            { i: 3, name: "RAM", x: 117, y: 68, rot: -90, size: 9 },
+            { i: 2, name: "GPU", x: 117, y: 145, size: 10 },
+            { i: 4, name: "SSD", x: 150, y: 108, size: 8 },
+            { i: 5, name: "电源", x: 80, y: 226, size: 10 },
+            { i: 7, name: "机箱", x: 14, y: 248, size: 10, anchor: "start" },
           ];
-          const boxes = SLOTS.map((x) => x.box);
-          // 已放好的标签占位，防止标签之间互撞
-          const placed: Rect[] = [];
           return (
-            <g fontSize="10">
-              {SLOTS.map((sl) => {
-                const containers = [SLOTS[0].box, SLOTS[7].box];
-          const others = boxes.filter((b) => b !== sl.box && !containers.includes(b)).concat(placed);
-                const r = placeLabel(sl.name, sl.box, others, sl.prefer);
-                // 机箱标签固定在左下角外侧，避免和「电源」打架
-                const pos = sl.i === 7 ? { x: 14, y: 248 } : { x: r.x, y: r.y + 8 };
-                placed.push({ x: pos.x, y: pos.y - 8, w: sl.name.length * 6.6 + 2, h: 9 });
-                return (
-                  <text key={sl.i} x={pos.x} y={pos.y} fill={ok(sl.i) ? stroke(sl.i) : "#6b5a50"}>
-                    {sl.name}
-                  </text>
-                );
-              })}
+            <g>
+              {L.map((l) => (
+                <text key={l.i} x={l.x} y={l.y} fontSize={l.size ?? 10}
+                  textAnchor={l.anchor ?? "middle"} dominantBaseline="middle"
+                  transform={l.rot ? `rotate(${l.rot} ${l.x} ${l.y})` : undefined}
+                  fill={ok(l.i) ? stroke(l.i) : "#6b5a50"}
+                  style={{ fontWeight: 600, letterSpacing: ".02em", pointerEvents: "none" }}>
+                  {l.name}
+                </text>
+              ))}
             </g>
           );
         })()}
