@@ -95,10 +95,10 @@ export function Dividend() {
 
           {/* 指标面板 */}
           <section className="dv-stats">
-            <div className="dv-tile"><span><img className="coin-ico" src="/tapex-logo.svg" alt="" />TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
+            <div className="dv-tile"><span><img className="coin-ico" src="/tapex-logo.svg" alt="" />TAPEX 持仓</span><b>{loading ? "—" : num(Number(formatEther(tapex)), 0)} <em>TAPEX</em></b></div>
             <div className="dv-tile"><span><img className="coin-ico" src="/tape-logo.svg" alt="" />每日释放</span><b>{loading ? "—" : num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
-            <div className="dv-tile"><span>池累计注入</span><b>{loading ? "—" : num(Number(formatEther(pool)), 0)}</b></div>
-            <div className="dv-tile"><span>分红池余额</span><b className={runOut ? "warn" : ""}>{loading ? "—" : num(Number(formatEther(balance)), 0)}</b></div>
+            <div className="dv-tile"><span>池累计注入</span><b>{loading ? "—" : num(Number(formatEther(pool)), 0)} <em>TAPE</em></b></div>
+            <div className="dv-tile"><span>分红池余额</span><b className={runOut ? "warn" : ""}>{loading ? "—" : num(Number(formatEther(balance)), 0)} <em>TAPE</em></b></div>
             <div className="dv-runway">
               <div className="dv-runway-top">
                 <span>按当前释放速度可发</span>
