@@ -5,7 +5,7 @@ import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { readProvider } from "../lib/wallet";
 import { loadCache, putCache } from "../lib/pcCache";
 import { ScanLink } from "../components/ScanLink";
-import { getNames, setName } from "../lib/names";
+import { getNames, setName, getHue, getVariant } from "../lib/names";
 import { logAction } from "../lib/history";
 import { FloatGain } from "../components/FloatGain";
 import { useApp } from "../state/App";
@@ -274,7 +274,9 @@ export function Stake() {
                 setDetail({ kind: "pc", id: p.id });
               }}
               style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
-              <RigArt hash={p.hash} mining={p.staked} grade={gradeNum(p.hash)} size={200} />
+              <RigArt hash={p.hash} grade={gradeNum(p.hash)} size={200}
+                variant={getVariant(p.id)} lightHue={getHue(p.id)}
+                state={p.staked ? "mining" : p.listed ? "listed" : "idle"} />
               <label className="farm-check" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" checked={sel.has(p.id)} onChange={() => toggle(p.id)} />
               </label>

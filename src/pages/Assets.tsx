@@ -9,6 +9,7 @@ import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { PartIcon } from "../components/PartIcon";
 import { RigArt } from "../components/RigArt";
 import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
+import { getHue, getVariant } from "../lib/names";
 import { gradeOf, gradeNum } from "../lib/contracts";
 import { getHistory } from "../lib/tx";
 import { Num } from "../components/Num";

@@ -9,6 +9,7 @@ import { GradeBadge } from "../components/GradeBadge";
 import { RigArt } from "../components/RigArt";
 import { PartIcon } from "../components/PartIcon";
 import { logAction } from "../lib/history";
+import { getHue, getVariant } from "../lib/names";
 import { trackTx } from "../lib/tx";
 
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -241,7 +242,8 @@ export function Build() {
         <div className="born-mask" onClick={() => setBorn(null)}>
           <div className="born-card">
             <span className="born-badge">出厂</span>
-            <div className="born-rig"><RigArt hash={born.hash} mining grade={gradeNum(born.hash)} size={180} /></div>
+            <div className="born-rig"><RigArt hash={born.hash} grade={gradeNum(born.hash)} size={180}
+              variant={getVariant(born.id)} lightHue={getHue(born.id)} state="mining" /></div>
             <b>PC #{born.id}</b>
             <p>{born.hash} H · {GRADE(born.hash)} 级</p>
             <span className="born-hint">点击任意处关闭</span>
