@@ -167,20 +167,18 @@ export function Stake() {
         <div className="tile"><span>总矿机</span><b>{pcs.length}</b></div>
         <div className="tile"><span>质押中</span><b>{stakedList.length}</b></div>
         <div className="tile"><span>总算力</span><b>{num(totalHash, 0)} <em>H</em></b></div>
-        <div className="tile"><span>待领取</span><b>{num(Number(formatEther(earned)), 4)} <em>TAPE</em></b></div>
+        <div className="tile tile-claim">
+          <span>待领取</span>
+          <b>{loading ? "—" : num(Number(formatEther(earned)), 4)} <em>TAPE</em></b>
+          <button className="tile-claim-btn" disabled={busy !== 0 || earned === 0n || stakedList.length === 0} onClick={claimAll}>
+            {busy === -1 ? "领取中" : earned === 0n ? "无可领" : "领取"}
+          </button>
+          {stakedList.length > 0 && (
+            <i className="tile-claim-hint">{stakedList.length} 台{stakedList.length > maxBatch ? ` · ${Math.ceil(stakedList.length / maxBatch)} 笔` : ""}</i>
+          )}
+        </div>
       </div>
 
-      <div className="claim-row">
-        <div className="claim-info">
-          <span>可领取挖矿收益</span>
-          <b>{loading ? "—" : num(Number(formatEther(earned)), 4)} <em>TAPE</em></b>
-          <i>{stakedList.length} 台质押中{stakedList.length > maxBatch ? ` · 分 ${Math.ceil(stakedList.length / maxBatch)} 笔` : ""}</i>
-        </div>
-        <button className="btn btn-primary claim-btn" disabled={busy !== 0 || earned === 0n || stakedList.length === 0}
-          onClick={claimAll}>
-          {busy === -1 ? "领取中…" : earned === 0n ? "暂无可领" : "一键领取"}
-        </button>
-      </div>
 
       <div className="sec-head">
         <b>我的矿机</b>

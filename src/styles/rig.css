@@ -89,18 +89,25 @@
 .pc-listed { font-size: 9.5px; color: var(--gold); border: 1px solid rgba(255,217,61,.4);
   background: rgba(255,217,61,.1); border-radius: 999px; padding: 1px 7px; }
 
-/* 一键领取条 */
-.claim-row { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding: 14px 16px;
-  border-radius: var(--r-lg); border: 1px solid rgba(0,229,160,.28);
-  background: linear-gradient(100deg, rgba(0,229,160,.10), rgba(255,217,61,.06) 60%, transparent); }
-.claim-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.claim-info span { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--tx-3); }
-.claim-info b { font-family: var(--mono); font-size: 22px; color: var(--gold); }
-.claim-info b em { font-style: normal; font-size: 11px; color: var(--tx-3); }
-.claim-info i { font-style: normal; font-size: 11px; color: var(--tx-3); }
-.claim-btn { margin-left: auto; height: 42px; min-width: 140px; }
+
+
+/* 待领取砖内嵌领取按钮 */
+.tile-claim { display: flex; flex-direction: column; gap: 2px; padding-bottom: 10px; }
+.tile-claim > b { margin-top: 4px; }
+.tile-claim-btn {
+  position: absolute; right: 10px; top: 10px;
+  height: 26px; padding: 0 12px; border-radius: 8px; border: none; cursor: pointer;
+  font-size: 11px; font-weight: 800; letter-spacing: .02em; color: #2a1700;
+  background: var(--grad-gold); box-shadow: 0 2px 0 #b36a00;
+  transition: transform .12s, box-shadow .12s, filter .2s;
+}
+.tile-claim-btn:hover:not(:disabled) { filter: brightness(1.06); }
+.tile-claim-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #b36a00; }
+.tile-claim-btn:disabled {
+  background: rgba(255,255,255,.06); color: var(--tx-3); box-shadow: none;
+  border: 1px dashed rgba(255,255,255,.16);
+}
+.tile-claim-hint { font-style: normal; font-size: 9.5px; color: var(--tx-3); margin-top: 2px; }
 @media (max-width: 640px) {
-  .claim-row { flex-direction: column; align-items: stretch; gap: 10px; }
-  .claim-btn { margin-left: 0; width: 100%; }
-  .claim-info b { font-size: 20px; }
+  .tile-claim-btn { position: static; margin-top: 8px; width: 100%; height: 30px; }
 }
