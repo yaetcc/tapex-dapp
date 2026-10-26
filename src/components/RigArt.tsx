@@ -247,9 +247,15 @@ export function RigArt({
                 <rect x="104" y="216" width="10" height="10" rx="2" />
               </g>
             )}
-            {/* SSD */}
-            <rect x="134" y="204" width="54" height="22" rx="3" fill="#241a16" stroke="#4a382f" strokeWidth="1.2" />
-            {lvl >= 1 && <rect x="134" y="230" width="54" height="12" rx="3" fill="#241a16" stroke="#4a382f" strokeWidth="1.2" />}
+            {/* 2.5" SSD：装在电源仓上盖 */}
+            <rect x="130" y="197" width="58" height="10" rx="2" fill="#2a211d" stroke="#4a382f" strokeWidth="0.8" />
+            <rect x="132" y="198" width="54" height="15" rx="3" fill="#241a16" stroke="#5a463a" strokeWidth="1.2" />
+            {lvl >= 2 && (
+              <g fill="#6b5344">
+                <circle cx="138" cy="205" r="1.2" />
+                <circle cx="180" cy="205" r="1.2" />
+              </g>
+            )}
 
             {/* 机箱脚垫（大图） */}
             {lvl >= 2 && (
