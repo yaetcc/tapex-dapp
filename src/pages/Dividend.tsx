@@ -67,7 +67,7 @@ export function Dividend() {
           {/* 主面板：可领 + 领取 */}
           <section className="dv-claim">
             <div className="dv-claim-head">
-              <img className="dv-coin-img" src="/tapex-logo.svg" alt="TAPEX" aria-hidden />
+              <img className="dv-coin-img" src="/tape-logo.svg" alt="TAPE" aria-hidden />
               <div>
                 <span className="dv-label">可领分红</span>
                 <div className="dv-amount">
