@@ -17,19 +17,21 @@ export function Dividend() {
   const [perDay, setPerDay] = useState<bigint>(0n);
   const [pool, setPool] = useState<bigint>(0n);
   const [balance, setBalance] = useState<bigint>(0n);
+  const [effSupply, setEffSupply] = useState<bigint>(0n);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
   const load = async () => {
-    const [p, st, pd, dep, bal] = await Promise.all([
+    const [p, st, pd, dep, bal, eff] = await Promise.all([
       account ? fsC.pending(account) as Promise<bigint> : Promise.resolve(0n),
       fsC.stakeToken() as Promise<string>,
       fsC.rewardPerDay() as Promise<bigint>,
       fsC.totalDeposited() as Promise<bigint>,
       tapeC.balanceOf(ADDRS.feeSplit) as Promise<bigint>,
+      fsC.effectiveSupply().catch(() => 0n) as Promise<bigint>,
     ]);
-    setPending(p); setPerDay(pd); setPool(dep); setBalance(bal);
+    setPending(p); setPerDay(pd); setPool(dep); setBalance(bal); setEffSupply(eff);
     if (account && st) {
       const erc = new Contract(st, ABI.tape as unknown as string[], readProvider);
       setTapex(await erc.balanceOf(account) as bigint);
@@ -40,9 +42,9 @@ export function Dividend() {
   const claimable = Number(formatEther(pending));
   const daysLeft = perDay > 0n ? Math.floor(Number(balance) / Number(perDay)) : 0;
   const runOut = daysLeft > 0 && daysLeft < 7;
-  // 有效供应 ≈ 21.16M（已排除流动性池与项目地址），用于估算"每天大概分到多少"
-  const EFFECTIVE_SUPPLY = 21_160_000;
-  const dailyEst = (Number(formatEther(tapex)) / EFFECTIVE_SUPPLY) * Number(formatEther(perDay));
+  // 有效供应直接读链上 effectiveSupply()（= 总量 − 被排除的 LP/项目地址余额）
+  const supply = Number(formatEther(effSupply));
+  const dailyEst = supply > 0 ? (Number(formatEther(tapex)) / supply) * Number(formatEther(perDay)) : 0;
   const rate = tapex > 0n ? "按持仓占比实时累积" : "持有 TAPEX 后开始累积";
 
   const claim = async () => {

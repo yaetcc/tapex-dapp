@@ -39,6 +39,7 @@ export const ABI = {
   mining: [
     "function totalShares() view returns (uint256)",
     "function rewardPerDay() view returns (uint256)",
+    "function effectiveSupply() view returns (uint256)",
     "function stake(uint256)",
     "function unstake(uint256)",
     "function batchStake(uint256[])",
@@ -67,6 +68,7 @@ export const ABI = {
     "function stakeToken() view returns (address)",
     "function totalDeposited() view returns (uint256)",
     "function rewardPerDay() view returns (uint256)",
+    "function effectiveSupply() view returns (uint256)",
     "function claim() returns (uint256)",
   ],
 } as const;
