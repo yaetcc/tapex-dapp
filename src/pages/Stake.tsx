@@ -116,6 +116,29 @@ export function Stake() {
 
   const toggle = (id: number) => setSel((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
+  const claimAll = async () => {
+    if (!signer || !account) return toast(t("err.noWallet"), "err");
+    const ids = stakedList.map((p) => p.id);
+    if (!ids.length) return toast("没有质押中的矿机", "err");
+    if (earned === 0n) return toast("暂无可领收益", "err");
+    setBusy(-1);
+    try {
+      const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
+      const size = Math.max(1, maxBatch);
+      for (let i = 0; i < ids.length; i += size) {
+        const chunk = ids.slice(i, i + size);
+        const round = ids.length > size ? ` ${i + 1}-${i + chunk.length}/${ids.length}` : "";
+        await trackTx(`领取挖矿收益${round}`, async () => {
+          const tx = await c.claim(chunk);
+          await tx.wait();
+        });
+      }
+      toast(`已领取 ${num(Number(formatEther(earned)), 4)} TAPE`, "ok");
+      await load();
+    } catch (e) { toast((e as Error).message.slice(0, 90), "err"); }
+    finally { setBusy(0); }
+  };
+
   const act = async (kind: "stake" | "unstake" | "claim", id?: number) => {
     if (!signer || !account) return toast(t("err.noWallet"), "err");
     setBusy(id ?? -1);
@@ -145,6 +168,18 @@ export function Stake() {
         <div className="tile"><span>质押中</span><b>{stakedList.length}</b></div>
         <div className="tile"><span>总算力</span><b>{num(totalHash, 0)} <em>H</em></b></div>
         <div className="tile"><span>待领取</span><b>{num(Number(formatEther(earned)), 4)} <em>TAPE</em></b></div>
+      </div>
+
+      <div className="claim-row">
+        <div className="claim-info">
+          <span>可领取挖矿收益</span>
+          <b>{loading ? "—" : num(Number(formatEther(earned)), 4)} <em>TAPE</em></b>
+          <i>{stakedList.length} 台质押中{stakedList.length > maxBatch ? ` · 分 ${Math.ceil(stakedList.length / maxBatch)} 笔` : ""}</i>
+        </div>
+        <button className="btn btn-primary claim-btn" disabled={busy !== 0 || earned === 0n || stakedList.length === 0}
+          onClick={claimAll}>
+          {busy === -1 ? "领取中…" : earned === 0n ? "暂无可领" : "一键领取"}
+        </button>
       </div>
 
       <div className="sec-head">

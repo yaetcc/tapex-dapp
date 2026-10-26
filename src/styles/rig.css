@@ -88,3 +88,19 @@
 
 .pc-listed { font-size: 9.5px; color: var(--gold); border: 1px solid rgba(255,217,61,.4);
   background: rgba(255,217,61,.1); border-radius: 999px; padding: 1px 7px; }
+
+/* 一键领取条 */
+.claim-row { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding: 14px 16px;
+  border-radius: var(--r-lg); border: 1px solid rgba(0,229,160,.28);
+  background: linear-gradient(100deg, rgba(0,229,160,.10), rgba(255,217,61,.06) 60%, transparent); }
+.claim-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.claim-info span { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--tx-3); }
+.claim-info b { font-family: var(--mono); font-size: 22px; color: var(--gold); }
+.claim-info b em { font-style: normal; font-size: 11px; color: var(--tx-3); }
+.claim-info i { font-style: normal; font-size: 11px; color: var(--tx-3); }
+.claim-btn { margin-left: auto; height: 42px; min-width: 140px; }
+@media (max-width: 640px) {
+  .claim-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .claim-btn { margin-left: 0; width: 100%; }
+  .claim-info b { font-size: 20px; }
+}
