@@ -96,8 +96,8 @@ export function Stake() {
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
       const label = kind === "claim" ? "批量领取" : kind === "stake" ? "批量质押" : "批量解押";
-      // 合约单笔上限 maxBatch（默认 10），超出自动分批
-      const size = Math.max(1, maxBatch);
+      // 质押/解押受 maxBatch 限制；claim 没有限制，一笔发完（超 80 台才分批）
+      const size = kind === "claim" ? (ids.length > 80 ? 80 : ids.length) : Math.max(1, maxBatch);
       for (let i = 0; i < ids.length; i += size) {
         const chunk = ids.slice(i, i + size);
         const round = ids.length > size ? ` ${i + 1}-${i + chunk.length}/${ids.length}` : ` ${ids.length}`;
@@ -124,7 +124,8 @@ export function Stake() {
     setBusy(-1);
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
-      const size = Math.max(1, maxBatch);
+      // claim(ids) 没有长度限制，一笔领完；超过 80 台才分批，避免单笔 gas 过高
+      const size = ids.length > 80 ? 80 : ids.length;
       for (let i = 0; i < ids.length; i += size) {
         const chunk = ids.slice(i, i + size);
         const round = ids.length > size ? ` ${i + 1}-${i + chunk.length}/${ids.length}` : "";
@@ -174,7 +175,7 @@ export function Stake() {
             {busy === -1 ? "领取中" : earned === 0n ? "无可领" : "领取"}
           </button>
           {stakedList.length > 0 && (
-            <i className="tile-claim-hint">{stakedList.length} 台{stakedList.length > maxBatch ? ` · ${Math.ceil(stakedList.length / maxBatch)} 笔` : ""}</i>
+            <i className="tile-claim-hint">{stakedList.length} 台 · 1 笔</i>
           )}
         </div>
       </div>
