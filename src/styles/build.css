@@ -1,6 +1,8 @@
 .build-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 380px); gap: 22px; align-items: start; margin-top: 18px; }
 @media (max-width: 1080px) { .build-grid { grid-template-columns: 1fr; gap: 16px; } }
 .build-side { position: sticky; top: 92px; }
+/* 左栏首个区块标题去掉上外边距，让右侧卡片顶部与它对齐 */
+.build-grid > div > .sec-head:first-child { margin-top: 0; }
 @media (max-width: 1080px) { .build-side { position: static; } }
 .build-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 @media (max-width: 760px) { .build-rows { grid-template-columns: 1fr; } }
