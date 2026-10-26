@@ -7,11 +7,22 @@ MSG="${1:-chore: publish}"
 APP="$(cd "$(dirname "$0")/.." && pwd)"
 export PATH="/Users/yaetc/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/node/bin:$PATH"
 
-cd "$APP"
-echo "▶ 构建"
-./node_modules/.bin/tsc -b >/dev/null 2>&1 || true
+# 构建在源工程里做（它有 node_modules），再把产物搬过来
+SRC="${SRC_APP:-/Users/yaetc/Documents/deepseek-harness/default-workspace/tapex-app}"
+cd "$SRC"
+echo "▶ 构建（$SRC）"
 node scripts/build.mjs | tail -1
-touch dist/.nojekyll
+rm -rf "$APP/dist"
+cp -R dist "$APP/dist"
+# 只保留 index 引用的产物，避免历史哈希文件堆积
+for f in "$APP"/dist/assets/app.*.js "$APP"/dist/assets/app.*.css; do
+  [ -e "$f" ] || continue
+  base=$(basename "$f")
+  grep -q "$base" "$APP/dist/index.html" || rm -f "$f"
+done
+touch "$APP/dist/.nojekyll"
+[ -f "$APP/CNAME" ] && cp "$APP/CNAME" "$APP/dist/CNAME"
+cd "$APP"
 
 echo "▶ 推到 gh-pages"
 cd dist

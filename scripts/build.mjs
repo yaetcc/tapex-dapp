@@ -32,8 +32,8 @@ if (existsSync(out + "/assets/app.css")) {
 
 const html = readFileSync("index.html", "utf8")
   .replace('<script type="module" src="/src/main.tsx"></script>',
-    (cssName ? `<link rel="stylesheet" href="/assets/${cssName}" />\n    ` : "") +
-    `<script type="module" src="/assets/${jsName}"></script>`);
+    (cssName ? `<link rel="stylesheet" href="./assets/${cssName}" />\n    ` : "") +
+    `<script type="module" src="./assets/${jsName}"></script>`);
 writeFileSync(out + "/index.html", html);
 console.log("hashed assets:", cssName ?? "(no css)", jsName);
 // 拷贝 public/ 下的静态资源（logo 等）
