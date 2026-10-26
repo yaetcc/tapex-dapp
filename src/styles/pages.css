@@ -421,3 +421,53 @@
   .act-card { flex-wrap: wrap; }
   .act-card .btn { width: 100%; }
 }
+
+/* ===== 主页美化：海报 Hero / KPI 主次 / 三档明度 / 首屏动效 ===== */
+.home { gap: 24px; }
+.home-hero { padding: 48px 40px 40px; position: relative; overflow: hidden; }
+.home-hero::before { content: ""; position: absolute; inset: -40% -10% auto -10%; height: 120%;
+  background: radial-gradient(60% 70% at 22% 0%, rgba(255,217,61,.10), transparent 70%); pointer-events: none; }
+.home-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .03;
+  background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+  background-size: 60px 60px; }
+.home-hero-txt { position: relative; z-index: 1; }
+.home-kicker { display: inline-flex; align-items: center; gap: 10px; }
+.home-kicker i { width: 24px; height: 1px; background: var(--gold); display: inline-block; }
+.home-hero h1 { font-size: clamp(32px, 3.4vw, 44px); line-height: 1.08; margin: 14px 0 10px; }
+.home-hero-art { position: relative; z-index: 1; }
+@media (max-width: 760px) {
+  .home-hero { padding: 18px 16px; grid-template-columns: 1fr auto; align-items: center; }
+  .home-hero h1 { font-size: var(--fs-2xl); margin: 6px 0 4px; }
+  .home-hero p { display: none; }
+  .home-hero-art { display: grid; }
+}
+
+/* KPI：一主三次 */
+.home-kpi { grid-template-columns: 2fr 1fr 1fr 1fr; }
+.home-tile.main { border-color: var(--line-gold); background: linear-gradient(120deg, rgba(255,217,61,.10), rgba(255,217,61,.02) 65%); }
+.home-tile.main b { font-size: var(--fs-3xl); }
+.home-tile b { font-variant-numeric: tabular-nums; }
+.home-tile:not(.main) b { color: var(--tx-1); }
+.spark { display: flex; align-items: flex-end; gap: 3px; height: 18px; margin-top: 8px; }
+.spark b { flex: 1; border-radius: 1px; background: rgba(255,217,61,.35); height: 40%; }
+.spark b:nth-child(2) { height: 62%; } .spark b:nth-child(3) { height: 48%; }
+.spark b:nth-child(4) { height: 78%; } .spark b:nth-child(5) { height: 58%; }
+.spark b:nth-child(6) { height: 88%; } .spark b:nth-child(7) { height: 70%; background: var(--gold); }
+
+/* 三档明度 */
+.home-panel { background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--mat-matte); }
+.home-panel .home-list li { padding: 8px 10px; border-radius: 8px; background: rgba(0,0,0,.16); }
+.home-net { opacity: .92; }
+
+/* 首屏动效 */
+.home > * { animation: homeIn .42s both; }
+.home > *:nth-child(1) { animation-delay: 0ms; }
+.home > *:nth-child(2) { animation-delay: 160ms; }
+.home > *:nth-child(3) { animation-delay: 240ms; }
+.home > *:nth-child(4) { animation-delay: 320ms; }
+.home > *:nth-child(5) { animation-delay: 400ms; }
+@keyframes homeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.act-card { animation: homeIn .42s .16s both, actBreath .9s .6s ease-in-out 1; }
+@keyframes actBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(1.01); } }
+@media (prefers-reduced-motion: reduce) { .home > *, .act-card { animation: none !important; } }
+@media (max-width: 760px) { .home-kpi { grid-template-columns: repeat(2, 1fr); } .home-tile.main { grid-column: span 2; } }

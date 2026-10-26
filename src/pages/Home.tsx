@@ -7,6 +7,23 @@ import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
 import { gradeNum } from "../lib/contracts";
 
+function Count({ to, digits = 2 }: { to: number; digits?: number }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (!to) { setV(0); return; }
+    const t0 = performance.now(); const dur = 600;
+    let raf = 0;
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      setV(to * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [to]);
+  return <>{v.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}</>;
+}
+
 export function Home({ go }: { go: (r: string) => void }) {
   const { account, connect } = useApp();
   const [d, setD] = useState<{ pcs: number; staked: number; hash: number; pending: number; ids: number[]; can: number; missing: number[] } | null>(null);
@@ -90,7 +107,7 @@ export function Home({ go }: { go: (r: string) => void }) {
     <div className="home">
       <div className="card home-hero">
         <div className="home-hero-txt">
-          <span className="home-kicker">TAPEX · 矿场总览</span>
+          <span className="home-kicker"><i aria-hidden />TAPEX · 矿场总览</span>
           <h1>{account ? "你的矿场" : "开始你的矿场"}</h1>
           <p>抽部件、组装矿机、上架挖矿、每日领分红。</p>
           <div className="home-cta">
@@ -119,18 +136,15 @@ export function Home({ go }: { go: (r: string) => void }) {
       )}
 
       <div className="home-kpi">
-        {[
-          { k: "算力", v: d ? `${d.hash}` : "—", u: "H" },
-          { k: "机器", v: d ? `${d.pcs}` : "—", u: `台（${d?.staked ?? 0} 挖矿）` },
-          { k: "待领取", v: d ? num(d.pending, 2) : "—", u: "TAPE" },
-          { k: "每台日均", v: d && d.staked > 0 ? num(d.pending / d.staked, 2) : "—", u: "TAPE" },
-        ].map((x) => (
-          <div className="card home-tile" key={x.k}>
-            <span>{x.k}</span>
-            <b data-num>{x.v}</b>
-            <em>{x.u}</em>
-          </div>
-        ))}
+        <div className="card home-tile main">
+          <span>待领取</span>
+          <b data-num>{d ? <Count to={d.pending} /> : "—"}</b>
+          <em>TAPE · {d && d.staked > 0 ? `${d.staked} 台在挖` : "未上架"}</em>
+          <i className="spark" aria-hidden><b /><b /><b /><b /><b /><b /><b /></i>
+        </div>
+        <div className="card home-tile"><span>算力</span><b data-num>{d ? <Count to={d.hash} digits={0} /> : "—"}</b><em>H</em></div>
+        <div className="card home-tile"><span>机器</span><b data-num>{d ? <Count to={d.pcs} digits={0} /> : "—"}</b><em>台（{d?.staked ?? 0} 挖矿）</em></div>
+        <div className="card home-tile"><span>每台日均</span><b data-num>{d && d.staked > 0 ? <Count to={d.pending / d.staked} /> : "—"}</b><em>TAPE</em></div>
       </div>
 
       <div className="home-grid">
