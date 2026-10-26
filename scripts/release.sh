@@ -13,7 +13,7 @@ echo "▶ 构建"
 cd "$APP"
 ./node_modules/.bin/tsc -b >/dev/null 2>&1 || echo "  (tsc 有告警，继续)"
 node scripts/build.mjs | tail -2
-JS=$(ls dist/assets/app.*.js | head -1 | xargs basename)
+JS=$(ls -t dist/assets/app.*.js | head -1 | xargs basename)
 
 echo "▶ 同步到发布仓"
 cp -R src/. "$REPO/src/"
