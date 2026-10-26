@@ -4,6 +4,7 @@ import { ADDRS, ABI } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { compact, num } from "../lib/format";
+import { Num } from "../components/Num";
 
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
 const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
@@ -42,8 +43,8 @@ export function Network() {
       <h2 style={{ marginTop: 14 }}>全网状态</h2>
 
       <div className="tiles" style={{ marginTop: 18 }}>
-        <div className="tile"><span>全网算力</span><b>{s ? num(s.shares, 0) : "—"} <em>H</em></b></div>
-        <div className="tile"><span>奖励池余额</span><b>{s ? compact(s.pool) : "—"} <em>TAPE</em></b></div>
+        <div className="tile"><span>全网算力</span><b>{s ? <Num value={s.shares} format={(n) => num(n, 0)} /> : "—"} <em>H</em></b></div>
+        <div className="tile"><span>奖励池余额</span><b>{s ? <Num value={s.pool} format={compact} /> : "—"} <em>TAPE</em></b></div>
         <div className="tile"><span>已抽部件</span><b>{s ? compact(s.minted) : "—"}</b></div>
         <div className="tile"><span>抽卡上限</span><b>{s ? compact(s.cap) : "—"}</b></div>
       </div>

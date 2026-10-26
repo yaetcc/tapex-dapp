@@ -7,6 +7,7 @@ import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
 import { PartIcon } from "../components/PartIcon";
 import { getHistory } from "../lib/tx";
+import { Num } from "../components/Num";
 
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
@@ -20,6 +21,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
   const [pending, setPending] = useState<bigint>(0n);
   const [pcs, setPcs] = useState<number>(0);
   const [detail, setDetail] = useState<Detail>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!account) return;
@@ -32,7 +34,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
         circC.pcsOfOwner(account) as Promise<bigint[]>,
       ]);
       setTape(bal); setCounts(parts.map(Number)); setPending(p); setPcs(pcList.length);
-    })().catch(() => {});
+    })().catch(() => {}).finally(() => setLoading(false));
   }, [account]);
 
   const totalParts = counts.reduce((a, b) => a + b, 0);
@@ -47,11 +49,17 @@ export function Assets({ go }: { go: (r: string) => void }) {
       ) : (
         <>
           <div className="tiles" style={{ marginTop: 18 }}>
-            <div className="tile"><span>TAPE</span><b>{num(Number(formatEther(tape)), 2)}</b></div>
-            <div className="tile"><span>待领分红</span><b>{num(Number(formatEther(pending)), 4)} <em>TAPE</em></b></div>
-            <div className="tile"><span>PC 整机</span><b>{pcs} <em>台</em></b></div>
-            <div className="tile"><span>硬件部件</span><b>{totalParts} <em>件</em></b></div>
+            <div className="tile"><span>TAPE</span><b>{loading ? "—" : <Num value={Number(formatEther(tape))} format={(n) => num(n, 2)} />}</b></div>
+            <div className="tile"><span>待领分红</span><b>{loading ? "—" : <Num value={Number(formatEther(pending))} format={(n) => num(n, 4)} />} <em>TAPE</em></b></div>
+            <div className="tile"><span>PC 整机</span><b>{loading ? "—" : pcs} <em>台</em></b></div>
+            <div className="tile"><span>硬件部件</span><b>{loading ? "—" : totalParts} <em>件</em></b></div>
           </div>
+          {!loading && pcs === 0 && totalParts === 0 && (
+            <div className="guide" style={{ marginTop: 14 }}>
+              <b>第一步</b> 还没有部件 —— 先去铸造抽几件，再组装成 PC。
+              <button className="btn btn-ghost" onClick={() => go("mint")}>去铸造</button>
+            </div>
+          )}
 
           <div className="sec-head"><b>硬件部件</b><span>标准 / Pro / 旗舰</span></div>
           <div className="rack">

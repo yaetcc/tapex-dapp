@@ -19,7 +19,9 @@ const partName = (id: number) => `${PART_NAMES[typeOf(id)]} · ${TIERS[tierOf(id
 
 export function Market() {
   const { t, account, signer, toast } = useApp();
-  const [mode, setMode] = useState<"pc" | "part">("pc");
+  const [mode, setMode] = useState<"pc" | "part" | "mine">("pc");
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<"price" | "time">("time");
   const [pc, setPc] = useState<PcOrder[]>([]);
   const [parts, setParts] = useState<PartOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +75,10 @@ export function Market() {
 
   const myPc = pc.filter((o) => account && o.seller.toLowerCase() === account.toLowerCase());
   const myParts = parts.filter((o) => account && o.seller.toLowerCase() === account.toLowerCase());
+  const bySort = <T extends { price: bigint }>(arr: T[]) =>
+    sort === "price" ? [...arr].sort((a, b) => (a.price < b.price ? -1 : 1)) : arr;
+  const pcView = bySort(pc.filter((o) => !q || String(o.tokenId).includes(q)));
+  const partView = bySort(parts.filter((o) => !q || partName(o.partType).toLowerCase().includes(q.toLowerCase())));
 
   const delistPc = (ids: number[]) => withSigner(async () => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
@@ -141,9 +147,53 @@ export function Market() {
       <div className="mk-tabs">
         <button className={mode === "pc" ? "on" : ""} onClick={() => setMode("pc")}>整机 PC</button>
         <button className={mode === "part" ? "on" : ""} onClick={() => setMode("part")}>部件</button>
+        <button className={mode === "mine" ? "on" : ""} onClick={() => setMode("mine")}>我的</button>
       </div>
 
-      {mode === "pc" ? (
+      <div className="sell-row" style={{ marginTop: 10 }}>
+        <input className="field field-sm" placeholder="搜索 PC ID / 部件名" value={q} onChange={(e) => setQ(e.target.value)} />
+        <select className="field field-sm" value={sort} onChange={(e) => setSort(e.target.value as "price" | "time")}>
+          <option value="time">默认排序</option>
+          <option value="price">价格从低到高</option>
+        </select>
+      </div>
+
+      {mode === "mine" ? (
+        <>
+          <div className="sec-head"><b>我的整机挂单</b><span>{myPc.length} 条</span><span className="spacer" />
+            {myPc.length > 0 && <button className="btn btn-ghost" disabled={busy} onClick={() => delistPc(myPc.map((o) => o.id))}>全部撤下</button>}
+          </div>
+          {myPc.length === 0 ? <div className="empty">没有整机挂单</div> : (
+            <div className="order-list">
+              {myPc.map((o) => (
+                <div className="order-row" key={"mp" + o.id}>
+                  <b>PC #{o.tokenId}</b><span className="muted">#{o.id}</span>
+                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
+                  <button className="btn btn-ghost" disabled={busy} onClick={() => delistPc([o.id])}>撤单</button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="sec-head"><b>我的部件挂单</b><span>{myParts.length} 条</span><span className="spacer" />
+            {myParts.length > 0 && <button className="btn btn-ghost" disabled={busy} onClick={() => delistPart(myParts.map((o) => o.id))}>全部撤下</button>}
+          </div>
+          {myParts.length === 0 ? <div className="empty">没有部件挂单</div> : (
+            <div className="order-list">
+              {myParts.map((o) => (
+                <div className="order-row" key={"mpa" + o.id}>
+                  <b style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <PartIcon type={(o.partType - 1) % 8} tier={Math.floor((o.partType - 1) / 8)} size={17} />
+                    {partName(o.partType)}
+                  </b>
+                  <span className="muted">剩 {o.amount}</span>
+                  <span className="price">{num(Number(formatEther(o.price)), 2)} TAPE</span>
+                  <button className="btn btn-ghost" disabled={busy} onClick={() => delistPart([o.id])}>撤单</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      ) : mode === "pc" ? (
         <>
           <div className="sec-head" style={{ marginTop: 12 }}>
             <b>批量挂单</b><span>一次签名挂多台</span>
@@ -193,12 +243,12 @@ export function Market() {
               ))}
             </div>
           )}
-          <div className="sec-head"><b>在售整机</b><span>{pc.length - myPc.length} 条</span></div>
+          <div className="sec-head"><b>在售整机</b><span>{pcView.length - myPc.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : pc.length === 0 ? (
             <div className="empty">暂无在售整机</div>
           ) : (
             <div className="order-list">
-              {pc.map((o) => (
+              {pcView.map((o) => (
                 <div className="order-row" key={o.id} style={{ cursor: "pointer" }}
                   onClick={(e) => { if (!(e.target as HTMLElement).closest("button")) setDetail({ kind: "pc", id: o.tokenId }); }}>
                   <b>PC #{o.tokenId}</b>
@@ -270,12 +320,12 @@ export function Market() {
               ))}
             </div>
           )}
-          <div className="sec-head"><b>在售部件</b><span>{parts.length - myParts.length} 条</span></div>
+          <div className="sec-head"><b>在售部件</b><span>{partView.length - myParts.length} 条</span></div>
           {loading ? <div className="skeleton" style={{ height: 90 }} /> : parts.length === 0 ? (
             <div className="empty">暂无在售部件</div>
           ) : (
             <div className="order-list">
-              {parts.map((o) => (
+              {partView.map((o) => (
                 <div className="order-row" key={o.id}>
                   <b style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <PartIcon type={(o.partType - 1) % 8} tier={Math.floor((o.partType - 1) / 8)} size={17} />

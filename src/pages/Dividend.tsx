@@ -4,6 +4,7 @@ import { ADDRS, ABI } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
+import { Num } from "../components/Num";
 
 const fsC = new Contract(ADDRS.feeSplit, ABI.feeSplit as unknown as string[], readProvider);
 
@@ -14,6 +15,7 @@ export function Dividend() {
   const [perDay, setPerDay] = useState<bigint>(0n);
   const [pool, setPool] = useState<bigint>(0n);
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const load = async () => {
     const [p, st, pd, dep] = await Promise.all([
@@ -28,7 +30,7 @@ export function Dividend() {
       setTapex(await erc.balanceOf(account) as bigint);
     }
   };
-  useEffect(() => { load().catch(() => {}); }, [account]);
+  useEffect(() => { load().catch(() => {}).finally(() => setLoading(false)); }, [account]);
 
   const claim = async () => {
     if (!signer) return toast(t("err.noWallet"), "err");
@@ -49,8 +51,8 @@ export function Dividend() {
       <p className="sub">持有 TAPEX 自动累积分红：分红池每天恒定释放，按持仓占比分配，随时可领取。</p>
 
       <div className="tiles" style={{ marginTop: 18 }}>
-        <div className="tile"><span>TAPEX 持仓</span><b>{num(Number(formatEther(tapex)), 2)}</b></div>
-        <div className="tile"><span>可领分红</span><b>{num(Number(formatEther(pending)), 4)} <em>TAPE</em></b></div>
+        <div className="tile"><span>TAPEX 持仓</span><b>{loading ? "—" : <Num value={Number(formatEther(tapex))} format={(n) => num(n, 2)} />}</b></div>
+        <div className="tile"><span>可领分红</span><b>{loading ? "—" : <Num value={Number(formatEther(pending))} format={(n) => num(n, 4)} />} <em>TAPE</em></b></div>
         <div className="tile"><span>每日释放</span><b>{num(Number(formatEther(perDay)), 0)} <em>TAPE</em></b></div>
         <div className="tile"><span>池累计注入</span><b>{num(Number(formatEther(pool)), 0)} <em>TAPE</em></b></div>
       </div>

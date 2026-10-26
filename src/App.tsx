@@ -19,6 +19,18 @@ export default function App() {
   const [route, setRoute] = useState<string>(() => location.hash.replace("#", "") || "mint");
 
   useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = document.activeElement as HTMLElement | null;
+      if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+      const n = Number(e.key);
+      if (n >= 1 && n <= 7) { e.preventDefault(); go(ROUTES[n - 1]); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
     const onHash = () => setRoute(location.hash.replace("#", "") || "mint");
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
@@ -38,7 +50,7 @@ export default function App() {
       <Stickers />
       <Mascot />
       <Nav route={current} go={go} />
-      <main className="shell" style={{ paddingTop: 26 }}>
+      <main className="shell page-enter" key={current} style={{ paddingTop: 26 }}>
         {current === "mint" ? <Mint />
           : current === "asm" ? <Build />
           : current === "stake" ? <Stake />

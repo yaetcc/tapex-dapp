@@ -1,9 +1,18 @@
+import { useEffect, useState } from "react";
 // 真实感矿机插画：机箱 + 三风扇 + GPU + 主板 + 电源 + 内存 + SSD
 // mining=true 时风扇旋转、灯带呼吸、热量上升；hashRate 影响转速
 export function RigArt({
   hash = 0, mining = false, grade = 3, size = 260,
 }: { hash?: number; mining?: boolean; grade?: number; size?: number }) {
-  const speed = mining ? Math.max(0.45, 1.4 - Math.min(hash, 300) / 300) : 0; // 算力越高转得越快
+  // 负载波动：基础转速 + 每 4s 微调 ±8%，模拟真实矿机噪声起伏
+  const base = mining ? Math.max(0.45, 1.4 - Math.min(hash, 300) / 300) : 0;
+  const [jit, setJit] = useState(1);
+  useEffect(() => {
+    if (!mining) return;
+    const t = setInterval(() => setJit(0.92 + Math.random() * 0.16), 4000);
+    return () => clearInterval(t);
+  }, [mining]);
+  const speed = base * jit;
   const glow = ["#7FE0D6", "#00E5A0", "#FFD54D"][Math.max(0, Math.min(2, grade - 3))] ?? "#FFD54D";
   return (
     <div className={`rig${mining ? " on" : ""}`} style={{ width: size, ["--spin" as string]: `${speed}s`, ["--glow" as string]: glow }}>
