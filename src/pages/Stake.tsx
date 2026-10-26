@@ -64,15 +64,28 @@ export function Stake() {
       });
       setPcs(build());                                  // 先把卡片铺出来，数据陆续填充
       setLoading(false);
-      const need = ids.map(Number).filter((id) => !cache[String(id)]);
-      for (let i = 0; i < need.length; i += 8) {
-        const chunk = need.slice(i, i + 8);
-        const infos = await Promise.all(chunk.map((x) => circC.getCircuitInfo(x) as Promise<{ hashRate: bigint; grade: bigint }>));
-        chunk.forEach((x, k) => {
-          cache[String(x)] = { hash: Number(infos[k].hashRate), grade: Number(infos[k].grade) };
-          putCache(x, cache[String(x)]);
-        });
-        setPcs(build());                                // 每批到达即刷新
+      // 一次聚合拉全量算力+等级（新实现）；失败回退分批 getCircuitInfo
+      try {
+        const c2 = new Contract(ADDRS.circuit, ["function circuitsOf(address) view returns (uint256[], uint32[], uint8[])"], readProvider);
+        const all = await c2.circuitsOf(account) as unknown as [bigint[], number[], number[]];
+        const byId = new Map<number, { hash: number; grade: number }>();
+        Array.from(all[0]).forEach((id, i) => byId.set(Number(id), { hash: Number(all[1][i]), grade: Number(all[2][i]) }));
+        for (const id of ids.map(Number)) {
+          const hit = byId.get(id);
+          if (hit) { cache[String(id)] = hit; putCache(id, hit); }
+        }
+        setPcs(build());
+      } catch {
+        const need = ids.map(Number).filter((id) => !cache[String(id)]);
+        for (let i = 0; i < need.length; i += 8) {
+          const chunk = need.slice(i, i + 8);
+          const infos = await Promise.all(chunk.map((x) => circC.getCircuitInfo(x) as Promise<{ hashRate: bigint; grade: bigint }>));
+          chunk.forEach((x, k) => {
+            cache[String(x)] = { hash: Number(infos[k].hashRate), grade: Number(infos[k].grade) };
+            putCache(x, cache[String(x)]);
+          });
+          setPcs(build());
+        }
       }
       const e = (await mineC.userEarned(account)) as bigint;
       setEarned(e);
