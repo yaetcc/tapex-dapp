@@ -208,12 +208,12 @@ export function RigArt({
             )}
 
             {/* 显卡投影 */}
-            <rect x="46" y="170" width="146" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
+            <rect x="38" y="170" width="152" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
             {/* 显卡（加厚 140×34） */}
-            <rect x="44" y="122" width="146" height="46" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
-            <rect x="44" y="122" width="146" height="46" rx="5" fill="url(#brushed)" />
-            <rect x="48" y="128" width="26" height="34" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
-            {(lvl >= 1 ? [92, 122, 152] : [106, 136]).map((cx) => (
+            <rect x="36" y="122" width="154" height="46" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
+            <rect x="36" y="122" width="154" height="46" rx="5" fill="url(#brushed)" />
+            <rect x="40" y="128" width="26" height="34" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
+            {(lvl >= 1 ? [86, 118, 150] : [100, 132]).map((cx) => (
               <g key={cx}>
                 <circle cx={cx} cy="145" r="14.5" fill="#120e0c" stroke="#8a6d59" strokeWidth="1.2" />
                 <g className="fan-blades" style={{ transformOrigin: `${cx}px 145px` }}>
@@ -224,7 +224,7 @@ export function RigArt({
               </g>
             ))}
             {/* 显卡 RGB 灯条 */}
-            <rect className="gpu-rgb" x="52" y="122.5" width="136" height="2.5" rx="1.2" fill="url(#rgbfade)" opacity={st === "idle" ? ".25" : ".95"} />
+            <rect className="gpu-rgb" x="44" y="122.5" width="138" height="2.5" rx="1.2" fill="url(#rgbfade)" opacity={st === "idle" ? ".25" : ".95"} />
 
             {/* 背板螺丝（仅大图） */}
             {lvl >= 2 && (

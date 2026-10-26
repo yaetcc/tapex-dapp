@@ -75,7 +75,7 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         <rect x="117" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
 
         {/* 显卡（部件 3） */}
-        <rect x="44" y="122" width="146" height="38" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
+        <rect x="36" y="122" width="154" height="38" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
 
         {/* SSD（部件 5） */}
         <rect onMouseEnter={() => onHover?.(4)} x="124" y="100" width="58" height="10" rx="2" {...fp(4, 0.35)} stroke={stroke(4)} strokeWidth="0.9" strokeDasharray={dash(4)} />
@@ -90,7 +90,7 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
             { i: 0, name: "CPU", x: 75, y: 60, size: 9 },
             { i: 6, name: "散热", x: 75, y: 96, size: 9 },
             { i: 3, name: "RAM", x: 117, y: 34, size: 9 },
-            { i: 2, name: "GPU", x: 117, y: 145, size: 10 },
+            { i: 2, name: "GPU", x: 113, y: 145, size: 10 },
             { i: 4, name: "SSD", x: 150, y: 94, size: 9 },
             { i: 5, name: "电源", x: 80, y: 226, size: 10 },
             { i: 7, name: "机箱", x: 14, y: 248, size: 10, anchor: "start" },
