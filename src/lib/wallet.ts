@@ -9,6 +9,10 @@ export type Eth = {
 
 // 直连单一端点：FallbackProvider 会增加 1.5s+ 的选路开销，读页面明显变慢
 const PRIMARY = "https://xlayerrpc.okx.com";
+
+// 注意：X Layer 公共 RPC（xlayerrpc.okx.com）对 JSON-RPC batch 支持不完整，
+// 实测 batchMaxCount>1 时 eth_call 批量返回后解码失败（组装页库存变 0/8），
+// 因此保持单发（batchMaxCount: 1）。速度靠"合约聚合 + 前端缓存"解决，不靠批量。
 export const readProvider = new JsonRpcProvider(PRIMARY, CHAIN.id, {
   batchMaxCount: 1, staticNetwork: true,
 });
