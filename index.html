@@ -6363,6 +6363,109 @@ body::before{ animation:none !important; }
 #mint .rack-tiers .t0{ color:#7FE0D6; border-color:rgba(127,224,214,.32) }
 #mint .rack-tiers .t1{ color:#00E5A0; border-color:rgba(0,229,160,.34) }
 #mint .rack-tiers .t2{ color:#FFD54D; border-color:rgba(255,213,77,.45) }
+
+/* ================= 设计系统 v4：统一其余页面 ================= */
+/* 1) 页面卡片：与铸造页同款表面 */
+.card{
+  background:radial-gradient(120% 70% at 50% -25%, rgba(255,217,61,.075), transparent 62%), linear-gradient(180deg,#1f1815,#171210);
+  border:1px solid rgba(255,217,61,.20);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 16px 38px rgba(0,0,0,.42);
+}
+/* 2) 数据卡统一：标签在上、金色 mono 数字在下 */
+.statbox,.mk-stat{
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.075);
+  background:linear-gradient(165deg, rgba(255,217,61,.055), rgba(179,136,255,.032));
+  box-shadow:none;
+  padding:11px 14px 12px;
+  position:relative;
+  overflow:hidden;
+}
+.statbox::after,.mk-stat::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+}
+.statbox b,.mk-stat b{
+  font-family:"JetBrains Mono",monospace !important;
+  font-variant-numeric:tabular-nums;
+  font-size:18px !important;
+  letter-spacing:0 !important;
+  color:var(--gold) !important;
+  background:none !important;
+  -webkit-text-fill-color:currentColor !important;
+  filter:none !important;
+  text-shadow:0 0 18px rgba(255,217,61,.22);
+}
+.statbox span,.mk-stat span{
+  display:block; margin-top:4px;
+  font-size:10px !important; letter-spacing:.14em !important;
+  text-transform:uppercase; color:var(--tx3) !important;
+}
+.statbox::before{ width:0 !important; }
+.mk-stat{ border-color:rgba(255,255,255,.075) !important; }
+.mk-stat.gold{ border-color:rgba(255,217,61,.32) !important; }
+.mk-stat b{ -webkit-text-fill-color:var(--gold) !important; }
+/* 2b) 质押页统计砖 */
+.rig-ops ~ * .rs-item,.rs-item{
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.075) !important;
+  background:linear-gradient(165deg, rgba(255,217,61,.05), rgba(179,136,255,.03)) !important;
+  padding:10px 13px !important;
+}
+.rs-item>b{
+  font-family:"JetBrains Mono",monospace !important;
+  font-size:17px !important; color:var(--gold) !important;
+  font-variant-numeric:tabular-nums;
+}
+.rs-item .rs-top span{
+  font-size:9.5px !important; letter-spacing:.14em; text-transform:uppercase; color:var(--tx3) !important;
+}
+.rs-item .rs-top svg{ opacity:.55; }
+/* 3) 区块小标题：金色小字 + 发丝线 */
+.mk-head,.rig-title,.ab-head b,.rack-head b,.prob-title,.tp-head{
+  font-size:11px !important; letter-spacing:.16em !important;
+  text-transform:uppercase; color:var(--gold) !important;
+}
+.mk-head{border-bottom:1px solid rgba(255,255,255,.07); padding-bottom:8px;}
+/* 4) 主按钮：与铸造页同款立体渐变 */
+.btn.primary,#assembleBtn,#hdClaimBtn,.ab-foot #assembleBtn{
+  height:44px !important; border-radius:13px !important;
+  font-size:14px !important; font-weight:800 !important; letter-spacing:.04em;
+  color:#2a1700 !important;
+  background:linear-gradient(118deg,#FFD93D,#FF9F45 52%,#FF6BCB) !important;
+  border:none !important;
+  box-shadow:0 5px 0 #B36A00, 0 12px 24px rgba(255,159,69,.24), inset 0 1px 0 rgba(255,255,255,.5) !important;
+  transition:transform .12s ease, box-shadow .12s ease, filter .2s ease !important;
+  opacity:1 !important;
+}
+.btn.primary:hover:not(:disabled),#assembleBtn:hover:not(:disabled),#hdClaimBtn:hover:not(:disabled){ filter:brightness(1.06); }
+.btn.primary:active:not(:disabled),#assembleBtn:active:not(:disabled),#hdClaimBtn:active:not(:disabled){
+  transform:translateY(3px); box-shadow:0 2px 0 #B36A00, 0 6px 14px rgba(255,159,69,.2) !important;
+}
+.btn.primary:disabled,#hdClaimBtn:disabled,#assembleBtn:disabled{
+  background:rgba(255,255,255,.04) !important;
+  color:var(--tx3) !important;
+  border:1px dashed rgba(255,255,255,.16) !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+/* 5) 列表行：发丝分隔，不再用整块边框 */
+.mk-list li,.rig-row,.pc-row,.pt-row,.asset-list li{ border-color:rgba(255,255,255,.06) !important; }
+.mk-list li:hover,.rig-row:hover,.pc-row:hover{ background:rgba(255,255,255,.03); }
+/* 6) 市场模式切换：胶囊 tab */
+.mk-mode{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:999px; padding:3px; width:max-content; }
+.mk-mbtn{ border:none !important; background:transparent !important; color:var(--tx3) !important; padding:7px 16px !important; font-size:11.5px !important; border-radius:999px !important; }
+.mk-mbtn.on{ background:linear-gradient(118deg,#FFD93D,#FF9F45) !important; color:#241505 !important; }
+/* 7) 空态：虚线 + 低饱和 */
+.mk-empty,.rig-empty{
+  border:1px dashed rgba(255,255,255,.14) !important;
+  background:rgba(255,255,255,.015);
+  border-radius:14px;
+  color:var(--tx3) !important;
+  padding:18px 14px !important;
+}
+/* 8) 分页/次要按钮圆角统一 */
+.mk-pg,.mk-refresh,.mk-fch,.mt-chips .mq{ border-radius:9px !important; }
 </style>
 </head>
 <body><div class="meme-float" aria-hidden="true"><i style="left:6%;animation-duration:22s;animation-delay:0s">🚀</i><i style="left:15%;animation-duration:30s;animation-delay:3s">💰</i><i style="left:26%;animation-duration:25s;animation-delay:6s">🌙</i><i style="left:38%;animation-duration:33s;animation-delay:1s">⛏️</i><i style="left:52%;animation-duration:27s;animation-delay:9s">🪙</i><i style="left:64%;animation-duration:31s;animation-delay:4s">✨</i><i style="left:76%;animation-duration:24s;animation-delay:7s">💎</i><i style="left:88%;animation-duration:29s;animation-delay:2s">🔥</i></div>
