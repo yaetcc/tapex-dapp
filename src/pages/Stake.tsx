@@ -3,6 +3,7 @@ import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, gradeOf } from "../lib/contracts";
 import { GradeBadge, GRADE_COLOR } from "../components/GradeBadge";
 import { readProvider } from "../lib/wallet";
+import { loadCache, putCache } from "../lib/pcCache";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
@@ -11,8 +12,9 @@ import { trackTx } from "../lib/tx";
 
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
 const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
+const mkC = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
 
-type PC = { id: number; hash: number; grade: number; staked: boolean; listed: boolean };
+type PC = { id: number; hash: number; grade: number; staked: boolean; listed: boolean; ready?: boolean };
 
 export function Stake() {
   const { t, account, signer, toast } = useApp();
@@ -31,17 +33,34 @@ export function Stake() {
     if (!account) { setPcs([]); setEarned(0n); setLoading(false); return; }
     setLoading(true);
     try {
-      const [ids, staked] = await Promise.all([
+      const [ids, staked, orders] = await Promise.all([
         circC.pcsOfOwner(account) as Promise<bigint[]>,
         mineC.stakedPCsOf(account) as Promise<bigint[]>,
+        mkC.activePCOrders().catch(() => []) as Promise<{ tokenId: bigint; active: boolean }[]>,
       ]);
       const stakedSet = new Set(staked.map(Number));
-      const infos = await Promise.all(ids.map((i) => circC.getCircuitInfo(i) as Promise<{ hashRate: bigint; grade: bigint }>));
-      const listedFlags = await Promise.all(ids.map((i) => circC.listedOf(i) as Promise<boolean>));
-      setPcs(ids.map((i, k) => ({
-        id: Number(i), hash: Number(infos[k].hashRate), grade: Number(infos[k].grade),
-        staked: stakedSet.has(Number(i)), listed: Boolean(listedFlags[k]),
-      })));
+      const listedSet = new Set(orders.filter((o) => o.active).map((o) => Number(o.tokenId)));
+      const cache = loadCache();
+      const build = () => ids.map((x) => {
+        const id = Number(x);
+        const meta = cache[String(id)];
+        return {
+          id, hash: meta?.hash ?? 0, grade: meta?.grade ?? 3,
+          staked: stakedSet.has(id), listed: listedSet.has(id), ready: Boolean(meta),
+        };
+      });
+      setPcs(build());                                  // 先把卡片铺出来，数据陆续填充
+      setLoading(false);
+      const need = ids.map(Number).filter((id) => !cache[String(id)]);
+      for (let i = 0; i < need.length; i += 8) {
+        const chunk = need.slice(i, i + 8);
+        const infos = await Promise.all(chunk.map((x) => circC.getCircuitInfo(x) as Promise<{ hashRate: bigint; grade: bigint }>));
+        chunk.forEach((x, k) => {
+          cache[String(x)] = { hash: Number(infos[k].hashRate), grade: Number(infos[k].grade) };
+          putCache(x, cache[String(x)]);
+        });
+        setPcs(build());                                // 每批到达即刷新
+      }
       const e = (await mineC.userEarned(account)) as bigint;
       setEarned(e);
     } finally { setLoading(false); }

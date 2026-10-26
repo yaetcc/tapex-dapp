@@ -7,15 +7,11 @@ export type Eth = {
   removeListener?(ev: string, fn: (...a: unknown[]) => void): void;
 };
 
-const RPC_LIST = [CHAIN.rpc, "https://xlayerrpc.okx.com"];
-export const readProvider = new FallbackProvider(
-  RPC_LIST.map((url, i) => ({
-    provider: new JsonRpcProvider(url, CHAIN.id, { batchMaxCount: 1, staticNetwork: true }),
-    priority: i + 1, stallTimeout: 1500, weight: 1,
-  })),
-  CHAIN.id,
-  { quorum: 1 }
-);
+// 直连单一端点：FallbackProvider 会增加 1.5s+ 的选路开销，读页面明显变慢
+const PRIMARY = "https://xlayerrpc.okx.com";
+export const readProvider = new JsonRpcProvider(PRIMARY, CHAIN.id, {
+  batchMaxCount: 1, staticNetwork: true,
+});
 
 /** 读操作重试：3 次指数退避，失败抛最后一次错误 */
 export async function withRetry<T>(fn: () => Promise<T>, tries = 3): Promise<T> {

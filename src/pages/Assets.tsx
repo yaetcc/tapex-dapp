@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, PART_NAMES } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
+import { loadCache, putCache } from "../lib/pcCache";
 import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
 import { DetailSheet, type Detail } from "../components/DetailSheet";
@@ -16,6 +17,7 @@ const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProv
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
 const fsC = new Contract(ADDRS.feeSplit, ABI.feeSplit as unknown as string[], readProvider);
+const mkC = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
 
 export function Assets({ go }: { go: (r: string) => void }) {
   const { t, account } = useApp();
@@ -23,9 +25,9 @@ export function Assets({ go }: { go: (r: string) => void }) {
   const [counts, setCounts] = useState<number[]>([]);
   const [pending, setPending] = useState<bigint>(0n);
   const [pcs, setPcs] = useState<number>(0);
-  const [pcList, setPcList] = useState<{ id: number; hash: number; grade: number; staked: boolean }[]>([]);
+  const [pcList, setPcList] = useState<{ id: number; hash: number; grade: number; staked: boolean; listed: boolean }[]>([]);
   const [pcLoading, setPcLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "idle" | "staked">("all");
+  const [filter, setFilter] = useState<"all" | "idle" | "staked" | "listed">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
   const [shown, setShown] = useState(8);
   const [detail, setDetail] = useState<Detail>(null);
@@ -45,16 +47,27 @@ export function Assets({ go }: { go: (r: string) => void }) {
       if (pcList.length) {
         const circ = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
         const mine = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
-        const stakedIds = new Set((await mine.stakedPCsOf(account)).map(Number));
-        const out: { id: number; hash: number; grade: number; staked: boolean }[] = [];
-        for (let i = 0; i < pcList.length; i += 6) {           // 每批 6 个，降低 RPC 并发
-          const chunk = pcList.slice(i, i + 6);
+        const [stakedRaw, orders] = await Promise.all([
+          mine.stakedPCsOf(account) as Promise<bigint[]>,
+          mkC.activePCOrders().catch(() => []) as Promise<{ tokenId: bigint; active: boolean }[]>,
+        ]);
+        const stakedIds = new Set(stakedRaw.map(Number));
+        const listedIds = new Set(orders.filter((o) => o.active).map((o) => Number(o.tokenId)));
+        const cache = loadCache();
+        const need = pcList.map(Number).filter((id) => !cache[String(id)]);
+        for (let i = 0; i < need.length; i += 8) {
+          const chunk = need.slice(i, i + 8);
           const infos = await Promise.all(chunk.map((id) => circ.getCircuitInfo(id) as Promise<{ hashRate: bigint; grade: bigint }>));
-          chunk.forEach((id, k) => out.push({
-            id: Number(id), hash: Number(infos[k].hashRate), grade: Number(infos[k].grade), staked: stakedIds.has(Number(id)),
-          }));
+          chunk.forEach((id, k) => {
+            cache[String(id)] = { hash: Number(infos[k].hashRate), grade: Number(infos[k].grade) };
+            putCache(id, cache[String(id)]);
+          });
         }
-        setPcList(out);
+        setPcList(pcList.map((x) => {
+          const id = Number(x);
+          const meta = cache[String(id)] ?? { hash: 0, grade: 3 };
+          return { id, hash: meta.hash, grade: meta.grade, staked: stakedIds.has(id), listed: listedIds.has(id) };
+        }));
       }
     })().catch(() => {}).finally(() => { setLoading(false); setPcLoading(false); });
   }, [account]);
@@ -87,8 +100,13 @@ export function Assets({ go }: { go: (r: string) => void }) {
             <b>我的 PC</b><span>{pcs} 台</span>
             <span className="spacer" />
             <div className="pc-filters">
-              {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"]] as const).map(([k, label]) => (
-                <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>{label}</button>
+              {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"], ["listed", "挂单中"]] as const).map(([k, label]) => (
+                <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>
+                  {label}<i>{k === "all" ? pcList.length
+                    : k === "staked" ? pcList.filter((p) => p.staked).length
+                    : k === "listed" ? pcList.filter((p) => p.listed).length
+                    : pcList.filter((p) => !p.staked && !p.listed).length}</i>
+                </button>
               ))}
               <button className="pc-chip" onClick={() => setSort(sort === "hash" ? "id" : "hash")}>
                 {sort === "hash" ? "算力↓" : "编号↑"}
@@ -104,7 +122,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
             <>
               <div className="pc-grid">
                 {pcList
-                  .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked))
+                  .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : filter === "listed" ? p.listed : !p.staked && !p.listed))
                   .sort((a, b) => (sort === "hash" ? b.hash - a.hash : a.id - b.id))
                   .slice(0, shown)
                   .map((p) => (
@@ -117,14 +135,17 @@ export function Assets({ go }: { go: (r: string) => void }) {
                         <b>#{p.id}</b>
                         <GradeBadge hash={p.hash} />
                         <em>{p.hash} H</em>
+                        <span className={`pc-mini-state${p.staked ? " live" : p.listed ? " list" : ""}`}>
+                          {p.staked ? "质押中" : p.listed ? "挂单中" : "待机"}
+                        </span>
                       </div>
                     </div>
                   ))}
               </div>
-              {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked)).length > shown && (
+              {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : filter === "listed" ? p.listed : !p.staked && !p.listed)).length > shown && (
                 <div className="pc-more">
                   <button className="btn btn-ghost" onClick={() => setShown((v) => v + 16)}>
-                    显示更多（还有 {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked)).length - shown} 台）
+                    显示更多（还有 {pcList.filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : filter === "listed" ? p.listed : !p.staked && !p.listed)).length - shown} 台）
                   </button>
                 </div>
               )}

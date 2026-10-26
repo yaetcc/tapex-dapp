@@ -269,3 +269,7 @@
   .pc-mini-meta em { font-size: 10px; }
   .tile b em { margin-left: 3px; }
 }
+
+.pc-mini-state { font-size: 9.5px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--tx-3); white-space: nowrap; }
+.pc-mini-state.live { color: var(--ac); border-color: rgba(0,229,160,.42); background: rgba(0,229,160,.08); }
+.pc-mini-state.list { color: var(--gold); border-color: rgba(255,217,61,.42); background: rgba(255,217,61,.08); }
