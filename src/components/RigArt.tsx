@@ -180,8 +180,8 @@ export function RigArt({
             {/* CPU 插槽 */}
             <rect x="58" y="42" width="34" height="30" rx="3" fill="#0f1a17" stroke="#356b58" strokeWidth="0.8" />
             {/* 内存 ×2（细条 5×42） */}
-            <rect x="104" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />
-            {lvl >= 1 && <rect x="114" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />}
+            <rect x="108" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />
+            {lvl >= 1 && <rect x="117" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />}
             {/* 内存顶部灯点 */}
             <circle className="ram-led" cx="107" cy="40" r="1.6" fill="var(--glow)" opacity={st === "idle" ? ".3" : ".9"} />
             {lvl >= 1 && <circle className="ram-led" cx="117" cy="40" r="1.6" fill="var(--glow)" opacity={st === "idle" ? ".3" : ".9"} />}
@@ -189,8 +189,8 @@ export function RigArt({
             {/* 金手指（仅大图） */}
             {lvl >= 2 && (
               <g fill="#C9A227" opacity=".65">
-                <rect x="104" y="90" width="6" height="4" />
-                <rect x="114" y="90" width="6" height="4" />
+                <rect x="108" y="90" width="6" height="4" />
+                <rect x="117" y="90" width="6" height="4" />
               </g>
             )}
             {/* M.2 NVMe：直插主板（显卡下方） */}
@@ -208,12 +208,12 @@ export function RigArt({
             )}
 
             {/* 显卡投影 */}
-            <rect x="46" y="170" width="150" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
+            <rect x="46" y="170" width="146" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
             {/* 显卡（加厚 140×34） */}
-            <rect x="44" y="122" width="152" height="46" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
-            <rect x="44" y="122" width="152" height="46" rx="5" fill="url(#brushed)" />
+            <rect x="44" y="122" width="146" height="46" rx="5" fill="#241a16" stroke="#6b5344" strokeWidth="1.6" />
+            <rect x="44" y="122" width="146" height="46" rx="5" fill="url(#brushed)" />
             <rect x="48" y="128" width="26" height="34" rx="2" fill="#1a1310" stroke="#8a6d59" strokeWidth="0.8" />
-            {(lvl >= 1 ? [94, 126, 158] : [108, 140]).map((cx) => (
+            {(lvl >= 1 ? [92, 122, 152] : [106, 136]).map((cx) => (
               <g key={cx}>
                 <circle cx={cx} cy="145" r="14.5" fill="#120e0c" stroke="#8a6d59" strokeWidth="1.2" />
                 <g className="fan-blades" style={{ transformOrigin: `${cx}px 145px` }}>
