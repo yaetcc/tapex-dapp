@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
+import { trackTx } from "../lib/tx";
 
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
 const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
@@ -49,9 +50,12 @@ export function Stake() {
     setBusy(-1);
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
-      const tx = kind === "claim" ? await c.claim(ids)
-        : kind === "stake" ? await c.batchStake(ids) : await c.batchUnstake(ids);
-      await tx.wait();
+      const label = kind === "claim" ? "批量领取" : kind === "stake" ? "批量质押" : "批量解押";
+      await trackTx(`${label} ${ids.length} 台`, async () => {
+        const tx = kind === "claim" ? await c.claim(ids)
+          : kind === "stake" ? await c.batchStake(ids) : await c.batchUnstake(ids);
+        await tx.wait();
+      });
       toast(`批量${kind === "claim" ? "领取" : kind === "stake" ? "质押" : "解押"} ${ids.length} 台完成`, "ok");
       setSel(new Set());
       await load();
@@ -66,10 +70,12 @@ export function Stake() {
     setBusy(id ?? -1);
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
-      const tx = kind === "claim"
-        ? await c.claim(stakedList.map((p) => p.id))
-        : kind === "stake" ? await c.stake(id) : await c.unstake(id);
-      await tx.wait();
+      await trackTx(kind === "claim" ? "领取" : kind === "stake" ? `质押 PC #${id}` : `解押 PC #${id}`, async () => {
+        const tx = kind === "claim"
+          ? await c.claim(stakedList.map((p) => p.id))
+          : kind === "stake" ? await c.stake(id) : await c.unstake(id);
+        await tx.wait();
+      });
       toast(kind === "claim" ? "领取成功" : kind === "stake" ? "质押成功" : "已解押", "ok");
       await load();
     } catch (e) {

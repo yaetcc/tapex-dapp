@@ -50,10 +50,12 @@ export const ABI = {
   market: [
     "function activePCOrders() view returns (tuple(address seller,uint256 price,uint256 tokenId,bool active)[])",
     "function listPC(uint256,uint256)",
+    "function batchListPC(uint256[],uint256[])",
     "function buyPC(uint256)",
     "function delistPC(uint256[])",
     "function activePartOrders() view returns (tuple(address seller,uint256 price,uint256 amount,uint256 partType,bool active)[])",
     "function listPart(uint256,uint256,uint256)",
+    "function batchListPart(uint256[],uint256[],uint256[])",
     "function buyPart(uint256,uint256)",
     "function delistPart(uint256[])",
   ],

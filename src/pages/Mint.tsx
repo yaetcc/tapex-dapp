@@ -4,6 +4,7 @@ import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { compact, num } from "../lib/format";
+import { trackTx } from "../lib/tx";
 
 // 权重按部件名对齐（PART_NAMES 顺序：CPU/主板/GPU/RAM/SSD/电源/散热器/机箱）
 const ODD = [6, 8, 4, 14, 12, 20, 18, 18];
@@ -67,8 +68,10 @@ export function Mint() {
       let left = n;
       while (left > 0) {
         const b = Math.min(left, 500);
-        const tx = await circ.mint(b, { value: fee * BigInt(b) });
-        await tx.wait();
+        await trackTx(`抽卡 ${b} 件`, async () => {
+          const tx = await circ.mint(b, { value: fee * BigInt(b) });
+          await tx.wait();
+        });
         left -= b;
       }
       const ids = Array.from({ length: 24 }, (_, i) => i + 1);

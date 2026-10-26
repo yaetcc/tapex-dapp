@@ -4,6 +4,7 @@ import { ADDRS, ABI, PART_NAMES, TIERS, tierOf, typeOf } from "../lib/contracts"
 import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num, shortAddr } from "../lib/format";
+import { trackTx } from "../lib/tx";
 
 const mkC = new Contract(ADDRS.market, ABI.market as unknown as string[], readProvider);
 const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
@@ -21,6 +22,8 @@ export function Market() {
   const [parts, setParts] = useState<PartOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [sellId, setSellId] = useState(""); const [sellPrice, setSellPrice] = useState("");
+  const [batch, setBatch] = useState(false);
+  const [rows, setRows] = useState<string[][]>([["", "", ""]]);
   const [ptType, setPtType] = useState(1); const [ptAmount, setPtAmount] = useState(""); const [ptPrice, setPtPrice] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -41,7 +44,7 @@ export function Market() {
   const withSigner = async (fn: () => Promise<unknown>) => {
     if (!signer || !account) return toast(t("err.noWallet"), "err");
     setBusy(true); setMsg("等待钱包确认…");
-    try { await fn(); setMsg(""); await load(); }
+    try { await trackTx("交易", fn); setMsg(""); await load(); }
     catch (e) { setMsg((e as Error).message.slice(0, 90)); }
     finally { setBusy(false); }
   };
@@ -79,6 +82,31 @@ export function Market() {
     toast(`撤单 ${ids.length} 条`, "ok");
   });
 
+  const setCell = (i: number, k: number, v: string) =>
+    setRows((rs) => rs.map((r, idx) => (idx === i ? r.map((c, j) => (j === k ? v : c)) : r)));
+
+  const submitBatch = () => withSigner(async () => {
+    const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
+    const valid = rows.filter((r) => r[0] && r[2]);
+    if (!valid.length) throw new Error("请至少填一行完整数据");
+    if (mode === "pc") {
+      const ids = valid.map((r) => BigInt(r[0]));
+      const prices = valid.map((r) => parseEther(r[2]));
+      await (await mk.batchListPC(ids, prices)).wait();
+    } else {
+      const types = valid.map((r) => BigInt(r[0]));
+      const amounts = valid.map((r) => BigInt(r[1] || "1"));
+      const prices = valid.map((r) => parseEther(r[2]));
+      const part = new Contract(ADDRS.part, ABI.part as unknown as string[], signer!);
+      if (!(await part.isApprovedForAll(account, ADDRS.market))) {
+        await (await part.setApprovalForAll(ADDRS.market, true)).wait();
+      }
+      await (await mk.batchListPart(types, amounts, prices)).wait();
+    }
+    setRows([["", "", ""]]);
+    toast(`批量挂单 ${valid.length} 条`, "ok");
+  });
+
   const listPc = () => withSigner(async () => {
     const mk = new Contract(ADDRS.market, ABI.market as unknown as string[], signer!);
     await (await mk.listPC(Number(sellId), parseEther(sellPrice || "0"))).wait();
@@ -107,6 +135,28 @@ export function Market() {
 
       {mode === "pc" ? (
         <>
+          <div className="sec-head" style={{ marginTop: 12 }}>
+            <b>批量挂单</b><span>一次签名挂多台</span>
+            <span className="spacer" />
+            <button className="btn btn-ghost" onClick={() => setBatch((b) => !b)}>{batch ? "收起" : "展开"}</button>
+          </div>
+          {batch && (
+            <div className="batch-list">
+              {rows.map((r, i) => (
+                <div className="batch-line" key={i}>
+                  <input className="field field-sm" placeholder="PC ID" value={r[0]} onChange={(e) => setCell(i, 0, e.target.value.replace(/\D/g, ""))} />
+                  <input className="field field-sm" placeholder="价格 TAPE" value={r[2]} onChange={(e) => setCell(i, 2, e.target.value)} />
+                  <button className="btn btn-ghost" onClick={() => setRows((rs) => rs.filter((_, x) => x !== i))}>删</button>
+                </div>
+              ))}
+              <div className="batch-line">
+                <button className="btn btn-ghost" onClick={() => setRows((rs) => [...rs, ["", "", ""]])}>+ 加一行</button>
+                <button className="btn btn-primary" style={{ height: 32, padding: "0 16px", fontSize: 12 }} disabled={busy} onClick={submitBatch}>
+                  批量挂单
+                </button>
+              </div>
+            </div>
+          )}
           <div className="sell-row">
             <input className="field field-sm" placeholder="PC ID" value={sellId} onChange={(e) => setSellId(e.target.value.replace(/\D/g, ""))} />
             <input className="field field-sm" placeholder="价格 TAPE" value={sellPrice} onChange={(e) => setSellPrice(e.target.value)} />
@@ -154,6 +204,29 @@ export function Market() {
         </>
       ) : (
         <>
+          <div className="sec-head" style={{ marginTop: 12 }}>
+            <b>批量挂单</b><span>部件类型 / 数量 / 单价</span>
+            <span className="spacer" />
+            <button className="btn btn-ghost" onClick={() => setBatch((b) => !b)}>{batch ? "收起" : "展开"}</button>
+          </div>
+          {batch && (
+            <div className="batch-list">
+              {rows.map((r, i) => (
+                <div className="batch-line" key={i}>
+                  <input className="field field-sm" placeholder="ID 1-24" value={r[0]} onChange={(e) => setCell(i, 0, e.target.value.replace(/\D/g, ""))} style={{ width: 90 }} />
+                  <input className="field field-sm" placeholder="数量" value={r[1]} onChange={(e) => setCell(i, 1, e.target.value.replace(/\D/g, ""))} style={{ width: 80 }} />
+                  <input className="field field-sm" placeholder="单价 TAPE" value={r[2]} onChange={(e) => setCell(i, 2, e.target.value)} />
+                  <button className="btn btn-ghost" onClick={() => setRows((rs) => rs.filter((_, x) => x !== i))}>删</button>
+                </div>
+              ))}
+              <div className="batch-line">
+                <button className="btn btn-ghost" onClick={() => setRows((rs) => [...rs, ["", "", ""]])}>+ 加一行</button>
+                <button className="btn btn-primary" style={{ height: 32, padding: "0 16px", fontSize: 12 }} disabled={busy} onClick={submitBatch}>
+                  批量挂单
+                </button>
+              </div>
+            </div>
+          )}
           <div className="sell-row">
             <select className="field field-sm" value={ptType} onChange={(e) => setPtType(Number(e.target.value))}>
               {Array.from({ length: 24 }, (_, i) => i + 1).map((id) => <option key={id} value={id}>{partName(id)}</option>)}

@@ -39,3 +39,23 @@
 .order-row:hover { background: rgba(255, 255, 255, .03); }
 .order-row .muted { color: var(--tx-3); font-size: 11px; }
 .order-row .price { font-family: var(--mono); color: var(--gold); }
+
+/* 全局交易状态条 */
+.txbar {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 9px; z-index: 80;
+  padding: 9px 16px; border-radius: 999px; font-size: 12px;
+  background: rgba(23, 18, 16, .95); border: 1px solid var(--line-gold);
+  box-shadow: 0 14px 34px rgba(0,0,0,.5); animation: txIn .22s ease;
+}
+.txbar i { width: 7px; height: 7px; border-radius: 50%; animation: txPulse 1.2s infinite; }
+.txbar b { color: var(--tx); font-weight: 700; }
+.txbar span { color: var(--tx-3); }
+.txbar em { color: var(--danger); font-style: normal; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.txbar.ok i, .txbar.err i { animation: none; }
+@keyframes txIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes txPulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+.batch-list { margin: 8px 0 4px; display: grid; gap: 6px; }
+.batch-line { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.batch-line .field { width: 130px; }

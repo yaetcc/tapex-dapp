@@ -5,6 +5,7 @@ import { readProvider } from "../lib/wallet";
 import { useApp } from "../state/App";
 import { num } from "../lib/format";
 import { RigSlots } from "../components/RigSlots";
+import { trackTx } from "../lib/tx";
 
 const partC = new Contract(ADDRS.part, ABI.part as unknown as string[], readProvider);
 const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
@@ -69,10 +70,12 @@ export function Build() {
         setMsg({ k: "info", s: "首次需要授权 TAPE…" });
         await (await tape.approve(ADDRS.circuit, need * 100n)).wait();
       }
-      const tx = units === 1
-        ? await circ.assembleWithTiers(tiers)
-        : await circ.batchAssembleWithTiers(units, tiers);
-      await tx.wait();
+      await trackTx(`组装 ${units} 台`, async () => {
+        const tx = units === 1
+          ? await circ.assembleWithTiers(tiers)
+          : await circ.batchAssembleWithTiers(units, tiers);
+        await tx.wait();
+      });
       setMsg({ k: "ok", s: `组装完成 ${units} 台` });
       toast(`组装完成 ${units} 台`, "ok");
       await loadCounts();

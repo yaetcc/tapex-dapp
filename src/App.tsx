@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Nav } from "./components/Nav";
 import { Atmosphere, Stickers } from "./components/Atmosphere";
 import { Mascot } from "./components/Mascot";
+import { TxBar } from "./components/TxBar";
 import { Toasts } from "./components/Toasts";
 import { Mint } from "./pages/Mint";
 import { Placeholder } from "./pages/Placeholder";
@@ -48,6 +49,7 @@ export default function App() {
           : <Placeholder name={current} />}
       </main>
       <Toasts />
+      <TxBar />
     </>
   );
 }
