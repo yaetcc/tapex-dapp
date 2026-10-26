@@ -6247,7 +6247,7 @@ body::before{ animation:none !important; }
       <p class="sub" data-i18n="集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。">集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。</p>
       <div class="parts-grid" id="partsGrid"></div>
       <div class="tier-pick" id="tierPick">
-        <div class="tp-head">组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）</div>
+        <div class="tp-head" data-i18n="asm.tierPick">组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）</div>
         <div class="tp-grid" id="tpGrid"></div>
       </div>
       <div class="bench" id="bench"></div>
@@ -6266,7 +6266,7 @@ body::before{ animation:none !important; }
     <div class="card" data-tab="stake">
       <div class="kicker">Step 3 · Stake / Unstake</div>
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 4v8l-7 4-7-4V7z"/><path d="M12 12l7-4M12 12v8"/></svg><span data-i18n="k.stH">质押 PC NFT 挖矿</span></h3>
-      <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。">质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。</p>
+      <p class="sub" data-i18n="质押整机 NFT 按算力份额累计 TAPE；NFT 始终留在你的钱包，链上仅标记为质押中，可随时解押取回。">质押整机 NFT 按算力份额累计 TAPE；NFT 始终留在你的钱包，链上仅标记为质押中，可随时解押取回。</p>
       <div class="rig" id="rig">
         <svg viewBox="0 0 220 130" fill="none" stroke="currentColor">
           <rect x="20" y="18" width="180" height="94" rx="10" stroke-width="3"/>
@@ -6361,9 +6361,9 @@ body::before{ animation:none !important; }
           <button type="button" class="mk-fch" data-g="3" title="A 级" data-i18n-title="g.t3">A</button>
           <button type="button" class="mk-fch" data-g="4" title="S 级" data-i18n-title="g.t4">S</button>
         </div>
-        <input class="mk-price-min" id="mkPmin" type="number" min="0" step="0.000001" aria-label="最低价">
+        <input class="mk-price-min" id="mkPmin" type="number" min="0" step="0.000001" placeholder="最低价" aria-label="最低价">
         <span class="mk-range-sep">–</span>
-        <input class="mk-price-max" id="mkPmax" type="number" min="0" step="0.000001" aria-label="最高价">
+        <input class="mk-price-max" id="mkPmax" type="number" min="0" step="0.000001" placeholder="最高价" aria-label="最高价">
         <button type="button" class="mk-refresh" id="mkRefresh" title="刷新" data-i18n-title="m.refresh">⟳</button>
         <span class="mk-updated" id="mkUpdated"></span>
         <span class="mk-page" id="mkPage">—</span>
@@ -6579,11 +6579,15 @@ var I18N = {
   "st.cap": {zh:"总可铸上限", en:"Mint Cap"},
   "st.hash": {zh:"全网算力 H", en:"Network Hash H"},
   "st.epoch": {zh:"当前 epoch", en:"Current Epoch"},
+  "net.pool": {zh:"池:", en:"Pool: "},
   "ph.noWallet": {zh:"未连接钱包", en:"No wallet connected"},
   "ph.rigEmpty": {zh:"连接钱包后显示质押中的矿机", en:"Staked miners appear after connecting"},
   "mine.title": {zh:"我的资产", en:"My Assets"},
   "mine.copyTip": {zh:"点击复制合约地址", en:"Click to copy contract address"},
   "rig.stake": {zh:"质押挖矿", en:"Stake & Mine"},
+  "d.perDay": {zh:" TAPE/天", en:" TAPE/day"},
+  "asm.tierPick": {zh:"组装档位选择（8 类各 1 件 · 自选组合 · 点击切换）", en:"Tier picker (1 of each of 8 types · custom combo · click to switch)"},
+  "组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。": {zh:"组装消耗所选档位每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 所选档位各部件库存的最小值；批量组装一次签名完成（单笔最多 10 台）。", en:"Each build burns 1 part of every type at the chosen tier + 100 TAPE fee; max builds = min stock across the 8 types. Batch builds sign once (max 10 per tx)."},
   "wp.pc": {zh:"PC 整机", en:"PC Rigs"},
   "wp.parts": {zh:"部件", en:"Parts"},
   "wp.pending": {zh:"待领", en:"Pending"},
@@ -6937,7 +6941,7 @@ var I18N = {
   "算力 ↓": {zh:"算力 ↓", en:"Hash ↓"},
   "组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。": {zh:"组装消耗每类部件各 1 件 + 100 TAPE 组装费；可组装台数 = 各部件库存的最小值。批量组装需逐台确认签名。", en:"Each build burns 1 of every part type + 100 TAPE fee; max builds = min of your part counts. Batch builds confirm per unit."},
   "花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。": {zh:"花 OKB 抽随机电脑硬件部件（8 类加权概率，每件 0.001 OKB；部件分标准/Pro/旗舰 3 档）。", en:"Spend OKB for random parts (8 types weighted, 0.001 OKB each; tiers: Standard/Pro/Flagship)."},
-  "质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；质押期间 NFT 由 Mining 合约托管，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; NFT held by the Mining contract, unstake anytime."},
+  "质押整机 NFT 按算力份额累计 TAPE；NFT 始终留在你的钱包，链上仅标记为质押中，可随时解押取回。": {zh:"质押整机 NFT 按算力份额累计 TAPE；NFT 始终留在你的钱包，链上仅标记为质押中，可随时解押取回。", en:"Stake to earn TAPE by hashrate share; the NFT stays in your wallet (marked staked on-chain), unstake anytime."},
   "集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。": {zh:"集齐 CPU / 主板 / GPU / RAM / SSD / 电源 / 散热器 / 机箱 各 1 件即可组装成整机 NFT。自选每类档位（标准/Pro/旗舰）组合，消耗所选档位每类 1 件 + 100 TAPE 组装费，算力 = 8 部件算力按档位累加。批量组装一次签名完成，无签名门槛，人人可组。", en:"Gather 1 of each part (CPU / MB / GPU / RAM / SSD / PSU / Cooler / Case) to mint a PC NFT. Pick a tier per type (Standard/Pro/Flagship); burns 1 per selected tier + 100 TAPE fee; hash = sum of 8 parts by tier. Batch assembly signs once. No signature needed."},
   "领取": {zh:"领取", en:"Claim"},
   "首次使用请先切到 X Layer 主网": {zh:"首次使用请先切到 X Layer 主网", en:"Switch to X Layer mainnet first"}
@@ -7124,7 +7128,7 @@ rpcProbe();                 // 启动健康探测
 setInterval(rpcProbe, 300000);  // 每 5 分钟复测
 bindBlockWatch();
 var signer = null; var account = null;
-var UNIT_PRICE = 100000000000000n; // 默认 0.0001 OKB = 1e14 wei（V3 单价），renderGlobal 时从 config.price 更新
+var UNIT_PRICE = 1000000000000000n; // 兜底 0.001 OKB/件（与 V6 链上 mintFee 一致），renderGlobal 会从链上覆盖
 
 /* ---------- 工具 ---------- */
 function fmtWei(bn, d){
@@ -7321,7 +7325,7 @@ function renderGlobal(){
     if(isFinite(_mv))HIST.mint.push(_mv);
     if(HIST.hash.length>8){HIST.hash.shift();HIST.price.shift();HIST.mint.shift();}
     renderSpark();
-    var poolTxt = "池:" + fmtWei(r[5]);
+    var poolTxt = t("net.pool") + fmtWei(r[5]);
     var se = $("stEpoch");
     if (se && se._tx !== poolTxt) { se._tx = poolTxt; se.textContent = poolTxt; flashStat("stEpoch"); }
     var ms = $("minerStatus");
@@ -7413,7 +7417,7 @@ function renderDividend(){
   ]).then(function(r){
     var st = r[2];
     var noSt = !st || st === "0x0000000000000000000000000000000000000000";
-    $("hdRate").textContent = noSt ? t("d.waiting") : fmtInt(BigInt(r[3]) / 1000000000000000000n) + " TAPE/天";
+    $("hdRate").textContent = noSt ? t("d.waiting") : fmtInt(BigInt(r[3]) / 1000000000000000000n) + t("d.perDay");
     var ta = Promise.resolve("—");
     if (!noSt) {
       var stC = new ethers.Contract(st, ABI_TOKEN, pubProvider);
@@ -8078,14 +8082,8 @@ function doMarketList(){
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
   readRetry(function(){ return circ.ownerOf(id); }).then(function(owner){
     if (owner.toLowerCase() !== account.toLowerCase()) { busy(btn,false); setMsg("mkMsg","err", t("o.tokenId") + id + t("mkt.notMine")); throw new Error("not owner"); }
-    return readRetry(function(){ return circ.getApproved(id); });
-  }).then(function(appr){
-    var chain = Promise.resolve();
-    if (appr.toLowerCase() !== ADDRS.market.toLowerCase()) {
-      setMsg("mkMsg","info", t("mkt.sendApprove"));
-      chain = chain.then(function(){ return circ.approve(ADDRS.market, id, { gasLimit: 150000 }); }).then(function(tx){ return tx.wait(); });
-    }
-    return chain.then(function(){ return mk.listPC(id, price, { gasLimit: 300000 }); });
+    // V6：MarketV6.listPC 只置 listedOf 标记，成交时由合约自行转移，无需 approve
+    return mk.listPC(id, price, { gasLimit: 300000 });
   }).then(function(tx){
     setMsg("mkMsg","info", t("mkt.txSent") + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
@@ -8602,7 +8600,7 @@ function doAssembleN(n){
       if (e.message === "missing parts") return;
       stopSigWatch();
       setMsg("toMsg","err", t("o.batchFail") + humanErr(e).slice(0, 140));
-      busy(btn, false); Q.done("批量组装失败");
+      busy(btn, false); Q.fail(1, humanErr(e).slice(0, 80)); Q.done("批量组装失败");
     });
 }
 (function(){ var ab = $("asmBatchBtn"); if (ab) ab.addEventListener("click", function(){ var v = Number($("asmCount").value) || 1; if (v < 1) v = 1; doAssembleN(v); }); })();
@@ -8640,7 +8638,7 @@ function renderRigList(){
     '</div>';
   var body = slice.length ? slice.map(function(o){
     var p = o.p, g = p.grade || 1;
-    var fl = 0, pr = 0; for (var ti = 0; ti < 8; ti++) { if (Number(p.tiers[ti]) === 3) fl++; else if (Number(p.tiers[ti]) === 2) pr++; }
+    var fl = 0, pr = 0; for (var ti = 0; ti < 8; ti++) { var tvv = Number(p.tiers[ti]); if (tvv >= 2) fl++; else if (tvv === 1) pr++; }
     var tierTxt = (fl ? "旗舰×" + fl : "") + (pr ? "Pro×" + pr : "");
     var shr = rigData.totalH > 0 && o.st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "";
     var fanSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(0 12 12)"/><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(120 12 12)"/><ellipse cx="12" cy="6.5" rx="2.2" ry="5.5" transform="rotate(240 12 12)"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>';
@@ -8674,19 +8672,19 @@ function renderRigModal(tid){
   var st = rigData.staked.indexOf(tid) > -1;
   var g = p.grade || 1;
   var fl = 0, pr = 0, tierList = [];
-  for (var ti = 0; ti < 8; ti++){ var tv = Number(p.tiers[ti]); if (tv === 3) fl++; else if (tv === 2) pr++; tierList.push(PART_NAMES[ti] + "·" + PART_TIER[tv]); }
+  for (var ti = 0; ti < 8; ti++){ var tv = Number(p.tiers[ti]); if (tv >= 2) fl++; else if (tv === 1) pr++; tierList.push(PART_NAMES[ti] + "·" + PART_TIER[tv]); }
   var shr = rigData.totalH > 0 && st ? (p.hash / rigData.totalH * 100).toFixed(1) + "%" : "—";
   var acts;
   if (rigSell[tid]) {
-    acts = '<input class="ast-price" type="number" step="0.000001" min="0.000001" placeholder="价格 OKB"><button class="action-btn auto" data-rig-sell-ok="' + tid + '">' + t("act.confirm") + '</button><button class="action-btn sec" data-rig-sell-cancel="' + tid + '">' + t("act.cancelOrder") + '</button>';
+    acts = '<input class="ast-price" type="number" step="0.000001" min="0.000001" placeholder="价格 TAPE"><button class="action-btn auto" data-rig-sell-ok="' + tid + '">' + t("act.confirm") + '</button><button class="action-btn sec" data-rig-sell-cancel="' + tid + '">' + t("act.cancelOrder") + '</button>';
   } else if (st) {
     acts = '<button class="action-btn" data-rig-unstake="' + tid + '">解押</button>';
   } else {
-    acts = '<button class="action-btn auto" data-rig-stake="' + tid + '">质押挖矿</button><button class="action-btn sec" data-rig-sell="' + tid + '">' + t("rig.sell") + '</button>';
+    acts = '<button class="action-btn auto" data-rig-stake="' + tid + '">' + t("rig.stake") + '</button><button class="action-btn sec" data-rig-sell="' + tid + '">' + t("rig.sell") + '</button>';
   }
   $("rigModalBody").innerHTML =
     '<div class="rm-head"><b>PC #' + tid + '</b><span class="grade g' + g + '">' + (GRADE_NAMES[g] || "") + '</span><span class="rg-st ' + (st ? "on" : "idle") + '">' + (st ? t("f.mining") : t("f.idle")) + '</span></div>' +
-    '<div class="rm-info"><span>' + t("rig.rate") + '<b>' + fmtInt(p.hash) + ' H</b></span><span>' + t("rig.tier") + '旗舰×' + fl + ' · Pro×' + pr + '</span><span>' + t("rig.share") + shr + '</span>' + (st ? '<span>' + t("rig.pending") + ' <b>' + rigData.pending + '</b></span>' : '') + '</div>' +
+    '<div class="rm-info"><span>' + t("rig.rate") + '<b>' + fmtInt(p.hash) + ' H</b></span><span>' + t("rig.tier") + PART_TIER[2] + '×' + fl + ' · ' + PART_TIER[1] + '×' + pr + '</span><span>' + t("rig.share") + shr + '</span>' + (st ? '<span>' + t("rig.pending") + ' <b>' + rigData.pending + '</b></span>' : '') + '</div>' +
     '<div class="rm-parts">' + tierList.map(function(x){ return '<i>' + x + '</i>'; }).join("") + '</div>' +
     '<div class="rm-acts">' + acts + '</div>' +
     '<div class="msg" id="rigModalMsg"></div>';
@@ -8705,14 +8703,7 @@ function doRigStake(id){
     return circ.listedOf(id);
   }).then(function(listed){
     if (listed) { setMsg("rigModalMsg","err","该矿机正在挂单中，请先撤单再质押。"); if (btn) busy(btn, false); throw new Error("listed"); }
-    return circ.getApproved(id);
-  }).then(function(approved){
-    if (approved.toLowerCase() !== ADDRS.mining.toLowerCase()) {
-      setMsg("rigModalMsg","info", t("o.sendApprove"));
-      startSigWatch("rigModalMsg", btn);
-      return circ.approve(ADDRS.mining, id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); }).then(function(){ return true; });
-    }
-    return false;
+    // V6：MiningV6.stake 只做链上标记，不转走 NFT，无需授权
   }).then(function(){
     setMsg("rigModalMsg","info", t("o.sendStake"));
     startSigWatch("rigModalMsg", btn);
@@ -8792,20 +8783,14 @@ function doAssetList(id, priceOkb){
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, signer);
   readRetry(function(){ return circ.ownerOf(id); }).then(function(owner){
     if (owner.toLowerCase() !== account.toLowerCase()) { setMsg("rigModalMsg","err","Token ID " + id + " 不属于当前钱包，无法挂单。"); throw new Error("not owner"); }
-    return readRetry(function(){ return circ.getApproved(id); });
-  }).then(function(appr){
-    var chain = Promise.resolve();
-    if (appr.toLowerCase() !== ADDRS.market.toLowerCase()) {
-      setMsg("rigModalMsg","info","未授权市场合约，先发送授权交易（请确认签名）…");
-      chain = chain.then(function(){ return circ.approve(ADDRS.market, id, { gasLimit: 150000 }); }).then(function(tx){ return tx.wait(); });
-    }
-    return chain.then(function(){ return mk.listPC(id, price, { gasLimit: 300000 }); });
+    // V6：MarketV6.listPC 只置 listedOf 标记，成交时由合约自行转移，无需 approve
+    return mk.listPC(id, price, { gasLimit: 300000 });
   }).then(function(tx){
     setMsg("rigModalMsg","info","挂单交易已发送，等待确认…<br><a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
     return tx.wait();
   }).then(function(receipt){
     logTx("资产页挂单", receipt.hash);
-    setMsg("rigModalMsg","ok","挂单成功！PC #" + id + " 以 " + Number(price)/1e18 + " OKB 在售。");
+    setMsg("rigModalMsg","ok","挂单成功！PC #" + id + " 以 " + Number(price)/1e18 + " TAPE 在售。");
     delete rigSell[id];
     closeRigModal(); toast("挂单成功");
     refresh();
@@ -8839,21 +8824,9 @@ function doBatchStake(){
     busy(btn, true, t("o.stakeBusy"));
     Q.start("批量质押 " + ids.length + " 台（一次签名）", 1, function(){ doBatchStake(); });
     rigLog("info", "批量质押 " + ids.length + " 台（一次签名）…");
-    // 逐台补授权（仅未授权的矿机，已授权过无需重复签名）
-    return readRetry(function(){ return Promise.all(ids.map(function(id){ return circ.getApproved(id); })); })
-      .then(function(apps){
-        var needApprove = [];
-        apps.forEach(function(app, i){ if (app.toLowerCase() !== ADDRS.mining.toLowerCase()) needApprove.push(ids[i]); });
-        if (!needApprove.length) return Promise.resolve();
-        rigLog("info", "授权 " + needApprove.length + " 台矿机给质押合约（" + needApprove.join(", ") + "）…");
-        return needApprove.reduce(function(p, id){
-          return p.then(function(){ return circ.approve(ADDRS.mining, id, { gasLimit: 150000 }).then(function(tx){ return tx.wait(); }); });
-        }, Promise.resolve());
-      })
-      .then(function(){
-        rigLog("info", "批量质押（一次签名）…");
-        return mine.batchStake(ids, { gasLimit: 400000 + ids.length * 150000 });
-      });
+    // V6：MiningV6.batchStake 只做链上标记（setStaked），不转走 NFT，无需 approve
+    rigLog("info", "批量质押（一次签名）…");
+    return mine.batchStake(ids, { gasLimit: 400000 + ids.length * 150000 });
   })
   .then(function(tx){
     rigLog("info", "交易已发送，等待确认…<a href='" + EXPLORER + "/tx/" + tx.hash + "' target='_blank' rel='noopener'>" + tx.hash.slice(0,18) + "…</a>");
@@ -8866,7 +8839,7 @@ function doBatchStake(){
   })
   .catch(function(e){
     rigLog("err", "批量质押失败：" + humanErr(e).slice(0, 140));
-    busy(btn, false); Q.done("批量质押失败");
+    busy(btn, false); Q.fail(1, humanErr(e).slice(0, 80)); Q.done("批量质押失败");
   });
 }
 function doBatchUnstake(){
@@ -8886,7 +8859,7 @@ function doBatchUnstake(){
     })
     .catch(function(e){
       rigLog("err", "批量解押失败：" + humanErr(e).slice(0, 140));
-      busy(btn, false); Q.done("批量解押失败");
+      busy(btn, false); Q.fail(1, humanErr(e).slice(0, 80)); Q.done("批量解押失败");
     });
 }
 (function(){
