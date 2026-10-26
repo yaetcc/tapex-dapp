@@ -6470,7 +6470,7 @@ body::before{ animation:none !important; }
       <div class="wallet-hint mk-nowallet" id="mkNoWallet" data-i18n="m.noWallet">连接钱包后可浏览在售挂单并购买 / 挂单。</div>
       <div class="mk-mode" id="mkMode">
         <button class="mk-mbtn on" data-mode="pc" data-i18n="pm.pc">整机 PC</button>
-        <button class="mk-mbtn" data-mode="part" data-i18n="pm.part">标准部件</button>
+        <button class="mk-mbtn" data-mode="part" data-i18n="pm.part">部件</button>
       </div>
       <div id="pcPanel">
       <div class="mk-stats">
@@ -6538,7 +6538,7 @@ body::before{ animation:none !important; }
           </div>
           <button class="action-btn" id="ptListBtn" data-i18n="pm.list">挂单</button>
           <div class="msg" id="ptMsg"></div>
-          <p class="hint" data-i18n="pm.limit">合约目前只支持标准档部件（id 1–8）挂单；Pro / 旗舰部件暂不支持交易。</p>
+          <p class="hint" data-i18n="pm.limit">支持全部 24 种部件：标准（1–8）、Pro（9–16）、旗舰（17–24），均按 TAPE 计价。</p>
         </div>
         <div class="mk-head"><span data-i18n="pm.onSaleH">在售部件</span></div>
         <ul class="mk-list" id="ptList"><li class="mk-empty skel" data-i18n="加载中…">加载中…</li></ul>
@@ -6943,13 +6943,13 @@ var I18N = {
   "整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。": {zh:"整机与部件都可在此挂单买卖（TAPE 计价，成交收 10% 手续费：5% 销毁 + 5% 分红）。", en:"List and buy both PCs and parts here (priced in TAPE; 10% fee on sale: 5% burn + 5% dividend)."},
   "pm.inputInvalid": {zh:"请填完整：部件类型 + 数量（≥1）+ 单价（>0）", en:"Fill in part type, amount (≥1) and unit price (>0)"},
   "pm.pc": {zh:"整机 PC", en:"PC NFT"},
-  "pm.part": {zh:"标准部件", en:"Standard parts"},
+  "pm.part": {zh:"部件", en:"Parts"},
   "pm.onSale": {zh:"在售挂单", en:"Listings"},
   "pm.floor": {zh:"最低单价", en:"Lowest price"},
   "pm.mine": {zh:"我的挂单", en:"My listings"},
   "pm.sellTitle": {zh:"挂单卖出部件", en:"List parts"},
   "pm.list": {zh:"挂单", en:"List"},
-  "pm.limit": {zh:"合约目前只支持标准档部件（id 1–8）挂单；Pro / 旗舰部件暂不支持交易。", en:"The contract currently supports standard-tier parts only (id 1–8); Pro/Flagship cannot be traded yet."},
+  "pm.limit": {zh:"支持全部 24 种部件：标准（1–8）、Pro（9–16）、旗舰（17–24），均按 TAPE 计价。", en:"All 24 part types tradable: Standard (1–8), Pro (9–16), Flagship (17–24), priced in TAPE."},
   "pm.onSaleH": {zh:"在售部件", en:"Parts on sale"},
   "pm.mineH": {zh:"我的部件挂单", en:"My part listings"},
   "pm.empty": {zh:"暂无在售部件 · 把多余的部件挂上来换 TAPE", en:"No parts on sale — list your spare parts"},
@@ -8349,7 +8349,12 @@ function renderMkPage(){
 /* ==================== 部件市场（标准档 1-8） ==================== */
 var mkMode = "pc";
 var __ptLoadedAt = 0;
-function ptName(typeId){ var i = Number(typeId) - 1; if (i < 0 || i > 7) return "#" + typeId; return (PART_NAMES[i] || ("#" + typeId)) + " · " + (PART_TIER[0] || "标准"); }
+function ptName(typeId){
+  var id = Number(typeId);
+  if (!(id >= 1 && id <= 24)) return "#" + typeId;
+  var ti = Math.floor((id - 1) / 8), i = (id - 1) % 8;
+  return (PART_NAMES[i] || ("#" + id)) + " · " + (PART_TIER[ti] || "标准");
+}
 function switchMkMode(mode){
   mkMode = mode === "part" ? "part" : "pc";
   var pc = $("pcPanel"), pp = $("partPanel");
@@ -8363,7 +8368,11 @@ function renderPartMarket(){
   if (!window.__ptSelInit) {
     window.__ptSelInit = 1;
     var sel = $("ptType");
-    if (sel) sel.innerHTML = PART_NAMES.map(function(nm, i){ return '<option value="' + (i + 1) + '">' + nm + ' · ' + (PART_TIER[0] || "标准") + '</option>'; }).join("");
+    if (sel) {
+      var opts = [];
+      for (var id = 1; id <= 24; id++) opts.push('<option value="' + id + '">' + ptName(id) + '</option>');
+      sel.innerHTML = opts.join("");
+    }
   }
   var mk = new ethers.Contract(ADDRS.market, ABI_MARKET, pubProvider);
   return readRetry(function(){ return mk.activePartOrders(); }, 2).then(function(orders){
@@ -8413,7 +8422,7 @@ function doListPart(){
   if (!signer || !account) { setMsg("ptMsg", "err", t("t.connectFirst")); return; }
   if (!ensureNetMsg("ptMsg")) return;
   var typeId = Number($("ptType").value), amount = Number($("ptAmount").value), priceOkb = parseFloat($("ptPrice").value);
-  if (!typeId || typeId < 1 || typeId > 8) { setMsg("ptMsg", "err", "标准档部件 id 1–8"); return; }
+  if (!typeId || typeId < 1 || typeId > 24) { setMsg("ptMsg", "err", "部件 id 1–24"); return; }
   if (!(amount >= 1) || !(priceOkb > 0)) { setMsg("ptMsg", "err", t("pm.inputInvalid")); return; }
   var price = BigInt(Math.round(priceOkb * 1e18));
   var btn = $("ptListBtn"); busy(btn, true);
