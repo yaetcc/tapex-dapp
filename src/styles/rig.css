@@ -196,3 +196,12 @@
 @media (prefers-reduced-motion: reduce) {
   .led-flow, .born-card .led-strip, .born-card .rig-badge { animation: none !important; }
 }
+
+/* 灯条错峰呼吸 */
+.gpu-rgb { animation: rgbBreath 2.8s ease-in-out infinite; }
+.ram-led { animation: rgbBreath 3.2s ease-in-out infinite reverse; }
+@keyframes rgbBreath { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.rig:not(.on) .gpu-rgb, .rig:not(.on) .ram-led { animation: none; }
+/* 停机惯性 */
+.rig.coasting .fan-blades { animation-duration: 3.2s !important; }
+@media (prefers-reduced-motion: reduce) { .gpu-rgb, .ram-led { animation: none !important; } }

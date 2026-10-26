@@ -38,12 +38,21 @@ export function RigArt({
   const base = st === "mining" ? Math.max(0.45, 1.4 - Math.min(hash, 300) / 300) : 0;
   const [jit, setJit] = useState(1);
   const [booting, setBooting] = useState(false);
+  const [coasting, setCoasting] = useState(false);
   useEffect(() => {
     if (st !== "mining") return;
     const t = setInterval(() => setJit(0.92 + Math.random() * 0.16), 4000);
     return () => clearInterval(t);
   }, [st]);
   const speed = base * jit;
+
+  // 停机惯性：退出挖矿态后仍慢转 1.2s
+  useEffect(() => {
+    if (st === "mining") { setCoasting(false); return; }
+    setCoasting(true);
+    const t = setTimeout(() => setCoasting(false), 1200);
+    return () => clearTimeout(t);
+  }, [st]);
 
   // 启动加速：第一次进入挖矿态时，用 1.2s 从慢速升到目标转速
   useEffect(() => {
@@ -65,9 +74,10 @@ export function RigArt({
   }, [v]);
 
   return (
-    <div className={`rig${st === "mining" ? " on" : ""}${booting ? " booting" : ""}`}
+    <div className={`rig${st === "mining" || coasting ? " on" : ""}${booting ? " booting" : ""}${coasting ? " coasting" : ""}`}
       style={{ width: size, ["--spin" as string]: `${speed}s`, ["--glow" as string]: glow, ["--dim" as string]: dim ? "0.55" : "1" }}>
-      <svg viewBox="0 0 220 260" width="100%" height="100%" fill="none">
+      <svg viewBox="0 0 220 260" width="100%" height="100%" fill="none"
+        style={lvl === 2 ? { transform: "skewY(-0.6deg)" } : undefined}>
         <defs>
           <linearGradient id="caseBody" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#2a211d" /><stop offset="1" stopColor="#15100e" />
@@ -92,14 +102,35 @@ export function RigArt({
             <stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
           </linearGradient>
           <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2" /></filter>
+          <linearGradient id="rgbfade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="var(--glow)" stopOpacity=".1" />
+            <stop offset=".5" stopColor="var(--glow)" stopOpacity=".95" />
+            <stop offset="1" stopColor="var(--glow)" stopOpacity=".1" />
+          </linearGradient>
+          <radialGradient id="spill" cx="50%" cy="50%">
+            <stop offset="0" stopColor="var(--glow)" stopOpacity=".22" />
+            <stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
+          </radialGradient>
           <radialGradient id="led" cx="50%" cy="50%">
             <stop offset="0" stopColor="var(--glow)" stopOpacity=".9" /><stop offset="1" stopColor="var(--glow)" stopOpacity="0" />
           </radialGradient>
         </defs>
 
         <g style={{ opacity: dim ? 0.6 : 1 }}>
+          {/* 接地阴影 + 倒影 */}
+          <ellipse cx="110" cy="256" rx="96" ry="7" fill="#000" opacity=".45" filter="url(#soft)" />
+          <g transform="translate(0, 508) scale(1, -0.2)" opacity=".10">
+            <rect x="8" y="6" width="204" height="248" rx="14" fill="url(#caseBody)" />
+          </g>
+
           {/* 机箱外壳 */}
           <rect x={8} y={6} width={204} height={248} rx="14" fill="url(#caseBody)" stroke="#4a382f" strokeWidth="1.6" />
+          <rect x={8} y={6} width={204} height={248} rx="14" fill="url(#brushed)" opacity=".5" />
+
+          {/* 顶板（仅大图，制造体积） */}
+          {lvl === 2 && (
+            <path d="M14 8 L28 2 h168 l8 6 z" fill="#2f241f" stroke="#4a382f" strokeWidth="1" opacity=".9" />
+          )}
 
           {/* 外形差异 */}
           {shell.kind === "open" && (
@@ -151,6 +182,10 @@ export function RigArt({
             {/* 内存 ×2（细条 5×42） */}
             <rect x="104" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />
             {lvl >= 1 && <rect x="114" y="42" width="6" height="54" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.8" />}
+            {/* 内存顶部灯点 */}
+            <circle className="ram-led" cx="107" cy="40" r="1.6" fill="var(--glow)" opacity={st === "idle" ? ".3" : ".9"} />
+            {lvl >= 1 && <circle className="ram-led" cx="117" cy="40" r="1.6" fill="var(--glow)" opacity={st === "idle" ? ".3" : ".9"} />}
+
             {/* 金手指（仅大图） */}
             {lvl >= 2 && (
               <g fill="#C9A227" opacity=".65">
@@ -188,6 +223,9 @@ export function RigArt({
                 </g>
               </g>
             ))}
+            {/* 显卡 RGB 灯条 */}
+            <rect className="gpu-rgb" x="52" y="122.5" width="136" height="2.5" rx="1.2" fill="url(#rgbfade)" opacity={st === "idle" ? ".25" : ".95"} />
+
             {/* 背板螺丝（仅大图） */}
             {lvl >= 2 && (
               <g fill="#6b5344">
@@ -245,7 +283,8 @@ export function RigArt({
 
             {/* 底部电源仓 */}
             <line x1="18" y1="190" x2="202" y2="190" stroke="#3a2c26" strokeWidth="1.2" />
-            <rect x="28" y="196" width="112" height="46" rx="5" fill="#1b1512" stroke="#40302a" strokeWidth="1.2" />
+            <rect x="28" y="196" width="112" height="46" rx="5" fill="#15100e" stroke="#40302a" strokeWidth="1.2" />
+            <rect x="30" y="198" width="108" height="8" rx="4" fill="#ffffff" opacity=".04" />
             <circle cx="48" cy="221" r="11" fill="none" stroke="#4a382f" strokeWidth="0.8" />
             <g className="fan-blades" style={{ transformOrigin: "48px 221px" }}>
               {[0, 120, 240].map((a) => (
@@ -283,7 +322,13 @@ export function RigArt({
           {st === "mining" && <rect className="led-flow" x="18" y="245" width="70" height="5" rx="2.5" fill="url(#ledflow)" opacity=".8" />}
 
           {/* 玻璃反光（仅高细节） */}
-          {lvl === 2 && <path d="M18 16h40L18 96z" fill="#ffffff" opacity=".05" />}
+          {st !== "idle" && <ellipse cx="110" cy="236" rx="92" ry="24" fill="url(#spill)" opacity=".65" />}
+          {lvl === 2 && (
+            <>
+              <path d="M18 16h40L18 96z" fill="#ffffff" opacity=".06" />
+              <path d="M196 60v150l-34 60V120z" fill="#ffffff" opacity=".03" />
+            </>
+          )}
         </g>
       </svg>
 
