@@ -50,7 +50,7 @@ export function RigSlots({ tiers, counts, size = 300, onHover }: Props) {
         <rect x="113" y="44" width="5" height="48" rx="1.5" {...fp(3, 0.5)} stroke={stroke(3)} strokeWidth="0.8" strokeDasharray={dash(3)} />
 
         {/* 显卡（部件 3） */}
-        <rect x="44" y="122" width="158" height="38" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
+        <rect x="44" y="122" width="146" height="38" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
 
         {/* SSD（部件 5） */}
         <rect onMouseEnter={() => onHover?.(4)} x="124" y="100" width="58" height="10" rx="2" {...fp(4, 0.35)} stroke={stroke(4)} strokeWidth="0.9" strokeDasharray={dash(4)} />
