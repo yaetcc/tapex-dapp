@@ -1,10 +1,24 @@
 import { useEffect, useState } from "react";
 import { Contract, formatEther } from "ethers";
 import { useApp } from "../state/App";
-import { ADDRS, ABI, PART_NAMES } from "../lib/contracts";
+import { ADDRS, PART_NAMES } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
 import { num } from "../lib/format";
 import { RigArt } from "../components/RigArt";
+
+const A = {
+  erc721: ["function balanceOf(address) view returns (uint256)"],
+  staked: ["function stakedPCsOf(address) view returns (uint256[])"],
+  pending: ["function pending(address) view returns (uint256)"],
+  batch: ["function balanceOfBatch(address[],uint256[]) view returns (uint256[])"],
+  info: ["function getCircuitInfo(uint256) view returns (tuple(uint256 processorId,bytes32 circuitHash,uint8[8] tiers,uint32 hashRate,uint8 grade,uint256 createdAt))"],
+  u64: ["function totalShares() view returns (uint256)"],
+  bal: ["function balanceOf(address) view returns (uint256)"],
+  perDay: ["function rewardPerDay() view returns (uint256)"],
+  supply: ["function totalSupply() view returns (uint256)"],
+  minted: ["function mintedTotal() view returns (uint256)"],
+  maxMint: ["function maxMintTotal() view returns (uint256)"],
+};
 
 type Mine = { pcs: number; staked: number; hash: number; pending: number; ids: number[]; can: number; missing: number[] };
 type Net = { shares: number; pool: number; perDay: number; supply: number; minted: number; cap: number };
@@ -19,9 +33,9 @@ export function Home({ go }: { go: (r: string) => void }) {
     let alive = true;
     (async () => {
       try {
-        const tapeC = new Contract(ADDRS.tape, ABI.tape as unknown as string[], readProvider);
-        const mineC = new Contract(ADDRS.mining, ABI.mining as unknown as string[], readProvider);
-        const circC = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], readProvider);
+        const tapeC = new Contract(ADDRS.tape, A.supply.concat(A.bal), readProvider);
+        const mineC = new Contract(ADDRS.mining, A.u64.concat(A.perDay), readProvider);
+        const circC = new Contract(ADDRS.circuit, A.minted.concat(A.maxMint), readProvider);
         const [shares, pool, perDay, supply, minted, cap] = await Promise.all([
           mineC.totalShares() as Promise<bigint>,
           tapeC.balanceOf(ADDRS.mining) as Promise<bigint>,
@@ -44,9 +58,9 @@ export function Home({ go }: { go: (r: string) => void }) {
     let alive = true;
     (async () => {
       try {
-        const ct = new Contract(ADDRS.circuit, ABI.circuit, readProvider);
-        const mt = new Contract(ADDRS.mining, ABI.mining, readProvider);
-        const fs = new Contract(ADDRS.feeSplit, ABI.feeSplit, readProvider);
+        const ct = new Contract(ADDRS.circuit, A.erc721.concat(A.info), readProvider);
+        const mt = new Contract(ADDRS.mining, A.staked, readProvider);
+        const fs = new Contract(ADDRS.feeSplit, A.pending, readProvider);
         const [pcBal, stakedIds, pending] = await Promise.all([
           ct.balanceOf(account).catch(() => 0n),
           mt.stakedPCsOf(account).catch(() => [] as bigint[]),
@@ -54,7 +68,7 @@ export function Home({ go }: { go: (r: string) => void }) {
         ]);
         let can = 0; let missing: number[] = [];
         try {
-          const pt = new Contract(ADDRS.part, ABI.part, readProvider);
+          const pt = new Contract(ADDRS.part, A.batch, readProvider);
           const ids24 = Array.from({ length: 24 }, (_, i) => i + 1);
           const bals: bigint[] = await pt.balanceOfBatch(ids24.map(() => account), ids24);
           const byType = Array.from({ length: 8 }, (_, i) => [0, 1, 2].reduce((a, tr) => a + Number(bals[tr * 8 + i]), 0));
