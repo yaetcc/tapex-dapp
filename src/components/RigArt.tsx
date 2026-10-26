@@ -44,8 +44,26 @@ export function RigArt({
             <rect x="8" y="246" width="204" height="8" rx="4" fill="#241a16" stroke="#3a2c26" />
           </>
         ) : grade >= 5 ? (
-          /* 全侧透：玻璃几乎铺满，边框很细 */
-          <rect x="14" y="12" width="192" height="236" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".10" />
+          <>
+            {/* 全侧透：玻璃铺满 */}
+            <rect x="14" y="12" width="192" height="236" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".10" />
+            {/* 前部金属冲孔网 */}
+            <rect x="14" y="12" width="16" height="236" rx="8" fill="#171110" stroke="#3a2c26" />
+            <g fill="#4a3a32" opacity=".85">
+              {Array.from({ length: 11 }, (_, r) => (
+                <g key={r}>
+                  <circle cx="18.5" cy={26 + r * 20} r="1.5" />
+                  <circle cx="23" cy={26 + r * 20} r="1.5" />
+                  <circle cx="27.5" cy={26 + r * 20} r="1.5" />
+                </g>
+              ))}
+            </g>
+            {/* 顶部提手 */}
+            <path d="M78 8 h64" stroke="#6b5344" strokeWidth="5" strokeLinecap="round" />
+            <path d="M78 8 v-4 M142 8 v-4" stroke="#6b5344" strokeWidth="5" strokeLinecap="round" />
+            {/* 前部竖向灯条 */}
+            <rect x="31" y="26" width="3" height="196" rx="1.5" fill="var(--glow)" opacity=".75" />
+          </>
         ) : grade >= 4 ? (
           /* 侧透：内窗，四周留金属框 */
           <rect x="18" y="16" width="184" height="200" rx="10" fill="url(#glass)" stroke="#ffffff" strokeOpacity=".06" />

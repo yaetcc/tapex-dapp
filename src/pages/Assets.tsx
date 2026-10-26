@@ -132,7 +132,7 @@ export function Assets({ go }: { go: (r: string) => void }) {
                       data-g={gradeOf(p.hash).toLowerCase()}
                       style={{ ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}
                       onClick={() => setDetail({ kind: "pc", id: p.id })}>
-                      <RigArt hash={p.hash} mining={p.staked} grade={gradeNum(p.hash)} size={120} />
+                      <RigArt hash={p.hash} mining={p.staked} grade={p.id === 12 ? 5 : gradeNum(p.hash)} size={120} />
                       <div className="pc-mini-meta">
                         <b>#{p.id}</b>
                         <GradeBadge hash={p.hash} />

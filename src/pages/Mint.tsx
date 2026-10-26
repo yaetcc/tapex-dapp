@@ -8,10 +8,10 @@ import { PartIcon } from "../components/PartIcon";
 import { RoiCalc } from "../components/RoiCalc";
 import { trackTx } from "../lib/tx";
 
-// 链上实测权重（CircuitV6.typeWeight）：CPU 18 / 主板 20 / GPU 18 / RAM 14 / SSD 12 / 电源 8 / 散热器 6 / 机箱 4
-const ODD = [18, 20, 18, 14, 12, 8, 6, 4];
+// 链上权重（2026-10-26 20:2x 由 owner 调整）：CPU 6 / 主板 8 / GPU 4 / RAM 14 / SSD 12 / 电源 20 / 散热器 18 / 机箱 18
+const ODD = [6, 8, 4, 14, 12, 20, 18, 18];
 // 方向 A：单色阶，但明度必须拉开，否则 8 段分不清
-const ODD_COLOR = ["#FFE066", "#FFC93F", "#F0A62F", "#D4853A", "#B36B33", "#8F5530", "#6E442E", "#503A32"];
+const ODD_COLOR = ["#C9762F", "#E09A34", "#8A5A2E", "#E8B03F", "#F0C446", "#FFE066", "#FFD24D", "#FFDE7A"];
 
 const TIER_COLOR = ["#7FE0D6", "#00E5A0", "#FFD54D"];
 
