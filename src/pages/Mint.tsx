@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { cachedStatic } from "../lib/cache";
 import { Contract, formatEther } from "ethers";
 import { ADDRS, ABI, PART_NAMES, TIERS } from "../lib/contracts";
 import { readProvider } from "../lib/wallet";
@@ -39,7 +40,7 @@ export function Mint() {
   }, [account]);
 
   useEffect(() => {
-    circC.mintFee().then((f: bigint) => setFee(f)).catch(() => {});
+    cachedStatic("mintFee", () => circC.mintFee() as Promise<bigint>).then((f) => setFee(f)).catch(() => {});
     Promise.all([circC.maxMintTotal(), circC.mintedTotal()])
       .then(([a, b]: bigint[]) => setCap({ total: a, minted: b }))
       .catch(() => {});
