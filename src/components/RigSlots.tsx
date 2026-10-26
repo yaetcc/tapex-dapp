@@ -53,7 +53,7 @@ export function RigSlots({ tiers, counts, size = 300 }: Props) {
         <rect x="46" y="116" width="140" height="32" rx="5" {...fp(2)} stroke={stroke(2)} strokeWidth="1.4" strokeDasharray={dash(2)} />
 
         {/* SSD（部件 5） */}
-        <rect x="132" y="198" width="54" height="15" rx="3" {...fp(4)} stroke={stroke(4)} strokeWidth="0.9" strokeDasharray={dash(4)} />
+        <rect x="120" y="94" width="48" height="9" rx="2" {...fp(4, 0.35)} stroke={stroke(4)} strokeWidth="0.9" strokeDasharray={dash(4)} />
 
         {/* 电源（部件 6） */}
         <rect x="30" y="204" width="94" height="38" rx="5" {...fp(5, 0.12)} stroke={stroke(5)} strokeWidth="1.1" strokeDasharray={dash(5)} />
@@ -65,7 +65,7 @@ export function RigSlots({ tiers, counts, size = 300 }: Props) {
           <text x="98" y="90" fill={ok(6) ? stroke(6) : "#6b5a50"}>散热</text>
           <text x="102" y="42" fill={ok(3) ? stroke(3) : "#6b5a50"}>RAM</text>
           <text x="50" y="112" fill={ok(2) ? stroke(2) : "#6b5a50"}>GPU</text>
-          <text x="128" y="194" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
+          <text x="170" y="100" fill={ok(4) ? stroke(4) : "#6b5a50"}>SSD</text>
           <text x="36" y="197" fill={ok(5) ? stroke(5) : "#6b5a50"}>电源</text>
           <text x="18" y="248" fill={ok(7) ? stroke(7) : "#6b5a50"}>机箱</text>
         </g>

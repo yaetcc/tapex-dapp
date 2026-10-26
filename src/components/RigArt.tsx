@@ -158,8 +158,12 @@ export function RigArt({
                 <rect x="111" y="84" width="5" height="4" />
               </g>
             )}
-            {/* M.2 */}
-            {lvl >= 1 && <rect x="122" y="96" width="44" height="5" rx="2.5" fill="#1a1512" stroke="#3d7a63" strokeWidth="0.8" />}
+            {/* M.2 NVMe：直插主板（显卡下方） */}
+            <g>
+              <rect x="120" y="94" width="48" height="9" rx="2" fill="#1a1512" stroke="#3d7a63" strokeWidth="0.9" />
+              <rect x="122" y="96" width="38" height="5" rx="1.5" fill="#22302c" stroke="#3d7a63" strokeWidth="0.6" />
+              {lvl >= 2 && <circle cx="164" cy="98.5" r="1.3" fill="#6b5344" />}
+            </g>
 
             {/* 显卡投影 */}
             <rect x="46" y="152" width="150" height="6" rx="3" fill="#000" opacity=".3" filter="url(#soft)" />
@@ -247,15 +251,7 @@ export function RigArt({
                 <rect x="104" y="216" width="10" height="10" rx="2" />
               </g>
             )}
-            {/* 2.5" SSD：装在电源仓上盖 */}
-            <rect x="130" y="197" width="58" height="10" rx="2" fill="#2a211d" stroke="#4a382f" strokeWidth="0.8" />
-            <rect x="132" y="198" width="54" height="15" rx="3" fill="#241a16" stroke="#5a463a" strokeWidth="1.2" />
-            {lvl >= 2 && (
-              <g fill="#6b5344">
-                <circle cx="138" cy="205" r="1.2" />
-                <circle cx="180" cy="205" r="1.2" />
-              </g>
-            )}
+
 
             {/* 机箱脚垫（大图） */}
             {lvl >= 2 && (
