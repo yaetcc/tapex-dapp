@@ -13,6 +13,10 @@ const STEPS: { route: string; label: string; icon: string }[] = [
   { route: "market", label: "交易", icon: "M4 8h14l-3-3M20 16H6l3 3" },
 ];
 
+// 模块级缓存：同一会话内 60s 内不重复拉取（每次切页会重挂载，避免 +2 RPC）
+let cache: { at: number; account: string; parts: number; pcs: number } | null = null;
+const TTL = 60_000;
+
 export function Trail({ route, go }: { route: string; go: (r: string) => void }) {
   const { account } = useApp();
   const [parts, setParts] = useState<number | null>(null);
@@ -20,6 +24,9 @@ export function Trail({ route, go }: { route: string; go: (r: string) => void })
 
   useEffect(() => {
     if (!account) { setParts(null); setPcs(null); return; }
+    if (cache && cache.account === account && Date.now() - cache.at < TTL) {
+      setParts(cache.parts); setPcs(cache.pcs); return;
+    }
     let alive = true;
     (async () => {
       try {
@@ -30,6 +37,7 @@ export function Trail({ route, go }: { route: string; go: (r: string) => void })
         const ct = new Contract(ADDRS.circuit, ABI.circuit, readProvider);
         const n = Number(await ct.balanceOf(account));
         if (!alive) return;
+        cache = { at: Date.now(), account, parts: total, pcs: n };
         setParts(total); setPcs(n);
       } catch { /* 静默：主线不阻塞 */ }
     })();
