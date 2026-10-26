@@ -12,19 +12,19 @@
 }
 .console-h { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
 .console-h i { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 217, 61, 0.5), transparent); }
-.console-h span { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); }
+.console-h span { font-size: var(--fs-2xs); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); }
 .console-total {
   display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px;
   margin: 15px 0 13px; padding-top: 13px; border-top: 1px dashed rgba(255, 255, 255, 0.1);
 }
-.console-total span { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx-3); }
-.console-total b { font-family: var(--mono); font-size: 15.5px; color: var(--gold); font-variant-numeric: tabular-nums; }
+.console-total span { font-size: var(--fs-2xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tx-3); }
+.console-total b { font-family: var(--mono); font-size: var(--fs-xl); color: var(--gold); font-variant-numeric: tabular-nums; }
 
 .odds-legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px 16px; margin-top: 13px; }
 @media (max-width: 700px) { .odds-legend { grid-template-columns: repeat(2, 1fr); } }
-.odds-legend span { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--tx-2); }
+.odds-legend span { display: flex; align-items: center; gap: 7px; font-size: var(--fs-xs); color: var(--tx-2); }
 .odds-legend i { width: 8px; height: 8px; border-radius: 2px; flex: 0 0 auto; box-shadow: 0 0 0 1px rgba(255,255,255,.14); }
-.odds-legend b { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--tx); }
+.odds-legend b { margin-left: auto; font-family: var(--mono); font-size: var(--fs-xs); color: var(--tx); }
 
 .rack { display: grid; grid-template-columns: repeat(8, 1fr); gap: 9px; }
 @media (max-width: 900px) { .rack { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
@@ -38,11 +38,11 @@
 }
 .rack-cell:hover { transform: translateY(-2px); }
 .rack-cell.has { border-color: rgba(0, 229, 160, 0.34); box-shadow: inset 0 0 0 1px rgba(0, 229, 160, 0.1), 0 6px 18px rgba(0, 229, 160, 0.08); }
-.rack-cell em { font-style: normal; font-size: 10.5px; color: var(--tx-2); }
-.rack-cell > b { font-family: var(--mono); font-size: 16px; font-weight: 800; color: rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
+.rack-cell em { font-style: normal; font-size: var(--fs-2xs); color: var(--tx-2); }
+.rack-cell > b { font-family: var(--mono); font-size: var(--fs-xl); font-weight: 800; color: rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
 .rack-cell.has > b { color: var(--gold); }
 .rack-tiers { display: flex; gap: 3px; min-height: 13px; }
-.rack-tiers i { font-style: normal; font-size: 9px; padding: 0 5px; border-radius: 20px; border: 1px solid; line-height: 13px; }
+.rack-tiers i { font-style: normal; font-size: var(--fs-2xs); padding: 0 5px; border-radius: 20px; border: 1px solid; line-height: 13px; }
 .rack-tiers .t0 { color: #7fe0d6; border-color: rgba(127, 224, 214, 0.32); }
 .rack-tiers .t1 { color: #00e5a0; border-color: rgba(0, 229, 160, 0.34); }
 .rack-tiers .t2 { color: #ffd54d; border-color: rgba(255, 213, 77, 0.45); }
@@ -62,13 +62,13 @@
   animation: pop 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .reveal-card em {
-  font-style: normal; font-size: 9px; letter-spacing: 0.2em; color: #241505;
+  font-style: normal; font-size: var(--fs-2xs); letter-spacing: 0.2em; color: #241505;
   background: var(--grad-gold); padding: 2px 8px; border-radius: 20px;
 }
-.reveal-card b { display: block; margin: 10px 0 4px; font-size: 16px; }
-.reveal-card span { font-size: 11.5px; }
+.reveal-card b { display: block; margin: 10px 0 4px; font-size: var(--fs-xl); }
+.reveal-card span { font-size: var(--fs-xs); }
 .reveal-sum {
-  font-size: 12.5px; color: var(--tx-2);
+  font-size: var(--fs-sm); color: var(--tx-2);
   background: rgba(23, 18, 16, 0.9); border: 1px solid var(--line-gold);
   border-radius: 20px; padding: 7px 16px;
 }

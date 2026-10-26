@@ -40,7 +40,7 @@
 
 .stickers { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
 .sticker {
-  position: absolute; font-size: 12px; font-weight: 800; letter-spacing: .04em;
+  position: absolute; font-size: var(--fs-sm); font-weight: 800; letter-spacing: .04em;
   padding: 6px 13px; border-radius: 20px; color: #241505;
   animation: stickerWig 5s ease-in-out infinite;
 }
@@ -70,7 +70,7 @@
 [data-density="compact"] .card { padding: 16px; }
 [data-density="compact"] .shell { padding-left: 18px; padding-right: 18px; }
 [data-density="compact"] .tile { padding: 8px 10px 9px; }
-[data-density="compact"] .tile b { font-size: 16px; }
+[data-density="compact"] .tile b { font-size: var(--fs-xl); }
 [data-density="compact"] .farm { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 [data-density="compact"] .pc-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 [data-density="compact"] .rack { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }

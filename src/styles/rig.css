@@ -13,7 +13,7 @@
 .rig-badge {
   position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 10.5px; color: var(--tx-2); background: rgba(18, 14, 12, .82);
+  font-size: var(--fs-2xs); color: var(--tx-2); background: rgba(18, 14, 12, .82);
   border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; white-space: nowrap;
 }
 .rig-badge b { font-family: var(--mono); color: var(--gold); }
@@ -42,10 +42,10 @@
 }
 .farm-cell.on { border-color: var(--line-gold); box-shadow: inset 0 0 0 1px rgba(255,217,61,.1); }
 .farm-cell:hover { transform: translateY(-2px); }
-.farm-meta { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--tx-2); }
+.farm-meta { display: flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--tx-2); }
 .farm-meta b { color: var(--tx); }
 .farm-actions { position: absolute; left: 10px; right: 10px; bottom: 9px; }
-.farm-actions .btn { width: 100%; height: 30px; font-size: 11.5px; }
+.farm-actions .btn { width: 100%; height: 30px; font-size: var(--fs-xs); }
 
 @media (prefers-reduced-motion: reduce) {
   .fan-blades, .led-strip, .led-glow, .rig-heat span, .rig-badge .dot { animation: none !important; }
@@ -55,16 +55,16 @@
 .rigslots { position: relative; display: block; margin: 0 auto; }
 .rigslots-badge {
   position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
-  font-size: 10.5px; color: var(--tx-3); background: rgba(18, 14, 12, .85);
+  font-size: var(--fs-2xs); color: var(--tx-3); background: rgba(18, 14, 12, .85);
   border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; white-space: nowrap;
 }
 .rigslots-badge b { color: var(--gold); font-family: var(--mono); }
 
 /* 批量选择 */
 .batch-bar { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.batch-bar .chk { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--tx-2); cursor: pointer; }
-.batch-bar .sel-count { font-size: 11px; color: var(--tx-3); font-family: var(--mono); }
-.batch-bar .btn { height: 28px; padding: 0 11px; font-size: 11px; }
+.batch-bar .chk { display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-xs); color: var(--tx-2); cursor: pointer; }
+.batch-bar .sel-count { font-size: var(--fs-xs); color: var(--tx-3); font-family: var(--mono); }
+.batch-bar .btn { height: 28px; padding: 0 11px; font-size: var(--fs-xs); }
 .farm-check { position: absolute; top: 8px; left: 9px; z-index: 2; cursor: pointer; }
 .farm-check input { width: 15px; height: 15px; accent-color: #00e5a0; }
 .farm-cell { position: relative; }
@@ -78,15 +78,15 @@
 .farm-cell[data-g="b"] { border-color: rgba(127,224,214,.26); }
 
 .farm-more { grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 4px; }
-.farm-more .btn { height: 32px; font-size: 11.5px; }
+.farm-more .btn { height: 32px; font-size: var(--fs-xs); }
 
-.pc-chip i { font-style: normal; font-family: var(--mono); font-size: 10px; opacity: .6; margin-left: 4px; }
+.pc-chip i { font-style: normal; font-family: var(--mono); font-size: var(--fs-2xs); opacity: .6; margin-left: 4px; }
 .pc-chip.on i { opacity: .85; }
-.chk-btn { border: none; background: none; color: var(--tx-3); font-size: 11px; cursor: pointer; text-decoration: underline; }
+.chk-btn { border: none; background: none; color: var(--tx-3); font-size: var(--fs-xs); cursor: pointer; text-decoration: underline; }
 .chk-btn:hover { color: var(--tx); }
 .batch-bar { gap: 8px 10px; }
 
-.pc-listed { font-size: 9.5px; color: var(--gold); border: 1px solid rgba(255,217,61,.4);
+.pc-listed { font-size: var(--fs-2xs); color: var(--gold); border: 1px solid rgba(255,217,61,.4);
   background: rgba(255,217,61,.1); border-radius: 20px; padding: 1px 7px; }
 
 
@@ -97,7 +97,7 @@
 .tile-claim-btn {
   position: absolute; right: 10px; top: 10px;
   height: 26px; padding: 0 12px; border-radius: 8px; border: none; cursor: pointer;
-  font-size: 11px; font-weight: 800; letter-spacing: .02em; color: #2a1700;
+  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .02em; color: #2a1700;
   background: var(--grad-gold); box-shadow: 0 2px 0 #b36a00;
   transition: transform .12s, box-shadow .12s, filter .2s;
 }
@@ -107,14 +107,14 @@
   background: var(--line); color: var(--tx-3); box-shadow: none;
   border: 1px dashed rgba(255,255,255,.16);
 }
-.tile-claim-hint { font-style: normal; font-size: 9.5px; color: var(--tx-3); margin-top: 2px; }
+.tile-claim-hint { font-style: normal; font-size: var(--fs-2xs); color: var(--tx-3); margin-top: 2px; }
 @media (max-width: 640px) {
   .tile-claim-btn { position: static; margin-top: 8px; width: 100%; height: 30px; }
 }
 
-.pc-daily { font-size: 9.5px; color: var(--ac); border: 1px solid rgba(0,229,160,.35);
+.pc-daily { font-size: var(--fs-2xs); color: var(--ac); border: 1px solid rgba(0,229,160,.35);
   background: rgba(0,229,160,.08); border-radius: 20px; padding: 1px 7px; font-family: var(--mono); }
-.scan-link { font-size: 10px; color: var(--tx-3); text-decoration: none; margin-left: 4px; }
+.scan-link { font-size: var(--fs-2xs); color: var(--tx-3); text-decoration: none; margin-left: 4px; }
 .scan-link:hover { color: var(--gold); }
 /* S 级流光边框 */
 @property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
@@ -131,7 +131,7 @@
 /* 空态骨架机箱 */
 .empty-empty { display: grid; justify-items: center; gap: 12px; padding: 18px 0 22px; }
 .empty-rig { opacity: .45; filter: grayscale(.35); }
-.empty-empty p { margin: 0; font-size: 12.5px; color: var(--tx-3); }
+.empty-empty p { margin: 0; font-size: var(--fs-sm); color: var(--tx-3); }
 
 /* 状态：待机降饱和、挂单常亮 */
 .rig-badge .dot.list { background: #FFD54D; box-shadow: 0 0 8px #FFD54D; }
@@ -144,7 +144,7 @@
 /* ===== 矿场视图（机架） ===== */
 .view-switch { display: inline-flex; gap: 2px; padding: 2px; border-radius: 8px; border: 1px solid var(--line); }
 .view-switch button { width: 26px; height: 22px; border: none; background: transparent; color: var(--tx-3);
-  font-size: 11px; border-radius: 6px; cursor: pointer; }
+  font-size: var(--fs-xs); border-radius: 6px; cursor: pointer; }
 .view-switch button.on { background: rgba(255,217,61,.16); color: var(--gold); }
 
 .rack-view { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
@@ -163,7 +163,7 @@
   padding: 4px 2px 2px; border-radius: 10px; transition: background .18s, transform .18s; }
 .rack-unit:hover { background: rgba(255,255,255,.04); transform: translateY(-1px); }
 .rack-unit svg { width: 100%; height: auto; }
-.rack-label { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--tx-3); }
+.rack-label { display: flex; align-items: center; gap: 5px; font-size: var(--fs-2xs); color: var(--tx-3); }
 .rack-label b { color: var(--tx-2); font-weight: 600; }
 .rack-label i { width: 5px; height: 5px; border-radius: 50%; background: #6b5a50; }
 .rack-label i.live { background: var(--ac); box-shadow: 0 0 6px var(--ac); }
