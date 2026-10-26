@@ -38,6 +38,7 @@ export const ABI = {
   ],
   mining: [
     "function totalShares() view returns (uint256)",
+    "function maxBatch() view returns (uint256)",
     "function rewardPerDay() view returns (uint256)",
     "function effectiveSupply() view returns (uint256)",
     "function stake(uint256)",

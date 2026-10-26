@@ -21,6 +21,7 @@ export function Stake() {
   const [busy, setBusy] = useState<number | 0>(0);
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [detail, setDetail] = useState<Detail>(null);
+  const [maxBatch, setMaxBatch] = useState(10);
   const [filter, setFilter] = useState<"all" | "staked" | "idle">("all");
   const [sort, setSort] = useState<"hash" | "id">("hash");
   const [shown, setShown] = useState(8);
@@ -45,6 +46,7 @@ export function Stake() {
   }, [account]);
 
   useEffect(() => { load().catch(() => setLoading(false)); }, [load]);
+  useEffect(() => { (mineC.maxBatch() as Promise<bigint>).then((v) => setMaxBatch(Number(v))).catch(() => {}); }, []);
 
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
   const visible = useMemo(
@@ -63,11 +65,17 @@ export function Stake() {
     try {
       const c = new Contract(ADDRS.mining, ABI.mining as unknown as string[], signer);
       const label = kind === "claim" ? "批量领取" : kind === "stake" ? "批量质押" : "批量解押";
-      await trackTx(`${label} ${ids.length} 台`, async () => {
-        const tx = kind === "claim" ? await c.claim(ids)
-          : kind === "stake" ? await c.batchStake(ids) : await c.batchUnstake(ids);
-        await tx.wait();
-      });
+      // 合约单笔上限 maxBatch（默认 10），超出自动分批
+      const size = Math.max(1, maxBatch);
+      for (let i = 0; i < ids.length; i += size) {
+        const chunk = ids.slice(i, i + size);
+        const round = ids.length > size ? ` ${i + 1}-${i + chunk.length}/${ids.length}` : ` ${ids.length}`;
+        await trackTx(`${label}${round}`, async () => {
+          const tx = kind === "claim" ? await c.claim(chunk)
+            : kind === "stake" ? await c.batchStake(chunk) : await c.batchUnstake(chunk);
+          await tx.wait();
+        });
+      }
       toast(`批量${kind === "claim" ? "领取" : kind === "stake" ? "质押" : "解押"} ${ids.length} 台完成`, "ok");
       setSel(new Set());
       await load();

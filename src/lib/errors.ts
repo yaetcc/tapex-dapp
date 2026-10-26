@@ -8,7 +8,7 @@ const MAP: [RegExp, string][] = [
   [/no part/i, "部件不足，凑齐 8 类各 1 件"],
   [/\bfee\b/i, "支付金额不符"],
   [/\bcap\b/i, "已达抽卡上限"],
-  [/\bbatch\b/i, "单笔数量超限（上限 10）"],
+  [/batch/i, "单笔数量超出合约上限（自动分批中，若仍报错请减少选择数量）"],
   [/not stake/i, "该矿机没有在质押中"],
   [/inactive/i, "该挂单已失效"],
   [/allowance/i, "TAPE 授权额度不足"],
