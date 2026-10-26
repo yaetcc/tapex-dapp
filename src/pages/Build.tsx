@@ -53,6 +53,12 @@ export function Build() {
     return base.reduce((a, b, i) => a + b * (mult[tiers[i]] ?? 1), 0);
   }, [base, mult, tiers]);
 
+  const missing = useMemo(
+    () => PART_NAMES.filter((_, i) => stock(i, tiers[i]) < 1),
+    [counts, tiers]
+  );
+  const totalCost = Number(formatEther(fee || 0n)) * Math.min(n, can);
+
   const pick = (i: number, tr: number) => {
     if (stock(i, tr) < 1) return;
     setTiers((s) => s.map((v, idx) => (idx === i ? tr : v)));
@@ -133,19 +139,25 @@ export function Build() {
             <div className="tile"><span>组装费</span><b>{formatEther(fee || 0n)} <em>TAPE</em></b></div>
           </div>
 
-          <div className="build-actions">
-            <div className="build-qty">
-              <span className="hint">批量台数</span>
-              <input className="field field-sm" style={{ width: 74 }} value={n}
-                onChange={(e) => setN(Math.max(1, Math.min(can || 1, Number(e.target.value.replace(/\D/g, "")) || 1)))} />
+          <div className="build-qty">
+            <span className="hint">组装台数</span>
+            <div className="stepper">
+              <button onClick={() => setN((v) => Math.max(1, v - 1))} disabled={n <= 1}>−</button>
+              <b>{Math.min(n, Math.max(can, 1))}</b>
+              <button onClick={() => setN((v) => Math.min(can || 1, v + 1))} disabled={n >= can}>+</button>
+              <button className="max" onClick={() => setN(Math.max(can, 1))} disabled={can < 2}>MAX</button>
             </div>
-            <button className="btn btn-primary btn-block" disabled={busy || can < 1} onClick={() => doAssemble(1)}>
-              {busy ? "…" : "组装 1 台"}
-            </button>
-            <button className="btn btn-primary btn-block" disabled={busy || can < 1} onClick={() => doAssemble(Math.min(n, can))}>
-              {busy ? "…" : `批量组装 ${Math.min(n, can)} 台`}
-            </button>
           </div>
+          <div className="build-cost">
+            <span>合计</span>
+            <b>{can > 0 ? `${num(totalCost, 2)} TAPE` : "—"}</b>
+          </div>
+          <button className="btn btn-primary btn-block" disabled={busy || can < 1} onClick={() => doAssemble(Math.min(n, Math.max(can, 1)))}>
+            {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : `组装 ${Math.min(n, can)} 台`}
+          </button>
+          {missing.length > 0 && (
+            <p className="build-missing">缺：{missing.join("、")}</p>
+          )}
           {msg && <p className={`msg ${msg.k}`}>{msg.s}</p>}
           <p className="hint" style={{ marginTop: 10 }}>
             组装消耗所选档位每类 1 件；批量需一次签名（单笔上限 10 台）。
