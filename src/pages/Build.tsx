@@ -26,6 +26,7 @@ export function Build() {
   const [n, setN] = useState(1);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ k: "ok" | "err" | "info"; s: string } | null>(null);
+  const [bal, setBal] = useState<bigint>(0n);
 
   const loadCounts = useCallback(async () => {
     if (!account) return setCounts([]);
@@ -42,6 +43,10 @@ export function Build() {
       .then((arr) => setMult(arr.map(Number))).catch(() => {});
   }, []);
   useEffect(() => { loadCounts().catch(() => {}); }, [loadCounts]);
+  useEffect(() => {
+    if (!account) return setBal(0n);
+    (tapeC.balanceOf(account) as Promise<bigint>).then(setBal).catch(() => {});
+  }, [account]);
 
   const stock = (i: number, tr: number) => counts[i + tr * 8] || 0;
   const can = useMemo(() => {
@@ -58,7 +63,11 @@ export function Build() {
     () => PART_NAMES.filter((_, i) => stock(i, tiers[i]) < 1),
     [counts, tiers]
   );
+  const units = Math.min(n, Math.max(can, 1));
   const totalCost = Number(formatEther(fee || 0n)) * Math.min(n, can);
+  const needWei = fee * BigInt(Math.min(n, can));
+  const shortTape = can > 0 && bal < needWei;
+  const MAX_PER_TX = 10;
 
   const pick = (i: number, tr: number) => {
     if (stock(i, tr) < 1) return;
@@ -72,18 +81,28 @@ export function Build() {
     try {
       const circ = new Contract(ADDRS.circuit, ABI.circuit as unknown as string[], signer);
       const tape = new Contract(ADDRS.tape, ABI.tape as unknown as string[], signer);
+      // 一次组装需要 fee × 台数；TAPE 不足直接拦下，避免钱包里才报错
       const need = fee * BigInt(units);
+      const myBal = (await tape.balanceOf(account)) as bigint;
+      if (myBal < need) {
+        throw new Error(`TAPE 不足：需要 ${formatEther(need)}，当前 ${formatEther(myBal)}`);
+      }
       const al = (await tape.allowance(account, ADDRS.circuit)) as bigint;
       if (al < need) {
-        setMsg({ k: "info", s: "首次需要授权 TAPE…" });
-        await (await tape.approve(ADDRS.circuit, need * 100n)).wait();
+        setMsg({ k: "info", s: `授权 ${formatEther(need)} TAPE…` });
+        await (await tape.approve(ADDRS.circuit, need)).wait();   // 精确授权，不再 ×100
       }
-      await trackTx(`组装 ${units} 台`, async () => {
-        const tx = units === 1
-          ? await circ.assembleWithTiers(tiers)
-          : await circ.batchAssembleWithTiers(units, tiers);
-        await tx.wait();
-      });
+      // 单笔上限 10 台，超过则分批（与抽卡一致）
+      let left = units;
+      while (left > 0) {
+        const b = Math.min(left, MAX_PER_TX);
+        setMsg({ k: "info", s: units > MAX_PER_TX ? `组装中… 剩余 ${left} 台` : "等待钱包确认…" });
+        await trackTx(`组装 ${b} 台`, async () => {
+          const tx = b === 1 ? await circ.assembleWithTiers(tiers) : await circ.batchAssembleWithTiers(b, tiers);
+          await tx.wait();
+        });
+        left -= b;
+      }
       setMsg({ k: "ok", s: `组装完成 ${units} 台` });
       toast(`组装完成 ${units} 台`, "ok");
       await loadCounts();
@@ -152,11 +171,15 @@ export function Build() {
             </div>
           </div>
           <div className="build-cost">
-            <span>合计</span>
-            <b>{can > 0 ? `${num(totalCost, 2)} TAPE` : "—"}</b>
+            <span>合计 {can > 0 && <em>(${num(Number(formatEther(fee || 0n)), 2)} / 台{units > MAX_PER_TX ? " · 自动分批" : ""})</em>}</span>
+            <b className={shortTape ? "warn" : ""}>{can > 0 ? `${num(totalCost, 2)} TAPE` : "—"}</b>
           </div>
-          <button className="btn btn-primary btn-block" disabled={busy || can < 1} onClick={() => doAssemble(Math.min(n, Math.max(can, 1)))}>
-            {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : `组装 ${Math.min(n, can)} 台`}
+          <div className="build-bal">
+            <span>我的 TAPE</span><b className={shortTape ? "warn" : ""}>{num(Number(formatEther(bal)), 2)}</b>
+          </div>
+          <button className="btn btn-primary btn-block" disabled={busy || can < 1 || shortTape}
+            onClick={() => doAssemble(units)}>
+            {busy ? "等待钱包确认…" : can < 1 ? "部件不足" : shortTape ? "TAPE 不足" : `组装 ${units} 台`}
           </button>
         </aside>
       </div>

@@ -76,3 +76,6 @@
 .farm-cell[data-g="s"] { border-color: rgba(255,213,77,.45); }
 .farm-cell[data-g="a"] { border-color: rgba(0,229,160,.32); }
 .farm-cell[data-g="b"] { border-color: rgba(127,224,214,.26); }
+
+.farm-more { grid-column: 1 / -1; display: flex; justify-content: center; margin-top: 4px; }
+.farm-more .btn { height: 32px; font-size: 11.5px; }

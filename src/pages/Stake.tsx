@@ -21,6 +21,9 @@ export function Stake() {
   const [busy, setBusy] = useState<number | 0>(0);
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [detail, setDetail] = useState<Detail>(null);
+  const [filter, setFilter] = useState<"all" | "staked" | "idle">("all");
+  const [sort, setSort] = useState<"hash" | "id">("hash");
+  const [shown, setShown] = useState(8);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -44,6 +47,12 @@ export function Stake() {
   useEffect(() => { load().catch(() => setLoading(false)); }, [load]);
 
   const stakedList = useMemo(() => pcs.filter((p) => p.staked), [pcs]);
+  const visible = useMemo(
+    () => pcs
+      .filter((p) => (filter === "all" ? true : filter === "staked" ? p.staked : !p.staked))
+      .sort((a, b) => (sort === "hash" ? b.hash - a.hash : a.id - b.id)),
+    [pcs, filter, sort]
+  );
   const totalHash = useMemo(() => pcs.reduce((a, p) => a + (p.staked ? p.hash : 0), 0), [pcs]);
 
   const batchAct = async (kind: "stake" | "unstake" | "claim") => {
@@ -104,6 +113,14 @@ export function Stake() {
         <span>实时链上状态</span>
         <span className="spacer" />
         <div className="batch-bar">
+          <div className="pc-filters">
+            {([["all", "全部"], ["idle", "待机"], ["staked", "质押中"]] as const).map(([k, label]) => (
+              <button key={k} className={`pc-chip${filter === k ? " on" : ""}`} onClick={() => { setFilter(k); setShown(8); }}>{label}</button>
+            ))}
+            <button className="pc-chip" onClick={() => setSort(sort === "hash" ? "id" : "hash")}>
+              {sort === "hash" ? "算力↓" : "编号↑"}
+            </button>
+          </div>
           <label className="chk">
             <input type="checkbox" checked={sel.size > 0 && sel.size === pcs.length}
               onChange={(e) => setSel(e.target.checked ? new Set(pcs.map((p) => p.id)) : new Set())} />
@@ -124,7 +141,7 @@ export function Stake() {
         <div className="empty">你还没有矿机 —— 去「铸造」抽部件，再到「组装」做一台</div>
       ) : (
         <div className="farm">
-          {pcs.map((p) => (
+          {visible.slice(0, shown).map((p) => (
             <div key={p.id} className={`farm-cell${p.staked ? " on" : ""}`} data-g={gradeOf(p.hash).toLowerCase()}
               onClick={() => setDetail({ kind: "pc", id: p.id })}
               style={{ cursor: "pointer", ["--gc" as string]: GRADE_COLOR[gradeOf(p.hash)] }}>
@@ -145,6 +162,13 @@ export function Stake() {
               </div>
             </div>
           ))}
+          {visible.length > shown && (
+            <div className="farm-more">
+              <button className="btn btn-ghost" onClick={() => setShown((v) => v + 16)}>
+                显示更多（还有 {visible.length - shown} 台）
+              </button>
+            </div>
+          )}
         </div>
       )}
       <DetailSheet detail={detail} onClose={() => setDetail(null)} onChanged={load} />

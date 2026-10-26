@@ -21,6 +21,9 @@
   line-height: 1.4; display: inline-flex; align-items: center; }
 .grade.md { font-size: 12px; padding: 3px 10px; }
 .grade-s { box-shadow: 0 0 12px rgba(255,213,77,.35); }
+/* 数据砖里的徽章不要被拉成整行 */
+.tile .grade, .sheet-stat .grade { width: max-content; }
+.tile > b { display: flex; align-items: center; }
 .grade-c { opacity: .8; }
 .g3 { color: #7fe0d6 } .g4 { color: #00e5a0 } .g5 { color: #ffd54d }
 .pc-state { margin-left: auto; font-size: 10.5px; color: var(--tx-3); }
