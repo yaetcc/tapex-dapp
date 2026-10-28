@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1200px;height:630px;}
+  body{background:#07080B;color:#F2F3F5;position:relative;overflow:hidden;
+       font-family:"PingFang SC","Hiragino Sans GB",sans-serif;-webkit-font-smoothing:antialiased;}
+  .g1{position:absolute;width:760px;height:760px;left:-260px;top:-330px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,217,61,.20),transparent 62%);}
+  .g2{position:absolute;width:640px;height:640px;right:-260px;bottom:-300px;border-radius:50%;
+      background:radial-gradient(circle,rgba(0,229,160,.17),transparent 64%);}
+  .grid{position:absolute;inset:0;opacity:.45;
+    background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:60px 60px;}
+  .wrap{position:relative;height:100%;padding:56px 64px;display:flex;justify-content:space-between;align-items:center;gap:48px;}
+  .left{max-width:700px;}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:34px;}
+  .brand svg{width:42px;height:42px;}
+  .brand b{font-size:27px;letter-spacing:.06em;font-weight:800;}
+  .brand b i{font-style:normal;color:#FFD93D;}
+  .brand em{font-style:normal;font-size:19px;color:#8D93A1;letter-spacing:.04em;margin-left:4px;}
+  h1{font-size:76px;line-height:1.08;font-weight:900;letter-spacing:-.02em;}
+  h1 span{display:block;color:#FFD93D;}
+  .sub{margin-top:24px;font-size:26px;color:#A7AEBD;font-weight:500;}
+  .sub b{color:#00E5A0;}
+  .badges{display:flex;gap:12px;margin-top:26px;}
+  .badges span{border:1px solid rgba(0,229,160,.32);background:rgba(0,229,160,.06);color:#00E5A0;
+    border-radius:8px;padding:9px 16px;font-size:17px;font-weight:600;}
+  .url{margin-top:32px;display:flex;align-items:baseline;gap:16px;}
+  .url b{font:800 34px/1 ui-monospace,Menlo,monospace;}
+  .url b i{font-style:normal;color:#00E5A0;}
+  .url small{font:500 15px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:#6E7686;}
+
+  .right{display:flex;flex-direction:column;gap:20px;min-width:268px;}
+  .stat{border-left:2px solid rgba(255,217,61,.55);padding:4px 0 4px 18px;}
+  .stat b{display:block;font:800 52px/1 ui-monospace,Menlo,monospace;color:#FFD93D;letter-spacing:-.02em;}
+  .stat span{display:block;margin-top:9px;font-size:16px;color:#8D93A1;}
+  .risk{position:absolute;left:64px;bottom:22px;font-size:12.5px;color:#4E5563;}
+</style>
+</head>
+<body>
+  <div class="g1"></div><div class="g2"></div><div class="grid"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" stroke="#FFD93D" stroke-width="4"/>
+          <circle cx="32" cy="32" r="12" fill="#00E5A0"/>
+          <path d="M32 4v14M32 46v14M4 32h14M46 32h14M12 12l10 10M42 42l10 10M52 12l-10 10M22 42l-10 10"
+                stroke="#FFD93D" stroke-width="2" opacity=".7"/>
+        </svg>
+        <b>TAPE<i>X</i></b><em>矿机盲盒</em>
+      </div>
+      <h1>抽一台矿机<span>挖一份算力</span></h1>
+      <div class="sub">0.001 OKB 起抽 · 8 件组装 · <b>质押即挖 TAPE</b></div>
+      <div class="badges"><span>TAPE 2,100 万 · 永不增发</span><span>概率全公示</span></div>
+      <div class="url"><b>tapex<i>.live</i></b><small>X LAYER 196</small></div>
+    </div>
+    <div class="right">
+      <div class="stat"><b>4%</b><span>抽到 GPU 的概率</span></div>
+      <div class="stat"><b>8 件</b><span>组装一台整机</span></div>
+      <div class="stat"><b>100,000</b><span>全网零件上限</span></div>
+    </div>
+  </div>
+  <div class="risk">盲盒含随机性，概率已公示。加密资产价格波动极大，可能损失全部本金。</div>
+</body>
+</html>

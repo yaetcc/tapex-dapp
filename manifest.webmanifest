@@ -1,0 +1,13 @@
+{
+  "name": "TAPEX 矿机盲盒",
+  "short_name": "TAPEX",
+  "description": "抽部件盲盒 → 组装 PC → 质押挖 TAPE → 市场买卖，跑在 X Layer 主网。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120e0c",
+  "theme_color": "#120e0c",
+  "icons": [
+    { "src": "/tape-logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/tape-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
